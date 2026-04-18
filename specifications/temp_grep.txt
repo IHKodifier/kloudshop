@@ -1,0 +1,18 @@
+13: merchants across B2C, B2B, and Hybrid operational modes. The stack must support a solo
+282: - Plan management: DTC ($24.99) / B2B ($39.99) / Hybrid ($49.99) tiers
+284:   or B2B at signup; Hybrid is paid-only. Three independent hard-stop triggers:
+291: - Proration on mid-cycle tier upgrades (e.g. DTC → Hybrid)
+613: | **Linked to Buyers** | All buyer account threads (B2B/Hybrid tiers only) |
+1292: new active theme on the next page request. On the Hybrid tier, the merchant explicitly
+1765: | **B2B Activity** (B2B/Hybrid tiers) | Top buyer accounts by spend, pending approvals, net-terms receivables ageing, quote conversion rate | Hourly |
+1766: | **Hybrid Cross-Channel** (Hybrid tier) | DTC vs B2B revenue split, customers who buy both channels, unified margin view | Daily |
+2711: ### Firebase Data Connect + SQLAlchemy — Division of Responsibility
+2713: *(Addendum: consolidating the Firebase Data Connect decision with environment architecture)*
+2715: Firebase Data Connect is scoped per Firebase project — meaning dev, staging, and
+2716: prod each have their own Data Connect instance, GraphQL schema, and generated
+2717: Flutter SDK. Schema changes to Data Connect are promoted through environments
+2724: | Flutter client → Cloud SQL (CRUD) | Firebase Data Connect (GraphQL) | Schema definition, type-safe Flutter SDK generation, simple mutations and queries from frontend clients |
+2737: ### Updated Stack Summary — Environments + Firebase Data Connect Added
+2745: | Flutter client queries | Firebase Data Connect (GraphQL, type-safe SDK) | ✅ Added |
+2764: ### Brand Voice Profile (per brand_profile — Hybrid merchants get two independent profiles)
+2780: Hybrid merchants configure independent Brand Voice profiles per storefront — DTC and

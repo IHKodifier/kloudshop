@@ -1,0 +1,21 @@
+Q: What personality should the KloudShop merchant admin feel like? This drives typography, colour temperature, and component density.
+
+A: Professional & trustworthy — merchants need to trust this with their business
+
+
+
+Q: Consumer storefronts are the merchant’s brand, not KloudShop’s. How much KloudShop identity should bleed through on the storefront (e.g. ‘Powered by KloudShop’ footer badge)?
+
+A: Neutral — adapts to whatever theme the merchant chose, no strong KloudShop identity
+
+
+
+Q: Dark mode for the merchant admin?
+
+A: Both light and dark from day one — system preference detection
+
+
+
+Q: Font direction for the admin UI? (Storefronts have their own per-theme typography — this is admin only.)
+
+A: No preference — you decide based on the brand personality

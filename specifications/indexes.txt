@@ -1,0 +1,396 @@
+
+--- 06a1-platform-core-schema.md ---
+Table: kloudshop_platform.order_sources
+  CREATE INDEX idx_order_sources_channel_type
+Table: kloudshop_platform.tenants
+  CREATE UNIQUE INDEX idx_tenants_slug
+  CREATE INDEX idx_tenants_account_status
+  CREATE INDEX idx_tenants_owner_gmail
+  CREATE INDEX idx_tenants_is_trial_active
+  CREATE INDEX idx_tenants_stripe_customer
+Table: kloudshop_platform.tenant_regions
+  CREATE INDEX idx_tenant_regions_tenant_id
+  CREATE INDEX idx_tenant_regions_active
+Table: kloudshop_platform.gcip_tenant_registry
+  CREATE UNIQUE INDEX idx_gcip_registry_tenant_id
+  CREATE UNIQUE INDEX idx_gcip_registry_gcip_tenant_id
+Table: kloudshop_platform.staff_users
+  CREATE UNIQUE INDEX idx_staff_users_gmail
+  CREATE UNIQUE INDEX idx_staff_users_firebase_uid
+  CREATE INDEX idx_staff_users_is_active
+Table: kloudshop_platform.staff_role_assignments
+  CREATE UNIQUE INDEX idx_staff_role_one_owner_per_tenant
+  CREATE INDEX idx_staff_role_by_staff_tenant
+  CREATE INDEX idx_staff_role_by_tenant
+  CREATE INDEX idx_staff_role_pending_invitations
+Table: kloudshop_platform.platform_staff
+  CREATE UNIQUE INDEX idx_platform_staff_gmail
+  CREATE INDEX idx_platform_staff_active
+Table: kloudshop_platform.platform_audit_log
+  CREATE INDEX idx_audit_log_actor
+  CREATE INDEX idx_audit_log_tenant
+  CREATE INDEX idx_audit_log_action_type
+Table: kloudshop_platform.migration_jobs
+  CREATE INDEX idx_migration_jobs_tenant
+  CREATE INDEX idx_migration_jobs_in_progress
+Table: kloudshop_platform.billing_cycles
+  CREATE INDEX idx_billing_cycles_tenant
+  CREATE INDEX idx_billing_cycles_open
+  CREATE INDEX idx_billing_cycles_stripe_invoice
+Table: kloudshop_platform.billing_line_items
+  CREATE INDEX idx_billing_line_items_cycle
+  CREATE INDEX idx_billing_line_items_tenant_period
+Table: kloudshop_platform.trial_visitor_counts
+  CREATE INDEX idx_trial_visitor_counts_tenant_date
+  CREATE INDEX idx_trial_visitor_counts_unsent
+Table: kloudshop_platform.platform_announcements
+  CREATE UNIQUE INDEX idx_platform_announcements_build_hash
+  CREATE INDEX idx_platform_announcements_published
+Table: kloudshop_platform.feature_request_channel
+  CREATE INDEX idx_feature_requests_by_votes
+  CREATE INDEX idx_feature_requests_by_tenant
+Table: kloudshop_platform.feature_request_votes
+  CREATE INDEX idx_feature_votes_request
+
+--- 06a2-platform-catalogue-schema.md ---
+Table: kloudshop_platform.themes
+  CREATE INDEX idx_themes_published_by_category
+  CREATE INDEX idx_themes_published_by_installs
+  CREATE INDEX idx_themes_sector_tags
+  CREATE INDEX idx_themes_schema_version
+Table: kloudshop_platform.feature_registry
+  CREATE INDEX idx_feature_registry_tier_scope
+  CREATE INDEX idx_feature_registry_status
+Table: kloudshop_platform.feature_config_schema
+  CREATE INDEX idx_feature_config_schema_feature_id
+  CREATE INDEX idx_feature_config_schema_wizard_group
+Table: kloudshop_platform.feature_dependencies
+  CREATE INDEX idx_feature_dependencies_feature_id
+  CREATE INDEX idx_feature_dependencies_depends_on
+Table: kloudshop_platform.feature_migrations
+  CREATE INDEX idx_feature_migrations_feature_sequence
+  CREATE INDEX idx_feature_migrations_required
+Table: kloudshop_platform.carriers
+  CREATE INDEX idx_carriers_active
+Table: kloudshop_platform.carrier_service_levels
+  CREATE INDEX idx_carrier_service_levels_carrier
+Table: kloudshop_platform.carrier_regions
+  CREATE INDEX idx_carrier_regions_carrier
+  CREATE INDEX idx_carrier_regions_country_origin
+  CREATE INDEX idx_carrier_regions_gcp_hint
+Table: kloudshop_platform.carrier_credential_schemas
+  CREATE INDEX idx_carrier_credential_schemas_carrier
+Table: kloudshop_platform.carrier_webhook_configs
+  CREATE INDEX idx_carrier_webhook_configs_carrier
+  CREATE INDEX idx_carrier_webhook_configs_endpoint
+Table: kloudshop_platform.carrier_rate_zones
+  CREATE INDEX idx_carrier_rate_zones_lookup
+  CREATE INDEX idx_carrier_rate_zones_postal_prefix
+
+--- 06b-tenant-catalog-schema.md ---
+Table: products
+  CREATE UNIQUE INDEX idx_products_slug
+  CREATE INDEX idx_products_status
+  CREATE INDEX idx_products_in_store
+  CREATE INDEX idx_products_age_gated
+  CREATE INDEX idx_products_prescription
+  CREATE INDEX idx_products_compliance_metadata
+  CREATE INDEX idx_products_embedding
+Table: variants
+  CREATE UNIQUE INDEX idx_variants_sku
+  CREATE INDEX idx_variants_product_id
+  CREATE INDEX idx_variants_active_product
+  CREATE INDEX idx_variants_digital_assets
+  CREATE INDEX idx_variants_perishable
+  CREATE INDEX idx_variants_pet_species
+  CREATE INDEX idx_variants_pricing_model
+Table: product_translations
+  CREATE INDEX idx_product_translations_locale
+  CREATE INDEX idx_product_translations_stale
+  CREATE UNIQUE INDEX idx_product_translations_slug
+Table: variant_translations
+  CREATE INDEX idx_variant_translations_locale
+Table: collections
+  CREATE UNIQUE INDEX idx_collections_slug
+  CREATE INDEX idx_collections_visible_position
+Table: collection_translations
+  CREATE INDEX idx_collection_translations_locale
+  CREATE UNIQUE INDEX idx_collection_translations_slug
+Table: collection_products
+  CREATE INDEX idx_collection_products_product
+  CREATE INDEX idx_collection_products_collection_sort
+Table: product_images
+  CREATE INDEX idx_product_images_product
+  CREATE INDEX idx_product_images_variant
+  CREATE INDEX idx_product_images_primary
+Table: product_suppliers
+  CREATE INDEX idx_product_suppliers_variant_rank
+  CREATE INDEX idx_product_suppliers_supplier
+  CREATE INDEX idx_product_suppliers_rank_1
+Table: product_reviews
+  CREATE INDEX idx_product_reviews_variant_approved
+  CREATE INDEX idx_product_reviews_consumer
+  CREATE INDEX idx_product_reviews_informed_pending_update
+  CREATE INDEX idx_product_reviews_pending_moderation
+Table: review_votes
+  CREATE INDEX idx_review_votes_review
+Table: seo_settings
+Table: ai_copywriter_log
+  CREATE INDEX idx_ai_copywriter_log_entity
+  CREATE INDEX idx_ai_copywriter_log_content_type
+  CREATE INDEX idx_ai_copywriter_log_discard_rate
+  CREATE INDEX idx_ai_copywriter_log_prompt_hash
+
+--- 06c-tenant-orders-schema.md ---
+Table: orders
+  CREATE UNIQUE INDEX idx_orders_order_number
+  CREATE INDEX idx_orders_consumer_id
+  CREATE INDEX idx_orders_b2b_account
+  CREATE INDEX idx_orders_placed_at
+  CREATE INDEX idx_orders_fulfilment_status
+  CREATE INDEX idx_orders_payment_status
+  CREATE INDEX idx_orders_approval_pending
+  CREATE INDEX idx_orders_source
+  CREATE INDEX idx_orders_net_terms_overdue
+  CREATE INDEX idx_orders_stripe_payment_intent
+  CREATE INDEX idx_orders_stripe_invoice
+Table: order_items
+  CREATE INDEX idx_order_items_order_id
+  CREATE INDEX idx_order_items_variant_id
+  CREATE INDEX idx_order_items_product_id
+  CREATE INDEX idx_order_items_fulfilment_location
+  CREATE INDEX idx_order_items_digital
+Table: order_events
+  CREATE INDEX idx_order_events_order_id
+  CREATE INDEX idx_order_events_type
+  CREATE INDEX idx_order_events_consumer_visible
+Table: order_shipments
+  CREATE INDEX idx_order_shipments_order_id
+  CREATE INDEX idx_order_shipments_status
+  CREATE INDEX idx_order_shipments_tracking
+  CREATE INDEX idx_order_shipments_location
+  CREATE INDEX idx_order_shipments_service_level
+Table: order_shipment_items
+  CREATE INDEX idx_order_shipment_items_shipment
+  CREATE INDEX idx_order_shipment_items_order_item
+Table: order_notes
+  CREATE INDEX idx_order_notes_order_id
+  CREATE INDEX idx_order_notes_author
+
+--- 06d-tenant-inventory-schema.md ---
+Table: stock_locations
+  CREATE INDEX idx_stock_locations_active
+  CREATE INDEX idx_stock_locations_online
+  CREATE INDEX idx_stock_locations_pos
+Table: inventory
+  CREATE UNIQUE INDEX idx_inventory_variant_location
+  CREATE INDEX idx_inventory_location
+  CREATE INDEX idx_inventory_low_stock
+  CREATE INDEX idx_inventory_dead_stock
+Table: stock_reservations
+  CREATE INDEX idx_stock_reservations_variant_location
+  CREATE INDEX idx_stock_reservations_expires_at
+  CREATE INDEX idx_stock_reservations_session
+Table: stock_transfers
+  CREATE INDEX idx_stock_transfers_source
+  CREATE INDEX idx_stock_transfers_destination
+  CREATE INDEX idx_stock_transfers_variant
+  CREATE INDEX idx_stock_transfers_in_transit
+Table: packaging_presets
+  CREATE INDEX idx_packaging_presets_weight_asc
+  CREATE INDEX idx_packaging_presets_default
+
+--- 06e-tenant-supplier-schema.md ---
+Table: suppliers
+  CREATE INDEX idx_suppliers_status
+  CREATE INDEX idx_suppliers_name_trgm
+  CREATE INDEX idx_suppliers_all_statuses
+Table: purchase_orders
+  CREATE UNIQUE INDEX idx_purchase_orders_po_number
+  CREATE INDEX idx_purchase_orders_supplier
+  CREATE INDEX idx_purchase_orders_status_open
+  CREATE INDEX idx_purchase_orders_receiving_location
+  CREATE INDEX idx_purchase_orders_overdue
+Table: purchase_order_lines
+  CREATE INDEX idx_po_lines_po_id
+  CREATE INDEX idx_po_lines_variant
+  CREATE INDEX idx_po_lines_supplier
+  CREATE INDEX idx_po_lines_discrepancy
+  CREATE INDEX idx_po_lines_manufacture_date
+  CREATE INDEX idx_po_lines_pending_receipt
+Table: supplier_performance_events
+  CREATE INDEX idx_supplier_perf_events_supplier
+  CREATE INDEX idx_supplier_perf_events_po
+  CREATE INDEX idx_supplier_perf_events_type
+  CREATE INDEX idx_supplier_perf_events_negative_severity
+Table: supplier_score_weights
+Table: shipping_settings
+
+--- 06f-tenant-b2b-schema.md ---
+Table: b2b_accounts
+  CREATE UNIQUE INDEX idx_b2b_accounts_email
+  CREATE UNIQUE INDEX idx_b2b_accounts_firebase_uid
+  CREATE INDEX idx_b2b_accounts_status
+  CREATE INDEX idx_b2b_accounts_company_name_trgm
+  CREATE INDEX idx_b2b_accounts_account_manager
+  CREATE INDEX idx_b2b_accounts_price_list
+Table: price_lists
+  CREATE INDEX idx_price_lists_active
+  CREATE INDEX idx_price_lists_default
+Table: price_list_items
+  CREATE INDEX idx_price_list_items_price_list
+  CREATE INDEX idx_price_list_items_variant
+Table: approval_workflows
+Table: approval_requests
+  CREATE UNIQUE INDEX idx_approval_requests_order_id
+  CREATE INDEX idx_approval_requests_pending
+  CREATE INDEX idx_approval_requests_b2b_account
+  CREATE INDEX idx_approval_requests_escalation_candidates
+Table: b2b_invoices
+  CREATE UNIQUE INDEX idx_b2b_invoices_order_id
+  CREATE UNIQUE INDEX idx_b2b_invoices_stripe_invoice_id
+  CREATE INDEX idx_b2b_invoices_b2b_account
+  CREATE INDEX idx_b2b_invoices_overdue
+  CREATE INDEX idx_b2b_invoices_payment_status
+
+--- 06h-tenant-blog-schema.md ---
+Table: blog_posts
+  CREATE INDEX idx_blog_posts_status
+  CREATE INDEX idx_blog_posts_scheduled_for
+  CREATE INDEX idx_blog_posts_author_id
+  CREATE INDEX idx_blog_posts_body_tsv
+  CREATE INDEX idx_blog_posts_is_featured
+Table: blog_post_translations
+  CREATE INDEX idx_blog_post_translations_post_id
+  CREATE INDEX idx_blog_post_translations_locale
+  CREATE INDEX idx_blog_post_translations_body_tsv
+Table: blog_categories
+  CREATE INDEX idx_blog_categories_sort_order
+Table: blog_category_translations
+  CREATE INDEX idx_blog_category_translations_category_id
+  CREATE INDEX idx_blog_category_translations_locale
+Table: blog_post_categories
+  CREATE INDEX idx_blog_post_categories_category_id
+Table: blog_tags
+Table: blog_post_tags
+  CREATE INDEX idx_blog_post_tags_tag_id
+
+--- 06i-tenant-messaging-schema.md ---
+Table: message_threads
+  CREATE INDEX idx_message_threads_type_object
+  CREATE INDEX idx_message_threads_created_by
+Table: thread_participants
+  CREATE INDEX idx_thread_participants_participant
+  CREATE INDEX idx_thread_participants_unread
+  CREATE INDEX idx_thread_participants_type
+Table: messages
+  CREATE INDEX idx_messages_thread_sent_at
+  CREATE INDEX idx_messages_sender_drafts
+  CREATE INDEX idx_messages_body_tsv
+  CREATE INDEX idx_messages_sender_id
+Table: message_attachments
+  CREATE INDEX idx_message_attachments_message_id
+  CREATE INDEX idx_message_attachments_storage_path
+
+--- 06j-tenant-consumer-schema.md ---
+Table: consumers
+  CREATE UNIQUE INDEX idx_consumers_email
+  CREATE UNIQUE INDEX idx_consumers_gcip_uid
+  CREATE INDEX idx_consumers_is_active
+  CREATE INDEX idx_consumers_accepts_marketing
+  CREATE INDEX idx_consumers_name_trgm
+Table: consumer_addresses
+  CREATE INDEX idx_consumer_addresses_consumer_id
+  CREATE INDEX idx_consumer_addresses_default
+  CREATE INDEX idx_consumer_addresses_country
+Table: consumer_sessions
+  CREATE UNIQUE INDEX idx_consumer_sessions_token
+  CREATE INDEX idx_consumer_sessions_consumer_id
+  CREATE INDEX idx_consumer_sessions_active
+  CREATE INDEX idx_consumer_sessions_device_type
+  CREATE INDEX idx_consumer_sessions_started_at
+Table: wishlists
+  CREATE INDEX idx_wishlists_consumer_id
+  CREATE INDEX idx_wishlists_variant_id
+
+--- 06k-tenant-feature-config-schema.md ---
+Table: tenant_feature_config
+  CREATE INDEX IF NOT EXISTS idx_tfc_feature_id
+  CREATE INDEX IF NOT EXISTS idx_tfc_set_by
+Table: tenant_migration_state
+  CREATE INDEX IF NOT EXISTS idx_tms_feature_id
+  CREATE INDEX IF NOT EXISTS idx_tms_applied_at_brin
+Table: tenant_feature_state
+  CREATE INDEX IF NOT EXISTS idx_tfs_status
+  CREATE INDEX IF NOT EXISTS idx_tfs_activated_at
+  CREATE INDEX IF NOT EXISTS idx_tfs_updated_at
+
+--- 06l-bigquery-analytics-schema.md ---
+Table: IF
+Table: IF
+Table: IF
+Table: IF
+Table: IF
+
+--- 06m-tenant-feature-gated-schema.md ---
+Table: reward_tiers
+  CREATE INDEX idx_reward_tiers_sort_order
+Table: loyalty_accounts
+  CREATE UNIQUE INDEX idx_loyalty_accounts_consumer_id
+  CREATE INDEX idx_loyalty_accounts_tier
+Table: point_transactions
+  CREATE INDEX idx_point_transactions_account
+  CREATE INDEX idx_point_transactions_order
+  CREATE INDEX idx_point_transactions_expiry
+Table: redemption_events
+  CREATE INDEX idx_redemption_events_account
+  CREATE INDEX idx_redemption_events_order
+Table: discount_codes
+  CREATE UNIQUE INDEX idx_discount_codes_code
+  CREATE INDEX idx_discount_codes_active_window
+  CREATE INDEX idx_discount_codes_scope_collections
+  CREATE INDEX idx_discount_codes_scope_products
+Table: discount_code_redemptions
+  CREATE INDEX idx_discount_code_redemptions_code
+  CREATE INDEX idx_discount_code_redemptions_consumer
+  CREATE INDEX idx_discount_code_redemptions_order
+Table: abandoned_cart_jobs
+  CREATE UNIQUE INDEX idx_abandoned_cart_jobs_session
+  CREATE INDEX idx_abandoned_cart_jobs_status_pending
+  CREATE INDEX idx_abandoned_cart_jobs_consumer
+Table: dynamic_pricing_rules
+  CREATE INDEX idx_dynamic_pricing_rules_active_type
+  CREATE INDEX idx_dynamic_pricing_rules_flash_sale_window
+  CREATE INDEX idx_dynamic_pricing_rules_scope_collections
+  CREATE INDEX idx_dynamic_pricing_rules_scope_variants
+Table: dynamic_pricing_events
+  CREATE INDEX idx_dynamic_pricing_events_rule
+  CREATE INDEX idx_dynamic_pricing_events_variant
+  CREATE INDEX idx_dynamic_pricing_events_triggered_at
+Table: subscription_plans
+  CREATE INDEX idx_subscription_plans_active
+  CREATE INDEX idx_subscription_plans_products
+Table: subscriptions
+  CREATE INDEX idx_subscriptions_consumer
+  CREATE INDEX idx_subscriptions_next_order
+  CREATE INDEX idx_subscriptions_variant
+Table: subscription_orders
+  CREATE INDEX idx_subscription_orders_subscription
+  CREATE INDEX idx_subscription_orders_order
+Table: gift_cards
+  CREATE UNIQUE INDEX idx_gift_cards_code
+  CREATE INDEX idx_gift_cards_consumer
+  CREATE INDEX idx_gift_cards_expiring
+Table: gift_card_transactions
+  CREATE INDEX idx_gift_card_transactions_card
+  CREATE INDEX idx_gift_card_transactions_order
+Table: bundle_definitions
+  CREATE INDEX idx_bundle_definitions_active
+Table: bundle_components
+  CREATE INDEX idx_bundle_components_bundle
+  CREATE INDEX idx_bundle_components_variant
+  CREATE INDEX idx_bundle_components_swappable_variants
+Table: affiliate_links
+  CREATE UNIQUE INDEX idx_affiliate_links_code
+  CREATE INDEX idx_affiliate_links_active
+  CREATE INDEX idx_affiliate_links_email
