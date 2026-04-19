@@ -9,9 +9,9 @@
 
 | Environment | GCP/Firebase Project | Git Branch | Status |
 |-------------|----------------------|------------|--------|
-| **Dev** | `kloudshop-dev` | `feature/*` | Setup Complete |
-| **Staging** | `kloudshop-staging` | `dev` | Setup Complete |
-| **Prod** | `kloudshop-prod` | `main` | Setup Complete |
+| **Dev** | `kloudshop-dev` | `dev` | Theme & Assets Stabilized |
+| **Staging** | `kloudshop-staging` | `dev` | Ready for Auth Phase |
+| **Prod** | `kloudshop-prod` | `main` | Baseline Set |
 
 ---
 
