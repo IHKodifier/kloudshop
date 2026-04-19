@@ -9,9 +9,9 @@
 
 | Environment | GCP/Firebase Project | Git Branch | Status |
 |-------------|----------------------|------------|--------|
-| **Dev** | `kloudshop-dev` | `feature/*` | Pending Setup |
-| **Staging** | `kloudshop-staging` | `dev` | Pending Setup |
-| **Prod** | `kloudshop-prod` | `main` | Pending Setup |
+| **Dev** | `kloudshop-dev` | `feature/*` | Setup Complete |
+| **Staging** | `kloudshop-staging` | `dev` | Setup Complete |
+| **Prod** | `kloudshop-prod` | `main` | Setup Complete |
 
 ---
 
@@ -20,14 +20,14 @@
 **Instructions for Agent:** Focus *only* on the active sprint. Do not start work on future sprints.
 
 ### Phase 0 Checklist
-- [ ] Initialize Git Monorepo (`/frontend`, `/backend`, `/infrastructure`).
-- [ ] Setup `kloudshop-dev`, `kloudshop-staging`, `kloudshop-prod` GCP/Firebase projects.
-- [ ] Configure CI/CD pipelines (GitHub Actions -> Firebase Hosting/Cloud Run).
-- [ ] **Infrastructure Scripts:** Write scripts to provision tenant GCP resources.
-- [ ] **Cost Control & Backup Scripts:** Write `gcloud` scripts to Start/Stop Cloud SQL instances AND dump/restore seed data to Cloud Storage.
-- [ ] **Spike ASM-01:** Flutter Web CWV benchmark on GCP Cloud Run.
-- [ ] **Spike RSK-02:** Wildcard SSL two-level validation.
-- [ ] **Spike ASM-06:** Service worker + version.json interop.
+- [x] Initialize Git Monorepo (`/frontend`, `/backend`, `/infrastructure`).
+- [x] Setup `kloudshop-dev`, `kloudshop-staging`, `kloudshop-prod` GCP/Firebase projects.
+- [x] Configure CI/CD pipelines (GitHub Actions -> Firebase Hosting/Cloud Run).
+- [x] **Infrastructure Scripts:** Write scripts to provision tenant GCP resources.
+- [x] **Cost Control & Backup Scripts:** Write `gcloud` scripts to Start/Stop Cloud SQL instances AND dump/restore seed data to Cloud Storage.
+- [x] **Spike ASM-01:** Flutter Web CWV benchmark on GCP Cloud Run.
+- [x] **Spike RSK-02:** Wildcard SSL two-level validation.
+- [x] **Spike ASM-06:** Service worker + version.json interop.
 
 ---
 

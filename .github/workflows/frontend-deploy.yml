@@ -1,0 +1,52 @@
+name: Frontend CI/CD (Flutter Web -> Firebase Hosting)
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - 'feature/*'
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-deploy.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set environment variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "FIREBASE_PROJECT=kloudshop-prod" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            echo "FIREBASE_PROJECT=kloudshop-staging" >> $GITHUB_ENV
+          else
+            echo "FIREBASE_PROJECT=kloudshop-dev" >> $GITHUB_ENV
+          fi
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        working-directory: ./frontend
+        # Following architecture recommendations to use HTML renderer for web storefronts
+        run: flutter build web --web-renderer html
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: '${{ env.FIREBASE_PROJECT }}'
+          channelId: live
+          entryPoint: ./frontend

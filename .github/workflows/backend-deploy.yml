@@ -1,0 +1,51 @@
+name: Backend CI/CD (FastAPI -> Cloud Run)
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - 'feature/*'
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-deploy.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set environment variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "PROJECT_ID=kloudshop-prod" >> $GITHUB_ENV
+            echo "SERVICE_NAME=kloudshop-api-prod" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            echo "PROJECT_ID=kloudshop-staging" >> $GITHUB_ENV
+            echo "SERVICE_NAME=kloudshop-api-staging" >> $GITHUB_ENV
+          else
+            echo "PROJECT_ID=kloudshop-dev" >> $GITHUB_ENV
+            echo "SERVICE_NAME=kloudshop-api-dev" >> $GITHUB_ENV
+          fi
+
+      # Authentication with GCP
+      # Note: Set up Workload Identity Federation or GCP_CREDENTIALS in your GitHub Secrets
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --source ./backend \
+            --project ${{ env.PROJECT_ID }} \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --quiet
