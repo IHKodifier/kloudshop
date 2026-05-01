@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/landing_page.dart';
 import 'package:kloudshop/providers/theme_provider.dart';
+import 'package:kloudshop/services/auth_service.dart';
+import 'package:kloudshop/providers/auth_providers.dart';
+import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/dashboard_page.dart';
+import 'package:kloudshop/provisioning_page.dart';
 
 class KloudShopApp extends ConsumerWidget {
   const KloudShopApp({super.key});
@@ -17,7 +22,90 @@ class KloudShopApp extends ConsumerWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
-      home: const KloudShopLandingPage(),
+      home: const AuthGate(),
+    );
+  }
+}
+
+class AuthGate extends ConsumerWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+
+    return authState.when(
+      data: (user) {
+        if (user == null) return const KloudShopLandingPage();
+
+        // If logged in to Firebase, we must check our backend identity
+        final claimsState = ref.watch(userClaimsProvider);
+
+        return claimsState.when(
+          data: (claims) {
+            if (claims == null) {
+              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            }
+
+            // If the user is authenticated but has no tenant_id, send them to provisioning
+            // Platform admins are exempt as they see the global dashboard.
+            if (claims.tenantId == null && claims.accountType != 'platform_admin') {
+              return ProvisioningPage(email: user.email);
+            }
+
+            // SUCCESS: We have a user and they belong to a tenant
+            return DashboardPage(claims: claims);
+          },
+          loading: () => const Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Verifying merchant identity...'),
+                ],
+              ),
+            ),
+          ),
+          error: (e, s) {
+            if (e is ApiException && e.statusCode == 403) {
+              // Authenticated but no tenant_id found in claims
+              return ProvisioningPage(email: user.email);
+            }
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                    const SizedBox(height: 16),
+                    Text('Backend Error: $e'),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(forceRefreshClaimsProvider.notifier).toggle(true);
+                        ref.invalidate(userClaimsProvider);
+                      },
+                      child: const Text('Retry Connection & Sync'),
+                    ),
+                    TextButton(
+                      onPressed: () => ref.read(authServiceProvider).signOut(),
+                      child: const Text('Sign Out'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, s) => Scaffold(
+        body: Center(child: Text('Firebase Error: $e')),
+      ),
     );
   }
 }

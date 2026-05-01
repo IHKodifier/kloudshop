@@ -39,17 +39,20 @@ if [ $? -ne 0 ]; then
 fi
 
 # 2. Create Cloud Storage Bucket
-echo "[1/3] Creating Cloud Storage Bucket: $BUCKET_NAME"
-# Attempt to create the bucket (if it doesn't already exist)
-gcloud storage buckets create $BUCKET_NAME \
-    --project=$PROJECT_ID \
-    --location=us-central1 \
-    --uniform-bucket-level-access
-
-if [ $? -eq 0 ]; then
-    echo "✅ Bucket created successfully."
+echo "[1/3] Checking/Creating Cloud Storage Bucket: $BUCKET_NAME"
+if gcloud storage buckets describe $BUCKET_NAME --project=$PROJECT_ID > /dev/null 2>&1; then
+    echo "✅ Bucket already exists."
 else
-    echo "⚠️ Bucket creation returned an error. It may already exist."
+    gcloud storage buckets create $BUCKET_NAME \
+        --project=$PROJECT_ID \
+        --location=us-central1 \
+        --uniform-bucket-level-access
+    if [ $? -eq 0 ]; then
+        echo "✅ Bucket created successfully."
+    else
+        echo "❌ Failed to create bucket."
+        exit 1
+    fi
 fi
 
 # 3. Apply CORS Policy to the Bucket

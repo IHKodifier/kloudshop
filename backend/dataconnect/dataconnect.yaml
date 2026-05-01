@@ -1,0 +1,7 @@
+specVersion: "v1beta"
+serviceId: "kloudshop-api"
+location: "us-central1"
+schema:
+  source: "schema"
+connectorDirs:
+  - "connector"

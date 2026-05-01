@@ -39,6 +39,11 @@ dependencies:
   http: ^1.6.0
   google_fonts: ^8.0.2
   lucide_flutter: ^1.7.0
+  firebase_core: ^3.10.1
+  firebase_auth: ^5.4.1
+  google_sign_in: ^6.2.2
+  intl: 0.19.0
+  url_launcher: 6.3.1
 
 dev_dependencies:
   flutter_test:

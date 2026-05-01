@@ -1,23 +1,35 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base
 from pydantic_settings import BaseSettings
+import os
 
 class Settings(BaseSettings):
     # Default to a local postgres instance or Cloud SQL proxy
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/kloudshop"
+    TESTING: bool = False
     
     class Config:
-        env_file = ".env"
+        env_file = os.path.join(os.path.dirname(__file__), "..", ".env")
 
 settings = Settings()
 
+# Use SQLite for testing to support in-memory async DB
+db_url = settings.DATABASE_URL
+if settings.TESTING:
+    db_url = "sqlite+aiosqlite:///:memory:"
+
 # Async SQLAlchemy Engine (configured for use with PgBouncer later)
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=False,
-    pool_size=10,
-    max_overflow=20,
-)
+engine_kwargs = {
+    "echo": False,
+}
+
+if "sqlite" not in db_url:
+    engine_kwargs.update({
+        "pool_size": 10,
+        "max_overflow": 20,
+    })
+
+engine = create_async_engine(db_url, **engine_kwargs)
 
 # Async Session Maker
 AsyncSessionLocal = async_sessionmaker(

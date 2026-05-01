@@ -1,16 +1,1 @@
-{
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
+{"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"flutter":{"platforms":{"android":{"default":{"projectId":"kloudshop-dev","appId":"1:102143585564:android:d4c689feeb12a4ba251ed9","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"kloudshop-dev","configurations":{"android":"1:102143585564:android:d4c689feeb12a4ba251ed9","ios":"1:102143585564:ios:9b6c20a476638fdd251ed9","web":"1:102143585564:web:9e0d2baeec4166c6251ed9"}}}}}}

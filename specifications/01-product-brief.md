@@ -42,7 +42,7 @@ merchants run B2C storefronts, B2B wholesale portals, or both simultaneously fro
 account, single inventory, and single dashboard — with zero GMV fees, a native Feature
 Catalogue (not an App Store), AI-powered consultative selling, and a competitor migration
 engine that gets any merchant from Shopify, WooCommerce, Adobe Commerce, Wix, or Squarespace
-to fully operational in under 2 minutes.
+to fully operational in minutes via high-speed Excel/CSV imports. (*Automated 2-minute scraper-based migration is a P1 feature deferred to post-MVP.*)
 
 ---
 

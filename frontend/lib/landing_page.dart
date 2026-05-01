@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/providers/theme_provider.dart';
+import 'package:kloudshop/login_page.dart';
 
 class KloudShopLandingPage extends ConsumerWidget {
   const KloudShopLandingPage({super.key});
@@ -54,7 +55,22 @@ class KloudShopLandingPage extends ConsumerWidget {
                   _navItem(context, 'Features'),
                   _navItem(context, 'Solutions'),
                   _navItem(context, 'Pricing'),
-                  const SizedBox(width: 24),
+                  const SizedBox(width: 32),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: theme.colorScheme.onSurface,
+                    ),
+                    child: const Text(
+                      'Merchant Login',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   // Theme Toggle
                   IconButton(
                     onPressed: () {

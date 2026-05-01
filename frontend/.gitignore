@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase — contains API keys, never commit the real generated file.
+# The stub file (firebase_options.dart) is committed instead.
+# Replace stub by running: flutterfire configure
+# lib/firebase_options.dart
+google-services.json
+GoogleService-Info.plist

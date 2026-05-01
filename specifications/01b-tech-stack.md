@@ -45,7 +45,7 @@ specific justification tied to the product's requirements.
 | **CI/CD** | GitHub Actions + GCP Cloud Build | ✅ Recommended — see missing layers below |
 | **Secrets management** | GCP Secret Manager | ✅ Recommended — GCP-native, zero additional vendor |
 | **Feature flags** | Firebase Remote Config | ✅ Recommended — GCP-native, already using Firebase |
-| **Web scraping (migration engine)** | Scrapy + Playwright on Cloud Run | ✅ Recommended — see missing layers below |
+| **Web scraping (migration engine)** | Scrapy + Playwright on Cloud Run | ❌ DEFERRED — Post-MVP |
 | **SMS / OTP** | Twilio | ✅ Recommended — see missing layers below |
 | **Testing** | Pytest (backend) + Flutter test + Playwright E2E | ✅ Recommended — see missing layers below |
 | **Tax compliance** | Stripe Tax (via merchant's Stripe connected account) | ✅ Updated — see section below |
@@ -460,17 +460,10 @@ translation absent. hreflang tags auto-generated for all active locales per page
 from the English slug to the locale slug is generated automatically for each locale.
 
 ### 11. Web Scraping (Migration Engine)
-**Recommendation: Scrapy + Playwright — containerised on Cloud Run**
-- **Scrapy:** Fast, production-grade Python scraping framework. Handles Shopify
-  and WooCommerce static product pages efficiently.
-- **Playwright:** Headless browser automation for JavaScript-rendered pages
-  (Adobe Commerce, heavily JS-dependent Shopify themes). Handles dynamic content
-  Scrapy cannot reach.
-- **Cloud Run:** Scraping jobs run as isolated, ephemeral Cloud Run jobs — not
-  persistent services. Scales to zero between jobs. Pass-through billable.
-- **Bot protection mitigation:** Rotate user agents, respect crawl delays, use
-  residential proxy pool (Bright Data or Oxylabs) for scale. This is the highest
-  technical risk item in the product — validate in Sprint 1.
+**Status: Post-MVP / P1**
+- **Scrapy:** Fast, production-grade Python scraping framework.
+- **Playwright:** Headless browser automation.
+- **Decision:** These components are deferred to post-MVP due to high technical risk (bot protection) and maintenance overhead. MVP onboarding will rely exclusively on Excel/CSV imports.
 
 ### 12. SMS / OTP
 **Recommendation: Twilio**

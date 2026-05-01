@@ -25,8 +25,8 @@ Merchant discovers KloudShop
 Signs up (Gmail OAuth, 30 seconds)
          │
          ▼
-Pastes competitor store URL → 2-minute migration
-(products, SEO metadata, migration runbook imported)
+28. Uploads Product Catalog (Excel/CSV) → Onboarding in minutes
+29. (Products, inventory, and variants imported via high-speed CSV parser)
          │
          ▼
 Applies a theme → customises brand in WYSIWYG
@@ -69,18 +69,18 @@ All of E01 is MVP. Without it nothing else functions.
 
 ---
 
-#### E02 — Merchant Onboarding & Migration Engine (P0, full)
+#### E02 — Merchant Onboarding (P0, partial)
 
-The acquisition moat. Automated scraping is MVP; CSV fallback is mandatory alongside it.
+High-speed Excel/CSV import is the primary MVP path. Automated scraping is deferred.
 
 | Story | Rationale | Complexity |
 |-------|-----------|------------|
 | US-009 Merchant Signup & Tier Selection | Top of funnel | Low |
 | US-010 GCP Region Selection | Infrastructure gate | Low |
-| US-011 Competitor Store Migration (Scrape + Import) | The 2-minute win — core differentiator | High |
-| US-012 Scraped Data Compliance Rules | Legal requirement alongside scraping | Low |
-| US-013 Product Catalog CSV Upload (Scraping Fallback) | Mandatory fallback when scraping is blocked | Medium |
-| US-014 CSV Customer & Order History Import | Migration completeness | Medium |
+| US-011 Competitor Store Migration (Scrape + Import) | DEFERRED — Post-MVP P1 Feature | — |
+| US-012 Scraped Data Compliance Rules | DEFERRED — Post-MVP | — |
+| US-013 Product Catalog CSV Upload | Primary onboarding path for MVP | Medium |
+| US-014 CSV Customer & Order History Import | High priority for migration completeness | Medium |
 | US-015 Migration Runbook Generation | Reduces go-live friction dramatically | Medium |
 | US-016 Brand Identity Setup | Required before storefront is usable | Low |
 | US-017 Tier Upgrade Consent Flow | Billing integrity requirement | Low |

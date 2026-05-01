@@ -1,0 +1,28 @@
+type Tenant @table(name: "tenants", schema: "kloudshop_platform") {
+  tenantId: UUID! @default(expr: "uuid_generate_v4()")
+  slug: String! @unique
+  displayName: String!
+  ownerGmail: String!
+  tier: String! @default(value: "DTC")
+  isPaid: Boolean! @default(value: false)
+  stripeCustomerId: String
+  stripeSubscriptionId: String
+  isTrial: Boolean! @default(value: true)
+  trialTier: String
+  trialStartAt: Timestamp
+  trialGcpCreditUsed: Float! @default(value: 0)
+  trialGmvTotal: Float! @default(value: 0)
+  trialHardStopTrigger: String
+  trialHardStopAt: Timestamp
+  trialPublishedClosingAt: Timestamp
+  trialPermanentDeletionAt: Timestamp
+  accountStatus: String! @default(value: "provisioning")
+  softDeletedAt: Timestamp
+  gcipTenantId: String
+  gcpProvisioningStatus: String! @default(value: "pending")
+  primaryRegion: String
+  customDomainDtc: String
+  customDomainB2b: String
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
