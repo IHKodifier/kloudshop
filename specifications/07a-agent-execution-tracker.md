@@ -132,6 +132,7 @@
 | `test_bulk_import.py` | PASS | 2 / 2 |
 | `test_seo_redirects.py` | PASS | 2 / 2 |
 | `test_orders.py` | PASS | 6 / 6 |
+| `test_inventory.py` | PASS | 3 / 3 |
 
 #### Sprint 5 — Orders (E05) — API: `/orders/*`
 - [x] `POST /storefront/{tenant}/checkout/payment-intent` — Stripe Payment Intent
@@ -143,12 +144,12 @@
 - [x] Unit tests: inventory reservation, payment failure rollback, partial refund guard
 
 #### Sprint 6 — Inventory (E06) — API: `/inventory/*`, `/suppliers/*`, `/purchase-orders/*`
-- [ ] Inventory dashboard with lead-time-aware urgency scoring
-- [ ] AI replenishment recommendations (Vertex AI or rule-based fallback)
-- [ ] Supplier CRUD + preference ranking (atomic rank swap)
-- [ ] Purchase order lifecycle (Draft → Send → Receive)
-- [ ] Supplier performance scorecard metrics
-- [ ] Unit tests: urgency algorithm, rank swap atomicity, PO partial receipt
+- [x] Inventory dashboard with lead-time-aware urgency scoring
+- [x] AI replenishment recommendations (Vertex AI or rule-based fallback)
+- [x] Supplier CRUD + preference ranking (atomic rank swap)
+- [x] Purchase order lifecycle (Draft → Send → Receive)
+- [x] Supplier performance scorecard metrics
+- [x] Unit tests: urgency algorithm, rank swap atomicity, PO partial receipt
 
 #### Sprint 7 — Storefront, Shipping & Tax (E17 + E20 + E13) — API: `/storefront/*`, `/shipping/*`, `/tax/*`
 - [ ] SSR product listing, PDP, collection pages (FastAPI + Flutter Web HTML renderer)

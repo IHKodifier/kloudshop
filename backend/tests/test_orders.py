@@ -6,7 +6,8 @@ from decimal import Decimal
 from datetime import datetime
 
 from modules.catalog.models import Product, Variant
-from modules.orders.models import Order, OrderItem, StockLocation, Inventory
+from modules.orders.models import Order, OrderItem
+from modules.inventory.models import StockLocation, Inventory
 
 @pytest.mark.asyncio
 async def test_order_checkout_flow(client: AsyncClient, db_session: AsyncSession, mock_firebase_user):

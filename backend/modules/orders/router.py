@@ -14,7 +14,8 @@ from decimal import Decimal
 from shared.db import get_db
 from shared.auth import UserClaims
 from shared.rbac import has_permissions
-from .models import Order, OrderItem, OrderEvent, OrderNote, StockLocation, Inventory
+from .models import Order, OrderItem, OrderEvent, OrderNote
+from ..inventory.models import StockLocation, Inventory
 from .schemas import (
     OrderResponse, PaymentIntentRequest, PaymentIntentResponse, OrderConfirmRequest,
     StockLocationResponse, StockLocationCreate, InventoryResponse,
