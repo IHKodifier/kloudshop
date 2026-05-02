@@ -172,12 +172,17 @@
 
 #### Sprint 8 — Onboarding (E02) — API: `/onboarding/*`
 > ⚠️ CSV/Excel import ONLY. Do NOT implement `/onboarding/migration/scrape` — Post-MVP.
-- [ ] Merchant signup + tier selection
-- [ ] GCP region selection
-- [ ] Product/customer/order CSV import with AI column mapping + partial success
-- [ ] Brand identity setup (name, logo, colours)
-- [ ] Personalised migration runbook generation + PDF download
-- [ ] Tier upgrade consent flow
+- [x] Merchant signup + tier selection
+- [x] GCP region selection
+- [x] Product/customer/order CSV import with AI column mapping + partial success
+- [x] Brand identity setup (name, logo, colours)
+- [x] Personalised migration runbook generation + PDF download
+- [x] Tier upgrade consent flow
+
+##### TDD Test Results — Sprint 8 (Onboarding)
+| Test File | Status | Passing / Total |
+|-----------|--------|-----------------|
+| `test_onboarding.py` | PASS | 1 / 1 |
 
 #### Sprint 9 — Themes (E03) — API: `/themes/*`
 - [ ] Theme catalogue browsing + selection

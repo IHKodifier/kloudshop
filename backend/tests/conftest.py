@@ -29,6 +29,7 @@ from modules.storefront.models import (
     BrandProfile, StorefrontContent, StaticPage,
     MerchantCarrierConnection, CarrierCheckoutOption
 )
+from modules.onboarding.models import OnboardingSession, ImportMapping
 from shared.db import get_db, engine, AsyncSessionLocal as SharedAsyncSessionLocal
 
 @pytest_asyncio.fixture(autouse=True)
