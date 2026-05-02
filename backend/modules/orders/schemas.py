@@ -65,6 +65,8 @@ class OrderItemResponse(BaseModel):
     quantity: int
     unit_price: Decimal
     total_price: Decimal
+    tax_amount: Decimal
+    taxable: bool
     is_digital: bool
 
     class Config:

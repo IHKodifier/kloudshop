@@ -9,6 +9,7 @@ MERCHANT_PERMISSIONS = {
     "inventory:read", "inventory:write",
     "supplier:read", "supplier:write",
     "po:read", "po:write",
+    "storefront:read", "storefront:write",
     "settings:read", "settings:write",
     "billing:read", "billing:write", "billing:manage",
     "users:read", "users:write",

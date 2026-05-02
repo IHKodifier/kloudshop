@@ -66,7 +66,8 @@ class OrderItem(Base):
     quantity = Column(Integer, nullable=False)
     unit_price = Column(Numeric(12, 2), nullable=False)
     total_price = Column(Numeric(12, 2), nullable=False)
-    
+    tax_amount = Column(Numeric(12, 2), nullable=False, default=0)
+    taxable = Column(Boolean, nullable=False, default=True)
     is_digital = Column(Boolean, nullable=False, default=False)
 
     order = relationship("Order", back_populates="items")

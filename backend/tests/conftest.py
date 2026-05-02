@@ -25,6 +25,10 @@ from modules.inventory.models import (
     SupplierPerformanceEvent, StockTransfer, PackagingPreset,
     SupplierScoreWeights, ShippingSettings
 )
+from modules.storefront.models import (
+    BrandProfile, StorefrontContent, StaticPage,
+    MerchantCarrierConnection, CarrierCheckoutOption
+)
 from shared.db import get_db, engine, AsyncSessionLocal as SharedAsyncSessionLocal
 
 @pytest_asyncio.fixture(autouse=True)

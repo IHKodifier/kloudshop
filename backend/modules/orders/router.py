@@ -53,6 +53,14 @@ class MockStripe:
             "status": "succeeded",
             "amount": amount
         }
+    
+    async def calculate_tax(self, items: list, currency: str, shipping_address: dict = None):
+        # Mock Stripe Tax API
+        tax_per_item = Decimal("0.08") # 8% tax mock
+        return {
+            "tax_total": sum(float(item["price"]) * item["quantity"] * 0.08 for item in items),
+            "item_taxes": [{"tax_amount": float(item["price"]) * item["quantity"] * 0.08} for item in items]
+        }
 
 stripe_client = MockStripe()
 
@@ -75,13 +83,30 @@ async def create_payment_intent(
         
         total_amount += variant.price * item.quantity
     
+    # Calculate Tax (Mocked)
+    tax_data = await stripe_client.calculate_tax(
+        items=[{"price": v.price, "quantity": i.quantity} for v, i in zip([], request.items)], # ZIP fix later
+        currency=request.currency
+    )
+    # Re-fetch for zip correctly or just loop
+    variant_data = []
+    for item in request.items:
+        v = (await db.execute(select(Variant).where(Variant.variant_id == item.variant_id))).scalar_one()
+        variant_data.append({"price": v.price, "quantity": item.quantity})
+    
+    tax_data = await stripe_client.calculate_tax(variant_data, request.currency)
+    tax_total = Decimal(str(tax_data["tax_total"]))
+    
+    # Total includes tax
+    total_with_tax = total_amount + tax_total
+    
     # Stripe expects amount in cents
-    amount_cents = int(total_amount * 100)
+    amount_cents = int(total_with_tax * 100)
     
     intent = await stripe_client.create_payment_intent(
         amount=amount_cents,
         currency=request.currency,
-        metadata={"email": request.email}
+        metadata={"email": request.email, "tax_total": str(tax_total)}
     )
     
     return PaymentIntentResponse(
@@ -135,10 +160,12 @@ async def confirm_order(
             order_number=order_number,
             tenant_id=tenant_id,
             email=email,
+            consumer_id=None, # DERIVE from auth if logged in
             payment_status="paid",
             fulfilment_status="unfulfilled",
             currency=intent["currency"].upper(),
-            subtotal=Decimal("0.00"), # Will calculate below
+            subtotal=Decimal("0.00"), 
+            tax_total=Decimal("0.00"),
             grand_total=Decimal(intent["amount"]) / 100,
             shipping_name=request.shipping_name,
             shipping_address1=request.shipping_address1,
@@ -177,6 +204,7 @@ async def confirm_order(
             variant = v_result.scalars().first()
             
             # Create Order Item (Snapshotting price and title)
+            item_tax = Decimal(str(variant.price * item.quantity * Decimal("0.08")))
             order_item = OrderItem(
                 order_id=new_order.order_id,
                 variant_id=variant.variant_id,
@@ -186,10 +214,13 @@ async def confirm_order(
                 quantity=item.quantity,
                 unit_price=variant.price,
                 total_price=variant.price * item.quantity,
+                tax_amount=item_tax,
+                taxable=variant.taxable,
                 is_digital=variant.product.is_digital
             )
             db.add(order_item)
             subtotal += order_item.total_price
+            new_order.tax_total += item_tax
             
             # Decrement Inventory
             inventory.quantity_on_hand -= item.quantity

@@ -71,6 +71,7 @@ from modules.platform.router import router as platform_router
 from modules.catalog.router import router as catalog_router
 from modules.orders.router import router as orders_router
 from modules.inventory.router import router as inventory_router
+from modules.storefront.router import router as storefront_router
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(provisioning_router, prefix="/api/v1/internal", tags=["Internal"])
@@ -80,3 +81,4 @@ app.include_router(platform_router, prefix="/api/v1/platform", tags=["Platform"]
 app.include_router(catalog_router, prefix="/api/v1/products", tags=["Catalog"])
 app.include_router(orders_router, prefix="/api/v1/orders", tags=["Orders"])
 app.include_router(inventory_router, prefix="/api/v1/inventory", tags=["Inventory"])
+app.include_router(storefront_router, prefix="/api/v1/storefront", tags=["Storefront"])
