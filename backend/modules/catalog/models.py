@@ -131,6 +131,7 @@ class Variant(Base):
 
     # Relationships
     product = relationship("Product", back_populates="variants")
+    inventory_items = relationship("Inventory", back_populates="variant", cascade="all, delete-orphan")
 
     __table_args__ = (
         CheckConstraint(pricing_model.in_(['fixed', 'pwyw', 'donation']), name='variants_pricing_model_check'),

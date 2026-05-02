@@ -19,6 +19,7 @@ from modules.auth.models import Invitation, StaffUser
 from modules.platform.models import Tenant
 from modules.billing.models import Subscription
 from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
+from modules.orders.models import Order, OrderItem, OrderEvent, OrderNote, StockLocation, Inventory
 from shared.db import get_db, engine, AsyncSessionLocal as SharedAsyncSessionLocal
 
 @pytest_asyncio.fixture(autouse=True)

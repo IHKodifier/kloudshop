@@ -1,0 +1,158 @@
+import uuid
+from datetime import datetime
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, DateTime, Numeric, Text, CheckConstraint, Index
+from sqlalchemy.orm import relationship
+from shared.db import Base
+
+class StockLocation(Base):
+    __tablename__ = "stock_locations"
+
+    stock_location_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(Text, nullable=False)
+    location_type = Column(String(16), nullable=False, default="warehouse") # 'warehouse', 'store', '3pl', 'virtual'
+    
+    # Address
+    address_line1 = Column(Text)
+    address_line2 = Column(Text)
+    city = Column(Text)
+    state = Column(Text)
+    postcode = Column(Text)
+    country_code = Column(String(2)) # ISO 3166-1 alpha-2
+
+    # Fulfilment Capabilities
+    fulfils_online = Column(Boolean, nullable=False, default=True)
+    fulfils_pos = Column(Boolean, nullable=False, default=False)
+    is_default = Column(Boolean, nullable=False, default=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    inventory_items = relationship("Inventory", back_populates="location")
+
+    __table_args__ = (
+        CheckConstraint(location_type.in_(['warehouse', 'store', '3pl', 'virtual']), name="stock_locations_type_check"),
+    )
+
+class Inventory(Base):
+    __tablename__ = "inventory"
+
+    inventory_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    variant_id = Column(String, ForeignKey("variants.variant_id", ondelete="CASCADE"), nullable=False)
+    stock_location_id = Column(String, ForeignKey("stock_locations.stock_location_id", ondelete="RESTRICT"), nullable=False)
+
+    quantity_on_hand = Column(Integer, nullable=False, default=0)
+    quantity_reserved = Column(Integer, nullable=False, default=0)
+    
+    # quantity_available is calculated in the application layer for now (SQLite compatibility)
+    
+    reorder_point = Column(Integer)
+    reorder_quantity = Column(Integer)
+
+    last_received_at = Column(DateTime)
+    last_sold_at = Column(DateTime)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    location = relationship("StockLocation", back_populates="inventory_items")
+    variant = relationship("Variant", back_populates="inventory_items")
+
+    __table_args__ = (
+        CheckConstraint(quantity_on_hand >= 0, name="inventory_on_hand_non_negative"),
+        CheckConstraint(quantity_reserved >= 0, name="inventory_reserved_non_negative"),
+        Index("idx_inventory_variant_location", "variant_id", "stock_location_id", unique=True),
+    )
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    order_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    order_number = Column(String(32), unique=True, nullable=False) # e.g. KS-1001
+    tenant_id = Column(String, nullable=False, index=True)
+    
+    consumer_id = Column(String) # NULL for guest
+    email = Column(String(255), nullable=False)
+    
+    payment_status = Column(String(16), nullable=False, default="pending")
+    fulfilment_status = Column(String(24), nullable=False, default="unfulfilled")
+    
+    # Financials (Denormalized snapshots)
+    currency = Column(String(3), nullable=False, default="USD")
+    subtotal = Column(Numeric(12, 2), nullable=False)
+    tax_total = Column(Numeric(12, 2), nullable=False, default=0)
+    shipping_total = Column(Numeric(12, 2), nullable=False, default=0)
+    grand_total = Column(Numeric(12, 2), nullable=False)
+    
+    # Shipping Address
+    shipping_name = Column(Text)
+    shipping_address1 = Column(Text)
+    shipping_address2 = Column(Text)
+    shipping_city = Column(Text)
+    shipping_state = Column(Text)
+    shipping_postcode = Column(Text)
+    shipping_country = Column(String(2))
+    
+    # Stripe reference
+    stripe_payment_intent_id = Column(String(255))
+    
+    placed_at = Column(DateTime, default=datetime.utcnow)
+    cancelled_at = Column(DateTime)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+    events = relationship("OrderEvent", back_populates="order", cascade="all, delete-orphan")
+    notes = relationship("OrderNote", back_populates="order", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        CheckConstraint(payment_status.in_(['pending', 'paid', 'failed', 'refunded', 'partially_refunded', 'voided']), name='orders_payment_status_check'),
+        CheckConstraint(fulfilment_status.in_(['unfulfilled', 'partially_fulfilled', 'fulfilled', 'delivered', 'cancelled', 'returned']), name='orders_fulfilment_status_check'),
+    )
+
+class OrderItem(Base):
+    __tablename__ = "order_items"
+
+    order_item_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    order_id = Column(String, ForeignKey("orders.order_id", ondelete="CASCADE"), nullable=False)
+    
+    variant_id = Column(String, nullable=False)
+    product_id = Column(String, nullable=False)
+    
+    # Snapshots
+    title = Column(Text, nullable=False) # Product + Variant name
+    sku = Column(String(64))
+    quantity = Column(Integer, nullable=False)
+    unit_price = Column(Numeric(12, 2), nullable=False)
+    total_price = Column(Numeric(12, 2), nullable=False)
+    
+    is_digital = Column(Boolean, nullable=False, default=False)
+
+    order = relationship("Order", back_populates="items")
+
+class OrderEvent(Base):
+    __tablename__ = "order_events"
+
+    event_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    order_id = Column(String, ForeignKey("orders.order_id", ondelete="CASCADE"), nullable=False)
+    
+    event_type = Column(String(32), nullable=False) # e.g. 'payment_confirmed', 'shipped'
+    description = Column(Text)
+    actor_id = Column(String) # staff or consumer
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    order = relationship("Order", back_populates="events")
+
+class OrderNote(Base):
+    __tablename__ = "order_notes"
+
+    note_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    order_id = Column(String, ForeignKey("orders.order_id", ondelete="CASCADE"), nullable=False)
+    
+    author_id = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    is_customer_visible = Column(Boolean, nullable=False, default=False)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    order = relationship("Order", back_populates="notes")

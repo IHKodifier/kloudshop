@@ -131,15 +131,16 @@
 | `test_collections.py` | PASS | 4 / 4 |
 | `test_bulk_import.py` | PASS | 2 / 2 |
 | `test_seo_redirects.py` | PASS | 2 / 2 |
+| `test_orders.py` | PASS | 6 / 6 |
 
 #### Sprint 5 — Orders (E05) — API: `/orders/*`
-- [ ] `POST /storefront/{tenant}/checkout/payment-intent` — Stripe Payment Intent
-- [ ] `POST /storefront/{tenant}/checkout/confirm` — Order creation + inventory lock
-- [ ] `PATCH /orders/{id}/fulfil` — Fulfilment + tracking + Resend notification
-- [ ] `POST /orders/{id}/refund` — Full/partial Stripe refund
-- [ ] `POST /orders/{id}/notes` — Internal order notes
-- [ ] `GET /orders/export` — CSV export with date range filter
-- [ ] Unit tests: inventory reservation, payment failure rollback, partial refund guard
+- [x] `POST /storefront/{tenant}/checkout/payment-intent` — Stripe Payment Intent
+- [x] `POST /storefront/{tenant}/checkout/confirm` — Order creation + inventory lock
+- [x] `PATCH /orders/{id}/fulfil` — Fulfilment + tracking + Resend notification
+- [x] `POST /orders/{id}/refund` — Full/partial Stripe refund
+- [x] `POST /orders/{id}/notes` — Internal order notes
+- [x] `GET /orders/export` — CSV export with date range filter
+- [x] Unit tests: inventory reservation, payment failure rollback, partial refund guard
 
 #### Sprint 6 — Inventory (E06) — API: `/inventory/*`, `/suppliers/*`, `/purchase-orders/*`
 - [ ] Inventory dashboard with lead-time-aware urgency scoring

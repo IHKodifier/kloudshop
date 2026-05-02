@@ -32,3 +32,9 @@ build/
 *.tfstate
 *.tfstate.backup
 .terraform/
+
+# Secrets
+backend/service_account.json
+*.json
+!package.json
+!composer.json
