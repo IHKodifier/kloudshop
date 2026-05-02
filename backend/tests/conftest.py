@@ -18,7 +18,8 @@ from shared.db import Base
 from modules.auth.models import Invitation, StaffUser
 from modules.platform.models import Tenant
 from modules.billing.models import Subscription
-from shared.db import get_db
+from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
+from shared.db import get_db, engine, AsyncSessionLocal as SharedAsyncSessionLocal
 
 @pytest_asyncio.fixture(autouse=True)
 async def override_get_db(db_session):
@@ -28,24 +29,23 @@ async def override_get_db(db_session):
 
 @pytest_asyncio.fixture
 async def db_session():
-    # Use in-memory SQLite for tests
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
-    
+    # Use the shared engine which is already configured for testing (:memory:)
     # Create tables
     async with engine.begin() as conn:
-        # SQLite doesn't support schemas, so we need to strip them for tests
         def strip_schema(conn, metadata):
             for table in metadata.tables.values():
                 table.schema = None
-        
         await conn.run_sync(strip_schema, Base.metadata)
         await conn.run_sync(Base.metadata.create_all)
         
-    AsyncSessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
-    async with AsyncSessionLocal() as session:
+    async with SharedAsyncSessionLocal() as session:
         yield session
         await session.close()
-    await engine.dispose()
+    
+    # We don't dispose the shared engine here as it's used across tests
+    # But we should probably clean up tables after each test if needed
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 @pytest.fixture
 def mock_firebase_user():
