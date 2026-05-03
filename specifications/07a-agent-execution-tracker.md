@@ -185,18 +185,31 @@
 | `test_onboarding.py` | PASS | 1 / 1 |
 
 #### Sprint 9 — Themes (E03) — API: `/themes/*`
-- [ ] Theme catalogue browsing + selection
-- [ ] WYSIWYG editor (component stack, config panel, content slots)
-- [ ] Draft save / apply to storefront / discard flow
-- [ ] Design token overrides
-- [ ] One-click theme switching with content carry-forward algorithm
+- [x] Theme catalogue browsing + selection
+- [x] WYSIWYG editor (component stack, config panel, content slots)
+- [x] Draft save / apply to storefront / discard flow
+- [x] Design token overrides
+- [x] One-click theme switching with content carry-forward algorithm
+
+##### TDD Test Results — Sprint 9 (Themes)
+| Test File | Status | Passing / Total |
+|-----------|--------|-----------------|
+| `test_themes.py` | PASS | 1 / 1 |
 
 #### Sprint 10 — Platform Features (E08 + E14 + E15 + E23) — API: `/features/*`, `/pricing/rules/*`, `/export/*`, `/ai/*`
-- [ ] Feature Catalogue toggle engine (Firebase Realtime DB progress, Alembic migration runner)
-- [ ] Feature setup wizard (schema-driven, dynamic form rendering)
-- [ ] Dynamic pricing rules (stock-age, velocity, flash sale)
-- [ ] Full data export on demand (CSV/JSON via Cloud Tasks)
-- [ ] AI Copywriter: Brand Voice profile, product title/description generation, blog enhancement
+- [x] Feature Catalogue toggle engine (Firebase Realtime DB progress, Alembic migration runner)
+- [x] Feature setup wizard (schema-driven, dynamic form rendering)
+- [x] Dynamic pricing rules (stock-age, velocity, flash sale)
+- [x] Full data export on demand (CSV/JSON via Cloud Tasks)
+- [x] AI Copywriter: Brand Voice profile, product title/description generation, blog enhancement
+
+##### TDD Test Results — Sprint 10 (Platform Features)
+| Test File | Status | Passing / Total |
+|-----------|--------|-----------------|
+| `test_features.py` | PASS | 4 / 4 |
+| `test_ai.py` | PASS | 3 / 3 |
+| `test_export.py` | PASS | 1 / 1 |
+| `test_pricing.py` | PASS | 1 / 1 |
 
 ---
 

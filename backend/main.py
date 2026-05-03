@@ -73,6 +73,11 @@ from modules.orders.router import router as orders_router
 from modules.inventory.router import router as inventory_router
 from modules.storefront.router import router as storefront_router
 from modules.onboarding.router import router as onboarding_router
+from modules.themes.router import router as themes_router
+from modules.features.router import router as features_router
+from modules.ai.router import router as ai_router
+from modules.export.router import router as export_router
+from modules.pricing.router import router as pricing_router
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(provisioning_router, prefix="/api/v1/internal", tags=["Internal"])
@@ -84,3 +89,8 @@ app.include_router(orders_router, prefix="/api/v1/orders", tags=["Orders"])
 app.include_router(inventory_router, prefix="/api/v1/inventory", tags=["Inventory"])
 app.include_router(storefront_router, prefix="/api/v1/storefront", tags=["Storefront"])
 app.include_router(onboarding_router, prefix="/api/v1/onboarding", tags=["Onboarding"])
+app.include_router(themes_router, prefix="/api/v1/themes", tags=["Themes"])
+app.include_router(features_router, prefix="/api/v1/features", tags=["Features"])
+app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI"])
+app.include_router(export_router, prefix="/api/v1/export", tags=["Export"])
+app.include_router(pricing_router, prefix="/api/v1/pricing", tags=["Pricing"])

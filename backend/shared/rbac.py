@@ -14,6 +14,7 @@ MERCHANT_PERMISSIONS = {
     "billing:read", "billing:write", "billing:manage",
     "users:read", "users:write",
     "auth:invite", "auth:revoke",
+    "features:read", "features:write",
 }
 
 PLATFORM_PERMISSIONS = {
