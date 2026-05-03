@@ -17,13 +17,13 @@
 
 | Environment | GCP/Firebase Project | Git Branch | Status |
 |-------------|----------------------|------------|--------|
-| **Dev** | `kloudshop-dev` | `dev/phase1` | PHASE 1 COMPLETE ✅ |
-| **Staging** | `kloudshop-staging` | `dev` | Ready for Phase 2 |
+| **Dev** | `kloudshop-dev` | `phase4/b2b-channels` | PHASE 4 IN PROGRESS 🚧 |
+| **Staging** | `kloudshop-staging` | `dev` | Phase 3 Complete ✅ |
 | **Prod** | `kloudshop-prod` | `main` | Baseline Set |
 
 ---
 
-## Active Sprint: PHASE 2 — Core Commerce (Sprint 4)
+## Active Sprint: PHASE 4 — B2B & Channels (Sprint 11)
 
 > [!IMPORTANT]
 > Focus **only** on the active sprint. Do not start work on future sprints. Check `08a-api-specification.md` section for the relevant Epic before writing any endpoint.
@@ -210,17 +210,18 @@
 | `test_ai.py` | PASS | 3 / 3 |
 | `test_export.py` | PASS | 1 / 1 |
 | `test_pricing.py` | PASS | 1 / 1 |
+| `test_b2b.py` | PASS | 9 / 9 |
 
 ---
 
 ## Phase 4 Checklist — B2B & Channels (Sprints 11–14)
 
 #### Sprint 11 — B2B (E07) — API: `/b2b/*`
-- [ ] B2B buyer account CRUD + invitation flow
-- [ ] Custom price list creation + buyer assignment
-- [ ] B2B approval workflow (threshold-based, FCM notifications)
-- [ ] B2B buyer portal catalog browsing (scoped + AI search)
-- [ ] Net-terms Stripe Invoice generation (Net-30/60/90)
+- [x] B2B buyer account CRUD + invitation flow
+- [x] Custom price list creation + buyer assignment
+- [x] B2B approval workflow (threshold-based, FCM notifications)
+- [x] B2B buyer portal catalog browsing (scoped + AI search)
+- [x] Net-terms Stripe Invoice generation (Net-30/60/90)
 
 #### Sprint 12 — POS (E11) — API: `/pos/*`
 - [ ] POS Operator role + location scope assignment

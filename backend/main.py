@@ -78,6 +78,7 @@ from modules.features.router import router as features_router
 from modules.ai.router import router as ai_router
 from modules.export.router import router as export_router
 from modules.pricing.router import router as pricing_router
+from modules.b2b.router import router as b2b_router
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(provisioning_router, prefix="/api/v1/internal", tags=["Internal"])
@@ -94,3 +95,4 @@ app.include_router(features_router, prefix="/api/v1/features", tags=["Features"]
 app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI"])
 app.include_router(export_router, prefix="/api/v1/export", tags=["Export"])
 app.include_router(pricing_router, prefix="/api/v1/pricing", tags=["Pricing"])
+app.include_router(b2b_router, prefix="/api/v1", tags=["B2B"])

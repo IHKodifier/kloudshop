@@ -120,6 +120,8 @@ class OrderResponse(BaseModel):
     placed_at: datetime
     cancelled_at: Optional[datetime] = None
     updated_at: datetime
+    b2b_account_id: Optional[str] = None
+    b2b_approval_status: str = "not_applicable"
     items: List[OrderItemResponse]
     events: List[OrderEventResponse]
     notes: List[OrderNoteResponse]

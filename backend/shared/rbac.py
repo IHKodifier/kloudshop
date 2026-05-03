@@ -15,6 +15,7 @@ MERCHANT_PERMISSIONS = {
     "users:read", "users:write",
     "auth:invite", "auth:revoke",
     "features:read", "features:write",
+    "b2b:manage", "b2b:approve",
 }
 
 PLATFORM_PERMISSIONS = {
@@ -49,6 +50,7 @@ ROLE_PERMISSIONS = {
         "catalog:read",
         "orders:read", "orders:write",
         "users:read", "users:write",
+        "b2b:manage",
     },
     "buyer": {
         "catalog:read",

@@ -38,6 +38,10 @@ class Order(Base):
     # Stripe reference
     stripe_payment_intent_id = Column(String(255))
     
+    # B2B Specifics
+    b2b_account_id = Column(String, index=True)
+    b2b_approval_status = Column(String(16), default="not_applicable") # pending | approved | declined | not_applicable
+    
     placed_at = Column(DateTime, default=datetime.utcnow)
     cancelled_at = Column(DateTime)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

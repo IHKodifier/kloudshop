@@ -35,6 +35,7 @@ from modules.features.models import Feature, TenantFeatureActivation, TenantFeat
 from modules.ai.models import BrandVoiceProfile, AICopywriterLog
 from modules.export.models import ExportJob
 from modules.pricing.models import PricingRule
+from modules.b2b.models import B2BAccount, PriceList, PriceListItem, ApprovalWorkflow, ApprovalRequest, B2BInvoice
 from shared.db import get_db, engine, AsyncSessionLocal as SharedAsyncSessionLocal
 
 @pytest_asyncio.fixture(autouse=True)
