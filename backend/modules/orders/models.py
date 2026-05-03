@@ -11,6 +11,7 @@ class Order(Base):
 
     order_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     order_number = Column(String(32), unique=True, nullable=False) # e.g. KS-1001
+    order_source_id = Column(String(64), nullable=False, default="kloudshop") # kloudshop | pos | tiktok_shop
     tenant_id = Column(String, nullable=False, index=True)
     
     consumer_id = Column(String) # NULL for guest

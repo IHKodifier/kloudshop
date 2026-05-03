@@ -19,7 +19,7 @@ class SubscriptionResponse(SubscriptionBase):
         from_attributes = True
 
 class UpgradeRequest(BaseModel):
-    plan_id: str # basic, pro, enterprise
+    plan_id: str # dtc, b2b, hybrid
     success_url: str
     cancel_url: str
 

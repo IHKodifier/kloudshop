@@ -58,6 +58,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
+        log('Subscription Response: ${response.body}');
         return SubscriptionModel.fromJson(jsonDecode(response.body));
       } else {
         throw ApiException(response.statusCode, 'Failed to fetch subscription: ${response.body}');

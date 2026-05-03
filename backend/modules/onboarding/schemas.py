@@ -5,7 +5,7 @@ from datetime import datetime
 class SignupRequest(BaseModel):
     brand_name: str
     owner_email: EmailStr
-    tier: str # basic | professional | enterprise
+    tier: str # dtc | b2b | hybrid
 
 class RegionSelectionRequest(BaseModel):
     region: str # us-central1 | europe-west1 | asia-southeast1

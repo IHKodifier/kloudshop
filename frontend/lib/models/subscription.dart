@@ -1,8 +1,4 @@
-enum SubscriptionTier {
-  basic,
-  pro,
-  enterprise,
-}
+enum SubscriptionTier { free, dtc, b2b, hybrid }
 
 enum SubscriptionStatus {
   trialing,
@@ -17,7 +13,9 @@ class SubscriptionModel {
   final String tenantId;
   final SubscriptionTier tier;
   final SubscriptionStatus status;
+  final DateTime? currentPeriodStart;
   final DateTime? currentPeriodEnd;
+  final DateTime? trialStart;
   final DateTime? trialEnd;
   final bool cancelAtPeriodEnd;
   final DateTime createdAt;
@@ -27,7 +25,9 @@ class SubscriptionModel {
     required this.tenantId,
     required this.tier,
     required this.status,
+    this.currentPeriodStart,
     this.currentPeriodEnd,
+    this.trialStart,
     this.trialEnd,
     required this.cancelAtPeriodEnd,
     required this.createdAt,
@@ -35,30 +35,38 @@ class SubscriptionModel {
 
   factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
     return SubscriptionModel(
-      id: json['id'] as String,
-      tenantId: json['tenant_id'] as String,
-      tier: _parseTier(json['tier'] as String),
-      status: _parseStatus(json['status'] as String),
-      currentPeriodEnd: json['current_period_end'] != null
-          ? DateTime.parse(json['current_period_end'] as String)
+      id: json['id'],
+      tenantId: json['tenant_id'],
+      tier: _parseTier(json['tier']),
+      status: _parseStatus(json['status']),
+      currentPeriodStart: json['current_period_start'] != null 
+          ? DateTime.parse(json['current_period_start']) 
           : null,
-      trialEnd: json['trial_end'] != null
-          ? DateTime.parse(json['trial_end'] as String)
+      currentPeriodEnd: json['current_period_end'] != null 
+          ? DateTime.parse(json['current_period_end']) 
           : null,
-      cancelAtPeriodEnd: json['cancel_at_period_end'] as bool? ?? false,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      trialStart: json['trial_start'] != null 
+          ? DateTime.parse(json['trial_start']) 
+          : null,
+      trialEnd: json['trial_end'] != null 
+          ? DateTime.parse(json['trial_end']) 
+          : null,
+      cancelAtPeriodEnd: json['cancel_at_period_end'] ?? false,
+      createdAt: DateTime.parse(json['created_at']),
     );
   }
 
-  static SubscriptionTier _parseTier(String tier) {
-    switch (tier.toLowerCase()) {
-      case 'pro':
-        return SubscriptionTier.pro;
-      case 'enterprise':
-        return SubscriptionTier.enterprise;
-      case 'basic':
+  static SubscriptionTier _parseTier(String? tier) {
+    switch (tier?.toLowerCase()) {
+      case 'dtc':
+        return SubscriptionTier.dtc;
+      case 'b2b':
+        return SubscriptionTier.b2b;
+      case 'hybrid':
+        return SubscriptionTier.hybrid;
+      case 'free':
       default:
-        return SubscriptionTier.basic;
+        return SubscriptionTier.free;
     }
   }
 

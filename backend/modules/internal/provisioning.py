@@ -11,6 +11,8 @@ from shared.auth import UserClaims, validate_token
 from shared.rbac import has_permissions
 from shared.db import get_db
 from modules.platform.models import Tenant
+from sqlalchemy import select, text
+from datetime import datetime
 import uuid
 
 router = APIRouter()
@@ -50,6 +52,20 @@ async def provision_tenant(
     is_sqlite = "sqlite" in engine.url.drivername
     
     
+    # 0. Safety Check: Does this user already own a store?
+    from modules.auth.models import StaffRoleAssignment
+    existing_assignment = await db.execute(
+        select(StaffRoleAssignment).where(
+            StaffRoleAssignment.staff_user_id == user.uid,
+            StaffRoleAssignment.is_owner == True
+        )
+    )
+    if existing_assignment.scalar_one_or_none():
+        raise HTTPException(
+            status_code=400, 
+            detail="You already own a provisioned store. Please refresh your session."
+        )
+
     logs = []
     
     # 1. Connectivity Test (Peace of Mind)
@@ -119,6 +135,47 @@ async def provision_tenant(
             logs.append(f"Tenant record {tenant_id} created in platform schema.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create tenant record: {str(e)}")
+
+    # 6. Set Custom Claims in Firebase & Create Staff Assignment
+    try:
+        from firebase_admin import auth as firebase_auth
+        from modules.auth.models import StaffRoleAssignment
+        
+        # Update Firebase Custom Claims
+        fb_user = firebase_auth.get_user(user.uid)
+        claims = fb_user.custom_claims or {}
+        claims.update({
+            "tenant_id": tenant_id,
+            "roles": ["owner"],
+            "is_owner": True,
+            "account_type": "merchant"
+        })
+        firebase_auth.set_custom_user_claims(user.uid, claims)
+        logs.append(f"Custom claims (tenant_id={tenant_id}) applied to user {user.uid}.")
+
+        # Record ownership in database
+        result = await db.execute(
+            select(StaffRoleAssignment).where(
+                StaffRoleAssignment.staff_user_id == user.uid,
+                StaffRoleAssignment.tenant_id == tenant_id
+            )
+        )
+        assignment = result.scalar_one_or_none()
+        if not assignment:
+            assignment = StaffRoleAssignment(
+                staff_user_id=user.uid,
+                tenant_id=tenant_id,
+                roles=["owner"],
+                is_owner=True,
+                accepted_at=datetime.utcnow()
+            )
+            db.add(assignment)
+            await db.commit()
+            logs.append(f"Staff role assignment created for owner {user.uid}.")
+            
+    except Exception as e:
+        # We don't fail the whole request if claims fail (idempotency), but we log it
+        logs.append(f"WARNING: Identity sync failed: {str(e)}")
 
     return {
         "status": "provisioned",

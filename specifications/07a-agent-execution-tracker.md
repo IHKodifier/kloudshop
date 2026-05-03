@@ -83,12 +83,13 @@
 | `test_provisioning_extended.py` | PASS | 4 / 4 |
 
 #### Sprint 3 — Billing & Admin (E10 + E18) — API: `/billing/*`, `/webhooks/stripe`, `/platform/*`
-- [x] `GET /billing/subscription` — Current tier + Stripe status
-- [x] `POST /billing/upgrade` — Tier upgrade with explicit consent flow
-- [x] `GET /billing/invoices` — Invoice list with Stripe integration
-- [x] `POST /billing/stripe/portal` — Stripe customer portal session link
+- [x] `GET /billing/subscription` — Current tier + Stripe status (Synced with DTC/B2B/Hybrid model)
+- [x] `POST /billing/upgrade` — Tier upgrade with explicit consent flow (Mock Mode enabled for Dev)
+- [x] `GET /billing/invoices` — Invoice list with Stripe integration (Mocked for Dev)
+- [x] `POST /billing/stripe/portal` — Stripe customer portal session link (Mocked for Dev)
 - [x] **REMEDIATION:** GCS Connectivity "Peace of Mind" test with auto-cleanup implemented
 - [x] **REMEDIATION:** Smart, cost-aware `manage_db.sh` interactive script implemented
+- [x] **REMEDIATION:** Billing stabilization complete with IntrinsicHeight UI fix and Mock Billing Mode.
 - [x] `POST /webhooks/stripe` — Stripe webhook handler (signature validated)
 - [x] Trial 3-trigger hard-stop system (Cloud Scheduler daily job)
 - [x] Dunning automation (Stripe webhook → account suspension)
@@ -224,10 +225,16 @@
 - [x] Net-terms Stripe Invoice generation (Net-30/60/90)
 
 #### Sprint 12 — POS (E11) — API: `/pos/*`
-- [ ] POS Operator role + location scope assignment
-- [ ] Browser-native in-store sale processing (Stripe Terminal optional)
-- [ ] Unified inventory deduction with row-level lock
-- [ ] POS order_source attribution in BigQuery
+- [x] POS Operator role + location scope assignment
+- [x] Browser-native in-store sale processing (Stripe Terminal optional)
+- [x] Unified inventory deduction with row-level lock
+- [x] POS order_source attribution in BigQuery
+
+##### TDD Test Results — Sprint 12 (POS Infrastructure)
+| Test File | Status | Passing / Total |
+|-----------|--------|-----------------|
+| `test_pos.py` | PASS | 4 / 4 |
+
 
 #### Sprint 13 — Social Commerce (E12) — API: `/channels/*`, `/feeds/*`
 - [ ] Channel Sync Service (unified abstraction with pluggable adapters)

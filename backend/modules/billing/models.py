@@ -16,9 +16,9 @@ class SubscriptionStatus(str, enum.Enum):
 
 class SubscriptionTier(str, enum.Enum):
     FREE = "free"
-    BASIC = "basic"
-    PRO = "pro"
-    ENTERPRISE = "enterprise"
+    DTC = "dtc"
+    B2B = "b2b"
+    HYBRID = "hybrid"
 
 class Subscription(Base):
     __tablename__ = "subscriptions"

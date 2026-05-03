@@ -54,27 +54,31 @@ class _DashboardPageState extends State<DashboardPage> {
           labelType: NavigationRailLabelType.none,
           extended: true,
           minExtendedWidth: 240,
-          leading: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: theme.primaryColor,
-                    borderRadius: BorderRadius.circular(12),
+          leading: SizedBox(
+            width: 240,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.primaryColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(LucideIcons.store, color: Colors.white, size: 24),
                   ),
-                  child: const Icon(LucideIcons.store, color: Colors.white, size: 24),
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  'KloudShop',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  const Text(
+                    'KloudShop',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ],
+              ),
             ),
           ),
-          trailing: Expanded(
+          trailing: SizedBox(
+            width: 240,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

@@ -1,12 +1,20 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base
 from pydantic_settings import BaseSettings
+from typing import Optional, List
 import os
 
 class Settings(BaseSettings):
     # Default to a local postgres instance or Cloud SQL proxy
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/kloudshop"
     TESTING: bool = False
+    
+    # Stripe Configuration
+    STRIPE_SECRET_KEY: Optional[str] = None
+    STRIPE_PRICE_DTC: Optional[str] = None
+    STRIPE_PRICE_B2B: Optional[str] = None
+    STRIPE_PRICE_HYBRID: Optional[str] = None
+    STRIPE_WEBHOOK_SECRET: Optional[str] = None
     
     class Config:
         env_file = os.path.join(os.path.dirname(__file__), "..", ".env")

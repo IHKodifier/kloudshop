@@ -5,17 +5,18 @@ from typing import List
 from datetime import datetime
 import stripe
 import os
+import uuid
 
 from shared.auth import UserClaims, validate_token
 from shared.rbac import has_permissions
-from shared.db import get_db
+from shared.db import get_db, settings
 from .models import Subscription, SubscriptionTier, SubscriptionStatus
 from .schemas import SubscriptionResponse, UpgradeRequest, InvoiceResponse, PortalSessionResponse
 
 router = APIRouter()
 
 # Stripe API Key initialization
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @router.get("/subscription", response_model=SubscriptionResponse)
 async def get_subscription(
@@ -59,16 +60,35 @@ async def create_checkout_session(
 
     # 2. Logic to map plan_id to Stripe Price ID
     price_map = {
-        "basic": os.getenv("STRIPE_PRICE_BASIC"),
-        "pro": os.getenv("STRIPE_PRICE_PRO"),
-        "enterprise": os.getenv("STRIPE_PRICE_ENTERPRISE"),
+        "dtc": settings.STRIPE_PRICE_DTC,
+        "b2b": settings.STRIPE_PRICE_B2B,
+        "hybrid": settings.STRIPE_PRICE_HYBRID,
     }
     
     price_id = price_map.get(request.plan_id)
+    
+    # In Testing/Dev mode, allow mock IDs if environment variables are missing
+    if not price_id and settings.TESTING:
+        print(f"DEBUG: Stripe Price ID missing for {request.plan_id}. Using mock ID.")
+        price_id = f"price_mock_{request.plan_id}"
+
     if not price_id:
-        raise HTTPException(status_code=400, detail="Invalid plan ID")
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid plan ID: {request.plan_id}. Ensure STRIPE_PRICE_{request.plan_id.upper()} is set in .env"
+        )
 
     try:
+        # If Stripe is not configured but we are in testing mode, return a mock success URL
+        if not stripe.api_key and settings.TESTING:
+            print(f"DEBUG: Mock Mode - Updating subscription to {request.plan_id} for tenant {user.tenant_id}")
+            # Automatically fulfill the "mock" upgrade in the database
+            subscription.tier = request.plan_id
+            await db.commit()
+
+            mock_url = request.success_url.replace("{CHECKOUT_SESSION_ID}", f"mock_sess_{uuid.uuid4().hex[:8]}")
+            return {"url": mock_url}
+
         # 3. Create Stripe Checkout Session
         checkout_session = stripe.checkout.Session.create(
             customer=subscription.stripe_customer_id,
@@ -91,7 +111,7 @@ async def create_checkout_session(
                 "tier": request.plan_id
             }
         )
-        return {"checkout_url": checkout_session.url}
+        return {"url": checkout_session.url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Stripe Session Creation Failed: {str(e)}")
 
@@ -110,6 +130,10 @@ async def list_invoices(
         return []
 
     try:
+        if not stripe.api_key and settings.TESTING:
+            print("DEBUG: Stripe Secret Key missing in TESTING mode. Returning empty invoice list.")
+            return []
+
         invoices = stripe.Invoice.list(customer=subscription.stripe_customer_id)
         return [
             {
@@ -141,6 +165,10 @@ async def create_portal_session(
         raise HTTPException(status_code=400, detail="No Stripe customer found for this tenant")
 
     try:
+        if not stripe.api_key and settings.TESTING:
+            print("DEBUG: Stripe Secret Key missing in TESTING mode. Returning mock portal URL.")
+            return {"url": return_url}
+
         session = stripe.billing_portal.Session.create(
             customer=subscription.stripe_customer_id,
             return_url=return_url,

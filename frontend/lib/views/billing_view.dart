@@ -99,6 +99,7 @@ class BillingView extends ConsumerWidget {
               children: [
                 Row(
                   children: [
+                    // Use a safer way to display the tier name
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
@@ -106,16 +107,23 @@ class BillingView extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        sub.tier.name.toUpperCase(),
+                        sub.tier.toString().split('.').last.toUpperCase(),
                         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    if (sub.isTrialing)
-                      Text(
-                        'Trial ends ${dateFormat.format(sub.trialEnd!)}',
-                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
-                      ),
+                    if (sub.isTrialing) ...[
+                      if (sub.trialEnd != null)
+                        Text(
+                          'Trial ends ${dateFormat.format(sub.trialEnd!)}',
+                          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                        )
+                      else
+                        Text(
+                          'Trial period active',
+                          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                        ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -138,39 +146,57 @@ class BillingView extends ConsumerWidget {
   }
 
   Widget _buildPricingTable(BuildContext context, WidgetRef ref, SubscriptionModel currentSub) {
-    return Row(
-      children: [
-        Expanded(
-          child: _PricingCard(
-            title: 'Basic',
-            price: '\$29',
-            features: ['5 Users', '100 Products', 'Email Support'],
-            isCurrent: currentSub.tier == SubscriptionTier.basic,
-            onPressed: () {},
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: _PricingCard(
+              title: 'DTC',
+              price: '\$24.99',
+              features: [
+                'Consumer Storefront',
+                'Unlimited Products',
+                'AI Copywriter',
+                'Zero GMV Fees',
+              ],
+              isCurrent: currentSub.tier == SubscriptionTier.dtc,
+              onPressed: () => _handleUpgrade(context, ref, 'dtc'),
+            ),
           ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: _PricingCard(
-            title: 'Pro',
-            price: '\$99',
-            features: ['Unlimited Users', '5,000 Products', 'Priority Support', 'Custom Domain'],
-            isCurrent: currentSub.tier == SubscriptionTier.pro,
-            isPopular: true,
-            onPressed: () => _handleUpgrade(context, ref, 'pro'),
+          const SizedBox(width: 24),
+          Expanded(
+            child: _PricingCard(
+              title: 'B2B',
+              price: '\$39.99',
+              features: [
+                'Wholesale Portal',
+                'Custom Price Lists',
+                'Net Terms & Credit Limits',
+                'Approval Workflows',
+              ],
+              isCurrent: currentSub.tier == SubscriptionTier.b2b,
+              isPopular: true,
+              onPressed: () => _handleUpgrade(context, ref, 'b2b'),
+            ),
           ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: _PricingCard(
-            title: 'Enterprise',
-            price: '\$299',
-            features: ['Unlimited Products', 'Dedicated Manager', 'API Access', 'SSO Login'],
-            isCurrent: currentSub.tier == SubscriptionTier.enterprise,
-            onPressed: () => _handleUpgrade(context, ref, 'enterprise'),
+          const SizedBox(width: 24),
+          Expanded(
+            child: _PricingCard(
+              title: 'Hybrid',
+              price: '\$49.99',
+              features: [
+                'DTC + B2B Simultaneously',
+                'Shared Inventory',
+                'Unified Dashboard',
+                'Dual Storefronts',
+              ],
+              isCurrent: currentSub.tier == SubscriptionTier.hybrid,
+              onPressed: () => _handleUpgrade(context, ref, 'hybrid'),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

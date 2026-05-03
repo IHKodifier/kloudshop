@@ -16,8 +16,22 @@ from .schemas import (
 router = APIRouter()
 
 @router.get("/me", response_model=UserClaims)
-async def get_me(user: UserClaims = Depends(validate_token)):
-    """Returns current user claims."""
+async def get_me(
+    user: UserClaims = Depends(validate_token),
+    db: AsyncSession = Depends(get_db)
+):
+    """Returns current user claims, resolving from DB if token is stale."""
+    if not user.tenant_id:
+        result = await db.execute(
+            select(StaffRoleAssignment).where(StaffRoleAssignment.staff_user_id == user.uid)
+        )
+        assignment = result.scalar_one_or_none()
+        if assignment:
+            user.tenant_id = assignment.tenant_id
+            user.roles = assignment.roles
+            user.is_owner = assignment.is_owner
+            # Note: The client should ideally refresh its token after this 
+            # to ensure subsequent requests have the claim in the JWT.
     return user
 
 @router.post("/invitations", response_model=InvitationResponse, status_code=status.HTTP_201_CREATED)

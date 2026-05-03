@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/services/auth_service.dart';
 import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/providers/auth_providers.dart';
 
 class ProvisioningPage extends ConsumerStatefulWidget {
   final String? email;
@@ -29,6 +30,10 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage> {
       
       // Force refresh the auth token to get the new custom claims set by the backend
       await ref.read(authServiceProvider).getIdToken(forceRefresh: true);
+      
+      // Trigger reactive refresh of user claims to route to dashboard
+      ref.read(forceRefreshClaimsProvider.notifier).toggle(true);
+      ref.invalidate(userClaimsProvider);
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
