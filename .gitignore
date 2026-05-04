@@ -38,3 +38,7 @@ backend/service_account.json
 *.json
 !package.json
 !composer.json
+
+# Database
+*.db
+*.sqlite

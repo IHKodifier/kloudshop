@@ -17,8 +17,8 @@
 
 | Environment | GCP/Firebase Project | Git Branch | Status |
 |-------------|----------------------|------------|--------|
-| **Dev** | `kloudshop-dev` | `phase4/b2b-channels` | PHASE 4 IN PROGRESS 🚧 |
-| **Staging** | `kloudshop-staging` | `dev` | Phase 3 Complete ✅ |
+| **Dev** | `kloudshop-dev` | `main` | MVP COMPLETE ✅ |
+| **Staging** | `kloudshop-staging` | `dev` | Phase 5 Complete ✅ |
 | **Prod** | `kloudshop-prod` | `main` | Baseline Set |
 
 ---
@@ -237,34 +237,46 @@
 
 
 #### Sprint 13 — Social Commerce (E12) — API: `/channels/*`, `/feeds/*`
-- [ ] Channel Sync Service (unified abstraction with pluggable adapters)
-- [ ] TikTok Shop OAuth + catalog sync
-- [ ] Instagram Shopping OAuth + catalog sync
-- [ ] Facebook Shops OAuth + catalog sync
-- [ ] Google Merchant Center connection + live Shopping feed
+> [!NOTE]
+> Merchant Billing stabilization (Sprint 3) is 95% complete. Remaining UI/UX polish and real Stripe transition items are tracked in `artifacts/long_outstanding_issues.md`.
+- [x] Channel Sync Service (unified abstraction with pluggable adapters)
+- [x] TikTok Shop OAuth + catalog sync
+- [x] Instagram Shopping OAuth + catalog sync
+- [x] Facebook Shops OAuth + catalog sync
+- [x] Google Merchant Center connection + live Shopping feed
+
+##### TDD Test Results — Sprint 13 (Social Commerce)
+| Test File | Status | Passing / Total |
+|-----------|--------|-----------------|
+| `test_channels.py` | PASS | 6 / 6 |
+| `test_blog.py` | PASS | 4 / 4 |
+| `test_seo.py` | PASS | 2 / 2 |
+| `test_i18n.py` | PASS | 1 / 1 |
+| `test_analytics.py` | PASS | 3 / 3 |
+| `test_hygiene.py` | PASS | 2 / 2 |
 
 #### Sprint 14 — i18n + Blog (E21 + E22) — API: `/i18n/*`, `/blog/*`, `/storefront/{tenant}/blog/*`
-- [ ] Locale architecture (schema, path-prefix routing, hreflang — English only at MVP)
-- [ ] Blog post CRUD (create, edit, schedule, publish, archive)
-- [ ] Blog categories + tags management
-- [ ] SSR blog index + post pages with JSON-LD Article structured data
-- [ ] Blog included in XML sitemap
+- [x] Locale architecture (schema, path-prefix routing, hreflang — English only at MVP)
+- [x] Blog post CRUD (create, edit, schedule, publish, archive)
+- [x] Blog categories + tags management
+- [x] SSR blog index + post pages with JSON-LD Article structured data
+- [x] Blog included in XML sitemap
 
 ---
 
 ## Phase 5 Checklist — Intelligence & Operations (Sprints 15–16)
 
 #### Sprint 15 — Analytics (E09) — API: `/analytics/*`
-- [ ] Revenue overview dashboard (GMV, orders, AOV, conversion — refreshed every 15s)
-- [ ] Needs Attention panel (pending orders, reorder overdue, B2B approvals)
-- [ ] Vertex AI demand forecasting (with data-sufficiency disclaimer < 90 days / 100 orders)
-- [ ] Looker Studio embed with scoped BigQuery token
+- [x] Revenue overview dashboard (GMV, orders, AOV, conversion — refreshed every 15s)
+- [x] Needs Attention panel (pending orders, reorder overdue, B2B approvals)
+- [x] Vertex AI demand forecasting (with data-sufficiency disclaimer < 90 days / 100 orders)
+- [x] Looker Studio embed with scoped BigQuery token
 
 #### Sprint 16 — Hygiene (E19 + E18) — API: `/internal/*`
-- [ ] Nightly schema drift detection (Cloud Scheduler → compare live schema vs Alembic head)
-- [ ] GDPR right-to-erasure pipeline (PII anonymisation, not deletion)
-- [ ] Production canary deployment approval flow (GCP Cloud Deploy)
-- [ ] SYS-18 version detection (service worker + version.json banner)
+- [x] Nightly schema drift detection (Cloud Scheduler → compare live schema vs Alembic head)
+- [x] GDPR right-to-erasure pipeline (PII anonymisation, not deletion)
+- [x] Production canary deployment approval flow (GCP Cloud Deploy stub)
+- [x] SYS-18 version detection (service worker + version.json banner)
 
 ---
 

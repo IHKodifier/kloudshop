@@ -80,6 +80,13 @@ from modules.export.router import router as export_router
 from modules.pricing.router import router as pricing_router
 from modules.b2b.router import router as b2b_router
 from modules.pos.router import router as pos_router
+from modules.channels.router import router as channels_router
+from modules.feeds.router import router as feeds_router
+from modules.blog.router import router as blog_router
+from modules.i18n.router import router as i18n_router
+from modules.storefront.sitemap_router import router as sitemap_router
+from modules.analytics.router import router as analytics_router
+from modules.platform.hygiene_router import router as hygiene_router
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(provisioning_router, prefix="/api/v1/internal", tags=["Internal"])
@@ -98,3 +105,10 @@ app.include_router(export_router, prefix="/api/v1/export", tags=["Export"])
 app.include_router(pricing_router, prefix="/api/v1/pricing", tags=["Pricing"])
 app.include_router(b2b_router, prefix="/api/v1", tags=["B2B"])
 app.include_router(pos_router, prefix="/api/v1/pos", tags=["POS"])
+app.include_router(channels_router, prefix="/api/v1/channels", tags=["Social Commerce"])
+app.include_router(feeds_router, prefix="/api/v1/feeds", tags=["Feeds"])
+app.include_router(blog_router, prefix="/api/v1/blog", tags=["Blog"])
+app.include_router(i18n_router, prefix="/api/v1/i18n", tags=["i18n"])
+app.include_router(sitemap_router, prefix="/api/v1/storefront", tags=["SEO"])
+app.include_router(analytics_router, prefix="/api/v1/analytics", tags=["Analytics"])
+app.include_router(hygiene_router, prefix="/api/v1/internal", tags=["Hygiene"])

@@ -17,6 +17,15 @@ MERCHANT_PERMISSIONS = {
     "features:read", "features:write",
     "b2b:manage", "b2b:approve",
     "pos:read", "pos:write",
+    "channels:manage", "feeds:read",
+    "blog:manage", "blog:read",
+}
+
+CUSTOMER_PERMISSIONS = {
+    "catalog:read",
+    "orders:create",
+    "orders:read",
+    "blog:read",
 }
 
 PLATFORM_PERMISSIONS = {

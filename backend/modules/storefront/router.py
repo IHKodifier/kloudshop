@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 from shared.db import get_db
@@ -21,6 +21,11 @@ from .schemas import (
     ShippingRateRequest, ShippingRateResponse
 )
 from modules.catalog.models import Product, Variant
+from modules.blog.models import BlogPost, BlogCategory, BlogTag
+from modules.blog import schemas as blog_schemas
+from shared.analytics import track_event
+from shared.locale import resolve_locale
+from shared.seo import generate_article_jsonld, generate_product_jsonld
 
 router = APIRouter(tags=["Storefront"])
 
@@ -101,6 +106,7 @@ async def list_storefront_products(
 async def get_storefront_product(
     tenant: str,
     product_slug: str,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db)
 ):
     profile_result = await db.execute(
@@ -111,7 +117,7 @@ async def get_storefront_product(
         tenant_id = tenant
     else:
         tenant_id = profile.tenant_id
-
+        
     result = await db.execute(
         select(Product)
         .where(
@@ -124,7 +130,21 @@ async def get_storefront_product(
     product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return product
+        
+    # Track performance analytics
+    background_tasks.add_task(
+        track_event,
+        tenant_id=tenant_id,
+        event_type="product_view",
+        data={"product_id": product.product_id, "product_slug": product_slug}
+    )
+    
+    # Generate SEO structured data
+    base_url = f"https://{tenant}.kloudshop.biz" # Mock base URL
+    product_data = product.__dict__.copy()
+    product_data["structured_data"] = generate_product_jsonld(product, product.variants, tenant_id, base_url)
+    
+    return product_data
 
 @router.get("/{tenant}/pages/{page_slug}", response_model=StaticPageResponse)
 async def get_storefront_page(
@@ -176,6 +196,107 @@ async def storefront_search(
         .options(selectinload(Product.variants))
     )
     return result.scalars().all()
+
+@router.get("/{tenant}/blog")
+async def list_storefront_blog(
+    tenant: str,
+    request: Request,
+    category: Optional[str] = None,
+    tag: Optional[str] = None,
+    db: AsyncSession = Depends(get_db)
+):
+    profile_result = await db.execute(
+        select(BrandProfile).where(BrandProfile.slug == tenant)
+    )
+    profile = profile_result.scalar_one_or_none()
+    tenant_id = profile.tenant_id if profile else tenant
+    supported_locales = profile.enabled_locales if profile else ["en"]
+    locale = resolve_locale(request, supported_locales)
+
+    query = select(BlogPost).options(
+        selectinload(BlogPost.categories),
+        selectinload(BlogPost.tags),
+        selectinload(BlogPost.translations)
+    ).where(
+        BlogPost.tenant_id == tenant_id,
+        BlogPost.status == "published"
+    )
+    
+    if category:
+        query = query.join(BlogPost.categories).where(BlogCategory.slug == category)
+    if tag:
+        query = query.join(BlogPost.tags).where(BlogTag.slug == tag)
+        
+    result = await db.execute(query.order_by(BlogPost.published_at.desc()))
+    posts = result.scalars().all()
+    
+    # Apply translations
+    if locale != "en":
+        for post in posts:
+            for trans in post.translations:
+                if trans.locale == locale:
+                    post.title = trans.title
+                    post.excerpt = trans.excerpt
+                    break
+                    
+    return posts
+
+@router.get("/{tenant}/blog/{post_slug}")
+async def get_storefront_blog_post(
+    tenant: str,
+    post_slug: str,
+    request: Request,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db)
+):
+    profile_result = await db.execute(
+        select(BrandProfile).where(BrandProfile.slug == tenant)
+    )
+    profile = profile_result.scalar_one_or_none()
+    tenant_id = profile.tenant_id if profile else tenant
+    supported_locales = profile.enabled_locales if profile else ["en"]
+    locale = resolve_locale(request, supported_locales)
+
+    result = await db.execute(
+        select(BlogPost).options(
+            selectinload(BlogPost.categories),
+            selectinload(BlogPost.tags),
+            selectinload(BlogPost.translations)
+        ).where(
+            BlogPost.tenant_id == tenant_id,
+            BlogPost.slug == post_slug,
+            BlogPost.status == "published"
+        )
+    )
+    post = result.scalar_one_or_none()
+    if not post:
+        raise HTTPException(status_code=404, detail="Blog post not found")
+        
+    # Apply translations
+    if locale != "en":
+        for trans in post.translations:
+            if trans.locale == locale:
+                post.title = trans.title
+                post.excerpt = trans.excerpt
+                post.body = trans.body
+                post.meta_title = trans.meta_title
+                post.meta_description = trans.meta_description
+                break
+                
+    # Track performance analytics
+    background_tasks.add_task(
+        track_event,
+        tenant_id=tenant_id,
+        event_type="blog_post_view",
+        data={"post_id": post.id, "post_slug": post_slug, "locale": locale}
+    )
+    
+    # Generate SEO structured data
+    base_url = f"https://{tenant}.kloudshop.biz" # Mock base URL
+    post_data = post.__dict__.copy()
+    post_data["structured_data"] = generate_article_jsonld(post, tenant_id, base_url)
+    
+    return post_data
 
 # --- Admin / Management Endpoints ---
 

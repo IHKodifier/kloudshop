@@ -19,7 +19,7 @@ We have successfully synchronized the platform's billing tiers with the official
 
 ## Resume Task Prompt (Copy & Paste to New Chat)
 
-> I am continuing the stabilization of the Merchant Billing workflow. 
+> I am continuing the stabilization of the Merchant Billing workflow and phase 4 of the 07a-agent-execution-tracker.md file.. we need to start the Sprint 13 (Social Commerce) features. preious agents have completed the base code for the sprint 11 and 12
 > 
 > **Context:**
 > - We have already aligned the tiers to **DTC**, **B2B**, and **Hybrid**.

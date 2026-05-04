@@ -22,3 +22,4 @@ class Tenant(Base):
     
     # Configuration
     config = Column(JSON, default={})
+    supported_locales = Column(JSON, default=["en"])
