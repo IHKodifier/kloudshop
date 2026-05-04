@@ -279,6 +279,34 @@ async def list_orders(
     result = await db.execute(query)
     return result.scalars().all()
 
+@router.get("/customers", response_model=List[dict])
+async def list_customers(
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["orders:read"])
+):
+    """
+    Aggregate unique customers from the orders table.
+    For MVP, we return email, total_spent, and order_count.
+    """
+    from sqlalchemy import func
+    query = select(
+        Order.email,
+        func.count(Order.order_id).label("order_count"),
+        func.sum(Order.grand_total).label("total_spent"),
+        func.max(Order.placed_at).label("last_order_at")
+    ).where(Order.tenant_id == user.tenant_id).group_by(Order.email)
+    
+    result = await db.execute(query)
+    customers = []
+    for row in result:
+        customers.append({
+            "email": row[0],
+            "order_count": row[1],
+            "total_spent": float(row[2]) if row[2] else 0.0,
+            "last_order_at": row[3].isoformat() if row[3] else None
+        })
+    return customers
+
 @router.get("/export")
 async def export_orders(
     start_date: Optional[datetime] = None,

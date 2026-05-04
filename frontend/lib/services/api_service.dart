@@ -5,6 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/services/auth_service.dart';
 import 'package:kloudshop/models/user_claims.dart';
 import 'package:kloudshop/models/subscription.dart';
+import 'package:kloudshop/models/analytics.dart';
+import 'package:kloudshop/models/blog.dart';
+import 'package:kloudshop/models/hygiene.dart';
+import 'package:kloudshop/models/catalog.dart';
+import 'package:kloudshop/models/order.dart';
+import 'package:kloudshop/models/customer.dart';
+import 'package:kloudshop/models/settings.dart';
 
 final apiServiceProvider = Provider<ApiService>((ref) {
   final authService = ref.watch(authServiceProvider);
@@ -112,6 +119,263 @@ class ApiService {
       rethrow;
     }
   }
+
+  // --- Analytics ---
+  Future<AnalyticsOverview> getAnalyticsOverview() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/analytics/overview'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return AnalyticsOverview.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch analytics: ${response.body}');
+    }
+  }
+
+  Future<NeedsAttention> getNeedsAttention() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/analytics/needs-attention'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return NeedsAttention.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch alerts: ${response.body}');
+    }
+  }
+
+  // --- Blog ---
+  Future<List<BlogPost>> listBlogPosts({String? status}) async {
+    final headers = await _getHeaders();
+    final queryParams = status != null ? '?status=$status' : '';
+    final response = await http.get(
+      Uri.parse('$baseUrl/blog/posts$queryParams'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => BlogPost.fromJson(item)).toList();
+    } else {
+      throw ApiException(response.statusCode, 'Failed to list posts: ${response.body}');
+    }
+  }
+
+  Future<BlogPost> createBlogPost(Map<String, dynamic> postData) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/blog/posts'),
+      headers: headers,
+      body: jsonEncode(postData),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return BlogPost.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to create post: ${response.body}');
+    }
+  }
+
+  Future<BlogPost> updateBlogPost(String id, Map<String, dynamic> data) async {
+    final headers = await _getHeaders();
+    final response = await http.put(
+      Uri.parse('$baseUrl/blog/posts/$id'),
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return BlogPost.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to update blog post: ${response.body}');
+    }
+  }
+
+  Future<void> deleteBlogPost(String postId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/blog/posts/$postId'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete post: ${response.body}');
+    }
+  }
+
+  // --- Hygiene & Compliance ---
+  Future<SystemStatus> getSystemStatus() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/internal/version'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return SystemStatus.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch system status: ${response.body}');
+    }
+  }
+
+  Future<SchemaHealth> getSchemaHealth() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/internal/health/schema-drift'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return SchemaHealth.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch schema health: ${response.body}');
+    }
+  }
+
+  Future<void> triggerGdprErasure(String email) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/internal/gdpr/erasure'),
+      headers: headers,
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to trigger erasure: ${response.body}');
+    }
+  }
+
+  // --- Catalog ---
+  Future<List<Product>> listProducts({String? status, String? search}) async {
+    final headers = await _getHeaders();
+    final params = <String, String>{};
+    if (status != null) params['status'] = status;
+    if (search != null) params['search'] = search;
+    
+    final uri = Uri.parse('$baseUrl/products/').replace(queryParameters: params);
+    final response = await http.get(uri, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Product.fromJson(item)).toList();
+    } else {
+      throw ApiException(response.statusCode, 'Failed to list products: ${response.body}');
+    }
+  }
+
+  Future<Product> createProduct(Map<String, dynamic> productData) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/products/'),
+      headers: headers,
+      body: jsonEncode(productData),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Product.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to create product: ${response.body}');
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw ApiException(response.statusCode, 'Failed to delete product: ${response.body}');
+    }
+  }
+
+  // --- Orders ---
+  Future<List<Order>> listOrders({String? status}) async {
+    final headers = await _getHeaders();
+    final queryParams = status != null ? '?status=$status' : '';
+    final response = await http.get(
+      Uri.parse('$baseUrl/orders/$queryParams'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Order.fromJson(item)).toList();
+    } else {
+      throw ApiException(response.statusCode, 'Failed to list orders: ${response.body}');
+    }
+  }
+
+  Future<Order> getOrderDetails(String orderId) async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/orders/$orderId'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return Order.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch order: ${response.body}');
+    }
+  }
+
+  Future<Order> fulfilOrder(String orderId, {String? trackingNumber, String? carrier}) async {
+    final headers = await _getHeaders();
+    final response = await http.patch(
+      Uri.parse('$baseUrl/orders/$orderId/fulfil'),
+      headers: headers,
+      body: jsonEncode({
+        'tracking_number': trackingNumber,
+        'carrier': carrier,
+        'notify_customer': true,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return Order.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fulfil order: ${response.body}');
+    }
+  }
+
+  // --- Customers ---
+  Future<List<Customer>> listCustomers() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/orders/customers'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Customer.fromJson(item)).toList();
+    } else {
+      throw ApiException(response.statusCode, 'Failed to list customers: ${response.body}');
+    }
+  }
+
+  // --- Settings ---
+  Future<TenantSettings> getTenantSettings() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/onboarding/tenant'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return TenantSettings.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch settings: ${response.body}');
+    }
+  }
+
 }
 
 class ApiException implements Exception {

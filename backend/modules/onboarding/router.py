@@ -31,7 +31,31 @@ async def get_onboarding_status(
         db.add(session)
         await db.commit()
         await db.refresh(session)
-    return session
+        return session
+
+@router.get("/tenant", response_model=dict)
+async def get_tenant_details(
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    """Fetch tenant identity and configuration for the current merchant."""
+    from modules.platform.models import Tenant
+    result = await db.execute(
+        select(Tenant).where(Tenant.id == user.tenant_id)
+    )
+    tenant = result.scalar_one_or_none()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+        
+    return {
+        "id": tenant.id,
+        "name": tenant.name,
+        "created_at": tenant.created_at.isoformat(),
+        "gcp_project_id": tenant.gcp_project_id,
+        "gcp_bucket_name": tenant.gcp_bucket_name,
+        "config": tenant.config,
+        "supported_locales": tenant.supported_locales
+    }
 
 @router.post("/signup", response_model=OnboardingStatusResponse)
 async def complete_onboarding_signup(

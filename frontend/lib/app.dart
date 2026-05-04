@@ -23,6 +23,22 @@ class KloudShopApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
       home: const AuthGate(),
+      builder: (context, child) {
+        ErrorWidget.builder = (FlutterErrorDetails details) {
+          return Scaffold(
+            body: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: SelectableText(
+                  'KloudShop Rendering Exception:\n\n$details',
+                  style: const TextStyle(color: Colors.red, fontFamily: 'monospace'),
+                ),
+              ),
+            ),
+          );
+        };
+        return child!;
+      },
     );
   }
 }

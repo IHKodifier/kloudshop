@@ -68,7 +68,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: theme.primaryColor.withOpacity(0.05),
+                  color: theme.primaryColor.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -81,17 +81,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   padding: const EdgeInsets.all(40),
                   decoration: BoxDecoration(
                     color: isDark 
-                        ? Colors.white.withOpacity(0.03) 
-                        : Colors.white.withOpacity(0.7),
+                        ? Colors.white.withValues(alpha: 0.03) 
+                        : Colors.white.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(32),
                     border: Border.all(
                       color: isDark 
-                          ? Colors.white.withOpacity(0.1) 
-                          : Colors.white.withOpacity(0.2),
+                          ? Colors.white.withValues(alpha: 0.1) 
+                          : Colors.white.withValues(alpha: 0.2),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 40,
                         offset: const Offset(0, 20),
                       ),
@@ -104,7 +104,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: theme.primaryColor.withOpacity(0.1),
+                          color: theme.primaryColor.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

@@ -103,7 +103,7 @@ class BillingView extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -116,12 +116,12 @@ class BillingView extends ConsumerWidget {
                       if (sub.trialEnd != null)
                         Text(
                           'Trial ends ${dateFormat.format(sub.trialEnd!)}',
-                          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                          style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
                         )
                       else
                         Text(
                           'Trial period active',
-                          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                          style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
                         ),
                     ],
                   ],
@@ -134,7 +134,7 @@ class BillingView extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Next payment: ${dateFormat.format(sub.currentPeriodEnd ?? DateTime.now().add(const Duration(days: 30)))}',
-                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
                 ),
               ],
             ),
@@ -261,11 +261,11 @@ class _PricingCardState extends State<_PricingCard> {
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: widget.isPopular ? theme.primaryColor : (_isHovered ? theme.primaryColor.withOpacity(0.5) : theme.dividerColor),
+            color: widget.isPopular ? theme.primaryColor : (_isHovered ? theme.primaryColor.withValues(alpha: 0.5) : theme.dividerColor),
             width: widget.isPopular ? 2 : 1,
           ),
           boxShadow: _isHovered
-              ? [BoxShadow(color: theme.primaryColor.withOpacity(0.1), blurRadius: 40, offset: const Offset(0, 20))]
+              ? [BoxShadow(color: theme.primaryColor.withValues(alpha: 0.1), blurRadius: 40, offset: const Offset(0, 20))]
               : [],
         ),
         child: Column(

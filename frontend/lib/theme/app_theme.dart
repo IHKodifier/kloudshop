@@ -69,19 +69,19 @@ class AppColors extends ThemeExtension<AppColors> {
   AppColors lerp(AppColors? other, double t) {
     if (other is! AppColors) return this;
     return AppColors(
-      success: Color.lerp(success, other.success, t)!,
-      onSuccess: Color.lerp(onSuccess, other.onSuccess, t)!,
-      successContainer: Color.lerp(successContainer, other.successContainer, t)!,
-      warning: Color.lerp(warning, other.warning, t)!,
-      onWarning: Color.lerp(onWarning, other.onWarning, t)!,
-      warningContainer: Color.lerp(warningContainer, other.warningContainer, t)!,
-      navBackground: Color.lerp(navBackground, other.navBackground, t)!,
-      onNavBackground: Color.lerp(onNavBackground, other.onNavBackground, t)!,
-      onNavBackgroundMuted: Color.lerp(onNavBackgroundMuted, other.onNavBackgroundMuted, t)!,
-      navActive: Color.lerp(navActive, other.navActive, t)!,
-      textBody: Color.lerp(textBody, other.textBody, t)!,
-      textPlaceholder: Color.lerp(textPlaceholder, other.textPlaceholder, t)!,
-      borderSubtle: Color.lerp(borderSubtle, other.borderSubtle, t)!,
+      success: Color.lerp(success, other.success, t) ?? success,
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t) ?? onSuccess,
+      successContainer: Color.lerp(successContainer, other.successContainer, t) ?? successContainer,
+      warning: Color.lerp(warning, other.warning, t) ?? warning,
+      onWarning: Color.lerp(onWarning, other.onWarning, t) ?? onWarning,
+      warningContainer: Color.lerp(warningContainer, other.warningContainer, t) ?? warningContainer,
+      navBackground: Color.lerp(navBackground, other.navBackground, t) ?? navBackground,
+      onNavBackground: Color.lerp(onNavBackground, other.onNavBackground, t) ?? onNavBackground,
+      onNavBackgroundMuted: Color.lerp(onNavBackgroundMuted, other.onNavBackgroundMuted, t) ?? onNavBackgroundMuted,
+      navActive: Color.lerp(navActive, other.navActive, t) ?? navActive,
+      textBody: Color.lerp(textBody, other.textBody, t) ?? textBody,
+      textPlaceholder: Color.lerp(textPlaceholder, other.textPlaceholder, t) ?? textPlaceholder,
+      borderSubtle: Color.lerp(borderSubtle, other.borderSubtle, t) ?? borderSubtle,
     );
   }
 }
@@ -104,58 +104,26 @@ class AppTheme {
   static const Color neutral700 = Color(0xFF374151);
   static const Color neutral900 = Color(0xFF111827);
 
-  static TextTheme _buildTextTheme(Color baseColor, Color mutedColor) {
-    return GoogleFonts.interTextTheme().copyWith(
-      displayLarge: GoogleFonts.inter(
-        fontSize: 36,
-        fontWeight: FontWeight.w700,
-        color: baseColor,
-        letterSpacing: -0.72,
-        height: 1.2,
-      ),
-      displayMedium: GoogleFonts.inter(
-        fontSize: 30,
-        fontWeight: FontWeight.w700,
-        color: baseColor,
-        letterSpacing: -0.3,
-        height: 1.2,
-      ),
-      headlineLarge: GoogleFonts.inter(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: baseColor,
-        height: 1.3,
-      ),
-      headlineMedium: GoogleFonts.inter(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: baseColor,
-        height: 1.3,
-      ),
-      titleLarge: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: baseColor,
-        height: 1.4,
-      ),
-      bodyLarge: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: mutedColor,
-        height: 1.5,
-      ),
-      bodyMedium: GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: mutedColor,
-        height: 1.5,
-      ),
-      bodySmall: GoogleFonts.inter(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: mutedColor,
-        height: 1.5,
-      ),
+  static TextTheme _buildTextTheme(TextTheme base, Color baseColor, Color mutedColor) {
+    final baseStyle = GoogleFonts.inter(color: baseColor);
+    final mutedStyle = GoogleFonts.inter(color: mutedColor);
+
+    return base.copyWith(
+      displayLarge: baseStyle.copyWith(fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: -0.72),
+      displayMedium: baseStyle.copyWith(fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: -0.6),
+      displaySmall: baseStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: -0.48),
+      headlineLarge: baseStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+      headlineMedium: baseStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+      headlineSmall: baseStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+      titleLarge: baseStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
+      titleMedium: baseStyle.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+      titleSmall: baseStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
+      bodyLarge: mutedStyle.copyWith(fontSize: 16),
+      bodyMedium: mutedStyle.copyWith(fontSize: 14),
+      bodySmall: mutedStyle.copyWith(fontSize: 12),
+      labelLarge: baseStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
+      labelMedium: mutedStyle.copyWith(fontSize: 12, fontWeight: FontWeight.w500),
+      labelSmall: mutedStyle.copyWith(fontSize: 10, fontWeight: FontWeight.w500),
     );
   }
 
@@ -182,7 +150,15 @@ class AppTheme {
         error: Color(0xFFEF4444),
         errorContainer: Color(0xFFFEF2F2),
       ),
-      textTheme: _buildTextTheme(neutral900, neutral700),
+      navigationRailTheme: const NavigationRailThemeData(
+        indicatorColor: brandTeal50,
+        backgroundColor: Colors.transparent,
+        selectedIconTheme: IconThemeData(color: brandTeal500, size: 24),
+        unselectedIconTheme: IconThemeData(color: neutral500, size: 24),
+        selectedLabelTextStyle: TextStyle(color: brandTeal500, fontWeight: FontWeight.bold),
+        unselectedLabelTextStyle: TextStyle(color: neutral500),
+      ),
+      textTheme: _buildTextTheme(ThemeData.light().textTheme, neutral900, neutral700),
       extensions: const [
         AppColors(
           success: brandEmerald500,
@@ -210,13 +186,28 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: brandTeal500,
         onPrimary: neutral0,
-        surface: Color(0xFF1E293B),
-        onSurface: Color(0xFFF1F5F9),
-        surfaceContainerLowest: Color(0xFF0F172A),
-        outline: Color(0xFF334155),
-        onSurfaceVariant: Color(0xFF94A3B8),
+        surface: Color(0xFF0F172A), // Slate 900
+        onSurface: Color(0xFFF8FAFC), // Slate 50
+        surfaceContainerLowest: Color(0xFF020617), // Real deep black
+        surfaceContainerLow: Color(0xFF1E293B), // Slate 800
+        surfaceContainer: Color(0xFF334155), // Slate 700
+        outline: Color(0xFF475569), // Slate 600
+        onSurfaceVariant: Color(0xFFCBD5E1), // Slate 300
       ),
-      textTheme: _buildTextTheme(const Color(0xFFF1F5F9), const Color(0xFFCBD5E1)),
+      primaryColor: brandTeal500,
+      scaffoldBackgroundColor: const Color(0xFF020617),
+      navigationRailTheme: const NavigationRailThemeData(
+        indicatorColor: brandTeal500,
+        backgroundColor: Color(0xFF0F172A),
+        selectedIconTheme: IconThemeData(color: Colors.white, size: 24),
+        unselectedIconTheme: IconThemeData(color: Color(0xFF94A3B8), size: 24),
+        selectedLabelTextStyle: TextStyle(color: brandTeal500, fontWeight: FontWeight.bold),
+        unselectedLabelTextStyle: TextStyle(color: Color(0xFF94A3B8)),
+      ),
+      cardColor: const Color(0xFF1E293B), // Slate 800
+      hintColor: const Color(0xFF94A3B8), // Slate 400
+      dividerColor: const Color(0xFF334155), // Slate 700
+      textTheme: _buildTextTheme(ThemeData.dark().textTheme, const Color(0xFFF1F5F9), const Color(0xFFCBD5E1)),
       extensions: const [
         AppColors(
           success: Color(0xFF34D399),
@@ -225,13 +216,13 @@ class AppTheme {
           warning: Color(0xFFFBBF24),
           onWarning: Color(0xFF92400E),
           warningContainer: Color(0xFF451A03),
-          navBackground: brandTeal900,
+          navBackground: Color(0xFF0F172A),
           onNavBackground: neutral0,
-          onNavBackgroundMuted: Color(0xFF99C4C2),
+          onNavBackgroundMuted: Color(0xFF94A3B8),
           navActive: brandTeal500,
-          textBody: Color(0xFFCBD5E1),
+          textBody: Color(0xFFE2E8F0),
           textPlaceholder: Color(0xFF64748B),
-          borderSubtle: Color(0xFF1E293B),
+          borderSubtle: Color(0xFF334155),
         ),
       ],
     );
