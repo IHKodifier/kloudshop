@@ -13,7 +13,6 @@ class BillingView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final subscriptionAsync = ref.watch(subscriptionProvider);
-    final theme = Theme.of(context);
 
     return subscriptionAsync.when(
       data: (sub) => _buildContent(context, ref, sub),
@@ -85,7 +84,7 @@ class BillingView extends ConsumerWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: theme.primaryColor.withOpacity(0.3),
+            color: theme.primaryColor.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -207,7 +206,14 @@ class BillingView extends ConsumerWidget {
         const SnackBar(content: Text('Preparing upgrade...')),
       );
 
-      final url = await ref.read(apiServiceProvider).createUpgradeSession(planId);
+      final successUrl = '${Uri.base.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}';
+      final cancelUrl = '${Uri.base.origin}/dashboard';
+
+      final url = await ref.read(apiServiceProvider).createUpgradeSession(
+        planId,
+        successUrl: successUrl,
+        cancelUrl: cancelUrl,
+      );
       final uri = Uri.parse(url);
       
       if (await canLaunchUrl(uri)) {
@@ -216,6 +222,7 @@ class BillingView extends ConsumerWidget {
         throw 'Could not launch $url';
       }
     } catch (e) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
@@ -276,7 +283,7 @@ class _PricingCardState extends State<_PricingCard> {
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: theme.primaryColor.withOpacity(0.1),
+                  color: theme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text('MOST POPULAR', style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.bold, fontSize: 10)),

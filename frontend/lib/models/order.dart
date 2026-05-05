@@ -7,6 +7,7 @@ class Order {
   final String currency;
   final double subtotal;
   final double taxTotal;
+  final double shippingTotal;
   final double grandTotal;
   final String? shippingName;
   final String? shippingAddress1;
@@ -24,6 +25,7 @@ class Order {
     required this.currency,
     required this.subtotal,
     required this.taxTotal,
+    required this.shippingTotal,
     required this.grandTotal,
     this.shippingName,
     this.shippingAddress1,
@@ -41,9 +43,10 @@ class Order {
       paymentStatus: json['payment_status'] as String,
       fulfilmentStatus: json['fulfilment_status'] as String,
       currency: json['currency'] as String,
-      subtotal: (json['subtotal'] as num).toDouble(),
-      taxTotal: (json['tax_total'] as num).toDouble(),
-      grandTotal: (json['grand_total'] as num).toDouble(),
+      subtotal: _toDouble(json['subtotal']),
+      taxTotal: _toDouble(json['tax_total']),
+      shippingTotal: _toDouble(json['shipping_total']),
+      grandTotal: _toDouble(json['grand_total']),
       shippingName: json['shipping_name'] as String?,
       shippingAddress1: json['shipping_address1'] as String?,
       shippingCity: json['shipping_city'] as String?,
@@ -57,6 +60,13 @@ class Order {
               .toList() ??
           [],
     );
+  }
+
+  static double _toDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 }
 
@@ -83,8 +93,8 @@ class OrderItem {
       title: json['title'] as String,
       sku: json['sku'] as String?,
       quantity: json['quantity'] as int,
-      unitPrice: (json['unit_price'] as num).toDouble(),
-      totalPrice: (json['total_price'] as num).toDouble(),
+      unitPrice: Order._toDouble(json['unit_price']),
+      totalPrice: Order._toDouble(json['total_price']),
     );
   }
 }

@@ -79,6 +79,11 @@ async def create_post(
     
     # Create the post object without related IDs in the main constructor
     post_data = post.model_dump(exclude={"category_ids", "tag_names"})
+    
+    # Auto-populate author_id from authenticated user if not provided
+    if not post_data.get("author_id"):
+        post_data["author_id"] = user.uid
+        
     db_post = models.BlogPost(**post_data, tenant_id=user.tenant_id)
     
     # Associate categories
@@ -127,6 +132,60 @@ async def get_post(
     if not db_post:
         raise HTTPException(status_code=404, detail="Post not found")
     return db_post
+
+@router.put("/posts/{post_id}", response_model=schemas.BlogPostRead)
+@router.patch("/posts/{post_id}", response_model=schemas.BlogPostRead)
+async def update_post(
+    post_id: str,
+    post_update: schemas.BlogPostUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["blog:manage"])
+):
+    result = await db.execute(
+        select(models.BlogPost).options(
+            selectinload(models.BlogPost.categories),
+            selectinload(models.BlogPost.tags)
+        ).filter(models.BlogPost.id == post_id, models.BlogPost.tenant_id == user.tenant_id)
+    )
+    db_post = result.scalar_one_or_none()
+    if not db_post:
+        raise HTTPException(status_code=404, detail="Post not found")
+        
+    update_data = post_update.model_dump(exclude_unset=True, exclude={"category_ids", "tag_names"})
+    
+    # Apply standard fields
+    for key, value in update_data.items():
+        setattr(db_post, key, value)
+        
+    # Update categories if provided
+    if post_update.category_ids is not None:
+        res = await db.execute(select(models.BlogCategory).filter(models.BlogCategory.id.in_(post_update.category_ids)))
+        db_post.categories = res.scalars().all()
+        
+    # Update tags if provided
+    if post_update.tag_names is not None:
+        db_post.tags = [] # Clear existing
+        for tag_name in post_update.tag_names:
+            tag_slug = tag_name.lower().replace(" ", "-")
+            res = await db.execute(select(models.BlogTag).filter(models.BlogTag.tenant_id == user.tenant_id, models.BlogTag.name == tag_name))
+            db_tag = res.scalar_one_or_none()
+            if not db_tag:
+                db_tag = models.BlogTag(tenant_id=user.tenant_id, name=tag_name, slug=tag_slug)
+                db.add(db_tag)
+            db_post.tags.append(db_tag)
+            
+    db_post.updated_at = datetime.utcnow()
+    await db.commit()
+    
+    # Re-fetch with all relations
+    result = await db.execute(
+        select(models.BlogPost).options(
+            selectinload(models.BlogPost.categories),
+            selectinload(models.BlogPost.tags),
+            selectinload(models.BlogPost.translations)
+        ).filter(models.BlogPost.id == post_id)
+    )
+    return result.scalar_one()
 
 @router.delete("/posts/{post_id}")
 async def delete_post(

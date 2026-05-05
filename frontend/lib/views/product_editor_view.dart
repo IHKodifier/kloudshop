@@ -18,6 +18,8 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
   late TextEditingController _titleController;
   late TextEditingController _slugController;
   late TextEditingController _descriptionController;
+  late TextEditingController _metaTitleController;
+  late TextEditingController _metaDescriptionController;
   late String _status;
   late bool _isDigital;
   
@@ -29,20 +31,24 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     _titleController = TextEditingController(text: widget.product?.title ?? '');
     _slugController = TextEditingController(text: widget.product?.slug ?? '');
     _descriptionController = TextEditingController(text: widget.product?.description ?? '');
+    _metaTitleController = TextEditingController(text: widget.product?.metaTitle ?? '');
+    _metaDescriptionController = TextEditingController(text: widget.product?.metaDescription ?? '');
+    
     _status = widget.product?.status ?? 'draft';
     _isDigital = widget.product?.isDigital ?? false;
     
     if (widget.product != null) {
       for (var v in widget.product!.variants) {
         _variants.add({
+          'variant_id': v.id,
           'sku': v.sku,
           'price': v.price.toString(),
+          'compare_at_price': v.compareAtPrice?.toString() ?? '',
           'stock': v.stock?.toString() ?? '0',
           'is_default': v.isDefault,
         });
       }
     } else {
-      // Add a default variant
       _addVariant();
     }
   }
@@ -50,9 +56,11 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
   void _addVariant() {
     setState(() {
       _variants.add({
+        'variant_id': null,
         'sku': '',
         'price': '0.00',
-        'stock': '100',
+        'compare_at_price': '',
+        'stock': '0',
         'is_default': _variants.isEmpty,
       });
     });
@@ -74,11 +82,22 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     _titleController.dispose();
     _slugController.dispose();
     _descriptionController.dispose();
+    _metaTitleController.dispose();
+    _metaDescriptionController.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+
+    // Client-side SKU uniqueness check
+    final skus = _variants.map((v) => v['sku'] as String).toList();
+    if (skus.toSet().length != skus.length) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error: Each variant must have a unique SKU'), backgroundColor: Colors.red),
+      );
+      return;
+    }
     
     final apiService = ref.read(apiServiceProvider);
     
@@ -86,13 +105,21 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       'title': _titleController.text,
       'slug': _slugController.text,
       'description': _descriptionController.text,
+      'meta_title': _metaTitleController.text,
+      'meta_description': _metaDescriptionController.text,
       'status': _status,
       'is_digital': _isDigital,
-      'variants': _variants.map((v) => {
-        'sku': v['sku'],
-        'price': double.tryParse(v['price']) ?? 0.0,
-        'stock': int.tryParse(v['stock']) ?? 0,
-        'is_default': v['is_default'],
+      'variants': _variants.map((v) {
+        final Map<String, dynamic> vMap = {
+          'sku': v['sku'],
+          'price': double.tryParse(v['price']) ?? 0.0,
+          'is_default': v['is_default'],
+        };
+        if (v['variant_id'] != null) vMap['variant_id'] = v['variant_id'];
+        if (v['compare_at_price'].toString().isNotEmpty) {
+          vMap['compare_at_price'] = double.tryParse(v['compare_at_price']);
+        }
+        return vMap;
       }).toList(),
     };
 
@@ -100,10 +127,15 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       if (widget.product == null) {
         await apiService.createProduct(productData);
       } else {
-        // TODO: Update product API
+        await apiService.updateProduct(widget.product!.id, productData);
       }
       ref.invalidate(productsProvider);
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Product saved successfully'), backgroundColor: Colors.green),
+        );
+        Navigator.pop(context);
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -123,9 +155,10 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton(
+            child: ElevatedButton.icon(
               onPressed: _save,
-              child: const Text('Save Product'),
+              icon: const Icon(LucideIcons.save, size: 18),
+              label: const Text('Save Product'),
             ),
           ),
         ],
@@ -139,6 +172,8 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
             children: [
               _buildGeneralInfo(theme),
               const SizedBox(height: 32),
+              _buildSeoSection(theme),
+              const SizedBox(height: 32),
               _buildVariantsSection(theme),
             ],
           ),
@@ -147,25 +182,82 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     );
   }
 
-  Widget _buildGeneralInfo(ThemeData theme) {
+  Widget _buildSeoSection(ThemeData theme) {
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: theme.dividerColor),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('General Information', style: theme.textTheme.titleLarge),
+            Row(
+              children: [
+                const Icon(LucideIcons.search, size: 20),
+                const SizedBox(width: 8),
+                Text('Search Engine Optimization', style: theme.textTheme.titleLarge),
+              ],
+            ),
+            const SizedBox(height: 24),
+            TextFormField(
+              controller: _metaTitleController,
+              decoration: const InputDecoration(
+                labelText: 'Meta Title',
+                hintText: 'Keep it under 60 characters',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _metaDescriptionController,
+              maxLines: 2,
+              decoration: const InputDecoration(
+                labelText: 'Meta Description',
+                hintText: 'Brief summary for search results',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGeneralInfo(ThemeData theme) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: theme.dividerColor),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(LucideIcons.info, size: 20),
+                const SizedBox(width: 8),
+                Text('General Information', style: theme.textTheme.titleLarge),
+              ],
+            ),
             const SizedBox(height: 24),
             TextFormField(
               controller: _titleController,
               decoration: const InputDecoration(
                 labelText: 'Product Title',
                 hintText: 'e.g. Classic Cotton T-Shirt',
+                border: OutlineInputBorder(),
               ),
               validator: (v) => v?.isEmpty == true ? 'Title is required' : null,
               onChanged: (v) {
-                if (_slugController.text.isEmpty || _slugController.text == _titleController.text.toLowerCase().replaceAll(' ', '-')) {
-                   _slugController.text = v.toLowerCase().replaceAll(' ', '-');
+                if (_slugController.text.isEmpty || 
+                    (widget.product == null && _slugController.text == _titleController.text.toLowerCase().replaceAll(' ', '-'))) {
+                   _slugController.text = v.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '-');
                 }
               },
             ),
@@ -175,6 +267,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               decoration: const InputDecoration(
                 labelText: 'URL Slug',
                 prefixText: '/products/',
+                border: OutlineInputBorder(),
               ),
               validator: (v) => v?.isEmpty == true ? 'Slug is required' : null,
             ),
@@ -185,15 +278,21 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               decoration: const InputDecoration(
                 labelText: 'Description',
                 alignLabelWithHint: true,
+                border: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 24),
+            const Divider(),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     initialValue: _status,
-                    decoration: const InputDecoration(labelText: 'Status'),
+                    decoration: const InputDecoration(
+                      labelText: 'Status',
+                      border: OutlineInputBorder(),
+                    ),
                     items: const [
                       DropdownMenuItem(value: 'active', child: Text('Active')),
                       DropdownMenuItem(value: 'draft', child: Text('Draft')),
@@ -206,6 +305,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                 Expanded(
                   child: SwitchListTile(
                     title: const Text('Digital Product'),
+                    subtitle: const Text('No shipping required'),
                     value: _isDigital,
                     onChanged: (v) => setState(() => _isDigital = v),
                   ),
@@ -225,11 +325,22 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Variants & Pricing', style: theme.textTheme.titleLarge),
-            TextButton.icon(
+            Row(
+              children: [
+                const Icon(LucideIcons.layers, size: 20),
+                const SizedBox(width: 8),
+                Text('Variants & Pricing', style: theme.textTheme.titleLarge),
+              ],
+            ),
+            ElevatedButton.icon(
               onPressed: _addVariant,
               icon: const Icon(LucideIcons.plus, size: 18),
               label: const Text('Add Variant'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
+                foregroundColor: theme.primaryColor,
+                elevation: 0,
+              ),
             ),
           ],
         ),
@@ -242,45 +353,85 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           itemBuilder: (context, index) {
             final variant = _variants[index];
             return Card(
+              elevation: 0,
               color: theme.colorScheme.surfaceContainerLow,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: theme.dividerColor),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      flex: 3,
-                      child: TextFormField(
-                        initialValue: variant['sku'],
-                        decoration: const InputDecoration(labelText: 'SKU'),
-                        onChanged: (v) => variant['sku'] = v,
-                        validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: TextFormField(
+                            initialValue: variant['sku'],
+                            decoration: const InputDecoration(
+                              labelText: 'SKU',
+                              border: OutlineInputBorder(),
+                            ),
+                            onChanged: (v) => variant['sku'] = v,
+                            validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            initialValue: variant['price'],
+                            decoration: const InputDecoration(
+                              labelText: 'Price', 
+                              prefixText: '\$',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged: (v) => variant['price'] = v,
+                            validator: (v) => double.tryParse(v ?? '') == null ? 'Invalid' : null,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            initialValue: variant['compare_at_price'],
+                            decoration: const InputDecoration(
+                              labelText: 'Compare At', 
+                              prefixText: '\$',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged: (v) => variant['compare_at_price'] = v,
+                          ),
+                        ),
+                        if (_variants.length > 1)
+                          IconButton(
+                            icon: const Icon(LucideIcons.trash2, color: Colors.redAccent, size: 20),
+                            onPressed: () => _removeVariant(index),
+                          ),
+                      ],
+                    ),
+                    if (widget.product == null) ...[
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              initialValue: variant['stock'],
+                              decoration: const InputDecoration(
+                                labelText: 'Initial Stock',
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.number,
+                              onChanged: (v) => variant['stock'] = v,
+                            ),
+                          ),
+                          const Spacer(),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      flex: 2,
-                      child: TextFormField(
-                        initialValue: variant['price'],
-                        decoration: const InputDecoration(labelText: 'Price', prefixText: '\$'),
-                        keyboardType: TextInputType.number,
-                        onChanged: (v) => variant['price'] = v,
-                        validator: (v) => double.tryParse(v ?? '') == null ? 'Invalid' : null,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      flex: 2,
-                      child: TextFormField(
-                        initialValue: variant['stock'],
-                        decoration: const InputDecoration(labelText: 'Stock'),
-                        keyboardType: TextInputType.number,
-                        onChanged: (v) => variant['stock'] = v,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(LucideIcons.trash2, color: Colors.redAccent, size: 20),
-                      onPressed: () => _removeVariant(index),
-                    ),
+                    ],
                   ],
                 ),
               ),

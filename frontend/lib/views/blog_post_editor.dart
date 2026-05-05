@@ -149,7 +149,7 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
             ),
             const SizedBox(height: 24),
             DropdownButtonFormField<String>(
-              initialValue: _status,
+              value: _status,
               decoration: const InputDecoration(
                 labelText: 'Publication Status',
                 border: OutlineInputBorder(),

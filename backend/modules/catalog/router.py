@@ -53,6 +53,17 @@ async def create_product(
         await db.commit()
     except IntegrityError as e:
         await db.rollback()
+        error_msg = str(e.orig).lower()
+        if "variants.sku" in error_msg or "uix_variant_tenant_sku" in error_msg:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A variant with this SKU already exists in your catalog."
+            )
+        if "products.slug" in error_msg or "uix_product_tenant_slug" in error_msg:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A product with this URL slug already exists."
+            )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Database integrity error: {str(e.orig)}"
@@ -107,7 +118,7 @@ async def update_product(
     user: UserClaims = has_permissions(["catalog:write"])
 ):
     """
-    Update a product. If slug changes, create a 301 redirect.
+    Update a product and its variants. If slug changes, create a 301 redirect.
     """
     # 1. Fetch existing product
     result = await db.execute(
@@ -123,12 +134,39 @@ async def update_product(
     old_slug = product.slug
     new_slug = product_data.slug
 
-    # 2. Update fields
-    update_dict = product_data.model_dump(exclude_unset=True)
+    # 2. Update Product fields
+    update_dict = product_data.model_dump(exclude_unset=True, exclude={"variants"})
     for key, value in update_dict.items():
         setattr(product, key, value)
 
-    # 3. Handle slug change -> 301 Redirect
+    # 3. Handle Variants Reconciliation
+    if product_data.variants is not None:
+        existing_variants_map = {v.variant_id: v for v in product.variants}
+        incoming_variant_ids = {v.variant_id for v in product_data.variants if v.variant_id}
+        
+        # a. Delete variants not in incoming list
+        for v_id in list(existing_variants_map.keys()):
+            if v_id not in incoming_variant_ids:
+                await db.delete(existing_variants_map[v_id])
+        
+        # b. Update or Create variants
+        for v_data in product_data.variants:
+            if v_data.variant_id and v_data.variant_id in existing_variants_map:
+                # Update existing
+                variant = existing_variants_map[v_data.variant_id]
+                v_update_dict = v_data.model_dump(exclude_unset=True, exclude={"variant_id"})
+                for key, value in v_update_dict.items():
+                    setattr(variant, key, value)
+            else:
+                # Create new
+                new_variant = Variant(
+                    **v_data.model_dump(exclude={"variant_id"}),
+                    product_id=product.product_id,
+                    tenant_id=user.tenant_id
+                )
+                db.add(new_variant)
+
+    # 4. Handle slug change -> 301 Redirect
     if new_slug and new_slug != old_slug:
         old_path = f"/products/{old_slug}"
         new_path = f"/products/{new_slug}"
@@ -144,7 +182,6 @@ async def update_product(
             chain.destination_path = new_path
 
         # Create new redirect rule
-        # Check if a rule for this source_path already exists (e.g. if we reverted a slug)
         existing_rule = await db.execute(
             select(RedirectRule).where(
                 RedirectRule.tenant_id == user.tenant_id,
@@ -166,10 +203,36 @@ async def update_product(
             )
             db.add(new_rule)
 
-    await db.commit()
-    await db.refresh(product)
+    try:
+        await db.commit()
+    except IntegrityError as e:
+        await db.rollback()
+        error_msg = str(e.orig).lower()
+        if "variants.sku" in error_msg or "uix_variant_tenant_sku" in error_msg:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A variant with this SKU already exists in your catalog."
+            )
+        if "products.slug" in error_msg or "uix_product_tenant_slug" in error_msg:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A product with this URL slug already exists."
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Database integrity error: {str(e.orig)}"
+        )
+    
+    # Re-fetch to return full object with updated variants
+    result = await db.execute(
+        select(Product).options(selectinload(Product.variants)).where(
+            Product.product_id == product_id,
+            Product.tenant_id == user.tenant_id
+        )
+    )
+    product = result.scalars().first()
 
-    # 4. Trigger Google Shopping update
+    # 5. Trigger Google Shopping update
     background_tasks.add_task(trigger_google_shopping_update, user.tenant_id, product.product_id)
 
     return product

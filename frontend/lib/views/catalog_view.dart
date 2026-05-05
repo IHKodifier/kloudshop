@@ -25,6 +25,7 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
   @override
   Widget build(BuildContext context) {
     final productsAsync = ref.watch(filteredProductsProvider);
+    final currentFilter = ref.watch(productStatusFilterProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -44,17 +45,50 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search products by title or slug...',
                 prefixIcon: const Icon(LucideIcons.search, size: 20),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                suffixIcon: _searchController.text.isNotEmpty 
+                  ? IconButton(
+                      icon: const Icon(LucideIcons.x, size: 16),
+                      onPressed: () {
+                        _searchController.clear();
+                        ref.read(productSearchQueryProvider.notifier).setQuery('');
+                      },
+                    )
+                  : null,
               ),
               onChanged: (value) => ref.read(productSearchQueryProvider.notifier).setQuery(value),
             ),
           ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: CatalogStatusFilter.values.map((filter) {
+                final isSelected = currentFilter == filter;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: FilterChip(
+                    label: Text(filter.name[0].toUpperCase() + filter.name.substring(1)),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        ref.read(productStatusFilterProvider.notifier).setFilter(filter);
+                      }
+                    },
+                    showCheckmark: false,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const Divider(),
           Expanded(
             child: productsAsync.when(
               data: (products) => products.isEmpty
@@ -79,11 +113,20 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(LucideIcons.shoppingCart, size: 64, color: Colors.grey.withValues(alpha: 0.5)),
+          Icon(LucideIcons.shoppingBag, size: 64, color: Colors.grey.withValues(alpha: 0.5)),
           const SizedBox(height: 16),
           const Text('No products found', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          const Text('Start by adding your first product to the catalog.'),
+          const Text('Try adjusting your filters or search query.'),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(productSearchQueryProvider.notifier).setQuery('');
+              ref.read(productStatusFilterProvider.notifier).setFilter(CatalogStatusFilter.all);
+              _searchController.clear();
+            },
+            child: const Text('Clear all filters'),
+          ),
         ],
       ),
     );
@@ -128,8 +171,8 @@ class _ProductCard extends ConsumerWidget {
           child: Row(
             children: [
               Container(
-                width: 60,
-                height: 60,
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
                   color: theme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -137,6 +180,7 @@ class _ProductCard extends ConsumerWidget {
                 child: Icon(
                   product.isDigital ? LucideIcons.fileDigit : LucideIcons.package,
                   color: theme.primaryColor,
+                  size: 28,
                 ),
               ),
               const SizedBox(width: 16),
@@ -146,9 +190,12 @@ class _ProductCard extends ConsumerWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          product.title,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        Flexible(
+                          child: Text(
+                            product.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         _StatusBadge(status: product.status),
@@ -160,67 +207,20 @@ class _ProductCard extends ConsumerWidget {
                       style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
                     ),
                     const SizedBox(height: 8),
-                    Row(
+                    Wrap(
+                      spacing: 12,
                       children: [
                         _InfoChip(label: '$variantCount variants', icon: LucideIcons.layers),
-                        const SizedBox(width: 12),
                         _InfoChip(label: 'From \$${minPrice.toStringAsFixed(2)}', icon: LucideIcons.tag),
                       ],
                     ),
                   ],
                 ),
               ),
-              Column(
-                children: [
-                  IconButton(
-                    icon: const Icon(LucideIcons.edit, size: 20),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProductEditorView(product: product)),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(LucideIcons.trash2, size: 20, color: Colors.redAccent),
-                    onPressed: () async {
-                      final confirmed = await _showDeleteConfirm(context);
-                      if (confirmed == true) {
-                        try {
-                          await ref.read(apiServiceProvider).deleteProduct(product.id);
-                          ref.invalidate(productsProvider);
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-                            );
-                          }
-                        }
-                      }
-                    },
-                  ),
-                ],
-              ),
+              const Icon(LucideIcons.chevronRight, size: 20, color: Colors.grey),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Future<bool?> _showDeleteConfirm(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Product'),
-        content: Text('Are you sure you want to delete "${product.title}"? This will also remove all variants.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
       ),
     );
   }
@@ -239,6 +239,9 @@ class _StatusBadge extends StatelessWidget {
         break;
       case 'archived':
         color = Colors.orange;
+        break;
+      case 'draft':
+        color = Colors.blue;
         break;
       default:
         color = Colors.grey;

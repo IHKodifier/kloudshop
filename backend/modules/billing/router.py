@@ -115,6 +115,45 @@ async def create_checkout_session(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Stripe Session Creation Failed: {str(e)}")
 
+@router.post("/complete-upgrade")
+async def complete_upgrade(
+    session_id: str,
+    user: UserClaims = Depends(validate_token),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Finalizes an upgrade session. 
+    In Stripe mode, this would verify the session status. 
+    In Mock mode, it verifies the mock session ID.
+    """
+    result = await db.execute(
+        select(Subscription).where(Subscription.tenant_id == user.tenant_id)
+    )
+    subscription = result.scalar_one_or_none()
+    
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+
+    if session_id.startswith("mock_sess_") and settings.TESTING:
+        # In mock mode, we assume the upgrade happened during session creation
+        # but we can return success here to trigger a frontend refresh.
+        return {"status": "success", "tier": subscription.tier}
+
+    try:
+        # Stripe verification logic
+        session = stripe.checkout.Session.retrieve(session_id)
+        if session.payment_status == "paid":
+            # Update tier if not already updated by webhook
+            tier = session.metadata.get("tier")
+            if tier:
+                subscription.tier = tier
+                await db.commit()
+            return {"status": "success", "tier": subscription.tier}
+        else:
+            return {"status": "pending", "payment_status": session.payment_status}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to verify session: {str(e)}")
+
 @router.get("/invoices", response_model=List[InvoiceResponse])
 async def list_invoices(
     user: UserClaims = has_permissions(["billing:manage"]),

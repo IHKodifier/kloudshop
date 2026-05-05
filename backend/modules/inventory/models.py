@@ -8,6 +8,7 @@ class StockLocation(Base):
     __tablename__ = "stock_locations"
 
     stock_location_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    tenant_id = Column(String, nullable=False, index=True)
     name = Column(Text, nullable=False)
     location_type = Column(String(16), nullable=False, default="warehouse") # 'warehouse', 'store', '3pl', 'virtual'
     
@@ -39,6 +40,7 @@ class Inventory(Base):
     __tablename__ = "inventory"
 
     inventory_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    tenant_id = Column(String, nullable=False, index=True)
     variant_id = Column(String, ForeignKey("variants.variant_id", ondelete="CASCADE"), nullable=False)
     stock_location_id = Column(String, ForeignKey("stock_locations.stock_location_id", ondelete="RESTRICT"), nullable=False)
 

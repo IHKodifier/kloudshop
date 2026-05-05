@@ -13,22 +13,74 @@ import 'package:kloudshop/views/catalog_view.dart';
 import 'package:kloudshop/views/orders_view.dart';
 import 'package:kloudshop/views/customers_view.dart';
 import 'package:kloudshop/views/settings_view.dart';
+import 'package:kloudshop/providers/billing_providers.dart';
 import 'package:kloudshop/providers/theme_provider.dart';
 import 'package:kloudshop/providers/settings_providers.dart';
 import 'package:kloudshop/providers/analytics_providers.dart';
+import 'package:kloudshop/services/api_service.dart';
 
-class DashboardPage extends StatefulWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   final UserClaims claims;
 
   const DashboardPage({super.key, required this.claims});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _DashboardPageState extends ConsumerState<DashboardPage> {
   int _selectedIndex = 0;
   bool _isRailExtended = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _handleBillingSession();
+  }
+
+  Future<void> _handleBillingSession() async {
+    // Wait for the next frame to avoid build context issues during initState
+    await Future.delayed(Duration.zero);
+    
+    final uri = Uri.base;
+    String? sessionId = uri.queryParameters['session_id'];
+    
+    // Support hash routing (fragment) session_id
+    if (sessionId == null && uri.fragment.isNotEmpty) {
+      try {
+        final fragmentPath = uri.fragment.startsWith('/') ? uri.fragment : '/${uri.fragment}';
+        final fragmentUri = Uri.parse('http://localhost$fragmentPath');
+        sessionId = fragmentUri.queryParameters['session_id'];
+      } catch (_) {}
+    }
+
+    if (sessionId != null) {
+      try {
+        await ref.read(apiServiceProvider).verifyUpgradeSession(sessionId);
+        
+        // Invalidate relevant providers to force fresh data
+        ref.invalidate(subscriptionProvider);
+        ref.invalidate(tenantSettingsProvider);
+        
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Plan upgraded successfully! Welcome to your new tier.'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        
+        // Switch to Billing tab (index 4)
+        setState(() => _selectedIndex = 4);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Verification failed: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -508,7 +560,7 @@ class _StatCard extends StatelessWidget {
 }
 
 enum ChartType { line, bar }
-enum TimeRange { d7, d30, d90 }
+enum TimeRange { today, h24, d7, d14, d28, d90 }
 enum MetricType { sales, orders, aov, customers, conversion, returns }
 
 class _TrendChart extends StatefulWidget {
@@ -525,6 +577,9 @@ class _TrendChartState extends State<_TrendChart> {
   TimeRange _timeRange = TimeRange.d7;
 
   List<DataPoint> _getFilteredData() {
+    if (_timeRange == TimeRange.today) return widget.stats.todayHistory;
+    if (_timeRange == TimeRange.h24) return widget.stats.h24History;
+
     List<DataPoint> source;
     switch (_selectedMetric) {
       case MetricType.sales: source = widget.stats.salesHistory; break;
@@ -535,7 +590,14 @@ class _TrendChartState extends State<_TrendChart> {
       case MetricType.returns: source = widget.stats.returnHistory; break;
     }
 
-    final days = _timeRange == TimeRange.d7 ? 7 : (_timeRange == TimeRange.d30 ? 30 : 90);
+    final days = switch (_timeRange) {
+      TimeRange.today => 1,
+      TimeRange.h24 => 1,
+      TimeRange.d7 => 7,
+      TimeRange.d14 => 14,
+      TimeRange.d28 => 28,
+      TimeRange.d90 => 90,
+    };
     if (source.length <= days) return source;
     return source.sublist(source.length - days);
   }
@@ -601,14 +663,23 @@ class _TrendChartState extends State<_TrendChart> {
                 ),
               ],
             ),
-            Row(
-              children: [
-                _RangeChip(label: '7D', isSelected: _timeRange == TimeRange.d7, onTap: () => setState(() => _timeRange = TimeRange.d7)),
-                const SizedBox(width: 4),
-                _RangeChip(label: '30D', isSelected: _timeRange == TimeRange.d30, onTap: () => setState(() => _timeRange = TimeRange.d30)),
-                const SizedBox(width: 4),
-                _RangeChip(label: '90D', isSelected: _timeRange == TimeRange.d90, onTap: () => setState(() => _timeRange = TimeRange.d90)),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _RangeChip(label: 'To Date', isSelected: _timeRange == TimeRange.today, onTap: () => setState(() => _timeRange = TimeRange.today)),
+                  const SizedBox(width: 4),
+                  _RangeChip(label: '24H', isSelected: _timeRange == TimeRange.h24, onTap: () => setState(() => _timeRange = TimeRange.h24)),
+                  const SizedBox(width: 4),
+                  _RangeChip(label: '7D', isSelected: _timeRange == TimeRange.d7, onTap: () => setState(() => _timeRange = TimeRange.d7)),
+                  const SizedBox(width: 4),
+                  _RangeChip(label: '14D', isSelected: _timeRange == TimeRange.d14, onTap: () => setState(() => _timeRange = TimeRange.d14)),
+                  const SizedBox(width: 4),
+                  _RangeChip(label: '28D', isSelected: _timeRange == TimeRange.d28, onTap: () => setState(() => _timeRange = TimeRange.d28)),
+                  const SizedBox(width: 4),
+                  _RangeChip(label: '90D', isSelected: _timeRange == TimeRange.d90, onTap: () => setState(() => _timeRange = TimeRange.d90)),
+                ],
+              ),
             ),
           ],
         ),
@@ -644,6 +715,8 @@ class _TrendChartState extends State<_TrendChart> {
 
   Widget _buildLineChart(List<DataPoint> data, ThemeData theme) {
     final hasSecondary = data.any((d) => d.secondaryValue != null);
+    final showDots = _timeRange != TimeRange.today;
+
     final bars = <LineChartBarData>[
       LineChartBarData(
         spots: data.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.value)).toList(),
@@ -652,7 +725,7 @@ class _TrendChartState extends State<_TrendChart> {
         barWidth: 3,
         isStrokeCapRound: true,
         dotData: FlDotData(
-          show: true,
+          show: showDots,
           getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
             radius: 4,
             color: theme.primaryColor,
@@ -697,7 +770,10 @@ class _TrendChartState extends State<_TrendChart> {
                 if (spot.barIndex != 0) return null;
 
                 final dp = data[spot.spotIndex];
-                final dateStr = DateFormat('MMM d').format(dp.date);
+                final format = (_timeRange == TimeRange.today || _timeRange == TimeRange.h24) 
+                    ? DateFormat('HH:mm') 
+                    : DateFormat('MMM d');
+                final dateStr = format.format(dp.date);
                 
                 return LineTooltipItem(
                   '$dateStr\n',

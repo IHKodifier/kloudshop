@@ -15,15 +15,38 @@ class ProductSearchQuery extends Notifier<String> {
 
 final productSearchQueryProvider = NotifierProvider<ProductSearchQuery, String>(ProductSearchQuery.new);
 
+enum CatalogStatusFilter { all, active, draft, archived }
+
+class ProductStatusFilterNotifier extends Notifier<CatalogStatusFilter> {
+  @override
+  CatalogStatusFilter build() => CatalogStatusFilter.all;
+  void setFilter(CatalogStatusFilter filter) => state = filter;
+}
+
+final productStatusFilterProvider = NotifierProvider<ProductStatusFilterNotifier, CatalogStatusFilter>(ProductStatusFilterNotifier.new);
+
 final filteredProductsProvider = Provider<AsyncValue<List<Product>>>((ref) {
   final productsAsync = ref.watch(productsProvider);
   final searchQuery = ref.watch(productSearchQueryProvider).toLowerCase();
+  final statusFilter = ref.watch(productStatusFilterProvider);
 
   return productsAsync.whenData((products) {
-    if (searchQuery.isEmpty) return products;
-    return products.where((p) => 
-      p.title.toLowerCase().contains(searchQuery) || 
-      p.slug.toLowerCase().contains(searchQuery)
-    ).toList();
+    var filtered = products;
+    
+    // Status Filter
+    if (statusFilter != CatalogStatusFilter.all) {
+      final statusStr = statusFilter.name;
+      filtered = filtered.where((p) => p.status.toLowerCase() == statusStr).toList();
+    }
+
+    // Search Filter
+    if (searchQuery.isNotEmpty) {
+      filtered = filtered.where((p) => 
+        p.title.toLowerCase().contains(searchQuery) || 
+        p.slug.toLowerCase().contains(searchQuery)
+      ).toList();
+    }
+    
+    return filtered;
   });
 });

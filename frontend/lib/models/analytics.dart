@@ -8,11 +8,18 @@ class DataPoint {
   factory DataPoint.fromJson(Map<String, dynamic> json) {
     return DataPoint(
       date: DateTime.parse(json['date']),
-      value: (json['value'] as num).toDouble(),
+      value: _toDouble(json['value']),
       secondaryValue: json['secondary_value'] != null 
-          ? (json['secondary_value'] as num).toDouble() 
+          ? _toDouble(json['secondary_value'])
           : null,
     );
+  }
+
+  static double _toDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 }
 
@@ -31,6 +38,8 @@ class AnalyticsOverview {
   final List<DataPoint> customerHistory;
   final List<DataPoint> conversionHistory;
   final List<DataPoint> returnHistory;
+  final List<DataPoint> todayHistory;
+  final List<DataPoint> h24History;
 
   AnalyticsOverview({
     required this.gmv,
@@ -45,15 +54,17 @@ class AnalyticsOverview {
     required this.customerHistory,
     required this.conversionHistory,
     required this.returnHistory,
+    required this.todayHistory,
+    required this.h24History,
   });
 
   factory AnalyticsOverview.fromJson(Map<String, dynamic> json) {
     return AnalyticsOverview(
-      gmv: (json['gmv'] as num).toDouble(),
-      orderCount: json['order_count'] as int,
-      aov: (json['aov'] as num).toDouble(),
-      conversionRate: (json['conversion_rate'] as num).toDouble(),
-      currency: json['currency'] as String,
+      gmv: DataPoint._toDouble(json['gmv']),
+      orderCount: json['order_count'] as int? ?? 0,
+      aov: DataPoint._toDouble(json['aov']),
+      conversionRate: DataPoint._toDouble(json['conversion_rate']),
+      currency: json['currency'] as String? ?? 'USD',
       refreshedAt: DateTime.parse(json['refreshed_at']),
       salesHistory: _parsePoints(json['sales_history']),
       orderHistory: _parsePoints(json['order_history']),
@@ -61,6 +72,8 @@ class AnalyticsOverview {
       customerHistory: _parsePoints(json['customer_history']),
       conversionHistory: _parsePoints(json['conversion_history']),
       returnHistory: _parsePoints(json['return_history']),
+      todayHistory: _parsePoints(json['today_history']),
+      h24History: _parsePoints(json['h24_history']),
     );
   }
 

@@ -24,7 +24,7 @@ settings = Settings()
 # Use SQLite for testing to support in-memory async DB
 db_url = settings.DATABASE_URL
 if settings.TESTING:
-    db_url = "sqlite+aiosqlite:///:memory:"
+    db_url = "sqlite+aiosqlite:///./test_persistent.db"
 
 # Async SQLAlchemy Engine (configured for use with PgBouncer later)
 engine_kwargs = {

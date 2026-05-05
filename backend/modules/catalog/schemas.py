@@ -1,3 +1,6 @@
+# [MODIFY] backend/modules/catalog/schemas.py
+# Added VariantUpdate and integrated it into ProductUpdate for full product reconciliation.
+
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
@@ -36,6 +39,22 @@ class VariantBase(BaseModel):
 
 class VariantCreate(VariantBase):
     pass
+
+class VariantUpdate(BaseModel):
+    variant_id: Optional[str] = None # If provided, update; else create
+    sku: Optional[str] = None
+    barcode: Optional[str] = None
+    option_1: Optional[str] = None
+    option_2: Optional[str] = None
+    option_3: Optional[str] = None
+    pricing_model: Optional[str] = None
+    price: Optional[Decimal] = Field(None, ge=0)
+    compare_at_price: Optional[Decimal] = Field(None, gt=0)
+    cost_per_item: Optional[Decimal] = Field(None, ge=0)
+    is_active: Optional[bool] = None
+    requires_shipping: Optional[bool] = None
+    taxable: Optional[bool] = None
+    position: Optional[int] = None
 
 class VariantResponse(VariantBase):
     variant_id: str
@@ -156,6 +175,7 @@ class ProductUpdate(BaseModel):
     age_verification_required: Optional[bool] = None
     requires_prescription: Optional[bool] = None
     prescription_document_required: Optional[bool] = None
+    variants: Optional[List[VariantUpdate]] = None
 
 class RedirectRuleResponse(BaseModel):
     rule_id: str

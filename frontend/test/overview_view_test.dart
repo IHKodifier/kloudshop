@@ -15,6 +15,14 @@ void main() {
       conversionRate: 0.05,
       currency: 'USD',
       refreshedAt: DateTime.now(),
+      salesHistory: [],
+      orderHistory: [],
+      aovHistory: [],
+      customerHistory: [],
+      conversionHistory: [],
+      returnHistory: [],
+      todayHistory: [],
+      h24History: [],
     );
 
     final mockAlerts = NeedsAttention(

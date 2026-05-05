@@ -70,9 +70,26 @@ class BlogPostBase(BaseModel):
     allow_comments: bool = False
 
 class BlogPostCreate(BlogPostBase):
-    author_id: str
+    author_id: Optional[str] = None
     category_ids: List[str] = []
     tag_names: List[str] = []
+
+class BlogPostUpdate(BaseModel):
+    title: Optional[str] = None
+    slug: Optional[str] = None
+    excerpt: Optional[str] = None
+    body: Optional[str] = None
+    cover_image_url: Optional[str] = None
+    cover_image_alt: Optional[str] = None
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+    status: Optional[str] = None
+    scheduled_for: Optional[datetime] = None
+    is_featured: Optional[bool] = None
+    allow_comments: Optional[bool] = None
+    author_id: Optional[str] = None
+    category_ids: Optional[List[str]] = None
+    tag_names: Optional[List[str]] = None
 
 class BlogPostRead(BlogPostBase):
     id: str

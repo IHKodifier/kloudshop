@@ -183,3 +183,152 @@ async def provision_tenant(
         "schema": schema_name if not is_sqlite else "shared (sqlite)",
         "logs": "\n".join(logs)
     }
+
+@router.post("/seed-demo-data")
+async def seed_demo_data(
+    user: UserClaims = Depends(validate_token),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Seeds mock orders and customers for the current tenant.
+    Enables verification of the Orders and Customers listing grids.
+    """
+    from modules.catalog.models import Product, Variant
+    from modules.orders.models import Order, OrderItem, OrderEvent
+    from modules.inventory.models import StockLocation, Inventory
+    import random
+    from datetime import timedelta
+    from decimal import Decimal
+
+    tenant_id = user.tenant_id
+    if not tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned.")
+
+    # 1. Ensure we have at least one stock location
+    loc_res = await db.execute(select(StockLocation).where(StockLocation.is_active == True))
+    location = loc_res.scalars().first()
+    if not location:
+        location = StockLocation(
+            tenant_id=tenant_id,
+            name="Main Warehouse",
+            is_default=True,
+            is_active=True
+        )
+        db.add(location)
+        await db.flush()
+
+    # 2. Ensure we have at least one product and variant
+    prod_res = await db.execute(select(Product).where(Product.tenant_id == tenant_id))
+    product = prod_res.scalars().first()
+    if not product:
+        product = Product(
+            tenant_id=tenant_id,
+            title="Demo Product",
+            slug="demo-product",
+            status="active",
+            created_by=user.uid
+        )
+        db.add(product)
+        await db.flush()
+        
+        variant = Variant(
+            product_id=product.product_id,
+            tenant_id=tenant_id,
+            sku="DEMO-SKU-01",
+            price=Decimal("99.99"),
+            is_active=True
+        )
+        db.add(variant)
+        await db.flush()
+        
+        # Add inventory
+        inv = Inventory(
+            tenant_id=tenant_id,
+            variant_id=variant.variant_id,
+            stock_location_id=location.stock_location_id,
+            quantity_on_hand=500
+        )
+        db.add(inv)
+    else:
+        var_res = await db.execute(select(Variant).where(Variant.product_id == product.product_id))
+        variant = var_res.scalars().first()
+
+    # 3. Generate 10 Mock Orders
+    mock_customers = [
+        ("alice@example.com", "Alice Smith"),
+        ("bob@example.com", "Bob Johnson"),
+        ("charlie@example.com", "Charlie Brown"),
+        ("diana@example.com", "Diana Prince"),
+        ("ethan@example.com", "Ethan Hunt")
+    ]
+    
+    orders_created = 0
+    now = datetime.utcnow()
+    
+    for i in range(10):
+        email, name = random.choice(mock_customers)
+        status_choice = random.choice(["unfulfilled", "fulfilled", "refunded"])
+        payment_status = "paid" if status_choice != "refunded" else "refunded"
+        days_ago = random.randint(0, 30)
+        placed_at = now - timedelta(days=days_ago)
+        
+        order_number = f"DEMO-{random.randint(1000, 9999)}"
+        
+        # Check if order number already exists (highly unlikely for 10)
+        check_order = await db.execute(select(Order).where(Order.order_number == order_number))
+        if check_order.scalar_one_or_none():
+            continue
+            
+        new_order = Order(
+            order_number=order_number,
+            tenant_id=tenant_id,
+            email=email,
+            payment_status=payment_status,
+            fulfilment_status=status_choice if status_choice != "refunded" else "unfulfilled",
+            currency="USD",
+            subtotal=variant.price,
+            tax_total=variant.price * Decimal("0.08"),
+            grand_total=variant.price * Decimal("1.08"),
+            shipping_name=name,
+            shipping_city="Kloud City",
+            shipping_country="US",
+            placed_at=placed_at
+        )
+        db.add(new_order)
+        await db.flush()
+        
+        # Add Order Item
+        item = OrderItem(
+            order_id=new_order.order_id,
+            variant_id=variant.variant_id,
+            product_id=product.product_id,
+            title=product.title,
+            sku=variant.sku,
+            quantity=1,
+            unit_price=variant.price,
+            total_price=variant.price
+        )
+        db.add(item)
+        
+        # Add Event
+        event = OrderEvent(
+            order_id=new_order.order_id,
+            event_type="payment_confirmed",
+            description="Demo order created via Seeding.",
+            created_at=placed_at
+        )
+        db.add(event)
+        
+        if status_choice == "fulfilled":
+            event_f = OrderEvent(
+                order_id=new_order.order_id,
+                event_type="order_fulfilled",
+                description="Demo fulfilment completed.",
+                created_at=placed_at + timedelta(hours=random.randint(2, 48))
+            )
+            db.add(event_f)
+            
+        orders_created += 1
+
+    await db.commit()
+    return {"status": "seeded", "orders_created": orders_created}

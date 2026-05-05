@@ -57,20 +57,30 @@ async def get_revenue_overview(
     # Mock all 6 metrics if empty
     if not sales_history:
         import random
-        for i in range(90, -1, -1): # Extended to 90 days
-            date = (datetime.utcnow() - timedelta(days=i)).strftime("%Y-%m-%d")
-            val = random.uniform(500, 5000)
-            target = val * random.uniform(0.8, 1.2)
+        for i in range(120, -1, -1): # Extended to 120 days for 90D view
+            dt = datetime.utcnow() - timedelta(days=i)
+            date_str = dt.strftime("%Y-%m-%d")
+            day = dt.day
+            
+            # Inject meaningful peaks on the 22nd and 24th
+            if day == 22:
+                val = 4200 + random.uniform(0, 800)
+            elif day == 24:
+                val = 4600 + random.uniform(0, 900)
+            else:
+                val = random.uniform(800, 3200)
+                
+            target = val * random.uniform(0.9, 1.1)
             sales_history.append({
-                "date": date, 
+                "date": date_str, 
                 "value": val,
                 "secondary_value": target
             })
             
-            ord_val = random.randint(5, 50)
-            fulfilled = int(ord_val * random.uniform(0.7, 1.0))
+            ord_val = int(val / 100) + random.randint(0, 5)
+            fulfilled = int(ord_val * random.uniform(0.85, 1.0))
             order_history.append({
-                "date": date, 
+                "date": date_str, 
                 "value": ord_val,
                 "secondary_value": fulfilled
             })
@@ -82,19 +92,31 @@ async def get_revenue_overview(
     conversion_history = [{"date": s["date"], "value": random.uniform(0.01, 0.05)} for s in sales_history]
     return_history = [{"date": s["date"], "value": random.randint(0, 3)} for s in sales_history]
 
+    # Generate hourly data for Today and 24H
+    today_history = []
+    h24_history = []
+    now = datetime.utcnow()
+    for i in range(23, -1, -1):
+        hr_dt = now - timedelta(hours=i)
+        val = random.uniform(50, 500)
+        today_history.append({"date": hr_dt.isoformat(), "value": val if hr_dt.day == now.day else 0})
+        h24_history.append({"date": hr_dt.isoformat(), "value": val})
+
     return {
         "gmv": round(gmv, 2),
         "order_count": order_count,
         "aov": round(aov, 2),
         "conversion_rate": 0.035,
         "currency": "USD",
-        "refreshed_at": datetime.utcnow(),
+        "refreshed_at": datetime.utcnow().isoformat(),
         "sales_history": sales_history,
         "order_history": order_history,
         "aov_history": aov_history,
         "customer_history": customer_history,
         "conversion_history": conversion_history,
-        "return_history": return_history
+        "return_history": return_history,
+        "today_history": today_history,
+        "h24_history": h24_history
     }
 
 @router.get("/needs-attention")

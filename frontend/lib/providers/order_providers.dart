@@ -20,3 +20,11 @@ final orderDetailsProvider = FutureProvider.family<Order, String>((ref, id) asyn
   final apiService = ref.watch(apiServiceProvider);
   return apiService.getOrderDetails(id);
 });
+
+class OrderActionLoading extends Notifier<bool> {
+  @override
+  bool build() => false;
+  void setLoading(bool loading) => state = loading;
+}
+
+final orderActionLoadingProvider = NotifierProvider<OrderActionLoading, bool>(OrderActionLoading.new);

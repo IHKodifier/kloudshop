@@ -76,7 +76,7 @@ class ApiService {
     }
   }
 
-  Future<String> createUpgradeSession(String planId) async {
+  Future<String> createUpgradeSession(String planId, {String? successUrl, String? cancelUrl}) async {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
@@ -84,8 +84,8 @@ class ApiService {
         headers: headers,
         body: jsonEncode({
           'plan_id': planId,
-          'success_url': 'http://localhost:3000/dashboard?session_id={CHECKOUT_SESSION_ID}',
-          'cancel_url': 'http://localhost:3000/dashboard',
+          'success_url': successUrl ?? 'http://localhost:3000/dashboard?session_id={CHECKOUT_SESSION_ID}',
+          'cancel_url': cancelUrl ?? 'http://localhost:3000/dashboard',
         }),
       );
 
@@ -116,6 +116,35 @@ class ApiService {
       }
     } catch (e) {
       log('ApiService.provisionTenant error: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> verifyUpgradeSession(String sessionId) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/billing/complete-upgrade?session_id=$sessionId'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to verify upgrade session: ${response.body}');
+    }
+  }
+
+  Future<void> seedDemoData() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/internal/seed-demo-data'),
+        headers: headers,
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw ApiException(response.statusCode, 'Failed to seed demo data: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.seedDemoData error: $e');
       rethrow;
     }
   }
@@ -283,6 +312,21 @@ class ApiService {
     }
   }
 
+  Future<Product> updateProduct(String productId, Map<String, dynamic> productData) async {
+    final headers = await _getHeaders();
+    final response = await http.put(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: headers,
+      body: jsonEncode(productData),
+    );
+
+    if (response.statusCode == 200) {
+      return Product.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to update product: ${response.body}');
+    }
+  }
+
   Future<void> deleteProduct(String productId) async {
     final headers = await _getHeaders();
     final response = await http.delete(
@@ -298,11 +342,11 @@ class ApiService {
   // --- Orders ---
   Future<List<Order>> listOrders({String? status}) async {
     final headers = await _getHeaders();
-    final queryParams = status != null ? '?status=$status' : '';
-    final response = await http.get(
-      Uri.parse('$baseUrl/orders/$queryParams'),
-      headers: headers,
-    );
+    final params = <String, String>{};
+    if (status != null) params['status'] = status;
+
+    final uri = Uri.parse('$baseUrl/orders/').replace(queryParameters: params);
+    final response = await http.get(uri, headers: headers);
 
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
@@ -345,6 +389,24 @@ class ApiService {
     }
   }
 
+  Future<Order> refundOrder(String orderId, {double? amount, String? reason}) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/orders/$orderId/refund'),
+      headers: headers,
+      body: jsonEncode({
+        'amount': amount,
+        'reason': reason ?? 'Requested by merchant',
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return Order.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to refund order: ${response.body}');
+    }
+  }
+
   // --- Customers ---
   Future<List<Customer>> listCustomers() async {
     final headers = await _getHeaders();
@@ -373,6 +435,21 @@ class ApiService {
       return TenantSettings.fromJson(jsonDecode(response.body));
     } else {
       throw ApiException(response.statusCode, 'Failed to fetch settings: ${response.body}');
+    }
+  }
+
+  Future<TenantSettings> updateTenantSettings(Map<String, dynamic> data) async {
+    final headers = await _getHeaders();
+    final response = await http.patch(
+      Uri.parse('$baseUrl/onboarding/tenant'),
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return TenantSettings.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to update settings: ${response.body}');
     }
   }
 

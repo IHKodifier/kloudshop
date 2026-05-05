@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/models/order.dart';
 import 'package:kloudshop/providers/order_providers.dart';
+import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/views/order_detail_view.dart';
 import 'package:intl/intl.dart';
 
 class OrdersView extends ConsumerWidget {
@@ -67,12 +69,12 @@ class OrdersView extends ConsumerWidget {
   }
 }
 
-class _OrderCard extends StatelessWidget {
+class _OrderCard extends ConsumerWidget {
   final Order order;
   const _OrderCard({required this.order});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final dateFormat = DateFormat('MMM dd, yyyy HH:mm');
 
@@ -82,91 +84,131 @@ class _OrderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: theme.dividerColor),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      order.orderNumber,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      dateFormat.format(order.placedAt),
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _StatusBadge(label: order.paymentStatus, color: _getPaymentColor(order.paymentStatus)),
-                    const SizedBox(width: 8),
-                    _StatusBadge(label: order.fulfilmentStatus, color: _getFulfilmentColor(order.fulfilmentStatus)),
-                  ],
-                ),
-              ],
-            ),
-            const Divider(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(order.shippingName ?? 'No Name', style: const TextStyle(fontWeight: FontWeight.w600)),
-                    Text(order.email, style: theme.textTheme.bodySmall),
-                  ],
-                ),
-                Text(
-                  '${order.currency} ${order.grandTotal.toStringAsFixed(2)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                if (order.fulfilmentStatus == 'unfulfilled')
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _showFulfilDialog(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.primaryColor,
-                        foregroundColor: Colors.white,
+      child: InkWell(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetailView(orderId: order.id))),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        order.orderNumber,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                      child: const Text('Mark as Fulfilled'),
+                      const SizedBox(height: 4),
+                      Text(
+                        dateFormat.format(order.placedAt),
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _StatusBadge(label: order.paymentStatus, color: _getPaymentColor(order.paymentStatus)),
+                      const SizedBox(width: 8),
+                      _StatusBadge(label: order.fulfilmentStatus, color: _getFulfilmentColor(order.fulfilmentStatus)),
+                    ],
+                  ),
+                ],
+              ),
+              const Divider(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(order.shippingName ?? 'No Name', style: const TextStyle(fontWeight: FontWeight.w600)),
+                      Text(order.email, style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                  Text(
+                    '${order.currency} ${order.grandTotal.toStringAsFixed(2)}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  if (order.fulfilmentStatus == 'unfulfilled')
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _showFulfilDialog(context, ref),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primaryColor,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Mark as Fulfilled'),
+                      ),
+                    ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetailView(orderId: order.id))),
+                      child: const Text('View Details'),
                     ),
                   ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => _showDetailsDialog(context),
-                    child: const Text('View Details'),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _showFulfilDialog(BuildContext context) {
-    // TODO: Implement fulfillment dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fulfillment dialog coming in next iteration!')),
-    );
-  }
+  void _showFulfilDialog(BuildContext context, WidgetRef ref) {
+    final carrierController = TextEditingController();
+    final trackingController = TextEditingController();
 
-  void _showDetailsDialog(BuildContext context) {
-    // TODO: Implement details modal
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Fulfil Order'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: carrierController,
+              decoration: const InputDecoration(labelText: 'Carrier (e.g. DHL, FedEx)', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: trackingController,
+              decoration: const InputDecoration(labelText: 'Tracking Number', border: OutlineInputBorder()),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await ref.read(apiServiceProvider).fulfilOrder(
+                  order.id,
+                  carrier: carrierController.text,
+                  trackingNumber: trackingController.text,
+                );
+                ref.invalidate(ordersProvider);
+                if (context.mounted) Navigator.pop(context);
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+                }
+              }
+            },
+            child: const Text('Confirm Fulfilment'),
+          ),
+        ],
+      ),
+    );
   }
 
   Color _getPaymentColor(String status) {

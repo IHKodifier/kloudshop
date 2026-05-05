@@ -23,10 +23,10 @@
 
 ---
 
-## Active Sprint: PHASE 4 — B2B & Channels (Sprint 11)
+## Active Sprint: PHASE 5 — Intelligence & Operations (Sprint 15)
 
 > [!IMPORTANT]
-> Focus **only** on the active sprint. Do not start work on future sprints. Check `08a-api-specification.md` section for the relevant Epic before writing any endpoint.
+> Focus **only** on the active sprint. We are currently implementing the high-fidelity Merchant Dashboard UI and functional parity for all management modules.
 
 ### Phase 0 Checklist — Remediation & Setup
 *Goal: Ensure baseline infrastructure and TDD environment are functional.*
@@ -266,17 +266,20 @@
 
 ## Phase 5 Checklist — Intelligence & Operations (Sprints 15–16)
 
-#### Sprint 15 — Analytics (E09) — API: `/analytics/*`
-- [x] Revenue overview dashboard (GMV, orders, AOV, conversion — refreshed every 15s)
-- [x] Needs Attention panel (pending orders, reorder overdue, B2B approvals)
-- [x] Vertex AI demand forecasting (with data-sufficiency disclaimer < 90 days / 100 orders)
-- [x] Looker Studio embed with scoped BigQuery token
+#### Sprint 15 — Analytics & Dashboard (E09) — API: `/analytics/*`
+- [x] **Revenue Overview (Dashboard):** Real-time GMV, orders, AOV, conversion (Implemented).
+- [x] **Needs Attention Panel:** Pending orders, reorder overdue, B2B approvals (Implemented).
+- [x] **Interactive Visualization:** High-fidelity Line/Grouped Bar charts with comparative targets (Implemented).
+- [ ] **Advanced Analytics (BigQuery):** Data export pipeline to BigQuery for long-term storage.
+- [ ] **Vertex AI Forecasting:** Demand forecasting using Vertex AI (requires 90 days of data).
+- [ ] **Looker Studio Integration:** Embedded Looker Studio dashboards via scoped BigQuery tokens.
 
 #### Sprint 16 — Hygiene (E19 + E18) — API: `/internal/*`
-- [x] Nightly schema drift detection (Cloud Scheduler → compare live schema vs Alembic head)
-- [x] GDPR right-to-erasure pipeline (PII anonymisation, not deletion)
-- [x] Production canary deployment approval flow (GCP Cloud Deploy stub)
-- [x] SYS-18 version detection (service worker + version.json banner)
+- [ ] Nightly schema drift detection (Cloud Scheduler → compare live schema vs Alembic head)
+- [ ] GDPR right-to-erasure pipeline (PII anonymisation, not deletion)
+- [ ] Production canary deployment approval flow (GCP Cloud Deploy stub)
+- [ ] SYS-18 version detection (service worker + version.json banner)
+- [/] **Frontend:** Implementation of other dashboard views (Catalog, Orders, Customers, Blog, etc.)
 
 ---
 

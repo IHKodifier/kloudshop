@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, Boolean, Integer, SmallInteger, Numeric, DateTime, JSON, ForeignKey, CheckConstraint
+from sqlalchemy import Column, String, Text, Boolean, Integer, SmallInteger, Numeric, DateTime, JSON, ForeignKey, CheckConstraint, UniqueConstraint
 from sqlalchemy.orm import relationship
 from shared.db import Base, engine
 import uuid
@@ -62,6 +62,7 @@ class Product(Base):
     collections = relationship("Collection", secondary="collection_products", back_populates="products")
 
     __table_args__ = (
+        UniqueConstraint('tenant_id', 'slug', name='uix_product_tenant_slug'),
         CheckConstraint(status.in_(['draft', 'active', 'archived']), name='products_status_check'),
         CheckConstraint(weight_unit.in_(['kg', 'lb']), name='products_weight_unit_check'),
         CheckConstraint(dimension_unit.in_(['cm', 'in']), name='products_dimension_unit_check'),
@@ -77,7 +78,7 @@ class Variant(Base):
     tenant_id = Column(String, nullable=False, index=True)
     
     # Identity
-    sku = Column(String(255), nullable=False, unique=True)
+    sku = Column(String(255), nullable=False)
     barcode = Column(String(128))
     
     # Options
@@ -134,6 +135,7 @@ class Variant(Base):
     inventory_items = relationship("Inventory", back_populates="variant", cascade="all, delete-orphan")
 
     __table_args__ = (
+        UniqueConstraint('tenant_id', 'sku', name='uix_variant_tenant_sku'),
         CheckConstraint(pricing_model.in_(['fixed', 'pwyw', 'donation']), name='variants_pricing_model_check'),
         CheckConstraint(price >= 0, name='variants_price_non_negative'),
         CheckConstraint(weight_unit.in_(['kg', 'lb']), name='variants_weight_unit_check'),
@@ -154,7 +156,7 @@ class Collection(Base):
 
     title = Column(Text, nullable=False)
     description = Column(Text)
-    slug = Column(String(255), nullable=False, unique=True)
+    slug = Column(String(255), nullable=False)
     image_url = Column(Text)
     meta_title = Column(Text)
     meta_description = Column(Text)
@@ -173,6 +175,7 @@ class Collection(Base):
     products = relationship("Product", secondary="collection_products", back_populates="collections")
 
     __table_args__ = (
+        UniqueConstraint('tenant_id', 'slug', name='uix_collection_tenant_slug'),
         CheckConstraint(collection_type.in_(['manual', 'automated']), name='collections_type_check'),
         CheckConstraint(sort_type.in_([
             'manual', 'best_selling', 'price_asc', 'price_desc',
