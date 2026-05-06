@@ -311,6 +311,13 @@
 - [x] **Carry-Forward:** Verify content preservation during theme switching.
 - [x] **Undo/Redo:** Session-based history for theme customizations (max 50).
 
+##### TDD Test Results — Sprint 17 (Themes & WYSIWYG)
+| Test File | Status | Passing / Total |
+|-----------|--------|-----------------|
+| `test_themes_carry_forward.py` | PASS | 1 / 1 |
+| `wysiwyg_view_test.dart` | PASS | 1 / 1 |
+| `wysiwyg_undo_test.dart` | PASS | 1 / 1 |
+
 #### Sprint 18 — Consumer Storefront Parity (E17)
 - [ ] **SSR Frontend:** High-performance public storefront rendering.
 - [ ] **RAG Search:** RAG-powered consultative search UI for consumers.
