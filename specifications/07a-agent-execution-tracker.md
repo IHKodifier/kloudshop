@@ -279,7 +279,7 @@
 - [ ] GDPR right-to-erasure pipeline (PII anonymisation, not deletion)
 - [ ] Production canary deployment approval flow (GCP Cloud Deploy stub)
 - [ ] SYS-18 version detection (service worker + version.json banner)
-- [/] **Frontend:** Implementation of other dashboard views (Catalog, Orders, Customers, Blog, etc.)
+- [x] **Frontend:** Implementation of other dashboard views (Catalog, Orders, Customers, Blog, etc.)
 
 
 ---
@@ -287,22 +287,29 @@
 ## Phase 5.5 Checklist — Remediation & Payment Hardening (Sprint 16.5)
 
 #### Sprint 16.5 — Commerce Core Hardening (Mock-Parity Focus)
-- [ ] **Billing Redirects:** Fix the blank route issue when returning from checkout (`/dashboard?session_id=...`).
-- [ ] **Billing UI Polish:** Distinguish "Active" vs "Trialing" states and general UI cleanup in `BillingView`.
-- [ ] **Payment Flow:** Full end-to-end validation of Storefront Payment Intent -> Order Creation -> Inventory Lock (Mocked).
-- [ ] **Feature Gating:** Implement tier-based logic (DTC vs B2B vs Hybrid) to restrict or enable platform modules.
-- [ ] **Auth State Sync:** Eliminate manual refresh requirement after provisioning or subscription updates.
+- [x] **Billing Redirects:** Fix the blank route issue when returning from checkout (`/dashboard?session_id=...`).
+- [x] **Billing UI Polish:** Distinguish "Active" vs "Trialing" states and general UI cleanup in `BillingView`.
+- [x] **Payment Flow:** Full end-to-end validation of Storefront Payment Intent -> Order Creation -> Inventory Lock (Mocked).
+- [x] **Feature Gating:** Implement tier-based logic (DTC vs B2B vs Hybrid) to restrict or enable platform modules.
+- [x] **Auth State Sync:** Eliminate manual refresh requirement after provisioning or subscription updates.
+
+##### TDD Test Results — Sprint 16.5 (Commerce Core Hardening)
+| Test File | Status | Passing / Total |
+|-----------|--------|-----------------|
+| `test_billing.py` | PASS | 6 / 6 |
+| `phase5.5_verification_test.dart` | PASS | 4 / 4 |
 
 ---
 
 ## Phase 6 Checklist — Themes & Visual Customization (Sprints 17–18)
 
 #### Sprint 17 — WYSIWYG Editor & Themes (E03)
-- [ ] **Themes:** Implement the Theme Library browser (Frontend).
-- [ ] **WYSIWYG:** Component-based page editor with real-time preview.
-- [ ] **Config Panel:** Visual controls for design tokens (Colors, Typography, Layout).
-- [ ] **Slot Management:** Edit content for Hero, Featured Products, and Newsletter slots.
-- [ ] **Carry-Forward:** Verify content preservation during theme switching.
+- [x] **Themes:** Implement the Theme Library browser (Frontend).
+- [x] **WYSIWYG:** Component-based page editor with real-time preview (E03).
+- [x] **Config Panel:** Visual controls for design tokens (Colors, Typography, Layout).
+- [x] **Slot Management:** Edit content for Hero, Featured Products, and Newsletter slots.
+- [x] **Carry-Forward:** Verify content preservation during theme switching.
+- [x] **Undo/Redo:** Session-based history for theme customizations (max 50).
 
 #### Sprint 18 — Consumer Storefront Parity (E17)
 - [ ] **SSR Frontend:** High-performance public storefront rendering.

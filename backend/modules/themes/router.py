@@ -29,12 +29,21 @@ async def list_themes(db: AsyncSession = Depends(get_db)):
             description="A sleek, professional dark theme with vibrant accents.",
             base_config={
                 "tokens": {"primary": "#6366f1", "secondary": "#1e293b", "background": "#0f172a"},
-                "slots": {"header": "centered", "hero": "full-width"}
+                "slots": {"header": "centered", "hero": "full-width", "hero_heading": "Modern Store"}
             }
         )
-        db.add(default_theme)
+        minimal_theme = Theme(
+            theme_id="minimal-light",
+            name="Minimal Light",
+            description="A clean, minimalist white theme for high-end brands.",
+            base_config={
+                "tokens": {"primary": "#000000", "secondary": "#f8fafc", "background": "#ffffff"},
+                "slots": {"header": "left", "hero": "centered", "hero_heading": "Minimalist"}
+            }
+        )
+        db.add_all([default_theme, minimal_theme])
         await db.commit()
-        themes = [default_theme]
+        themes = [default_theme, minimal_theme]
         
     return themes
 
@@ -64,14 +73,21 @@ async def select_theme(
     if not theme:
         raise HTTPException(status_code=404, detail="Theme not found")
         
-    # Deactivate old themes
+    # Get current active config for carry-forward
+    active_res = await db.execute(
+        select(ThemeConfiguration)
+        .where(ThemeConfiguration.tenant_id == user.tenant_id, ThemeConfiguration.is_active == True)
+    )
+    prev_config = active_res.scalar_one_or_none()
+    
+    # Deactivate all existing configs for this tenant
     await db.execute(
         update(ThemeConfiguration)
         .where(ThemeConfiguration.tenant_id == user.tenant_id)
         .values(is_active=False)
     )
     
-    # Check if already has config for this theme
+    # Check if already has config for the TARGET theme
     result = await db.execute(
         select(ThemeConfiguration)
         .where(ThemeConfiguration.tenant_id == user.tenant_id, ThemeConfiguration.theme_id == req.theme_id)
@@ -79,13 +95,22 @@ async def select_theme(
     config = result.scalar_one_or_none()
     
     if not config:
+        # Start with theme defaults
+        slots = theme.base_config["slots"].copy()
+        
+        # Apply Carry-Forward: Copy matching slots from prev_config
+        if prev_config:
+            for key, value in prev_config.draft_slots.items():
+                if key in slots:
+                    slots[key] = value
+                    
         config = ThemeConfiguration(
             tenant_id=user.tenant_id,
             theme_id=req.theme_id,
             draft_tokens=theme.base_config["tokens"],
             live_tokens=theme.base_config["tokens"],
-            draft_slots=theme.base_config["slots"],
-            live_slots=theme.base_config["slots"],
+            draft_slots=slots,
+            live_slots=slots,
             is_active=True
         )
         db.add(config)

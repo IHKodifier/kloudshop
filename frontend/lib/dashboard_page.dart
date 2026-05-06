@@ -17,7 +17,7 @@ import 'package:kloudshop/providers/billing_providers.dart';
 import 'package:kloudshop/providers/theme_provider.dart';
 import 'package:kloudshop/providers/settings_providers.dart';
 import 'package:kloudshop/providers/analytics_providers.dart';
-import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/views/themes_view.dart';
 import 'package:kloudshop/widgets/feature_gate.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -292,6 +292,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               label: Text('Compliance'),
             ),
             NavigationRailDestination(
+              icon: Icon(LucideIcons.palette),
+              selectedIcon: Icon(LucideIcons.palette),
+              label: Text('Themes'),
+            ),
+            NavigationRailDestination(
               icon: Icon(LucideIcons.settings),
               label: Text('Settings'),
             ),
@@ -323,6 +328,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       case 7:
         return const ComplianceView();
       case 8:
+        return const ThemesView();
+      case 9:
         return const SettingsView();
       default:
         return Center(

@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/services/auth_service.dart';
+import 'package:kloudshop/models/theme.dart';
+import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/models/user_claims.dart';
 import 'package:kloudshop/models/subscription.dart';
 import 'package:kloudshop/models/analytics.dart';
@@ -454,6 +456,82 @@ class ApiService {
     }
   }
 
+  // --- Themes ---
+
+  Future<List<ThemeModel>> listThemes() async {
+    final headers = await _getHeaders();
+    final response = await http.get(Uri.parse('$baseUrl/themes'), headers: headers);
+    
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => ThemeModel.fromJson(item)).toList();
+    } else {
+      throw ApiException(response.statusCode, 'Failed to list themes');
+    }
+  }
+
+  Future<ThemeConfigModel?> getActiveTheme() async {
+    final headers = await _getHeaders();
+    final response = await http.get(Uri.parse('$baseUrl/themes/active'), headers: headers);
+    
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 404) {
+      return null;
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch active theme');
+    }
+  }
+
+  Future<ThemeConfigModel> selectTheme(String themeId) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/themes/select'),
+      headers: headers,
+      body: jsonEncode({'theme_id': themeId}),
+    );
+    
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to select theme');
+    }
+  }
+
+  Future<ThemeConfigModel> updateThemeConfig({
+    Map<String, dynamic>? tokens,
+    Map<String, dynamic>? slots,
+  }) async {
+    final headers = await _getHeaders();
+    final response = await http.patch(
+      Uri.parse('$baseUrl/themes/config'),
+      headers: headers,
+      body: jsonEncode({
+        if (tokens != null) 'tokens': tokens,
+        if (slots != null) 'slots': slots,
+      }),
+    );
+    
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to update theme config');
+    }
+  }
+
+  Future<ThemeConfigModel> publishTheme() async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/themes/publish'),
+      headers: headers,
+    );
+    
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to publish theme');
+    }
+  }
 }
 
 class ApiException implements Exception {
