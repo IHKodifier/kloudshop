@@ -79,6 +79,12 @@ async def create_checkout_session(
         )
 
     try:
+        # 3. Success URL Normalization
+        success_url = request.success_url
+        if "{CHECKOUT_SESSION_ID}" not in success_url:
+            separator = "&" if "?" in success_url else "?"
+            success_url += f"{separator}session_id={{CHECKOUT_SESSION_ID}}"
+
         # If Stripe is not configured but we are in testing mode, return a mock success URL
         if not stripe.api_key and settings.TESTING:
             print(f"DEBUG: Mock Mode - Updating subscription to {request.plan_id} for tenant {user.tenant_id}")
@@ -86,10 +92,11 @@ async def create_checkout_session(
             subscription.tier = request.plan_id
             await db.commit()
 
-            mock_url = request.success_url.replace("{CHECKOUT_SESSION_ID}", f"mock_sess_{uuid.uuid4().hex[:8]}")
+            mock_url = success_url.replace("{CHECKOUT_SESSION_ID}", f"mock_sess_{uuid.uuid4().hex[:8]}")
             return {"url": mock_url}
 
-        # 3. Create Stripe Checkout Session
+        # 4. Create Stripe Checkout Session
+
         checkout_session = stripe.checkout.Session.create(
             customer=subscription.stripe_customer_id,
             payment_method_types=['card'],
@@ -98,7 +105,7 @@ async def create_checkout_session(
                 'quantity': 1,
             }],
             mode='subscription',
-            success_url=request.success_url + "?session_id={CHECKOUT_SESSION_ID}",
+            success_url=success_url,
             cancel_url=request.cancel_url,
             subscription_data={
                 "metadata": {

@@ -23,6 +23,9 @@ class KloudShopApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
       home: const AuthGate(),
+      routes: {
+        '/dashboard': (context) => const AuthGate(),
+      },
       builder: (context, child) {
         ErrorWidget.builder = (FlutterErrorDetails details) {
           return Scaffold(

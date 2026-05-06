@@ -281,6 +281,52 @@
 - [ ] SYS-18 version detection (service worker + version.json banner)
 - [/] **Frontend:** Implementation of other dashboard views (Catalog, Orders, Customers, Blog, etc.)
 
+
+---
+
+## Phase 5.5 Checklist — Remediation & Payment Hardening (Sprint 16.5)
+
+#### Sprint 16.5 — Commerce Core Hardening (Mock-Parity Focus)
+- [ ] **Billing Redirects:** Fix the blank route issue when returning from checkout (`/dashboard?session_id=...`).
+- [ ] **Billing UI Polish:** Distinguish "Active" vs "Trialing" states and general UI cleanup in `BillingView`.
+- [ ] **Payment Flow:** Full end-to-end validation of Storefront Payment Intent -> Order Creation -> Inventory Lock (Mocked).
+- [ ] **Feature Gating:** Implement tier-based logic (DTC vs B2B vs Hybrid) to restrict or enable platform modules.
+- [ ] **Auth State Sync:** Eliminate manual refresh requirement after provisioning or subscription updates.
+
+---
+
+## Phase 6 Checklist — Themes & Visual Customization (Sprints 17–18)
+
+#### Sprint 17 — WYSIWYG Editor & Themes (E03)
+- [ ] **Themes:** Implement the Theme Library browser (Frontend).
+- [ ] **WYSIWYG:** Component-based page editor with real-time preview.
+- [ ] **Config Panel:** Visual controls for design tokens (Colors, Typography, Layout).
+- [ ] **Slot Management:** Edit content for Hero, Featured Products, and Newsletter slots.
+- [ ] **Carry-Forward:** Verify content preservation during theme switching.
+
+#### Sprint 18 — Consumer Storefront Parity (E17)
+- [ ] **SSR Frontend:** High-performance public storefront rendering.
+- [ ] **RAG Search:** RAG-powered consultative search UI for consumers.
+- [ ] **Frictionless Checkout:** The "Zoomer" Guest Flow (Browse -> Cart -> Mock Payment).
+- [ ] **Post-Order Identity:** Post-purchase account creation (Consumer signs up after guest order).
+- [ ] **Consumer Self-Service:** UI for consumers to view order status and request refunds/returns.
+- [ ] **Mobile Optimization:** Full responsive audit (Core Web Vitals compliance).
+
+---
+
+## Phase 7 Checklist — Launch Readiness (Sprints 19–20)
+
+#### Sprint 19 — Production Infrastructure (E19 + E20)
+- [ ] **Custom Domains:** CNAME verification and SSL auto-provisioning.
+- [ ] **Platform Production:** Final terraform/scripts for `kloudshop-prod`.
+- [ ] **Final UAT:** End-to-end "Minimum Value Loop" (Sign up → Design → Sell) using Mock Mode.
+
+#### Sprint 20 — Production Handover (POST-LLC SETUP)
+- [ ] **Stripe Live Mode:** Transition from Mock Billing to real Stripe once UK LLC is verified.
+- [ ] **Connect Platform:** Final Live integration for merchant payouts and transaction fee collection.
+- [ ] **Security Audit:** Pentesting RBAC and data isolation boundaries.
+- [ ] **Public Launch:** Merge `dev` to `main` and activate marketing site.
+
 ---
 
 ## v1.1 Backlog (Post-MVP — Do NOT implement during Phase 1–5)

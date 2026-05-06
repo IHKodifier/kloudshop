@@ -180,6 +180,7 @@ async def provision_tenant(
     return {
         "status": "provisioned",
         "tenant_id": tenant_id,
+        "refresh_token_required": True,
         "schema": schema_name if not is_sqlite else "shared (sqlite)",
         "logs": "\n".join(logs)
     }
@@ -196,6 +197,7 @@ async def seed_demo_data(
     from modules.catalog.models import Product, Variant
     from modules.orders.models import Order, OrderItem, OrderEvent
     from modules.inventory.models import StockLocation, Inventory
+    from modules.storefront.models import BrandProfile
     import random
     from datetime import timedelta
     from decimal import Decimal
@@ -203,6 +205,24 @@ async def seed_demo_data(
     tenant_id = user.tenant_id
     if not tenant_id:
         raise HTTPException(status_code=400, detail="User has no tenant_id assigned.")
+
+    # 0. Ensure Brand Profile exists (required for public storefront)
+    brand_res = await db.execute(select(BrandProfile).where(BrandProfile.tenant_id == tenant_id))
+    brand_profile = brand_res.scalars().first()
+    if not brand_profile:
+        brand_profile = BrandProfile(
+            tenant_id=tenant_id,
+            brand_name=tenant_id.capitalize(),
+            slug=tenant_id,
+            is_published=True,
+            primary_color="#000000",
+            secondary_color="#FFFFFF"
+        )
+        db.add(brand_profile)
+        await db.flush()
+    elif not brand_profile.is_published:
+        brand_profile.is_published = True
+        await db.flush()
 
     # 1. Ensure we have at least one stock location
     loc_res = await db.execute(select(StockLocation).where(StockLocation.is_active == True))

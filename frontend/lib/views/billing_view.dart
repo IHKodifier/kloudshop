@@ -206,8 +206,8 @@ class BillingView extends ConsumerWidget {
         const SnackBar(content: Text('Preparing upgrade...')),
       );
 
-      final successUrl = '${Uri.base.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}';
-      final cancelUrl = '${Uri.base.origin}/dashboard';
+      final successUrl = '${Uri.base.origin}/#/dashboard?session_id={CHECKOUT_SESSION_ID}';
+      final cancelUrl = '${Uri.base.origin}/#/dashboard';
 
       final url = await ref.read(apiServiceProvider).createUpgradeSession(
         planId,

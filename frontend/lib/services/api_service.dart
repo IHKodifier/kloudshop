@@ -101,7 +101,7 @@ class ApiService {
     }
   }
 
-  Future<void> provisionTenant(String tenantId) async {
+  Future<Map<String, dynamic>> provisionTenant(String tenantId) async {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
@@ -111,6 +111,7 @@ class ApiService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         log('Tenant provisioned successfully: ${response.body}');
+        return jsonDecode(response.body);
       } else {
         throw ApiException(response.statusCode, 'Failed to provision tenant: ${response.body}');
       }

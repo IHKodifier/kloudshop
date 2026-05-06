@@ -18,6 +18,7 @@ import 'package:kloudshop/providers/theme_provider.dart';
 import 'package:kloudshop/providers/settings_providers.dart';
 import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/widgets/feature_gate.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final UserClaims claims;
@@ -281,6 +282,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               label: Text('Blog'),
             ),
             NavigationRailDestination(
+              icon: Icon(LucideIcons.usersRound),
+              selectedIcon: Icon(LucideIcons.usersRound),
+              label: Text('Wholesale'),
+            ),
+            NavigationRailDestination(
               icon: Icon(LucideIcons.shieldCheck),
               selectedIcon: Icon(LucideIcons.shieldCheck),
               label: Text('Compliance'),
@@ -310,8 +316,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       case 5:
         return BlogView(claims: widget.claims);
       case 6:
-        return const ComplianceView();
+        return FeatureGate(
+          feature: Feature.b2bPortal,
+          child: _B2BWholesalePlaceholder(),
+        );
       case 7:
+        return const ComplianceView();
+      case 8:
         return const SettingsView();
       default:
         return Center(
@@ -928,6 +939,53 @@ class _RangeChip extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _B2BWholesalePlaceholder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(title: const Text('B2B Wholesale Portal')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(LucideIcons.usersRound, size: 64, color: theme.primaryColor.withValues(alpha: 0.5)),
+            const SizedBox(height: 24),
+            Text(
+              'B2B Wholesale Infrastructure',
+              style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text('Manage wholesale customers, custom price lists, and net terms.'),
+            const SizedBox(height: 48),
+            // Example of what would be here
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildMockStat(context, 'Active Clients', '12'),
+                const SizedBox(width: 24),
+                _buildMockStat(context, 'Pending Apps', '4'),
+                const SizedBox(width: 24),
+                _buildMockStat(context, 'Credit Limit Usage', '68%'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMockStat(BuildContext context, String label, String value) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Text(value, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+        Text(label, style: theme.textTheme.bodySmall),
+      ],
     );
   }
 }

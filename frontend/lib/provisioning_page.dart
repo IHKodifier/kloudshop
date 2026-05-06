@@ -28,17 +28,42 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage> {
       
       await ref.read(apiServiceProvider).provisionTenant(tenantId);
       
-      // Force refresh the auth token to get the new custom claims set by the backend
-      await ref.read(authServiceProvider).getIdToken(forceRefresh: true);
+      // Auto-Sync Identity Loop
+      int retryCount = 0;
+      bool synced = false;
+      
+      while (retryCount < 5 && !synced) {
+        // Wait a bit for Firebase claims to propagate
+        await Future.delayed(Duration(seconds: 1 * (retryCount + 1)));
+        
+        // Force refresh the auth token to get the new custom claims
+        await ref.read(authServiceProvider).getIdToken(forceRefresh: true);
+        
+        // Verify with backend
+        final claims = await ref.read(apiServiceProvider).getMe(forceRefresh: true);
+        if (claims?.tenantId != null) {
+          synced = true;
+        }
+        retryCount++;
+      }
       
       // Trigger reactive refresh of user claims to route to dashboard
       ref.read(forceRefreshClaimsProvider.notifier).toggle(true);
       ref.invalidate(userClaimsProvider);
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Store provisioned successfully! Redirecting...')),
-        );
+        if (synced) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Store provisioned and identity synced! Redirecting...')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Store provisioned, but identity sync is taking longer than expected. Please wait a moment.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {

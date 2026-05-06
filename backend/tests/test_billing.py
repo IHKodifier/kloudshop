@@ -82,3 +82,63 @@ async def test_trial_check_task(db_session):
     
     assert tenant.is_active is False
     assert subscription.status == SubscriptionStatus.CANCELED
+
+@pytest.mark.asyncio
+async def test_create_checkout_session_url_logic(client: AsyncClient, auth_override, db_session):
+    """Verify that the success URL correctly appends session_id if missing."""
+    auth_override(UserClaims(
+        uid="user123",
+        email="merchant@test.com",
+        tenant_id="tenant_abc",
+        account_type="merchant",
+        roles=["owner"],
+        is_owner=True
+    ))
+    
+    # 1. Ensure subscription exists
+    sub = Subscription(tenant_id="tenant_abc", status=SubscriptionStatus.ACTIVE, tier=SubscriptionTier.FREE)
+    db_session.add(sub)
+    await db_session.commit()
+
+    # 2. Test with success URL that ALREADY has session_id
+    payload = {
+        "plan_id": "dtc",
+        "success_url": "http://localhost/success?session_id={CHECKOUT_SESSION_ID}",
+        "cancel_url": "http://localhost/cancel"
+    }
+    response = await client.post("/api/v1/billing/upgrade", json=payload)
+    assert response.status_code == 200
+    # In mock mode (no stripe key), it replaces {CHECKOUT_SESSION_ID}
+    assert "session_id=mock_sess_" in response.json()["url"]
+    assert "?session_id=mock_sess_?session_id=" not in response.json()["url"] # No double append
+
+    # 3. Test with success URL that is MISSING session_id
+    payload = {
+        "plan_id": "dtc",
+        "success_url": "http://localhost/success",
+        "cancel_url": "http://localhost/cancel"
+    }
+    response = await client.post("/api/v1/billing/upgrade", json=payload)
+    assert response.status_code == 200
+    assert "session_id=mock_sess_" in response.json()["url"]
+
+@pytest.mark.asyncio
+async def test_complete_upgrade_mock_success(client: AsyncClient, auth_override, db_session):
+    """Verify that complete-upgrade correctly identifies and processes a mock session."""
+    auth_override(UserClaims(
+        uid="user123",
+        email="merchant@test.com",
+        tenant_id="tenant_abc",
+        account_type="merchant",
+        roles=["owner"],
+        is_owner=True
+    ))
+    
+    # Setup sub
+    sub = Subscription(tenant_id="tenant_abc", status=SubscriptionStatus.ACTIVE, tier=SubscriptionTier.FREE)
+    db_session.add(sub)
+    await db_session.commit()
+
+    response = await client.post("/api/v1/billing/complete-upgrade?session_id=mock_sess_12345")
+    assert response.status_code == 200
+    assert response.json()["status"] == "success"
