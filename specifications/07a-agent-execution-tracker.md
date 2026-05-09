@@ -1,6 +1,9 @@
-# Agent Execution Tracker (SSOT)
+# Agent Execution Tracker (SSOT) - ARCHIVED
 
-> **Purpose:** This is the Single Source of Truth (SSOT) for all AI Agents working on KloudShop. It tracks the exact state of development at sprint level.
+> **⚠️ WARNING: THIS TRACKER IS ARCHIVED.**
+> **For Phase 7 and Phase 8 (UI Overhaul & Launch), please refer to `07b-agent-execution-tracker-ui-launch.md`.**
+>
+> **Purpose:** This is the Single Source of Truth (SSOT) for all AI Agents working on KloudShop. It tracks the exact state of development up to Phase 6.
 >
 > **Rule for Agents — MANDATORY SESSION START PROTOCOL:**
 > 1. Read `00-MASTER-PRD.md` first (vision, commandments, architecture, epic map).
