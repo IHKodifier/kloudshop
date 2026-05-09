@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/providers/settings_providers.dart';
 import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/providers/catalog_providers.dart';
+import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:intl/intl.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
@@ -111,8 +113,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         try {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Seeding demo data...')));
                           await ref.read(apiServiceProvider).seedDemoData();
+                          
+                          // Invalidate providers to show new data
+                          ref.invalidate(productsProvider);
+                          ref.invalidate(analyticsOverviewProvider);
+                          ref.invalidate(needsAttentionProvider);
+                          
                           if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Store seeded successfully! Refresh listing grids to see changes.')));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Store seeded successfully!')));
                         } catch (e) {
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));

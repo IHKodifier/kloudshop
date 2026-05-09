@@ -101,6 +101,20 @@ This sequence is ported directly from `04b-mvp-scope.md`. A "Sprint" in this con
 * **Sprint 15 (Analytics + AI):** E09 — `/analytics/*`. Revenue overview dashboard, Vertex AI demand forecasting (with data-sufficiency disclaimer), Looker Studio embed.
 * **Sprint 16 (Hygiene):** E19 — `/internal/schema-drift-check`, `/internal/gdpr-erasure`. Schema drift detection (nightly), GDPR erasure pipeline. E18 — canary deployment approval. SYS-18 — version detection (service worker + version.json banner).
 
+### PHASE 6 — Consumer Experience (Sprints 17–18)
+* **Goal:** High-performance, SEO-optimized storefront and frictionless guest checkout.
+* **Sprint 17 (Themes & CMS):** Refine content slots, draft/apply logic, and blog scheduling.
+* **Sprint 18 (Storefront Parity):** SSR rendering, RAG-powered search, and the "Zoomer" guest checkout flow.
+
+### PHASE 7 — Premium UI/UX "Surgical" Overhaul (Sprint 19)
+* **Goal:** Elevating the platform from skeletal MVP to premium "Designer" quality.
+* **Sprint 19 (Design Sprint):** Surgical replacement of all skeletal components with high-fidelity, premium UI elements. Full responsive audit and micro-animation injection across every screen.
+
+### PHASE 8 — Launch Readiness (Sprints 20–21)
+* **Goal:** Production hardening and platform activation.
+* **Sprint 20 (Infrastructure):** Custom domains, SSL, production terraform.
+* **Sprint 21 (Handover):** Stripe Live Mode (Post UK LLC), platform payouts, security audit, and Public Launch.
+
 ---
 
 ## 5. QA & UAT Gates

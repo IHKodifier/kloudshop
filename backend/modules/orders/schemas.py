@@ -133,6 +133,7 @@ class PaymentIntentRequest(BaseModel):
     items: List[OrderItemBase]
     currency: str = "usd"
     email: EmailStr
+    tenant_id: str
 
 class PaymentIntentResponse(BaseModel):
     client_secret: str
@@ -142,6 +143,7 @@ class PaymentIntentResponse(BaseModel):
 
 class OrderConfirmRequest(BaseModel):
     payment_intent_id: str
+    tenant_id: str
     items: List[OrderItemBase] # In real app, this might come from server-side cart
     shipping_name: str
     shipping_address1: str
@@ -161,3 +163,8 @@ class OrderRefundRequest(BaseModel):
     amount: Optional[Decimal] = None # NULL means full refund
     reason: Optional[str] = None
     refund_items: Optional[List[OrderItemBase]] = None
+
+class ReturnRequest(BaseModel):
+    reason: str
+    items: List[OrderItemBase]
+    description: Optional[str] = None

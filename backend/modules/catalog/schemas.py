@@ -70,6 +70,8 @@ class ProductBase(BaseModel):
     description: Optional[str] = None
     status: str = Field("draft", pattern="^(draft|active|archived)$")
     slug: str = Field(..., pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+    image_url: Optional[str] = None
+    images: List[str] = []
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     is_digital: bool = False
@@ -159,6 +161,8 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = Field(None, pattern="^(draft|active|archived)$")
     slug: Optional[str] = Field(None, pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+    image_url: Optional[str] = None
+    images: Optional[List[str]] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     is_digital: Optional[bool] = None

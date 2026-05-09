@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from shared.db import engine
 from contextlib import asynccontextmanager
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -16,7 +18,6 @@ async def lifespan(app: FastAPI):
                 
         import firebase_admin
         from firebase_admin import credentials
-        import os
         if not firebase_admin._apps:
             sa_path = "service_account.json"
             if not os.path.exists(sa_path):
@@ -85,9 +86,12 @@ from modules.feeds.router import router as feeds_router
 from modules.blog.router import router as blog_router
 from modules.i18n.router import router as i18n_router
 from modules.storefront.sitemap_router import router as sitemap_router
-from modules.analytics.router import router as analytics_router
+from modules.analytics.router import router as analytics_router 
 from modules.platform.hygiene_router import router as hygiene_router
+from modules.internal.media_router import router as media_router
+from modules.storefront.ssr_router import router as ssr_storefront_router
 
+# API Routes
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(provisioning_router, prefix="/api/v1/internal", tags=["Internal"])
 app.include_router(billing_router, prefix="/api/v1/billing", tags=["Billing"])
@@ -112,3 +116,20 @@ app.include_router(i18n_router, prefix="/api/v1/i18n", tags=["i18n"])
 app.include_router(sitemap_router, prefix="/api/v1/storefront", tags=["SEO"])
 app.include_router(analytics_router, prefix="/api/v1/analytics", tags=["Analytics"])
 app.include_router(hygiene_router, prefix="/api/v1/internal", tags=["Hygiene"])
+app.include_router(media_router, prefix="/api/v1/internal/media", tags=["Media"])
+
+# SSR Storefront Routes (Must be after API to avoid shadowing /api)
+app.include_router(ssr_storefront_router, tags=["Storefront SSR"])
+
+# Local Media Storage (Simulates GCS in Dev)
+media_path = os.path.join(os.getcwd(), "backend", "storage", "media")
+if not os.path.exists(media_path):
+    os.makedirs(media_path, exist_ok=True)
+app.mount("/media", StaticFiles(directory=media_path), name="media")
+
+# Static Files (Flutter Web Build)
+static_path = os.path.join(os.getcwd(), "frontend", "build", "web")
+if os.path.exists(static_path):
+    app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
+else:
+    print(f"WARNING: Static files not found at {static_path}. Storefront hydration will fail.")

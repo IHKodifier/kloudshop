@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/models/theme.dart';
 import 'package:kloudshop/models/theme_config.dart';
@@ -139,7 +140,7 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
       );
     } catch (e) {
       // Log error but keep local state for now
-      print('Failed to save theme draft: $e');
+      log('Failed to save theme draft: $e');
     }
   }
 

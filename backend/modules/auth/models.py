@@ -65,4 +65,6 @@ class ConsumerUser(Base):
     uid = Column(String, primary_key=True) # Firebase UID
     email = Column(String, nullable=False, unique=True, index=True)
     tenant_id = Column(String, nullable=False, index=True)
+    full_name = Column(String)
+    default_shipping_address = Column(JSON) # {address1, address2, city, state, zip, country}
     created_at = Column(DateTime, default=datetime.utcnow)

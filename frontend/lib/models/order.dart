@@ -72,6 +72,7 @@ class Order {
 
 class OrderItem {
   final String id;
+  final String variantId;
   final String title;
   final String? sku;
   final int quantity;
@@ -80,6 +81,7 @@ class OrderItem {
 
   OrderItem({
     required this.id,
+    required this.variantId,
     required this.title,
     this.sku,
     required this.quantity,
@@ -90,6 +92,7 @@ class OrderItem {
   factory OrderItem.fromJson(Map<String, dynamic> json) {
     return OrderItem(
       id: json['order_item_id'] as String,
+      variantId: json['variant_id'] as String,
       title: json['title'] as String,
       sku: json['sku'] as String?,
       quantity: json['quantity'] as int,

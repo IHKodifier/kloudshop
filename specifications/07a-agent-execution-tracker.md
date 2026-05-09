@@ -319,23 +319,34 @@
 | `wysiwyg_undo_test.dart` | PASS | 1 / 1 |
 
 #### Sprint 18 — Consumer Storefront Parity (E17)
-- [ ] **SSR Frontend:** High-performance public storefront rendering.
-- [ ] **RAG Search:** RAG-powered consultative search UI for consumers.
-- [ ] **Frictionless Checkout:** The "Zoomer" Guest Flow (Browse -> Cart -> Mock Payment).
-- [ ] **Post-Order Identity:** Post-purchase account creation (Consumer signs up after guest order).
-- [ ] **Consumer Self-Service:** UI for consumers to view order status and request refunds/returns.
+- [x] **SSR Frontend:** High-performance public storefront rendering.
+- [x] **RAG Search:** RAG-powered consultative search UI for consumers.
+- [x] **Frictionless Checkout:** The "Zoomer" Guest Flow (Browse -> Cart -> Mock Payment).
+- [x] **Post-Order Identity:** Post-purchase account creation (Consumer signs up after guest order).
+- [x] **Consumer Self-Service:** UI for consumers to view order status and request refunds/returns.
 - [ ] **Mobile Optimization:** Full responsive audit (Core Web Vitals compliance).
 
 ---
 
-## Phase 7 Checklist — Launch Readiness (Sprints 19–20)
+## Phase 7 Checklist — Premium UI/UX "Surgical" Overhaul (Sprint 19)
 
-#### Sprint 19 — Production Infrastructure (E19 + E20)
+#### Sprint 19 — Designer UI Implementation
+- [ ] **Core Brand Identity:** Replace all skeletal components with premium, design-system-compliant UI tokens.
+- [ ] **Merchant Dashboard:** Full high-fidelity overhaul of the admin interface (Dark mode, glassmorphism, fluid transitions).
+- [ ] **Storefront Themes:** Implement pixel-perfect designer versions of all default storefront templates.
+- [ ] **Micro-animations:** Inject subtle interaction feedback (Lottie, Framer Motion-style Flutter animations) across all screens.
+- [ ] **Visual Audit:** Manual "Surgical" pass on every single screen to ensure 100% parity with design taste.
+
+---
+
+## Phase 8 Checklist — Launch Readiness (Sprints 20–21)
+
+#### Sprint 20 — Production Infrastructure (E19 + E20)
 - [ ] **Custom Domains:** CNAME verification and SSL auto-provisioning.
 - [ ] **Platform Production:** Final terraform/scripts for `kloudshop-prod`.
 - [ ] **Final UAT:** End-to-end "Minimum Value Loop" (Sign up → Design → Sell) using Mock Mode.
 
-#### Sprint 20 — Production Handover (POST-LLC SETUP)
+#### Sprint 21 — Production Handover (POST-LLC SETUP)
 - [ ] **Stripe Live Mode:** Transition from Mock Billing to real Stripe once UK LLC is verified.
 - [ ] **Connect Platform:** Final Live integration for merchant payouts and transaction fee collection.
 - [ ] **Security Audit:** Pentesting RBAC and data isolation boundaries.

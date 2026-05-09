@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  
+  {# Primary Meta Tags #}
+  <title>{{ title or "KloudShop Storefront" }}</title>
+  <meta name="description" content="{{ description or "Premium commerce powered by KloudShop." }}">
+
+  {# OpenGraph / Facebook #}
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ url }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:image" content="{{ image }}">
+
+  {# Twitter #}
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="{{ url }}">
+  <meta property="twitter:title" content="{{ title }}">
+  <meta property="twitter:description" content="{{ description }}">
+  <meta property="twitter:image" content="{{ image }}">
+
+  {# JSON-LD Structured Data #}
+  {% if structured_data %}
+  <script type="application/ld+json">
+    {{ structured_data | tojson }}
+  </script>
+  {% endif %}
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="kloudshop">
+  
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <link rel="manifest" href="/manifest.json">
+
+  <style>
+    #skeleton {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .skeleton-text { background: #eee; height: 20px; margin-bottom: 10px; border-radius: 4px; }
+    .skeleton-title { width: 60%; height: 40px; margin-top: 40px; }
+    .skeleton-image { width: 100%; max-width: 500px; aspect-ratio: 1; background: #f5f5f5; border-radius: 8px; margin: 40px 0; }
+    .skeleton-content { width: 80%; height: 100px; }
+  </style>
+</head>
+<body>
+  {# This skeleton is visible while Flutter loads #}
+  <div id="skeleton">
+    {% if type == 'product' %}
+      <div class="skeleton-title" style="background: none; height: auto; text-align: center;">
+        <h1>{{ title }}</h1>
+        <p style="color: #666; font-size: 24px;">{{ price }}</p>
+      </div>
+      <div class="skeleton-image">
+        {% if image %}
+          <img src="{{ image }}" alt="{{ title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+        {% endif %}
+      </div>
+      <div class="skeleton-content" style="background: none; height: auto;">
+        <p>{{ description }}</p>
+      </div>
+    {% elif type == 'order_success' %}
+      <div class="skeleton-title" style="background: none; height: auto; text-align: center;">
+        <h1 style="color: #4CAF50;">Order Confirmed!</h1>
+        <p style="color: #666;">Order ID: #{{ order_id }}</p>
+      </div>
+      <div style="margin: 40px 0; text-align: center; background: #f9f9f9; padding: 30px; border-radius: 12px; width: 100%; max-width: 500px;">
+        <h3>Want to track your order easily?</h3>
+        <p>Create an account now to save your details for next time.</p>
+        <a href="/storefront/register?order_id={{ order_id }}&email={{ customer_email }}" 
+           style="display: inline-block; background: #000; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+          Create Account
+        </a>
+      </div>
+    {% else %}
+      <div class="skeleton-title"></div>
+      <div class="skeleton-image"></div>
+      <div class="skeleton-text" style="width: 80%"></div>
+      <div class="skeleton-text" style="width: 70%"></div>
+    {% endif %}
+    <p style="margin-top: 40px; color: #999;">Loading storefront...</p>
+  </div>
+
+  <script src="/flutter_bootstrap.js" async></script>
+</body>
+</html>

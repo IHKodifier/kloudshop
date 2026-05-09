@@ -38,3 +38,6 @@ class ConsumerRegistration(BaseModel):
     password: str
     tenant_id: str
     display_name: Optional[str] = None
+    full_name: Optional[str] = None
+    shipping_address: Optional[dict] = None
+    order_id: Optional[str] = None # Link this order to the new consumer

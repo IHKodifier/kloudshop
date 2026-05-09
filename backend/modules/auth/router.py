@@ -292,7 +292,7 @@ async def register_consumer(
             fb_user = auth.create_user(
                 email=payload.email,
                 password=payload.password,
-                display_name=payload.display_name
+                display_name=payload.display_name or payload.full_name
             )
 
         # 2. Set Custom Claims
@@ -303,13 +303,38 @@ async def register_consumer(
         }
         auth.set_custom_user_claims(fb_user.uid, claims)
 
-        # 3. Update DB
-        new_consumer = ConsumerUser(
-            uid=fb_user.uid,
-            email=payload.email,
-            tenant_id=payload.tenant_id
-        )
-        db.add(new_consumer)
+        # 3. Create/Update Consumer In DB
+        result = await db.execute(select(ConsumerUser).where(ConsumerUser.uid == fb_user.uid))
+        consumer = result.scalar_one_or_none()
+        
+        if not consumer:
+            consumer = ConsumerUser(
+                uid=fb_user.uid,
+                email=payload.email,
+                tenant_id=payload.tenant_id,
+                full_name=payload.full_name,
+                default_shipping_address=payload.shipping_address
+            )
+            db.add(consumer)
+        else:
+            # Update existing if needed
+            if payload.full_name:
+                consumer.full_name = payload.full_name
+            if payload.shipping_address:
+                consumer.default_shipping_address = payload.shipping_address
+        
+        await db.flush()
+
+        # 4. Link Order if provided
+        if payload.order_id:
+            from ..orders.models import Order
+            order_result = await db.execute(
+                select(Order).where(Order.order_id == payload.order_id, Order.tenant_id == payload.tenant_id)
+            )
+            order = order_result.scalar_one_or_none()
+            if order:
+                order.consumer_id = fb_user.uid
+        
         await db.commit()
 
         return {"uid": fb_user.uid, "email": fb_user.email, "status": "registered"}

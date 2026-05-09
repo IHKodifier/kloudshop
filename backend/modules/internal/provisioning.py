@@ -48,9 +48,13 @@ async def provision_tenant(
     Provisions isolated GCP resources and SQL schema for a new tenant.
     This is an internal idempotent operation.
     """
+    import re
+    tenant_id = re.sub(r'[^a-z0-9]', '-', tenant_id.lower())
+    tenant_id = re.sub(r'-+', '-', tenant_id)
+    
     from shared.db import engine
     is_sqlite = "sqlite" in engine.url.drivername
-    
+    env = "dev"  # Default environment
     
     # 0. Safety Check: Does this user already own a store?
     from modules.auth.models import StaffRoleAssignment
@@ -68,35 +72,39 @@ async def provision_tenant(
 
     logs = []
     
-    # 1. Connectivity Test (Peace of Mind)
-    try:
-        test_log = await verify_gcp_connectivity()
-        logs.append(test_log)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # 1. Connectivity Test (Skip in dev for speed)
+    if env != "dev":
+        try:
+            test_log = await verify_gcp_connectivity()
+            logs.append(test_log)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+    else:
+        logs.append("GCP Connectivity check skipped (Dev Mode).")
 
-    # 2. Run GCP Provisioning Script
-    script_ext = "ps1" if os.name == "nt" else "sh"
-    shell_cmd = "powershell" if os.name == "nt" else "bash"
-    script_path = os.path.join(os.getcwd(), "..", "infrastructure", f"provision_tenant.{script_ext}")
-    
-    env = "dev" 
-    
-    try:
-        cmd = [shell_cmd]
-        if os.name == "nt":
-            cmd.extend(["-ExecutionPolicy", "Bypass", "-File", script_path, "-TenantId", tenant_id, "-Environment", env])
-        else:
-            cmd.extend([script_path, tenant_id, env])
-            
-        def run_script():
-            return subprocess.run(cmd, capture_output=True, text=True, check=True)
-            
-        result = await anyio.to_thread.run_sync(run_script)
-        result_stdout = result.stdout
-        logs.append(f"GCP Script Output: {result_stdout}")
-    except subprocess.CalledProcessError as e:
-        raise HTTPException(status_code=500, detail=f"GCP Provisioning failed: {e.stderr}")
+    # 2. Run GCP Provisioning Script (Skip in dev for speed)
+    if env != "dev":
+        script_ext = "ps1" if os.name == "nt" else "sh"
+        shell_cmd = "powershell" if os.name == "nt" else "bash"
+        script_path = os.path.join(os.getcwd(), "..", "infrastructure", f"provision_tenant.{script_ext}")
+        
+        try:
+            cmd = [shell_cmd]
+            if os.name == "nt":
+                cmd.extend(["-ExecutionPolicy", "Bypass", "-File", script_path, "-TenantId", tenant_id, "-Environment", env])
+            else:
+                cmd.extend([script_path, tenant_id, env])
+                
+            def run_script():
+                return subprocess.run(cmd, capture_output=True, text=True, check=True)
+                
+            result = await anyio.to_thread.run_sync(run_script)
+            result_stdout = result.stdout
+            logs.append(f"GCP Script Output: {result_stdout}")
+        except subprocess.CalledProcessError as e:
+            raise HTTPException(status_code=500, detail=f"GCP Provisioning failed: {e.stderr}")
+    else:
+        logs.append("GCP Infrastructure scripts skipped (Dev Mode).")
 
     # 3. Create PostgreSQL Schema
     schema_name = f"tenant_{tenant_id}"
@@ -177,6 +185,26 @@ async def provision_tenant(
         # We don't fail the whole request if claims fail (idempotency), but we log it
         logs.append(f"WARNING: Identity sync failed: {str(e)}")
 
+    # 7. Create Brand Profile (for Public Storefront)
+    try:
+        from modules.storefront.models import BrandProfile
+        brand_res = await db.execute(select(BrandProfile).where(BrandProfile.tenant_id == tenant_id))
+        brand_profile = brand_res.scalars().first()
+        if not brand_profile:
+            brand_profile = BrandProfile(
+                tenant_id=tenant_id,
+                brand_name=tenant_id.replace('-', ' ').title(), # e.g. "enigma-stores" -> "Enigma Stores"
+                slug=tenant_id,
+                is_published=True,
+                primary_color="#000000",
+                secondary_color="#FFFFFF"
+            )
+            db.add(brand_profile)
+            await db.commit()
+            logs.append(f"Public Brand Profile created for {tenant_id}.")
+    except Exception as e:
+        logs.append(f"WARNING: Brand Profile creation failed: {str(e)}")
+
     return {
         "status": "provisioned",
         "tenant_id": tenant_id,
@@ -246,6 +274,7 @@ async def seed_demo_data(
             title="Demo Product",
             slug="demo-product",
             status="active",
+            image_url="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80", # Premium T-shirt
             created_by=user.uid
         )
         db.add(product)

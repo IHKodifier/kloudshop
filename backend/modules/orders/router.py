@@ -12,14 +12,14 @@ from datetime import datetime
 from decimal import Decimal
 
 from shared.db import get_db
-from shared.auth import UserClaims
+from shared.auth import UserClaims, validate_token
 from shared.rbac import has_permissions
 from .models import Order, OrderItem, OrderEvent, OrderNote
 from ..inventory.models import StockLocation, Inventory
 from .schemas import (
     OrderResponse, PaymentIntentRequest, PaymentIntentResponse, OrderConfirmRequest,
     StockLocationResponse, StockLocationCreate, InventoryResponse,
-    OrderFulfilRequest, OrderRefundRequest
+    OrderFulfilRequest, OrderRefundRequest, ReturnRequest
 )
 from ..catalog.models import Variant, Product
 
@@ -106,7 +106,11 @@ async def create_payment_intent(
     intent = await stripe_client.create_payment_intent(
         amount=amount_cents,
         currency=request.currency,
-        metadata={"email": request.email, "tax_total": str(tax_total)}
+        metadata={
+            "email": request.email, 
+            "tenant_id": request.tenant_id,
+            "tax_total": str(tax_total)
+        }
     )
     
     return PaymentIntentResponse(
@@ -131,26 +135,32 @@ async def confirm_order(
         raise HTTPException(status_code=400, detail="Payment not successful")
     
     # 2. Get Metadata (In real Stripe, this comes from the intent)
-    email = "customer@example.com" # Mocked
-    tenant_id = "t_mock" # This would be derived from the storefront context/tenant_id path param
+    # We use the email from the request or metadata
+    email = intent.get("metadata", {}).get("email", "guest@example.com")
+    tenant_id = request.tenant_id
     
     # 3. Create Order Number
     order_number = f"KS-{uuid.uuid4().hex[:6].upper()}"
     
     # 4. Atomic Inventory Update & Order Creation
-    # We use a nested transaction or rely on the DI session
     try:
         # Find default stock location for tenant
         loc_result = await db.execute(
             select(StockLocation).where(
+                StockLocation.tenant_id == tenant_id,
                 StockLocation.is_default == True,
                 StockLocation.is_active == True
             )
         )
         location = loc_result.scalars().first()
         if not location:
-            # Fallback to any active location if no default
-            loc_result = await db.execute(select(StockLocation).where(StockLocation.is_active == True))
+            # Fallback to any active location for this tenant
+            loc_result = await db.execute(
+                select(StockLocation).where(
+                    StockLocation.tenant_id == tenant_id,
+                    StockLocation.is_active == True
+                )
+            )
             location = loc_result.scalars().first()
         
         if not location:
@@ -160,7 +170,7 @@ async def confirm_order(
             order_number=order_number,
             tenant_id=tenant_id,
             email=email,
-            consumer_id=None, # DERIVE from auth if logged in
+            consumer_id=None, # In v1.1, we'd check if user exists
             payment_status="paid",
             fulfilment_status="unfulfilled",
             currency=intent["currency"].upper(),
@@ -491,10 +501,89 @@ async def create_location(
     await db.refresh(new_loc)
     return new_loc
 
-@router.get("/locations", response_model=List[StockLocationResponse])
-async def list_locations(
-    db: AsyncSession = Depends(get_db),
-    user: UserClaims = has_permissions(["inventory:read"])
-):
     result = await db.execute(select(StockLocation).where(StockLocation.is_active == True))
     return result.scalars().all()
+
+# --- Consumer Self-Service Endpoints ---
+
+@router.get("/consumer/orders", response_model=List[OrderResponse])
+async def list_consumer_orders(
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    """
+    List all orders for the authenticated consumer.
+    """
+    query = select(Order).options(
+        selectinload(Order.items),
+        selectinload(Order.events),
+        selectinload(Order.notes)
+    ).where(Order.consumer_id == user.uid)
+    
+    result = await db.execute(query.order_by(Order.placed_at.desc()))
+    return result.scalars().all()
+
+@router.get("/consumer/orders/{order_id}", response_model=OrderResponse)
+async def get_consumer_order(
+    order_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    """
+    Get details for a specific order owned by the consumer.
+    """
+    result = await db.execute(
+        select(Order).options(
+            selectinload(Order.items),
+            selectinload(Order.events),
+            selectinload(Order.notes)
+        ).where(
+            Order.order_id == order_id,
+            Order.consumer_id == user.uid
+        )
+    )
+    order = result.scalars().first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found or access denied")
+    return order
+
+@router.post("/consumer/orders/{order_id}/return", response_model=OrderResponse)
+async def request_order_return(
+    order_id: str,
+    data: ReturnRequest,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    """
+    Request a return for an order. Logs an event for merchant review.
+    """
+    result = await db.execute(
+        select(Order).where(Order.order_id == order_id, Order.consumer_id == user.uid)
+    )
+    order = result.scalars().first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found or access denied")
+    
+    if order.fulfilment_status != "delivered" and order.fulfilment_status != "fulfilled":
+         raise HTTPException(status_code=400, detail="Only delivered orders can be returned")
+
+    # Create Order Event for return request
+    item_titles = [i.variant_id for i in data.items]
+    event = OrderEvent(
+        order_id=order.order_id,
+        event_type="return_requested",
+        description=f"Return requested by consumer. Reason: {data.reason}. Description: {data.description or 'N/A'}. Items: {', '.join(item_titles)}",
+        actor_id=user.uid
+    )
+    db.add(event)
+    await db.commit()
+    
+    # Re-fetch with relationships
+    result = await db.execute(
+        select(Order).options(
+            selectinload(Order.items),
+            selectinload(Order.events),
+            selectinload(Order.notes)
+        ).where(Order.order_id == order_id)
+    )
+    return result.scalars().first()

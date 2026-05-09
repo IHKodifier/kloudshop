@@ -6,7 +6,6 @@ import 'package:kloudshop/models/theme.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/providers/theme_providers.dart';
 import 'package:kloudshop/views/themes_view.dart';
-import 'package:lucide_flutter/lucide_flutter.dart';
 
 void main() {
   testWidgets('ThemesView renders list and shows active status', (tester) async {

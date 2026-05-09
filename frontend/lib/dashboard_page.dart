@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:kloudshop/models/analytics.dart';
 import 'package:kloudshop/models/user_claims.dart';
 import 'package:kloudshop/services/auth_service.dart';
+import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/views/billing_view.dart';
 import 'package:kloudshop/views/blog_view.dart';
 import 'package:kloudshop/views/compliance_view.dart';
@@ -106,7 +107,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return Consumer(
       builder: (context, ref, child) {
         final theme = Theme.of(context);
-        return NavigationRail(
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: NavigationRail(
           selectedIndex: _selectedIndex,
           onDestinationSelected: (int index) {
             setState(() {
@@ -168,6 +175,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: settingsAsync.when(
                         data: (settings) => Container(
+                          width: 200, // Explicitly constrain width to prevent overflow
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surfaceContainerLow,
@@ -184,10 +192,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                   letterSpacing: 1.2,
                                   color: theme.primaryColor,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
                               Text(
                                 (settings.config['sector'] as String?)?.toUpperCase() ?? 'MERCHANT',
                                 style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
                             ],
                           ),
@@ -203,9 +215,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ),
             ],
           ),
-          trailing: _isRailExtended ? SizedBox(
-            width: 240,
-            child: Column(
+          trailing: _isRailExtended ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 224, // 240 - 16 padding
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const Divider(),
@@ -228,10 +242,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   title: const Text('Sign Out'),
                   onTap: () => ref.read(authServiceProvider).signOut(),
                 ),
-                const SizedBox(height: 16),
-              ],
+                ],
+              ),
             ),
-          ) : Column(
+          )
+        : Column(
             children: [
               const Divider(),
               Consumer(
@@ -301,10 +316,15 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               label: Text('Settings'),
             ),
           ],
-        );
-      },
-    );
-  }
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 
   Widget _buildMainContent() {
     switch (_selectedIndex) {

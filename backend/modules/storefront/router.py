@@ -173,10 +173,13 @@ async def get_storefront_page(
         raise HTTPException(status_code=404, detail="Page not found")
     return page
 
+from shared.vector_search import get_vector_provider
+
 @router.get("/{tenant}/search")
 async def storefront_search(
     tenant: str,
     q: str,
+    consultative: bool = False,
     db: AsyncSession = Depends(get_db)
 ):
     profile_result = await db.execute(
@@ -185,17 +188,51 @@ async def storefront_search(
     profile = profile_result.scalar_one_or_none()
     tenant_id = profile.tenant_id if profile else tenant
     
-    # Simple keyword search (fallback for pgvector)
+    # 1. Fetch products from DB
     result = await db.execute(
         select(Product)
         .where(
             Product.tenant_id == tenant_id,
-            Product.status == "active",
-            (Product.title.ilike(f"%{q}%")) | (Product.description.ilike(f"%{q}%"))
+            Product.status == "active"
         )
         .options(selectinload(Product.variants))
     )
-    return result.scalars().all()
+    products = result.scalars().all()
+    
+    if not consultative:
+        # Simple keyword search fallback
+        filtered = [
+            p for p in products 
+            if q.lower() in p.title.lower() or q.lower() in (p.description or "").lower()
+        ]
+        return filtered
+
+    # 2. Vector Search (Consultative)
+    provider = get_vector_provider()
+    query_embedding = await provider.get_embedding(q)
+    
+    # Prepare collection with embeddings (generating on-the-fly for dev demo)
+    collection = []
+    for p in products:
+        # In a real app, p.embedding would be a column in the DB
+        text_to_embed = f"{p.title} {p.description or ''}"
+        p_embedding = await provider.get_embedding(text_to_embed)
+        
+        collection.append({
+            "product": p,
+            "embedding": p_embedding
+        })
+        
+    search_results = await provider.search_similar(query_embedding, collection, top_k=10)
+    
+    # Format response
+    return [
+        {
+            **item["product"].__dict__,
+            "search_score": item["similarity"]
+        }
+        for item in search_results
+    ]
 
 @router.get("/{tenant}/blog")
 async def list_storefront_blog(

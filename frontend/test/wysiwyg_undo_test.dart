@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/views/wysiwyg_view.dart';
-import 'package:kloudshop/providers/theme_providers.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/widgets/storefront_preview.dart';

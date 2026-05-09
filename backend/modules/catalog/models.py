@@ -20,6 +20,10 @@ class Product(Base):
     # Status
     status = Column(String(16), nullable=False, default='draft') # draft | active | archived
     
+    # Media
+    image_url = Column(Text) # Main image
+    images = Column(JSON, nullable=False, default=[]) # Gallery
+    
     # SEO
     slug = Column(String(255), nullable=False)
     meta_title = Column(Text)

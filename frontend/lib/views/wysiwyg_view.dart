@@ -63,7 +63,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                config?.themeId?.toUpperCase() ?? 'THEME EDITOR',
+                config?.themeId.toUpperCase() ?? 'THEME EDITOR',
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               const Text(
@@ -247,7 +247,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
           Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 4),
           DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             items: options.map((opt) => DropdownMenuItem(value: opt, child: Text(opt, style: const TextStyle(fontSize: 13)))).toList(),
             onChanged: (val) => ref.read(activeThemeConfigProvider.notifier).updateLocalSlot(key, val ?? ''),
             decoration: InputDecoration(

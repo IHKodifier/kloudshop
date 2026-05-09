@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from typing import List, Dict
-from datetime import datetime
+from datetime import datetime 
 
-from shared.db import get_db
-from shared.auth import UserClaims, validate_token
+from shared.db import get_db 
+from shared.auth import UserClaims, validate_token 
 from shared.rbac import has_permissions
-from .models import OnboardingSession, ImportMapping
+from .models import OnboardingSession, ImportMapping 
 from .schemas import (
     SignupRequest, RegionSelectionRequest, 
     ImportAnalysisRequest, ImportAnalysisResponse,
@@ -15,6 +15,17 @@ from .schemas import (
 )
 
 router = APIRouter(tags=["Onboarding"])
+
+@router.get("/check-availability")
+async def check_tenant_availability(
+    tenant_id: str,
+    db: AsyncSession = Depends(get_db)
+):
+    """Check if a tenant ID (slug) is available."""
+    from modules.platform.models import Tenant
+    result = await db.execute(select(Tenant).where(Tenant.id == tenant_id.lower()))
+    exists = result.scalar_one_or_none() is not None
+    return {"available": not exists, "tenant_id": tenant_id}
 
 @router.get("/status", response_model=OnboardingStatusResponse)
 async def get_onboarding_status(

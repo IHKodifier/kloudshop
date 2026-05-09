@@ -42,12 +42,18 @@ def generate_product_jsonld(product: Any, variants: List[Any], tenant_id: str, b
             "url": f"{base_url}/products/{product.slug}"
         })
 
+    images = []
+    if hasattr(product, 'images') and product.images:
+        images = product.images
+    elif hasattr(product, 'image_url') and product.image_url:
+        images = [product.image_url]
+
     return {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": product.title,
         "description": product.description,
-        "image": product.images if hasattr(product, 'images') else [],
+        "image": images,
         "sku": variants[0].sku if variants else None,
         "brand": {
             "@type": "Brand",
@@ -55,3 +61,20 @@ def generate_product_jsonld(product: Any, variants: List[Any], tenant_id: str, b
         },
         "offers": offers
     }
+
+def generate_meta_tags(
+    title: str,
+    description: str,
+    url: str,
+    image: str = None,
+    site_name: str = "KloudShop"
+) -> Dict[str, str]:
+    """Generates a standard set of meta tags for HTML rendering."""
+    tags = {
+        "title": title,
+        "description": description,
+        "url": url,
+        "image": image or f"{url}/logo.png", # Fallback
+        "site_name": site_name
+    }
+    return tags

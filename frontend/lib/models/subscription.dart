@@ -3,7 +3,7 @@ enum SubscriptionTier { free, dtc, b2b, hybrid }
 enum SubscriptionStatus {
   trialing,
   active,
-  past_due,
+  pastDue,
   canceled,
   incomplete,
 }
@@ -75,7 +75,7 @@ class SubscriptionModel {
       case 'active':
         return SubscriptionStatus.active;
       case 'past_due':
-        return SubscriptionStatus.past_due;
+        return SubscriptionStatus.pastDue;
       case 'canceled':
         return SubscriptionStatus.canceled;
       case 'incomplete':

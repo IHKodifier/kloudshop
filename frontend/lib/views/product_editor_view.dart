@@ -4,6 +4,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/models/catalog.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/providers/catalog_providers.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProductEditorView extends ConsumerStatefulWidget {
   final Product? product; // null if creating new
@@ -20,8 +21,10 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
   late TextEditingController _descriptionController;
   late TextEditingController _metaTitleController;
   late TextEditingController _metaDescriptionController;
+  late TextEditingController _imageUrlController;
   late String _status;
   late bool _isDigital;
+  bool _isUploading = false;
   
   final List<Map<String, dynamic>> _variants = [];
 
@@ -33,6 +36,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     _descriptionController = TextEditingController(text: widget.product?.description ?? '');
     _metaTitleController = TextEditingController(text: widget.product?.metaTitle ?? '');
     _metaDescriptionController = TextEditingController(text: widget.product?.metaDescription ?? '');
+    _imageUrlController = TextEditingController(text: widget.product?.imageUrl ?? '');
     
     _status = widget.product?.status ?? 'draft';
     _isDigital = widget.product?.isDigital ?? false;
@@ -84,6 +88,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     _descriptionController.dispose();
     _metaTitleController.dispose();
     _metaDescriptionController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -109,6 +114,8 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       'meta_description': _metaDescriptionController.text,
       'status': _status,
       'is_digital': _isDigital,
+      'image_url': _imageUrlController.text,
+      'images': [], // Gallery support coming later
       'variants': _variants.map((v) {
         final Map<String, dynamic> vMap = {
           'sku': v['sku'],
@@ -171,6 +178,8 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildGeneralInfo(theme),
+              const SizedBox(height: 32),
+              _buildMediaSection(theme),
               const SizedBox(height: 32),
               _buildSeoSection(theme),
               const SizedBox(height: 32),
@@ -288,7 +297,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    initialValue: _status,
+                    value: _status,
                     decoration: const InputDecoration(
                       labelText: 'Status',
                       border: OutlineInputBorder(),
@@ -440,5 +449,103 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
         ),
       ],
     );
+  }
+  Widget _buildMediaSection(ThemeData theme) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: theme.dividerColor),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(LucideIcons.image, size: 20),
+                const SizedBox(width: 8),
+                Text('Media', style: theme.textTheme.titleLarge),
+              ],
+            ),
+            const SizedBox(height: 24),
+            TextFormField(
+              controller: _imageUrlController,
+              decoration: InputDecoration(
+                labelText: 'Main Product Image URL',
+                hintText: 'https://example.com/image.jpg',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(LucideIcons.link, size: 18),
+                suffixIcon: IconButton(
+                  onPressed: _isUploading ? null : _pickAndUploadImage,
+                  icon: _isUploading 
+                    ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Icon(LucideIcons.upload, size: 18),
+                  tooltip: 'Upload from computer',
+                ),
+              ),
+              onChanged: (v) => setState(() {}), // Trigger preview refresh
+            ),
+            if (_imageUrlController.text.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  color: theme.colorScheme.surfaceContainerLow,
+                  child: Image.network(
+                    _imageUrlController.text,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(LucideIcons.imageOff, size: 48, color: Colors.grey),
+                          const SizedBox(height: 8),
+                          Text('Invalid Image URL', style: TextStyle(color: Colors.grey.shade600)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final picker = ImagePicker();
+    final file = await picker.pickImage(source: ImageSource.gallery);
+    if (file == null) return;
+
+    setState(() => _isUploading = true);
+    try {
+      final bytes = await file.readAsBytes();
+      final url = await ref.read(apiServiceProvider).uploadMedia(bytes, file.name);
+      
+      // Update the URL controller with the new public path
+      // Note: We need to prepend the actual backend host for local preview to work
+      _imageUrlController.text = "http://127.0.0.1:8000$url";
+      setState(() {});
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Image uploaded successfully')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload failed: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
+    }
   }
 }

@@ -7,6 +7,8 @@ class Product {
   final bool isDigital;
   final String? metaTitle;
   final String? metaDescription;
+  final String? imageUrl;
+  final List<String> images;
   final DateTime createdAt;
   final List<ProductVariant> variants;
 
@@ -19,6 +21,8 @@ class Product {
     required this.isDigital,
     this.metaTitle,
     this.metaDescription,
+    this.imageUrl,
+    this.images = const [],
     required this.createdAt,
     required this.variants,
   });
@@ -33,6 +37,8 @@ class Product {
       isDigital: json['is_digital'] as bool? ?? false,
       metaTitle: json['meta_title'] as String?,
       metaDescription: json['meta_description'] as String?,
+      imageUrl: json['image_url'] as String?,
+      images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
       createdAt: DateTime.parse(json['created_at'] as String),
       variants: (json['variants'] as List<dynamic>?)
               ?.map((v) => ProductVariant.fromJson(v as Map<String, dynamic>))

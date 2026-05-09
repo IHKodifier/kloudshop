@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/models/catalog.dart';
 import 'package:kloudshop/providers/catalog_providers.dart';
-import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/views/product_editor_view.dart';
 
 class CatalogView extends ConsumerStatefulWidget {

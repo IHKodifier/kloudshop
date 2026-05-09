@@ -8,6 +8,9 @@ import 'package:kloudshop/providers/auth_providers.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/dashboard_page.dart';
 import 'package:kloudshop/provisioning_page.dart';
+import 'package:kloudshop/views/consumer_registration_view.dart';
+import 'package:kloudshop/views/consumer_dashboard_view.dart';
+import 'package:kloudshop/views/consumer_order_details_view.dart';
 
 class KloudShopApp extends ConsumerWidget {
   const KloudShopApp({super.key});
@@ -23,8 +26,27 @@ class KloudShopApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
       home: const AuthGate(),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/storefront/register') {
+          final args = settings.arguments as Map<String, String?>?;
+          return MaterialPageRoute(
+            builder: (context) => ConsumerRegistrationView(
+              orderId: args?['order_id'],
+              email: args?['email'],
+            ),
+          );
+        }
+        if (settings.name == '/storefront/orders/details') {
+          final orderId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) => ConsumerOrderDetailsView(orderId: orderId),
+          );
+        }
+        return null;
+      },
       routes: {
         '/dashboard': (context) => const AuthGate(),
+        '/storefront/dashboard': (context) => const ConsumerDashboardView(),
       },
       builder: (context, child) {
         ErrorWidget.builder = (FlutterErrorDetails details) {
