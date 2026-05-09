@@ -15,7 +15,7 @@ async def client():
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from shared.db import Base
-from modules.auth.models import Invitation, StaffUser
+from modules.auth.models import Invitation, StaffUser, StaffRoleAssignment, B2BInvitation, BuyerUser, ConsumerUser
 from modules.platform.models import Tenant
 from modules.billing.models import Subscription
 from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
@@ -53,6 +53,7 @@ async def db_session():
             for table in metadata.tables.values():
                 table.schema = None
         await conn.run_sync(strip_schema, Base.metadata)
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
         
     async with SharedAsyncSessionLocal() as session:

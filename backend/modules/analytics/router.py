@@ -8,6 +8,7 @@ from modules.inventory.models import Inventory, StockLocation
 from modules.b2b.models import B2BAccount
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
+import random
 
 router = APIRouter(tags=["Analytics"])
 
@@ -56,7 +57,6 @@ async def get_revenue_overview(
 
     # Mock all 6 metrics if empty
     if not sales_history:
-        import random
         for i in range(120, -1, -1): # Extended to 120 days for 90D view
             dt = datetime.utcnow() - timedelta(days=i)
             date_str = dt.strftime("%Y-%m-%d")

@@ -64,7 +64,7 @@ async def test_analytics_needs_attention(client: AsyncClient, db_session, auth_o
     db_session.add(order)
     
     # 2. Low Stock
-    location = StockLocation(name="Main", location_type="warehouse")
+    location = StockLocation(tenant_id=tenant_id, name="Main", location_type="warehouse")
     db_session.add(location)
     await db_session.flush()
     
@@ -77,6 +77,7 @@ async def test_analytics_needs_attention(client: AsyncClient, db_session, auth_o
     await db_session.flush()
     
     inventory = Inventory(
+        tenant_id=tenant_id,
         variant_id=variant.variant_id,
         stock_location_id=location.stock_location_id,
         quantity_on_hand=5,
