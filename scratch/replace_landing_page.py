@@ -1,6 +1,20 @@
-import 'package:flutter/material.dart';
+"""
+Utility script to replace the contents of `landing_page.dart`.
+This script injects the 8-section conversion-first architecture (based on the landing page blueprint)
+into the KloudShop frontend.
+
+Usage: Run this script directly (`python replace_landing_page.py`) to overwrite the dart file.
+"""
+import os
+
+# Target file to overwrite with the new layout
+file_path = r"e:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\landing_page.dart"
+
+# The new Flutter code for the landing page containing all 8 modular sections
+new_content = """import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/providers/theme_provider.dart';
 import 'package:kloudshop/login_page.dart';
 
@@ -46,6 +60,7 @@ class KloudShopLandingPage extends ConsumerWidget {
                             ),
                           ),
                         ],
+                        
                       ),
                     ),
                   ),
@@ -262,7 +277,7 @@ class _SuccessSection extends StatelessWidget {
               children: [
                 _MigrationStep(icon: LucideIcons.search, title: 'Detected Shopify', isActive: true, theme: theme),
                 Icon(LucideIcons.arrowRight, color: theme.colorScheme.onSurfaceVariant),
-                _MigrationStep(icon: LucideIcons.package, title: 'Read 847 Products', isActive: true, theme: theme),
+                _MigrationStep(icon: LucideIcons.packageIcon, title: 'Read 847 Products', isActive: true, theme: theme),
                 Icon(LucideIcons.arrowRight, color: theme.colorScheme.onSurfaceVariant),
                 _MigrationStep(icon: LucideIcons.fileSearch, title: 'Preserved SEO', isActive: true, theme: theme),
                 Icon(LucideIcons.arrowRight, color: theme.colorScheme.onSurfaceVariant),
@@ -665,7 +680,7 @@ class _SecondaryCTASection extends StatelessWidget {
         child: Column(
           children: [
             SelectableText(
-              "Afraid of the migration headache? Don't be.",
+              'Afraid of the migration headache? Don\'t be.',
               style: theme.textTheme.displayMedium?.copyWith(fontWeight: FontWeight.w800, color: theme.colorScheme.onPrimary),
               textAlign: TextAlign.center,
             ),
@@ -792,3 +807,8 @@ class _FooterLink extends StatelessWidget {
     );
   }
 }
+"""
+
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(new_content)
+print("Updated landing_page.dart successfully!")
