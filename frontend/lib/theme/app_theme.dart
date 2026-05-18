@@ -89,7 +89,7 @@ class AppColors extends ThemeExtension<AppColors> {
 class AppTheme {
   // Light Theme Constants
   static const Color brandTeal900 = Color(0xFF134E4A);
-  static const Color brandTeal500 = Color(0xFF14B8A6);
+  static const Color brandTeal500 = Color(0xFF124B47);
   static const Color brandEmerald500 = Color(0xFF10B981);
   static const Color brandEmerald600 = Color(0xFF059669);
   static const Color brandEmerald50 = Color(0xFFECFDF5);

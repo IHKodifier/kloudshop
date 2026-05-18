@@ -45,13 +45,13 @@ Teal highlight bridges the two for interactive elements.
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `brand-teal-900` | `#134E4A` | Sidebar, navigation background, primary surface authority |
-| `brand-teal-500` | `#14B8A6` | Secondary CTA, highlight, hover on dark surfaces |
+| `brand-teal-500` | `#124B47` | Secondary CTA, highlight, hover on dark surfaces |
 | `brand-emerald-500` | `#10B981` | Success states, growth indicators, positive metrics |
 | `brand-emerald-600` | `#059669` | Hover on emerald elements, pressed state |
 | `brand-emerald-50` | `#ECFDF5` | Emerald tint — success banners, positive backgrounds |
 | `brand-teal-50` | `#F0FDFA` | Teal tint — selected states, active highlights |
 
-**Primary CTA colour:** `brand-teal-500` (`#14B8A6`) — used for all primary
+**Primary CTA colour:** `brand-teal-500` (`#124B47`) — used for all primary
 interactive elements in the admin. Sits on white content backgrounds with strong
 contrast and is visually distinct from both Shopify green and Stripe purple-grey.
 
@@ -72,13 +72,13 @@ contrast and is visually distinct from both Shopify green and Stripe purple-grey
 
 | Token | Light Mode Value | Purpose |
 |-------|-----------------|---------|
-| `color-action-primary` | `brand-teal-500` (#14B8A6) | All primary buttons and interactive elements |
+| `color-action-primary` | `brand-teal-500` (#124B47) | All primary buttons and interactive elements |
 | `color-action-primary-hover` | `#0D9488` | Hover on primary actions (teal-600 equivalent) |
 | `color-action-primary-pressed` | `#0F766E` | Pressed/active state on primary |
 | `color-nav-background` | `brand-teal-900` (#134E4A) | Sidebar and navigation surface |
 | `color-nav-text` | `#FFFFFF` | Navigation labels on dark sidebar |
 | `color-nav-text-muted` | `#99C4C2` | Inactive nav items on dark sidebar |
-| `color-nav-active` | `brand-teal-500` (#14B8A6) | Active nav item highlight |
+| `color-nav-active` | `brand-teal-500` (#124B47) | Active nav item highlight |
 | `color-surface-page` | `neutral-50` (#F9FAFB) | Main page background |
 | `color-surface-card` | `neutral-0` (#FFFFFF) | Cards, panels, modals |
 | `color-surface-raised` | `neutral-0` (#FFFFFF) | Dropdowns, popovers above cards |
@@ -95,7 +95,7 @@ contrast and is visually distinct from both Shopify green and Stripe purple-grey
 | `color-warning-surface` | `#FFFBEB` | Warning banners |
 | `color-error` | `#EF4444` | Errors, destructive actions, failed states |
 | `color-error-surface` | `#FEF2F2` | Error banners, validation backgrounds |
-| `color-info` | `brand-teal-500` (#14B8A6) | Informational states, tips |
+| `color-info` | `brand-teal-500` (#124B47) | Informational states, tips |
 | `color-info-surface` | `brand-teal-50` (#F0FDFA) | Info banners |
 
 ### Dark Mode Tokens
@@ -115,7 +115,7 @@ dark and requires no change. The content area switches to a dark neutral scale.
 | `color-text-secondary` | `#6B7280` | `#94A3B8` |
 | `color-text-placeholder` | `#9CA3AF` | `#64748B` |
 | `color-nav-background` | `#134E4A` | `#134E4A` (unchanged) |
-| `color-action-primary` | `#14B8A6` | `#14B8A6` (unchanged) |
+| `color-action-primary` | `#124B47` | `#124B47` (unchanged) |
 | `color-success` | `#10B981` | `#34D399` |
 | `color-warning` | `#F59E0B` | `#FBBF24` |
 | `color-error` | `#EF4444` | `#F87171` |
@@ -270,7 +270,7 @@ rendered via Flutter's `SvgPicture` widget.
 
 | Variant | Background | Text | Border | Usage |
 |---------|-----------|------|--------|-------|
-| Primary | `color-action-primary` (#14B8A6) | `#FFFFFF` | none | Main CTA — maximum one per view |
+| Primary | `color-action-primary` (#124B47) | `#FFFFFF` | none | Main CTA — maximum one per view |
 | Secondary | `color-surface-card` | `color-action-primary` | `color-action-primary` 1.5px | Secondary action alongside primary |
 | Ghost | transparent | `color-text-body` | none | Tertiary actions, icon-only buttons |
 | Danger | `color-error` (#EF4444) | `#FFFFFF` | none | Destructive — delete, revoke, suspend |
@@ -470,7 +470,7 @@ storefront component animations are disabled regardless of theme.json config.
 |---------|-------|-----------|
 | `#111827` on `#FFFFFF` | 16.1:1 | ✅ AAA |
 | `#111827` on `#F9FAFB` | 15.3:1 | ✅ AAA |
-| `#FFFFFF` on `#14B8A6` (primary button) | 4.6:1 | ✅ AA |
+| `#FFFFFF` on `#124B47` (primary button) | 4.6:1 | ✅ AA |
 | `#FFFFFF` on `#134E4A` (sidebar) | 10.9:1 | ✅ AAA |
 | `#6B7280` on `#FFFFFF` (muted text) | 4.6:1 | ✅ AA |
 | `#FFFFFF` on `#EF4444` (danger button) | 4.5:1 | ✅ AA |
@@ -701,7 +701,7 @@ Horizon hex values. The mapping below shows exactly how our tokens translate to 
 
 | Our Token | M3 ColorScheme Role | Hex (Light) |
 |-----------|-------------------|-------------|
-| `color-action-primary` | `primary` | `#14B8A6` |
+| `color-action-primary` | `primary` | `#124B47` |
 | white on primary button | `onPrimary` | `#FFFFFF` |
 | `brand-teal-50` | `primaryContainer` | `#F0FDFA` |
 | `brand-teal-900` text | `onPrimaryContainer` | `#134E4A` |
@@ -818,7 +818,7 @@ class AppColors extends ThemeExtension<AppColors> {
     navBackground:        Color(0xFF134E4A), // brand-teal-900
     onNavBackground:      Color(0xFFFFFFFF),
     onNavBackgroundMuted: Color(0xFF99C4C2),
-    navActive:            Color(0xFF14B8A6), // brand-teal-500
+    navActive:            Color(0xFF124B47), // brand-teal-500
     textBody:             Color(0xFF374151), // neutral-700
     textPlaceholder:      Color(0xFF9CA3AF), // neutral-400
     borderSubtle:         Color(0xFFF3F4F6), // neutral-100
@@ -834,7 +834,7 @@ class AppColors extends ThemeExtension<AppColors> {
     navBackground:        Color(0xFF134E4A), // unchanged in dark
     onNavBackground:      Color(0xFFFFFFFF),
     onNavBackgroundMuted: Color(0xFF99C4C2),
-    navActive:            Color(0xFF14B8A6),
+    navActive:            Color(0xFF124B47),
     textBody:             Color(0xFFCBD5E1),
     textPlaceholder:      Color(0xFF64748B),
     borderSubtle:         Color(0xFF1E293B),
@@ -845,7 +845,7 @@ class AppColors extends ThemeExtension<AppColors> {
 
 const _lightColorScheme = ColorScheme(
   brightness:              Brightness.light,
-  primary:                 Color(0xFF14B8A6), // brand-teal-500
+  primary:                 Color(0xFF124B47), // brand-teal-500
   onPrimary:               Color(0xFFFFFFFF),
   primaryContainer:        Color(0xFFF0FDFA), // brand-teal-50
   onPrimaryContainer:      Color(0xFF134E4A),
@@ -875,12 +875,12 @@ const _lightColorScheme = ColorScheme(
   scrim:                   Color(0xFF111827),
   inverseSurface:          Color(0xFF1E293B),
   onInverseSurface:        Color(0xFFF1F5F9),
-  inversePrimary:          Color(0xFF14B8A6),
+  inversePrimary:          Color(0xFF124B47),
 );
 
 const _darkColorScheme = ColorScheme(
   brightness:              Brightness.dark,
-  primary:                 Color(0xFF14B8A6),
+  primary:                 Color(0xFF124B47),
   onPrimary:               Color(0xFFFFFFFF),
   primaryContainer:        Color(0xFF0F766E),
   onPrimaryContainer:      Color(0xFFCCFBF1),
@@ -968,7 +968,7 @@ ThemeData buildLightTheme() => ThemeData(
   ),
   filledButtonTheme: FilledButtonThemeData(
     style: FilledButton.styleFrom(
-      backgroundColor: const Color(0xFF14B8A6),
+      backgroundColor: const Color(0xFF124B47),
       foregroundColor: const Color(0xFFFFFFFF),
       minimumSize:     const Size(0, 40),
       padding:         const EdgeInsets.symmetric(horizontal: 16),
@@ -978,9 +978,9 @@ ThemeData buildLightTheme() => ThemeData(
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: const Color(0xFF14B8A6),
+      foregroundColor: const Color(0xFF124B47),
       minimumSize:     const Size(0, 40),
-      side:            const BorderSide(color: Color(0xFF14B8A6), width: 1.5),
+      side:            const BorderSide(color: Color(0xFF124B47), width: 1.5),
       shape:           RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       textStyle:       _textTheme.labelLarge,
     ),
@@ -1007,7 +1007,7 @@ ThemeData buildLightTheme() => ThemeData(
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
-      borderSide:   const BorderSide(color: Color(0xFF14B8A6), width: 2),
+      borderSide:   const BorderSide(color: Color(0xFF124B47), width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
@@ -1066,7 +1066,7 @@ ThemeData buildDarkTheme() => buildLightTheme().copyWith(
     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     border:        OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF334155), width: 1.5)),
     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF334155), width: 1.5)),
-    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF14B8A6), width: 2)),
+    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF124B47), width: 2)),
     labelStyle:    _textTheme.labelLarge?.copyWith(color: const Color(0xFFCBD5E1)),
     hintStyle:     _textTheme.bodyMedium?.copyWith(color: const Color(0xFF64748B)),
   ),

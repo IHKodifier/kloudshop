@@ -171,7 +171,7 @@ CREATE TABLE brand_profiles (
 
     -- ── Colour Palette (fast-access denormalisation) ──────────
     primary_color            CHAR(7),
-    -- Brand primary colour as hex (e.g. '#14B8A6'). Kept in sync with
+    -- Brand primary colour as hex (e.g. '#124B47'). Kept in sync with
     -- the active theme's color_tokens.primary on theme apply.
 
     secondary_color          CHAR(7),
