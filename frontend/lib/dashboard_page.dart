@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -526,13 +527,20 @@ class _AlertItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.15 : 0.05),
+    return HoverScale(
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.2)),
-      ),
+        child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.15)),
+          ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -546,6 +554,9 @@ class _AlertItem extends StatelessWidget {
             ],
           ),
         ],
+      ),
+        ),
+      ),
       ),
     );
   }
@@ -561,20 +572,27 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
+    return HoverScale(
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.dividerColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+        child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: theme.cardColor.withValues(alpha: theme.brightness == Brightness.dark ? 0.6 : 0.8),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.5)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -592,6 +610,9 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(value, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
         ],
+      ),
+        ),
+      ),
       ),
     );
   }

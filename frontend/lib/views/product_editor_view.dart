@@ -21,7 +21,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
   late TextEditingController _descriptionController;
   late TextEditingController _metaTitleController;
   late TextEditingController _metaDescriptionController;
-  late TextEditingController _imageUrlController;
+  List<String> _images = [];
   late String _status;
   late bool _isDigital;
   bool _isUploading = false;
@@ -36,7 +36,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     _descriptionController = TextEditingController(text: widget.product?.description ?? '');
     _metaTitleController = TextEditingController(text: widget.product?.metaTitle ?? '');
     _metaDescriptionController = TextEditingController(text: widget.product?.metaDescription ?? '');
-    _imageUrlController = TextEditingController(text: widget.product?.imageUrl ?? '');
+    _images = List.from(widget.product?.images ?? []);
     
     _status = widget.product?.status ?? 'draft';
     _isDigital = widget.product?.isDigital ?? false;
@@ -88,7 +88,6 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     _descriptionController.dispose();
     _metaTitleController.dispose();
     _metaDescriptionController.dispose();
-    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -114,8 +113,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       'meta_description': _metaDescriptionController.text,
       'status': _status,
       'is_digital': _isDigital,
-      'image_url': _imageUrlController.text,
-      'images': [], // Gallery support coming later
+      'images': _images,
       'variants': _variants.map((v) {
         final Map<String, dynamic> vMap = {
           'sku': v['sku'],
@@ -463,55 +461,89 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(LucideIcons.image, size: 20),
-                const SizedBox(width: 8),
-                Text('Media', style: theme.textTheme.titleLarge),
-              ],
-            ),
-            const SizedBox(height: 24),
-            TextFormField(
-              controller: _imageUrlController,
-              decoration: InputDecoration(
-                labelText: 'Main Product Image URL',
-                hintText: 'https://example.com/image.jpg',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(LucideIcons.link, size: 18),
-                suffixIcon: IconButton(
+                Row(
+                  children: [
+                    const Icon(LucideIcons.image, size: 20),
+                    const SizedBox(width: 8),
+                    Text('Media Gallery', style: theme.textTheme.titleLarge),
+                  ],
+                ),
+                ElevatedButton.icon(
                   onPressed: _isUploading ? null : _pickAndUploadImage,
                   icon: _isUploading 
                     ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(LucideIcons.upload, size: 18),
-                  tooltip: 'Upload from computer',
+                  label: const Text('Add Image'),
                 ),
-              ),
-              onChanged: (v) => setState(() {}), // Trigger preview refresh
+              ],
             ),
-            if (_imageUrlController.text.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  height: 200,
-                  width: double.infinity,
+            const SizedBox(height: 24),
+            if (_images.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerLow,
-                  child: Image.network(
-                    _imageUrlController.text,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(LucideIcons.imageOff, size: 48, color: Colors.grey),
-                          const SizedBox(height: 8),
-                          Text('Invalid Image URL', style: TextStyle(color: Colors.grey.shade600)),
-                        ],
-                      ),
-                    ),
-                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: theme.dividerColor, style: BorderStyle.solid),
                 ),
+                child: Column(
+                  children: [
+                    Icon(LucideIcons.imagePlus, size: 48, color: theme.hintColor),
+                    const SizedBox(height: 16),
+                    Text('No images added yet', style: TextStyle(color: theme.hintColor)),
+                  ],
+                ),
+              )
+            else
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1,
+                ),
+                itemCount: _images.length,
+                itemBuilder: (context, index) {
+                  return Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          color: theme.colorScheme.surfaceContainerLow,
+                          child: Image.network(
+                            _images[index],
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => const Icon(LucideIcons.imageOff, color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: CircleAvatar(
+                          radius: 14,
+                          backgroundColor: Colors.black54,
+                          child: IconButton(
+                            icon: const Icon(LucideIcons.x, size: 14, color: Colors.white),
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              setState(() {
+                                _images.removeAt(index);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-            ],
           ],
         ),
       ),
@@ -530,7 +562,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       
       // Update the URL controller with the new public path
       // Note: We need to prepend the actual backend host for local preview to work
-      _imageUrlController.text = "http://127.0.0.1:8000$url";
+      _images.add("http://127.0.0.1:8000$url");
       setState(() {});
       
       if (mounted) {

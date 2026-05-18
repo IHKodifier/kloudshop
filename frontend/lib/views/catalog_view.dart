@@ -175,12 +175,20 @@ class _ProductCard extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: theme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
+                  image: product.images.isNotEmpty 
+                      ? DecorationImage(
+                          image: NetworkImage(product.images.first),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
-                child: Icon(
-                  product.isDigital ? LucideIcons.fileDigit : LucideIcons.package,
-                  color: theme.primaryColor,
-                  size: 28,
-                ),
+                child: product.images.isEmpty 
+                    ? Icon(
+                        product.isDigital ? LucideIcons.fileDigit : LucideIcons.package,
+                        color: theme.primaryColor,
+                        size: 28,
+                      )
+                    : null,
               ),
               const SizedBox(width: 16),
               Expanded(

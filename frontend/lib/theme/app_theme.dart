@@ -105,25 +105,25 @@ class AppTheme {
   static const Color neutral900 = Color(0xFF111827);
 
   static TextTheme _buildTextTheme(TextTheme base, Color baseColor, Color mutedColor) {
-    final baseStyle = GoogleFonts.inter(color: baseColor);
-    final mutedStyle = GoogleFonts.inter(color: mutedColor);
+    final displayStyle = GoogleFonts.outfit(color: baseColor);
+    final bodyStyle = GoogleFonts.inter(color: mutedColor);
 
     return base.copyWith(
-      displayLarge: baseStyle.copyWith(fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: -0.72),
-      displayMedium: baseStyle.copyWith(fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: -0.6),
-      displaySmall: baseStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: -0.48),
-      headlineLarge: baseStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
-      headlineMedium: baseStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-      headlineSmall: baseStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-      titleLarge: baseStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
-      titleMedium: baseStyle.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
-      titleSmall: baseStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
-      bodyLarge: mutedStyle.copyWith(fontSize: 16),
-      bodyMedium: mutedStyle.copyWith(fontSize: 14),
-      bodySmall: mutedStyle.copyWith(fontSize: 12),
-      labelLarge: baseStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
-      labelMedium: mutedStyle.copyWith(fontSize: 12, fontWeight: FontWeight.w500),
-      labelSmall: mutedStyle.copyWith(fontSize: 10, fontWeight: FontWeight.w500),
+      displayLarge: displayStyle.copyWith(fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: -0.72),
+      displayMedium: displayStyle.copyWith(fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: -0.6),
+      displaySmall: displayStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: -0.48),
+      headlineLarge: displayStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+      headlineMedium: displayStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+      headlineSmall: displayStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+      titleLarge: displayStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
+      titleMedium: displayStyle.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+      titleSmall: displayStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
+      bodyLarge: bodyStyle.copyWith(fontSize: 16),
+      bodyMedium: bodyStyle.copyWith(fontSize: 14),
+      bodySmall: bodyStyle.copyWith(fontSize: 12),
+      labelLarge: displayStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
+      labelMedium: bodyStyle.copyWith(fontSize: 12, fontWeight: FontWeight.w500),
+      labelSmall: bodyStyle.copyWith(fontSize: 10, fontWeight: FontWeight.w500),
     );
   }
 

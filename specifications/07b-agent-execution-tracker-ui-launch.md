@@ -30,13 +30,13 @@
 > Do NOT build simple minimum viable product screens here. Aesthetics are PARAMOUNT.
 
 ### Sprint 19 — Designer UI Implementation
-- [ ] **Dashboard Overview Restore:** Restore the charts and cards in the Dashboard Overview that were missing or flickering. Ensure they correctly reflect seeded demo data.
-- [ ] **Product Gallery Multi-image:** Expand the single `image_url` support to a full multi-image `List<String>` gallery in Catalog/Product Editor.
-- [ ] **Core Brand Identity:** Replace all skeletal components with premium, design-system-compliant UI tokens.
-- [ ] **Merchant Dashboard:** Full high-fidelity overhaul of the admin interface (Dark mode, glassmorphism, fluid transitions).
+- [x] **Dashboard Overview Restore:** Restore the charts and cards in the Dashboard Overview that were missing or flickering. Ensure they correctly reflect seeded demo data.
+- [x] **Product Gallery Multi-image:** Expand the single `image_url` support to a full multi-image `List<String>` gallery in Catalog/Product Editor.
+- [x] **Core Brand Identity:** Replace all skeletal components with premium, design-system-compliant UI tokens.
+- [x] **Merchant Dashboard:** Full high-fidelity overhaul of the admin interface (Dark mode, glassmorphism, fluid transitions).
 - [ ] **Storefront Themes:** Implement pixel-perfect designer versions of all default storefront templates.
-- [ ] **Micro-animations:** Inject subtle interaction feedback (Lottie, Framer Motion-style Flutter animations) across all screens.
-- [ ] **Visual Audit:** Manual "Surgical" pass on every single screen to ensure 100% parity with design taste.
+- [x] **Micro-animations:** Inject subtle interaction feedback (Lottie, Framer Motion-style Flutter animations) across all screens.
+- [x] **Visual Audit:** Manual "Surgical" pass on every single screen to ensure 100% parity with design taste.
 
 ---
 
