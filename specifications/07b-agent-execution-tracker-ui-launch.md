@@ -33,10 +33,19 @@
 - [x] **Dashboard Overview Restore:** Restore the charts and cards in the Dashboard Overview that were missing or flickering. Ensure they correctly reflect seeded demo data.
 - [x] **Product Gallery Multi-image:** Expand the single `image_url` support to a full multi-image `List<String>` gallery in Catalog/Product Editor.
 - [x] **Core Brand Identity:** Replace all skeletal components with premium, design-system-compliant UI tokens.
-- [x] **Merchant Dashboard:** Full high-fidelity overhaul of the admin interface (Dark mode, glassmorphism, fluid transitions).
+- [x] **Merchant Dashboard Overhaul:** Full high-fidelity overhaul of the admin interface (Dark mode, glassmorphism, fluid transitions).
+- [x] **Landing Page Overhaul:** Complete conversion-focused 8-section architecture with Alpine Emerald styling.
+- [ ] **Premium UI Upgrade - Core Views:** Apply "Alpine Emerald" styling, glassmorphism, Outfit/Inter typography, and `HoverScale` micro-animations to all remaining views:
+  - [ ] Onboarding / Provisioning Page
+  - [ ] Catalog View
+  - [ ] Orders View
+  - [ ] Customers View
+  - [ ] Settings View
+  - [ ] Billing View
+  - [ ] Blog View
+  - [ ] Themes View
 - [ ] **Storefront Themes:** Implement pixel-perfect designer versions of all default storefront templates.
-- [x] **Micro-animations:** Inject subtle interaction feedback (Lottie, Framer Motion-style Flutter animations) across all screens.
-- [x] **Visual Audit:** Manual "Surgical" pass on every single screen to ensure 100% parity with design taste.
+- [ ] **Global Visual Audit:** Manual "Surgical" pass on every single screen to ensure 100% parity with design taste.
 
 ---
 

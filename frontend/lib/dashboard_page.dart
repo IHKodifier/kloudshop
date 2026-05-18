@@ -21,6 +21,7 @@ import 'package:kloudshop/providers/settings_providers.dart';
 import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/views/themes_view.dart';
 import 'package:kloudshop/widgets/feature_gate.dart';
+import 'package:kloudshop/widgets/hover_scale.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final UserClaims claims;
