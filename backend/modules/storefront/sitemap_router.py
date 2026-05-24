@@ -6,7 +6,7 @@ from shared.db import get_db
 from modules.catalog.models import Product, Collection
 from modules.blog.models import BlogPost
 from .models import BrandProfile
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(tags=["SEO"])
 
@@ -45,17 +45,17 @@ async def get_sitemap(
     
     # Products
     for p in products:
-        lastmod = p.updated_at.date().isoformat() if p.updated_at else datetime.utcnow().date().isoformat()
+        lastmod = p.updated_at.date().isoformat() if p.updated_at else datetime.now(timezone.utc).date().isoformat()
         xml_content += f'  <url><loc>{base_url}/products/{p.slug}</loc><lastmod>{lastmod}</lastmod><priority>0.8</priority></url>\n'
         
     # Collections
     for c in collections:
-        lastmod = c.updated_at.date().isoformat() if c.updated_at else datetime.utcnow().date().isoformat()
+        lastmod = c.updated_at.date().isoformat() if c.updated_at else datetime.now(timezone.utc).date().isoformat()
         xml_content += f'  <url><loc>{base_url}/collections/{c.slug}</loc><lastmod>{lastmod}</lastmod><priority>0.6</priority></url>\n'
         
     # Blog Posts
     for b in posts:
-        lastmod = b.updated_at.date().isoformat() if b.updated_at else datetime.utcnow().date().isoformat()
+        lastmod = b.updated_at.date().isoformat() if b.updated_at else datetime.now(timezone.utc).date().isoformat()
         xml_content += f'  <url><loc>{base_url}/blog/{b.slug}</loc><lastmod>{lastmod}</lastmod><priority>0.5</priority></url>\n'
         
     xml_content += '</urlset>'

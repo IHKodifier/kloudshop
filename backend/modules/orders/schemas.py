@@ -133,7 +133,7 @@ class PaymentIntentRequest(BaseModel):
     items: List[OrderItemBase]
     currency: str = "usd"
     email: EmailStr
-    tenant_id: str
+    tenant_id: Optional[str] = None
 
 class PaymentIntentResponse(BaseModel):
     client_secret: str
@@ -143,7 +143,7 @@ class PaymentIntentResponse(BaseModel):
 
 class OrderConfirmRequest(BaseModel):
     payment_intent_id: str
-    tenant_id: str
+    tenant_id: Optional[str] = None
     items: List[OrderItemBase] # In real app, this might come from server-side cart
     shipping_name: str
     shipping_address1: str

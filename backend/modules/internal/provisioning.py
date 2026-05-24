@@ -9,10 +9,10 @@ from alembic import command
 
 from shared.auth import UserClaims, validate_token
 from shared.rbac import has_permissions
-from shared.db import get_db
+from shared.db import get_db, engine
 from modules.platform.models import Tenant
 from sqlalchemy import select, text
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 router = APIRouter()
@@ -52,16 +52,16 @@ async def provision_tenant(
     tenant_id = re.sub(r'[^a-z0-9]', '-', tenant_id.lower())
     tenant_id = re.sub(r'-+', '-', tenant_id)
     
-    from shared.db import engine
     is_sqlite = "sqlite" in engine.url.drivername
-    env = "dev"  # Default environment
+    env = os.getenv("KLOUDSHOP_ENV", "dev")  # Read from environment
     
-    # 0. Safety Check: Does this user already own a store?
+    # 0. Safety Check: Does this user already own a DIFFERENT store?
     from modules.auth.models import StaffRoleAssignment
     existing_assignment = await db.execute(
         select(StaffRoleAssignment).where(
             StaffRoleAssignment.staff_user_id == user.uid,
-            StaffRoleAssignment.is_owner == True
+            StaffRoleAssignment.is_owner == True,
+            StaffRoleAssignment.tenant_id != tenant_id
         )
     )
     if existing_assignment.scalar_one_or_none():
@@ -175,7 +175,7 @@ async def provision_tenant(
                 tenant_id=tenant_id,
                 roles=["owner"],
                 is_owner=True,
-                accepted_at=datetime.utcnow()
+                accepted_at=datetime.now(timezone.utc)
             )
             db.add(assignment)
             await db.commit()
@@ -312,7 +312,7 @@ async def seed_demo_data(
     ]
     
     orders_created = 0
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     
     for i in range(10):
         email, name = random.choice(mock_customers)

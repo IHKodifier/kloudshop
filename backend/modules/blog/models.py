@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 from sqlalchemy import Column, String, Text, Boolean, Integer, DateTime, ForeignKey, Table, CheckConstraint
 from sqlalchemy.orm import relationship
@@ -33,8 +33,8 @@ class BlogPost(Base):
     is_featured = Column(Boolean, nullable=False, default=False)
     allow_comments = Column(Boolean, nullable=False, default=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     categories = relationship("BlogCategory", secondary="blog_post_categories", back_populates="posts")
@@ -58,8 +58,8 @@ class BlogPostTranslation(Base):
     
     is_auto_translated = Column(Boolean, nullable=False, default=True)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     post = relationship("BlogPost", back_populates="translations")
 
@@ -74,8 +74,8 @@ class BlogCategory(Base):
     description = Column(String(1000))
     sort_order = Column(Integer, nullable=False, default=0)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     posts = relationship("BlogPost", secondary="blog_post_categories", back_populates="categories")
     translations = relationship("BlogCategoryTranslation", back_populates="category", cascade="all, delete-orphan")
@@ -93,8 +93,8 @@ class BlogCategoryTranslation(Base):
     
     is_auto_translated = Column(Boolean, nullable=False, default=True)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     category = relationship("BlogCategory", back_populates="translations")
 
@@ -107,8 +107,8 @@ class BlogTag(Base):
     name = Column(String(100), nullable=False)
     slug = Column(String(100), nullable=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     posts = relationship("BlogPost", secondary="blog_post_tags", back_populates="tags")
 

@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 
 logger = logging.getLogger("analytics")
@@ -20,7 +20,7 @@ async def track_event(
     event = {
         "tenant_id": tenant_id,
         "event_type": event_type,
-        "event_timestamp": datetime.utcnow().isoformat(),
+        "event_timestamp": datetime.now(timezone.utc).isoformat(),
         "visitor_id": visitor_id,
         "user_id": user_id,
         "data": data

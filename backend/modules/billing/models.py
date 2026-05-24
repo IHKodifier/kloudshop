@@ -1,6 +1,6 @@
 import uuid
 import enum
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, Boolean
 from shared.db import Base, engine
 
@@ -35,9 +35,9 @@ class Subscription(Base):
     current_period_start = Column(DateTime, nullable=True)
     current_period_end = Column(DateTime, nullable=True)
     
-    trial_start = Column(DateTime, default=datetime.utcnow)
+    trial_start = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     trial_end = Column(DateTime, nullable=True)
     
     cancel_at_period_end = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

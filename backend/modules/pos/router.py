@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, func
 from sqlalchemy.orm import selectinload
 from decimal import Decimal
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from shared.db import get_db
@@ -103,7 +103,7 @@ async def create_pos_order(
         
         # 3. Deduct stock
         inventory.quantity_on_hand -= item_in.quantity
-        inventory.last_sold_at = datetime.utcnow()
+        inventory.last_sold_at = datetime.now(timezone.utc)
         
         # 4. Prepare OrderItem
         item_subtotal = variant.price * item_in.quantity
@@ -144,7 +144,7 @@ async def create_pos_order(
         subtotal=total_subtotal,
         grand_total=total_subtotal,
         currency=order_in.currency,
-        placed_at=datetime.utcnow()
+        placed_at=datetime.now(timezone.utc)
     )
     db.add(order)
     await db.flush() # Get order_id

@@ -34,6 +34,7 @@ from modules.themes.models import Theme, ThemeConfiguration
 from modules.features.models import Feature, TenantFeatureActivation, TenantFeatureConfig, FeatureRequest, FeatureRequestVote
 from modules.ai.models import BrandVoiceProfile, AICopywriterLog
 from modules.export.models import ExportJob
+from modules.channels.models import ChannelConnection, ChannelSyncLog
 from modules.pricing.models import PricingRule
 from modules.b2b.models import B2BAccount, PriceList, PriceListItem, ApprovalWorkflow, ApprovalRequest, B2BInvoice
 from shared.db import get_db, engine, AsyncSessionLocal as SharedAsyncSessionLocal
@@ -48,12 +49,19 @@ async def override_get_db(db_session):
 async def db_session():
     # Use the shared engine which is already configured for testing (:memory:)
     # Create tables
+    from sqlalchemy import text
+    def safe_drop_all(conn, metadata):
+        conn.execute(text("PRAGMA foreign_keys = OFF;"))
+        for table in metadata.tables.values():
+            conn.execute(text(f"DROP TABLE IF EXISTS {table.name}"))
+        conn.execute(text("PRAGMA foreign_keys = ON;"))
+
     async with engine.begin() as conn:
         def strip_schema(conn, metadata):
             for table in metadata.tables.values():
                 table.schema = None
         await conn.run_sync(strip_schema, Base.metadata)
-        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(safe_drop_all, Base.metadata)
         await conn.run_sync(Base.metadata.create_all)
         
     async with SharedAsyncSessionLocal() as session:
@@ -63,7 +71,7 @@ async def db_session():
     # We don't dispose the shared engine here as it's used across tests
     # But we should probably clean up tables after each test if needed
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(safe_drop_all, Base.metadata)
 
 @pytest.fixture
 def mock_firebase_user():

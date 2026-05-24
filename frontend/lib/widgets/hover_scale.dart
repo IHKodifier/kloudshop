@@ -9,7 +9,7 @@ class HoverScale extends StatefulWidget {
   const HoverScale({
     Key? key,
     required this.child,
-    this.scale = 1.02,
+    this.scale = 1.05,
     this.duration = const Duration(milliseconds: 200),
     this.hitTestBehavior = HitTestBehavior.opaque,
   }) : super(key: key);

@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Text, Boolean, Integer, Float, DateTime, 
 from sqlalchemy.orm import relationship
 from shared.db import Base, engine
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class PricingRule(Base):
     __tablename__ = "pricing_rules"
@@ -25,7 +25,7 @@ class PricingRule(Base):
     start_date = Column(DateTime)
     end_date = Column(DateTime)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     created_by = Column(String)
 
     __table_args__ = (

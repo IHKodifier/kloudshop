@@ -22,7 +22,7 @@ from ..catalog.schemas import ProductResponse
 from shared.notifications import send_b2b_approval_notification
 from shared.stripe_mock import stripe_mock
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 router = APIRouter(prefix="/b2b", tags=["B2B Operations"])
 
@@ -63,7 +63,7 @@ async def invite_buyer(
         tenant_id=user.tenant_id,
         account_status='invited',
         invited_by=user.uid,
-        invited_at=datetime.utcnow()
+        invited_at=datetime.now(timezone.utc)
     )
     db.add(new_account)
     await db.commit()
@@ -254,7 +254,7 @@ async def approve_b2b_order(
     
     request.status = 'approved'
     request.decided_by = user.uid
-    request.decided_at = datetime.utcnow()
+    request.decided_at = datetime.now(timezone.utc)
     
     # 1. Update order status
     order_res = await db.execute(select(Order).where(Order.order_id == request.order_id))
@@ -273,7 +273,7 @@ async def approve_b2b_order(
     buyer_res = await db.execute(select(B2BAccount).where(B2BAccount.b2b_account_id == request.b2b_account_id))
     buyer = buyer_res.scalar_one_or_none()
     if buyer:
-        due_date = datetime.utcnow() + timedelta(days=buyer.net_terms_days or 30)
+        due_date = datetime.now(timezone.utc) + timedelta(days=buyer.net_terms_days or 30)
         # In a real app, this would be a background task calling Stripe
         stripe_invoice = await stripe_mock.create_invoice(
             amount=int(request.order_grand_total * 100),
@@ -315,7 +315,7 @@ async def decline_b2b_order(
     
     request.status = 'declined'
     request.decided_by = user.uid
-    request.decided_at = datetime.utcnow()
+    request.decided_at = datetime.now(timezone.utc)
     request.decline_reason = decline_reason
     
     # Update order status
@@ -459,16 +459,16 @@ async def place_b2b_order(
         order_grand_total=grand_total,
         currency_code="USD",
         status=status,
-        requested_at=datetime.utcnow()
+        requested_at=datetime.now(timezone.utc)
     )
     db.add(approval_req)
     
     if status == 'auto_approved':
-        approval_req.decided_at = datetime.utcnow()
+        approval_req.decided_at = datetime.now(timezone.utc)
         approval_req.decided_by = "system"
         
         # Trigger Invoice Generation for Auto-Approved orders
-        due_date = datetime.utcnow() + timedelta(days=buyer.net_terms_days or 30)
+        due_date = datetime.now(timezone.utc) + timedelta(days=buyer.net_terms_days or 30)
         stripe_invoice = await stripe_mock.create_invoice(
             amount=int(grand_total * 100),
             currency="USD",

@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Text, Boolean, Integer, SmallInteger, Num
 from sqlalchemy.orm import relationship
 from shared.db import Base, engine
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ChannelConnection(Base):
     __tablename__ = "channel_connections"
@@ -16,8 +16,8 @@ class ChannelConnection(Base):
     credentials_secret_id = Column(String) # Reference to Secret Manager
     
     last_sync_at = Column(DateTime)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint(channel_type.in_(['tiktok', 'instagram', 'facebook', 'google']), name='channel_type_check'),
@@ -36,5 +36,5 @@ class ChannelSyncLog(Base):
     items_failed = Column(Integer, default=0)
     error_message = Column(Text)
     
-    started_at = Column(DateTime, default=datetime.utcnow)
+    started_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime)

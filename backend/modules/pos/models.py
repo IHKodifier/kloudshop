@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, ForeignKey
 from shared.db import Base
 
@@ -15,5 +15,5 @@ class StaffLocationAssignment(Base):
     staff_user_id = Column(String, nullable=False, index=True) # Firebase UID
     stock_location_id = Column(String, ForeignKey("stock_locations.stock_location_id", ondelete="CASCADE"), nullable=False)
     
-    assigned_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    assigned_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from modules.auth.models import StaffRoleAssignment, B2BInvitation
 from sqlalchemy import select
 
@@ -85,7 +85,7 @@ async def test_b2b_buyer_registration_success(client: AsyncClient, db_session, m
         tenant_id="t_abc",
         buyer_account_id="corp_xyz",
         token=token,
-        expires_at=datetime.utcnow() + timedelta(days=7)
+        expires_at=datetime.now(timezone.utc) + timedelta(days=7)
     )
     db_session.add(invitation)
     await db_session.commit()

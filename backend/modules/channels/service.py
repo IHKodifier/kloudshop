@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from .models import ChannelConnection, ChannelSyncLog
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ChannelAdapter(ABC):
     @abstractmethod
@@ -180,7 +180,7 @@ class ChannelSyncService:
             log.status = result.get("status", "success")
             log.items_synced = result.get("items_synced", 0)
             log.items_failed = result.get("items_failed", 0)
-            log.completed_at = datetime.utcnow()
+            log.completed_at = datetime.now(timezone.utc)
             
             connection.last_sync_at = log.completed_at
             await self.db.commit()
@@ -189,6 +189,6 @@ class ChannelSyncService:
         except Exception as e:
             log.status = "failure"
             log.error_message = str(e)
-            log.completed_at = datetime.utcnow()
+            log.completed_at = datetime.now(timezone.utc)
             await self.db.commit()
             return {"error": str(e)}

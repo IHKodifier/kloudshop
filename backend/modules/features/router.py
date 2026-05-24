@@ -7,7 +7,7 @@ from shared.auth import UserClaims
 from shared.rbac import has_permissions
 from . import models, schemas
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(tags=["Features"])
 
@@ -71,14 +71,14 @@ async def activate_feature(
     
     if activation:
         activation.is_active = True
-        activation.activated_at = datetime.utcnow()
+        activation.activated_at = datetime.now(timezone.utc)
         activation.activated_by = user.uid
     else:
         activation = models.TenantFeatureActivation(
             tenant_id=user.tenant_id,
             feature_id=feature_id,
             is_active=True,
-            activated_at=datetime.utcnow(),
+            activated_at=datetime.now(timezone.utc),
             activated_by=user.uid
         )
         db.add(activation)

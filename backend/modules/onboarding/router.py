@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from typing import List, Dict
-from datetime import datetime 
+from datetime import datetime, timezone 
 
 from shared.db import get_db 
 from shared.auth import UserClaims, validate_token 
@@ -50,6 +50,9 @@ async def get_tenant_details(
     user: UserClaims = Depends(validate_token)
 ):
     """Fetch tenant identity and configuration for the current merchant."""
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
     from modules.platform.models import Tenant
     result = await db.execute(
         select(Tenant).where(Tenant.id == user.tenant_id)
@@ -74,12 +77,13 @@ async def get_tenant_details(
     return {
         "id": tenant.id,
         "name": tenant.name,
-        "created_at": tenant.created_at.isoformat(),
+        "created_at": tenant.created_at.isoformat() if tenant.created_at else None,
         "gcp_project_id": tenant.gcp_project_id,
         "gcp_bucket_name": tenant.gcp_bucket_name,
         "config": tenant.config,
         "supported_locales": tenant.supported_locales
     }
+
 
 @router.patch("/tenant", response_model=dict)
 async def update_tenant_details(
@@ -88,6 +92,9 @@ async def update_tenant_details(
     user: UserClaims = Depends(validate_token)
 ):
     """Update merchant store details (name, config)."""
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
     from modules.platform.models import Tenant
     result = await db.execute(
         select(Tenant).where(Tenant.id == user.tenant_id)
@@ -110,7 +117,7 @@ async def update_tenant_details(
     return {
         "id": tenant.id,
         "name": tenant.name,
-        "created_at": tenant.created_at.isoformat(),
+        "created_at": tenant.created_at.isoformat() if tenant.created_at else None,
         "gcp_project_id": tenant.gcp_project_id,
         "gcp_bucket_name": tenant.gcp_bucket_name,
         "config": tenant.config,
@@ -202,5 +209,5 @@ async def generate_migration_runbook(
     return MigrationRunbookResponse(
         merchant_name=user.tenant_id,
         steps=steps,
-        generated_at=datetime.utcnow()
+        generated_at=datetime.now(timezone.utc)
     )

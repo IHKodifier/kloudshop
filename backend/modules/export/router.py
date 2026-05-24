@@ -5,7 +5,7 @@ from shared.db import get_db, AsyncSessionLocal
 from shared.auth import UserClaims, validate_token
 from shared.rbac import has_permissions
 from . import models, schemas
-from datetime import datetime
+from datetime import datetime, timezone
 import asyncio
 
 router = APIRouter(tags=["Export Engine"])
@@ -33,7 +33,7 @@ async def run_export_job(job_id: str, tenant_id: str):
             .values(
                 status='completed',
                 download_url=signed_url,
-                completed_at=datetime.utcnow()
+                completed_at=datetime.now(timezone.utc)
             )
         )
         await db.commit()

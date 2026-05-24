@@ -18,6 +18,7 @@ class ThemeConfigRequest(BaseModel):
 
 class ThemeConfigResponse(BaseModel):
     config_id: str
+    tenant_id: str
     theme_id: str
     draft_tokens: Dict[str, Any]
     live_tokens: Dict[str, Any]

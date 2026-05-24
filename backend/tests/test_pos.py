@@ -17,7 +17,7 @@ async def test_assign_staff_location(client: AsyncClient, mock_firebase_user, db
     
     # 1. Create a stock location
     from modules.inventory.models import StockLocation
-    location = StockLocation(stock_location_id="loc1", name="London Store", location_type="store", fulfils_pos=True)
+    location = StockLocation(stock_location_id="loc1", tenant_id="t_abc", name="London Store", location_type="store", fulfils_pos=True)
     db_session.add(location)
     await db_session.commit()
     
@@ -40,7 +40,7 @@ async def test_pos_sale_success(client: AsyncClient, mock_firebase_user, db_sess
     from modules.inventory.models import StockLocation, Inventory
     from modules.catalog.models import Product, Variant
     
-    loc = StockLocation(stock_location_id="loc2", name="Sydney Store", location_type="store", fulfils_pos=True)
+    loc = StockLocation(stock_location_id="loc2", tenant_id="t_abc", name="Sydney Store", location_type="store", fulfils_pos=True)
     db_session.add(loc)
     
     prod = Product(product_id="p_pos", tenant_id="t_abc", title="POS Product", slug="pos-prod", created_by="admin")
@@ -49,7 +49,7 @@ async def test_pos_sale_success(client: AsyncClient, mock_firebase_user, db_sess
     var = Variant(variant_id="v_pos", product_id="p_pos", tenant_id="t_abc", sku="POS-SKU", price=Decimal("100.00"))
     db_session.add(var)
     
-    inv = Inventory(variant_id="v_pos", stock_location_id="loc2", quantity_on_hand=10)
+    inv = Inventory(variant_id="v_pos", stock_location_id="loc2", tenant_id="t_abc", quantity_on_hand=10)
     db_session.add(inv)
     
     # 2. Setup: Staff Assignment
@@ -95,13 +95,13 @@ async def test_pos_sale_insufficient_stock(client: AsyncClient, mock_firebase_us
     from modules.catalog.models import Product, Variant
     from modules.pos.models import StaffLocationAssignment
     
-    loc = StockLocation(stock_location_id="loc3", name="Melbourne Store", location_type="store", fulfils_pos=True)
+    loc = StockLocation(stock_location_id="loc3", tenant_id="t_abc", name="Melbourne Store", location_type="store", fulfils_pos=True)
     db_session.add(loc)
     prod = Product(product_id="p_fail", tenant_id="t_abc", title="Fail Product", slug="fail-prod", created_by="admin")
     db_session.add(prod)
     var = Variant(variant_id="v_fail", product_id="p_fail", tenant_id="t_abc", sku="FAIL-SKU", price=Decimal("10.00"))
     db_session.add(var)
-    inv = Inventory(variant_id="v_fail", stock_location_id="loc3", quantity_on_hand=1)
+    inv = Inventory(variant_id="v_fail", stock_location_id="loc3", tenant_id="t_abc", quantity_on_hand=1)
     db_session.add(inv)
     assignment = StaffLocationAssignment(tenant_id="t_abc", staff_user_id="fail_staff", stock_location_id="loc3")
     db_session.add(assignment)

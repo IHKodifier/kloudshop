@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, DateTime, Numeric, Text, CheckConstraint, Index
 from sqlalchemy.orm import relationship
 from shared.db import Base
@@ -43,9 +43,9 @@ class Order(Base):
     b2b_account_id = Column(String, index=True)
     b2b_approval_status = Column(String(16), default="not_applicable") # pending | approved | declined | not_applicable
     
-    placed_at = Column(DateTime, default=datetime.utcnow)
+    placed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     cancelled_at = Column(DateTime)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
     events = relationship("OrderEvent", back_populates="order", cascade="all, delete-orphan")
@@ -87,7 +87,7 @@ class OrderEvent(Base):
     description = Column(Text)
     actor_id = Column(String) # staff or consumer
     
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     order = relationship("Order", back_populates="events")
 
@@ -101,6 +101,6 @@ class OrderNote(Base):
     content = Column(Text, nullable=False)
     is_customer_visible = Column(Boolean, nullable=False, default=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     order = relationship("Order", back_populates="notes")

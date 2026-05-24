@@ -1,7 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/providers/customer_providers.dart';
+import 'package:kloudshop/theme/app_theme.dart';
+import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:intl/intl.dart';
 
 class CustomersView extends ConsumerStatefulWidget {
@@ -24,78 +27,148 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
   Widget build(BuildContext context) {
     final customersAsync = ref.watch(filteredCustomersProvider);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Customer Directory')),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search customers by email...',
-                prefixIcon: const Icon(LucideIcons.search, size: 20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                suffixIcon: _searchController.text.isNotEmpty 
-                  ? IconButton(
-                      icon: const Icon(LucideIcons.x, size: 16),
-                      onPressed: () {
-                        _searchController.clear();
-                        ref.read(customerSearchQueryProvider.notifier).setQuery('');
-                      },
-                    )
-                  : null,
-              ),
-              onChanged: (value) => ref.read(customerSearchQueryProvider.notifier).setQuery(value),
+          // Premium Header
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF1E293B).withValues(alpha: 0.8)
+                  : Colors.white.withValues(alpha: 0.9),
+              border: Border(
+                  bottom: BorderSide(color: theme.dividerColor)),
+            ),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Customer Directory',
+                      style: theme.textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'View and manage your customer base',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                // Stats summary
+                customersAsync.whenData((customers) {
+                  if (customers.isEmpty) return const SizedBox.shrink();
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.brandEmerald500.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: AppTheme.brandEmerald500
+                              .withValues(alpha: 0.25)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(LucideIcons.users,
+                            size: 14, color: AppTheme.brandEmerald500),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${customers.length} customers',
+                          style: const TextStyle(
+                            color: AppTheme.brandEmerald500,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).value ?? const SizedBox.shrink(),
+              ],
             ),
           ),
+
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search customers by email...',
+                    prefixIcon: Icon(LucideIcons.search,
+                        size: 18,
+                        color: theme.colorScheme.onSurfaceVariant),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          BorderSide(color: theme.colorScheme.outline),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          BorderSide(color: theme.colorScheme.outline),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(
+                          color: AppTheme.brandEmerald500, width: 1.5),
+                    ),
+                    filled: true,
+                    fillColor: isDark
+                        ? Colors.white.withValues(alpha: 0.04)
+                        : AppTheme.neutral50,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(LucideIcons.x, size: 16),
+                            onPressed: () {
+                              _searchController.clear();
+                              ref
+                                  .read(customerSearchQueryProvider.notifier)
+                                  .setQuery('');
+                            },
+                          )
+                        : null,
+                  ),
+                  onChanged: (value) => ref
+                      .read(customerSearchQueryProvider.notifier)
+                      .setQuery(value),
+                ),
+              ),
+            ),
+          ),
+
+          // Customer List
           Expanded(
             child: customersAsync.when(
               data: (customers) => customers.isEmpty
-                  ? _buildEmptyState()
-                  : SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: theme.cardColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: theme.dividerColor),
-                        ),
-                        child: DataTable(
-                          columnSpacing: 24,
-                          columns: const [
-                            DataColumn(label: Text('Customer')),
-                            DataColumn(label: Text('Orders'), numeric: true),
-                            DataColumn(label: Text('Total Spent'), numeric: true),
-                            DataColumn(label: Text('Last Order')),
-                          ],
-                          rows: customers.map((c) => DataRow(
-                            cells: [
-                              DataCell(
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 14,
-                                      backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
-                                      child: Text(c.email[0].toUpperCase(), style: TextStyle(fontSize: 10, color: theme.primaryColor)),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Text(c.email),
-                                  ],
-                                ),
-                              ),
-                              DataCell(Text(c.orderCount.toString())),
-                              DataCell(Text('\$${c.totalSpent.toStringAsFixed(2)}')),
-                              DataCell(Text(c.lastOrderAt != null ? DateFormat('MMM dd, yyyy').format(c.lastOrderAt!) : '-')),
-                            ],
-                          )).toList(),
-                        ),
-                      ),
+                  ? _buildEmptyState(theme)
+                  : ListView.separated(
+                      padding:
+                          const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                      itemCount: customers.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                      itemBuilder: (context, index) =>
+                          _CustomerCard(customer: customers[index]),
                     ),
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(
+                child: CircularProgressIndicator(
+                    color: AppTheme.brandEmerald500),
+              ),
               error: (e, s) => Center(child: Text('Error: $e')),
             ),
           ),
@@ -104,18 +177,187 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ThemeData theme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(LucideIcons.users, size: 64, color: Colors.grey.withValues(alpha: 0.5)),
-          const SizedBox(height: 16),
-          const Text('No customers found', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: AppTheme.brandEmerald500.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+              border: Border.all(
+                  color: AppTheme.brandEmerald500.withValues(alpha: 0.2)),
+            ),
+            child: const Icon(LucideIcons.users,
+                size: 48, color: AppTheme.brandEmerald500),
+          ),
+          const SizedBox(height: 24),
+          Text('No customers found',
+              style: theme.textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          const Text('Try adjusting your search query.'),
+          Text(
+            'Try adjusting your search query.',
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
         ],
       ),
+    );
+  }
+}
+
+/// A premium glassmorphism customer card (replaces the DataTable for a richer look)
+class _CustomerCard extends StatelessWidget {
+  final dynamic customer;
+  const _CustomerCard({required this.customer});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final initials = customer.email.isNotEmpty
+        ? customer.email[0].toUpperCase()
+        : '?';
+
+    // Generate a consistent color from the email
+    final colors = [
+      AppTheme.brandEmerald500,
+      const Color(0xFF6366F1),
+      const Color(0xFFF59E0B),
+      const Color(0xFFEC4899),
+      AppTheme.brandTeal500,
+    ];
+    final colorIndex = customer.email.codeUnitAt(0) % colors.length;
+    final avatarColor = colors[colorIndex];
+
+    return HoverScale(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF1E293B).withValues(alpha: 0.7)
+                  : Colors.white.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                  color: theme.dividerColor.withValues(alpha: 0.6)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Avatar
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: avatarColor.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        color: avatarColor.withValues(alpha: 0.4)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      initials,
+                      style: TextStyle(
+                        color: avatarColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                // Email + stats
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        customer.email,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          _StatChip(
+                            icon: LucideIcons.shoppingBag,
+                            label: '${customer.orderCount} orders',
+                          ),
+                          const SizedBox(width: 12),
+                          _StatChip(
+                            icon: LucideIcons.dollarSign,
+                            label:
+                                '\$${customer.totalSpent.toStringAsFixed(2)}',
+                            color: AppTheme.brandEmerald500,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Last order
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('Last order',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                            color:
+                                theme.colorScheme.onSurfaceVariant)),
+                    const SizedBox(height: 2),
+                    Text(
+                      customer.lastOrderAt != null
+                          ? DateFormat('MMM d, yyyy')
+                              .format(customer.lastOrderAt!)
+                          : '—',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color? color;
+
+  const _StatChip({required this.icon, required this.label, this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final c = color ?? theme.colorScheme.onSurfaceVariant;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: c),
+        const SizedBox(width: 4),
+        Text(label,
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: c, fontWeight: FontWeight.w500)),
+      ],
     );
   }
 }

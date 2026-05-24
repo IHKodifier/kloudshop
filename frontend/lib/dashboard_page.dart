@@ -109,224 +109,302 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return Consumer(
       builder: (context, ref, child) {
         final theme = Theme.of(context);
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: NavigationRail(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (int index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          labelType: NavigationRailLabelType.none,
-          extended: _isRailExtended,
-          minExtendedWidth: 240,
-          unselectedIconTheme: theme.navigationRailTheme.unselectedIconTheme,
-          selectedIconTheme: theme.navigationRailTheme.selectedIconTheme,
-          unselectedLabelTextStyle: theme.navigationRailTheme.unselectedLabelTextStyle,
-          selectedLabelTextStyle: theme.navigationRailTheme.selectedLabelTextStyle,
-          leading: Column(
-            children: [
-              IconButton(
-                icon: Icon(_isRailExtended ? LucideIcons.chevronLeft : LucideIcons.menu),
-                onPressed: () => setState(() => _isRailExtended = !_isRailExtended),
-                tooltip: _isRailExtended ? 'Collapse' : 'Expand',
+        final isDark = theme.brightness == Brightness.dark;
+        final sidebarWidth = _isRailExtended ? 240.0 : 78.0;
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: sidebarWidth,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            border: Border(
+              right: BorderSide(
+                color: theme.dividerColor.withValues(alpha: 0.1),
+                width: 1,
               ),
-              const SizedBox(height: 16),
-              // Persistent Logo / Header
-              _isRailExtended 
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                    child: Row(
-                      children: [
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Header section (Fixed height, always visible)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+                  child: Row(
+                    mainAxisAlignment: _isRailExtended ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                    children: [
+                      if (_isRailExtended) ...[
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: theme.primaryColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Image.asset(
+                                'assets/logo3d.png',
+                                width: 20,
+                                height: 20,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(
+                                    LucideIcons.store,
+                                    color: Colors.white,
+                                    size: 20,
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'KloudShop',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: -0.5),
+                            ),
+                          ],
+                        ),
+                      ] else ...[
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: theme.primaryColor,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(LucideIcons.store, color: Colors.white, size: 20),
+                          child: Image.asset(
+                            'assets/logo3d.png',
+                            width: 20,
+                            height: 20,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(
+                                LucideIcons.store,
+                                color: Colors.white,
+                                size: 20,
+                              );
+                            },
+                          ),
                         ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          'KloudShop',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, letterSpacing: -0.5),
+                      ],
+                      if (_isRailExtended)
+                        IconButton(
+                          icon: const Icon(LucideIcons.chevronLeft, size: 20),
+                          onPressed: () => setState(() => _isRailExtended = false),
+                          tooltip: 'Collapse',
+                        ),
+                    ],
+                  ),
+                ),
+                
+                // Menu toggle when collapsed
+                if (!_isRailExtended) ...[
+                  IconButton(
+                    icon: const Icon(LucideIcons.menu, size: 20),
+                    onPressed: () => setState(() => _isRailExtended = true),
+                    tooltip: 'Expand',
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // Main navigation scroll view (Scrollable center)
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Store Info badge (only when extended)
+                        if (_isRailExtended) ...[
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final settingsAsync = ref.watch(tenantSettingsProvider);
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                child: settingsAsync.when(
+                                  data: (settings) => Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.surfaceContainerLow,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          settings.name.toUpperCase(),
+                                          style: theme.textTheme.labelSmall?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.2,
+                                            color: theme.primaryColor,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          (settings.config['sector'] as String?)?.toUpperCase() ?? 'MERCHANT',
+                                          style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  loading: () => const LinearProgressIndicator(),
+                                  error: (e, s) => const SizedBox.shrink(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        
+                        // Navigation Menu Items
+                        _SidebarItemTile(
+                          index: 0,
+                          icon: LucideIcons.layoutDashboard,
+                          label: 'Overview',
+                          isSelected: _selectedIndex == 0,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 0),
+                        ),
+                        _SidebarItemTile(
+                          index: 1,
+                          icon: LucideIcons.shoppingCart,
+                          label: 'Catalog',
+                          isSelected: _selectedIndex == 1,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 1),
+                        ),
+                        _SidebarItemTile(
+                          index: 2,
+                          icon: LucideIcons.package,
+                          label: 'Orders',
+                          isSelected: _selectedIndex == 2,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 2),
+                        ),
+                        _SidebarItemTile(
+                          index: 3,
+                          icon: LucideIcons.users,
+                          label: 'Customers',
+                          isSelected: _selectedIndex == 3,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 3),
+                        ),
+                        _SidebarItemTile(
+                          index: 4,
+                          icon: LucideIcons.creditCard,
+                          label: 'Billing',
+                          isSelected: _selectedIndex == 4,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 4),
+                        ),
+                        _SidebarItemTile(
+                          index: 5,
+                          icon: LucideIcons.newspaper,
+                          label: 'Blog',
+                          isSelected: _selectedIndex == 5,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 5),
+                        ),
+                        _SidebarItemTile(
+                          index: 6,
+                          icon: LucideIcons.usersRound,
+                          label: 'Wholesale',
+                          isSelected: _selectedIndex == 6,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 6),
+                        ),
+                        _SidebarItemTile(
+                          index: 7,
+                          icon: LucideIcons.shieldCheck,
+                          label: 'Compliance',
+                          isSelected: _selectedIndex == 7,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 7),
+                        ),
+                        _SidebarItemTile(
+                          index: 8,
+                          icon: LucideIcons.palette,
+                          label: 'Themes',
+                          isSelected: _selectedIndex == 8,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 8),
+                        ),
+                        _SidebarItemTile(
+                          index: 9,
+                          icon: LucideIcons.settings,
+                          label: 'Settings',
+                          isSelected: _selectedIndex == 9,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 9),
                         ),
                       ],
                     ),
-                  )
-                : Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: theme.primaryColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(LucideIcons.store, color: Colors.white, size: 24),
                   ),
-              const SizedBox(height: 32),
-              // Tenant/Store Info (Only when extended)
-              if (_isRailExtended)
-                Consumer(
-                  builder: (context, ref, child) {
-                    final settingsAsync = ref.watch(tenantSettingsProvider);
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: settingsAsync.when(
-                        data: (settings) => Container(
-                          width: 200, // Explicitly constrain width to prevent overflow
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                settings.name.toUpperCase(),
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                  color: theme.primaryColor,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                ),
+                
+                const Divider(height: 1),
+                
+                // Footer section (Fixed height, always visible)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final themeMode = ref.watch(themeModeProvider);
+                          final isDark = themeMode == ThemeMode.dark;
+                          
+                          if (_isRailExtended) {
+                            return ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                              leading: Icon(isDark ? LucideIcons.moon : LucideIcons.sun, size: 20),
+                              title: Text(isDark ? 'Dark Mode' : 'Light Mode', style: const TextStyle(fontSize: 14)),
+                              trailing: Switch(
+                                value: isDark,
+                                onChanged: (val) => ref.read(themeModeProvider.notifier).toggleTheme(val),
                               ),
-                              Text(
-                                (settings.config['sector'] as String?)?.toUpperCase() ?? 'MERCHANT',
-                                style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                        ),
-                        loading: () => const SizedBox(
-                          width: 200,
-                          child: LinearProgressIndicator(),
-                        ),
-                        error: (e, s) => const SizedBox.shrink(),
+                            );
+                          } else {
+                            return IconButton(
+                              icon: Icon(isDark ? LucideIcons.moon : LucideIcons.sun, size: 20),
+                              onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(!isDark),
+                              tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                            );
+                          }
+                        },
                       ),
-                    );
-                  },
-                ),
-            ],
-          ),
-          trailing: _isRailExtended ? Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: 224, // 240 - 16 padding
-              child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Divider(),
-                Consumer(
-                  builder: (context, ref, child) {
-                    final themeMode = ref.watch(themeModeProvider);
-                    final isDark = themeMode == ThemeMode.dark;
-                    return ListTile(
-                      leading: Icon(isDark ? LucideIcons.moon : LucideIcons.sun),
-                      title: Text(isDark ? 'Dark Mode' : 'Light Mode'),
-                      trailing: Switch(
-                        value: isDark,
-                        onChanged: (val) => ref.read(themeModeProvider.notifier).toggleTheme(val),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          if (_isRailExtended) {
+                            return ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                              leading: const Icon(LucideIcons.logOut, size: 20, color: Colors.redAccent),
+                              title: const Text('Sign Out', style: TextStyle(fontSize: 14, color: Colors.redAccent)),
+                              onTap: () => ref.read(authServiceProvider).signOut(),
+                            );
+                          } else {
+                            return IconButton(
+                              icon: const Icon(LucideIcons.logOut, size: 20, color: Colors.redAccent),
+                              onPressed: () => ref.read(authServiceProvider).signOut(),
+                              tooltip: 'Sign Out',
+                            );
+                          }
+                        },
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
-                ListTile(
-                  leading: const Icon(LucideIcons.logOut),
-                  title: const Text('Sign Out'),
-                  onTap: () => ref.read(authServiceProvider).signOut(),
-                ),
-                ],
-              ),
+              ],
             ),
-          )
-        : Column(
-            children: [
-              const Divider(),
-              Consumer(
-                builder: (context, ref, child) {
-                  final themeMode = ref.watch(themeModeProvider);
-                  final isDark = themeMode == ThemeMode.dark;
-                  return IconButton(
-                    icon: Icon(isDark ? LucideIcons.moon : LucideIcons.sun),
-                    onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(!isDark),
-                    tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(LucideIcons.logOut),
-                onPressed: () => ref.read(authServiceProvider).signOut(),
-                tooltip: 'Sign Out',
-              ),
-              const SizedBox(height: 16),
-            ],
           ),
-          destinations: const [
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.layoutDashboard),
-              selectedIcon: Icon(LucideIcons.layoutDashboard),
-              label: Text('Overview'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.shoppingCart),
-              label: Text('Catalog'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.package),
-              label: Text('Orders'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.users),
-              label: Text('Customers'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.creditCard),
-              selectedIcon: Icon(LucideIcons.creditCard),
-              label: Text('Billing'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.newspaper),
-              selectedIcon: Icon(LucideIcons.newspaper),
-              label: Text('Blog'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.usersRound),
-              selectedIcon: Icon(LucideIcons.usersRound),
-              label: Text('Wholesale'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.shieldCheck),
-              selectedIcon: Icon(LucideIcons.shieldCheck),
-              label: Text('Compliance'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.palette),
-              selectedIcon: Icon(LucideIcons.palette),
-              label: Text('Themes'),
-            ),
-            NavigationRailDestination(
-              icon: Icon(LucideIcons.settings),
-              label: Text('Settings'),
-            ),
-          ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   Widget _buildMainContent() {
     switch (_selectedIndex) {
@@ -723,22 +801,25 @@ class _TrendChartState extends State<_TrendChart> {
                 ),
               ],
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _RangeChip(label: 'To Date', isSelected: _timeRange == TimeRange.today, onTap: () => setState(() => _timeRange = TimeRange.today)),
-                  const SizedBox(width: 4),
-                  _RangeChip(label: '24H', isSelected: _timeRange == TimeRange.h24, onTap: () => setState(() => _timeRange = TimeRange.h24)),
-                  const SizedBox(width: 4),
-                  _RangeChip(label: '7D', isSelected: _timeRange == TimeRange.d7, onTap: () => setState(() => _timeRange = TimeRange.d7)),
-                  const SizedBox(width: 4),
-                  _RangeChip(label: '14D', isSelected: _timeRange == TimeRange.d14, onTap: () => setState(() => _timeRange = TimeRange.d14)),
-                  const SizedBox(width: 4),
-                  _RangeChip(label: '28D', isSelected: _timeRange == TimeRange.d28, onTap: () => setState(() => _timeRange = TimeRange.d28)),
-                  const SizedBox(width: 4),
-                  _RangeChip(label: '90D', isSelected: _timeRange == TimeRange.d90, onTap: () => setState(() => _timeRange = TimeRange.d90)),
-                ],
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _RangeChip(label: 'To Date', isSelected: _timeRange == TimeRange.today, onTap: () => setState(() => _timeRange = TimeRange.today)),
+                    const SizedBox(width: 4),
+                    _RangeChip(label: '24H', isSelected: _timeRange == TimeRange.h24, onTap: () => setState(() => _timeRange = TimeRange.h24)),
+                    const SizedBox(width: 4),
+                    _RangeChip(label: '7D', isSelected: _timeRange == TimeRange.d7, onTap: () => setState(() => _timeRange = TimeRange.d7)),
+                    const SizedBox(width: 4),
+                    _RangeChip(label: '14D', isSelected: _timeRange == TimeRange.d14, onTap: () => setState(() => _timeRange = TimeRange.d14)),
+                    const SizedBox(width: 4),
+                    _RangeChip(label: '28D', isSelected: _timeRange == TimeRange.d28, onTap: () => setState(() => _timeRange = TimeRange.d28)),
+                    const SizedBox(width: 4),
+                    _RangeChip(label: '90D', isSelected: _timeRange == TimeRange.d90, onTap: () => setState(() => _timeRange = TimeRange.d90)),
+                  ],
+                ),
               ),
             ),
           ],
@@ -1035,6 +1116,133 @@ class _B2BWholesalePlaceholder extends StatelessWidget {
         Text(value, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
         Text(label, style: theme.textTheme.bodySmall),
       ],
+    );
+  }
+}
+
+class _SidebarItemTile extends StatefulWidget {
+  final int index;
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final bool isExtended;
+  final VoidCallback onTap;
+
+  const _SidebarItemTile({
+    required this.index,
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.isExtended,
+    required this.onTap,
+  });
+
+  @override
+  State<_SidebarItemTile> createState() => _SidebarItemTileState();
+}
+
+class _SidebarItemTileState extends State<_SidebarItemTile> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    final activeBgColor = theme.primaryColor.withValues(alpha: isDark ? 0.15 : 0.08);
+    final hoverBgColor = theme.primaryColor.withValues(alpha: isDark ? 0.08 : 0.03);
+    final activeTextColor = theme.primaryColor;
+    final inactiveTextColor = isDark ? Colors.grey[400]! : Colors.grey[700]!;
+    
+    final currentBgColor = widget.isSelected 
+        ? activeBgColor 
+        : (_isHovered ? hoverBgColor : Colors.transparent);
+    final currentTextColor = widget.isSelected ? activeTextColor : inactiveTextColor;
+    
+    Widget content;
+    if (widget.isExtended) {
+      content = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        child: Row(
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: 4,
+              height: 20,
+              decoration: BoxDecoration(
+                color: widget.isSelected ? theme.primaryColor : Colors.transparent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Icon(
+              widget.icon,
+              size: 20,
+              color: currentTextColor,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                widget.label,
+                style: TextStyle(
+                  color: currentTextColor,
+                  fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      content = Tooltip(
+        message: widget.label,
+        waitDuration: const Duration(milliseconds: 500),
+        child: Container(
+          height: 48,
+          alignment: Alignment.center,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                left: 0,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  width: 4,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: widget.isSelected ? theme.primaryColor : Colors.transparent,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Icon(
+                widget.icon,
+                size: 22,
+                color: currentTextColor,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          decoration: BoxDecoration(
+            color: currentBgColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: content,
+        ),
+      ),
     );
   }
 }

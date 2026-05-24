@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 from decimal import Decimal
 from shared.auth import UserClaims
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 @pytest.mark.asyncio
 async def test_b2b_unauthorized(client: AsyncClient):
@@ -310,5 +310,5 @@ async def test_b2b_invoice_generation(client: AsyncClient, mock_firebase_user, d
     assert invoice.payment_status == "open"
     
     # Due date should be ~45 days from now
-    expected_due = datetime.utcnow() + timedelta(days=45)
+    expected_due = (datetime.now(timezone.utc) + timedelta(days=45)).replace(tzinfo=None)
     assert abs((invoice.due_date - expected_due).total_seconds()) < 60 # Within a minute

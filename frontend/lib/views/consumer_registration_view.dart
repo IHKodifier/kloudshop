@@ -1,6 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/theme/app_theme.dart';
+import 'package:kloudshop/widgets/hover_scale.dart';
 
 class ConsumerRegistrationView extends ConsumerStatefulWidget {
   final String? orderId;
@@ -24,6 +28,7 @@ class _ConsumerRegistrationViewState extends ConsumerState<ConsumerRegistrationV
   final _addressController = TextEditingController();
   bool _isNewsletterOptIn = true;
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -46,8 +51,6 @@ class _ConsumerRegistrationViewState extends ConsumerState<ConsumerRegistrationV
     setState(() => _isLoading = true);
     try {
       final apiService = ref.read(apiServiceProvider);
-      // For skeletal UI, we'll use a hardcoded tenant_id or resolve it from URL/context
-      // In a real multi-tenant app, this would be injected.
       const tenantId = 'demo-tenant'; 
 
       await apiService.registerConsumer(
@@ -63,15 +66,17 @@ class _ConsumerRegistrationViewState extends ConsumerState<ConsumerRegistrationV
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account created successfully!')),
+          const SnackBar(
+            content: Text('Account created successfully! Welcome to KloudShop.'),
+            backgroundColor: AppTheme.brandEmerald600,
+          ),
         );
-        // Navigate to storefront home or order details
         Navigator.of(context).pushReplacementNamed('/');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text('Registration failed: $e'), backgroundColor: Colors.redAccent),
         );
       }
     } finally {
@@ -81,96 +86,205 @@ class _ConsumerRegistrationViewState extends ConsumerState<ConsumerRegistrationV
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: const Text('Create Consumer Account'),
+        title: const Text('Customer Registration', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+        elevation: 0,
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Save your details for later',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.orderId != null 
-                      ? 'Link your order #${widget.orderId} to your new account.'
-                      : 'Join us for a faster checkout experience.',
-                    style: const TextStyle(color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Full Name',
-                      border: OutlineInputBorder(),
+          padding: const EdgeInsets.all(32),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 460),
+            child: _buildGlassCard(
+              isDark: isDark,
+              theme: theme,
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(LucideIcons.userPlus, size: 24, color: AppTheme.brandEmerald500),
+                    SizedBox(width: 12),
+                    Text(
+                      'Create Account',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
-                    validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.orderId != null 
+                    ? 'Link your order #${widget.orderId} to your new customer profile.'
+                    : 'Join us for a seamless checkout and tracking experience.',
+                  style: TextStyle(color: theme.hintColor, fontSize: 13),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                
+                // Registration Form
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Full name input
+                      _buildInputField(
+                        label: 'Full Name',
+                        controller: _nameController,
+                        hint: 'e.g. Jane Doe',
+                        icon: LucideIcons.user,
+                        theme: theme,
+                        validator: (v) => v == null || v.isEmpty ? 'Full name is required' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Email input
+                      _buildInputField(
+                        label: 'Email Address',
+                        controller: _emailController,
+                        hint: 'name@company.com',
+                        icon: LucideIcons.mail,
+                        theme: theme,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (v) => v == null || !v.contains('@') ? 'Enter a valid email' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Password input
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          hintText: '••••••••',
+                          prefixIcon: const Icon(LucideIcons.lock, size: 16),
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye, size: 16),
+                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(color: AppTheme.brandEmerald500, width: 1.5),
+                          ),
+                        ),
+                        validator: (v) => v == null || v.length < 6 ? 'Password must be at least 6 characters' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Address input
+                      _buildInputField(
+                        label: 'Shipping Address',
+                        controller: _addressController,
+                        hint: 'e.g. 123 Main St, London, UK',
+                        icon: LucideIcons.mapPin,
+                        theme: theme,
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Newsletter opt-in
+                      CheckboxListTile(
+                        value: _isNewsletterOptIn,
+                        onChanged: (v) => setState(() => _isNewsletterOptIn = v ?? false),
+                        title: const Text('Subscribe to newsletter for exclusive offers', style: TextStyle(fontSize: 12)),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                        activeColor: AppTheme.brandEmerald500,
+                      ),
+                      const SizedBox(height: 32),
+                      
+                      // Submit button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: HoverScale(
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _submit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.brandTeal500,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              elevation: 0,
+                            ),
+                            child: _isLoading 
+                              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                              : const Text('Register & Continue', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email Address',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (v) => v == null || !v.contains('@') ? 'Invalid email' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true,
-                    validator: (v) => v == null || v.length < 6 ? 'Too short' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _addressController,
-                    decoration: const InputDecoration(
-                      labelText: 'Shipping Address (Summary)',
-                      border: OutlineInputBorder(),
-                      hintText: 'e.g. 123 Main St, London, UK',
-                    ),
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 16),
-                  CheckboxListTile(
-                    value: _isNewsletterOptIn,
-                    onChanged: (v) => setState(() => _isNewsletterOptIn = v ?? false),
-                    title: const Text('Subscribe to our newsletter for exclusive offers'),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _submit,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: _isLoading 
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Create Account'),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassCard({
+    required bool isDark,
+    required ThemeData theme,
+    required List<Widget> children,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E293B).withOpacity(0.7) : Colors.white.withOpacity(0.85),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppTheme.brandEmerald500.withOpacity(0.15)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField({
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    required ThemeData theme,
+    int maxLines = 1,
+    TextInputType? keyboardType,
+    FormFieldValidator<String>? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        prefixIcon: Icon(icon, size: 16),
+        alignLabelWithHint: maxLines > 1,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppTheme.brandEmerald500, width: 1.5),
         ),
       ),
     );

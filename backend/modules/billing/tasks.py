@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
-from datetime import datetime
+from datetime import datetime, timezone
 from .models import Subscription, SubscriptionStatus
 from modules.platform.models import Tenant
 
@@ -9,7 +9,7 @@ async def check_trial_expirations(db: AsyncSession):
     Finds tenants with expired trials and suspends their access.
     In a real app, this would also send email notifications via Resend.
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     
     # 1. Find expired trial subscriptions that are still 'trialing'
     result = await db.execute(

@@ -8,7 +8,7 @@ from typing import List, Optional
 import uuid
 import csv
 import io
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 
 from shared.db import get_db
@@ -145,23 +145,38 @@ async def confirm_order(
     # 4. Atomic Inventory Update & Order Creation
     try:
         # Find default stock location for tenant
-        loc_result = await db.execute(
-            select(StockLocation).where(
-                StockLocation.tenant_id == tenant_id,
-                StockLocation.is_default == True,
-                StockLocation.is_active == True
-            )
-        )
-        location = loc_result.scalars().first()
-        if not location:
-            # Fallback to any active location for this tenant
+        if tenant_id:
             loc_result = await db.execute(
                 select(StockLocation).where(
                     StockLocation.tenant_id == tenant_id,
+                    StockLocation.is_default == True,
                     StockLocation.is_active == True
                 )
             )
             location = loc_result.scalars().first()
+            if not location:
+                # Fallback to any active location for this tenant
+                loc_result = await db.execute(
+                    select(StockLocation).where(
+                        StockLocation.tenant_id == tenant_id,
+                        StockLocation.is_active == True
+                    )
+                )
+                location = loc_result.scalars().first()
+        else:
+            # No tenant context: find any active default location
+            loc_result = await db.execute(
+                select(StockLocation).where(
+                    StockLocation.is_default == True,
+                    StockLocation.is_active == True
+                )
+            )
+            location = loc_result.scalars().first()
+            if not location:
+                loc_result = await db.execute(
+                    select(StockLocation).where(StockLocation.is_active == True)
+                )
+                location = loc_result.scalars().first()
         
         if not location:
             raise HTTPException(status_code=500, detail="No active stock locations configured for this store")
@@ -234,7 +249,7 @@ async def confirm_order(
             
             # Decrement Inventory
             inventory.quantity_on_hand -= item.quantity
-            inventory.last_sold_at = datetime.utcnow()
+            inventory.last_sold_at = datetime.now(timezone.utc)
 
         new_order.subtotal = subtotal
         await db.commit()

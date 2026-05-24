@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func
 from sqlalchemy.orm import selectinload
 from typing import List
-from datetime import datetime
+from datetime import datetime, timezone
 
 from shared.db import get_db
 from shared.auth import UserClaims
@@ -219,7 +219,7 @@ async def send_purchase_order(
         raise HTTPException(status_code=400, detail="Receiving location must be set before sending")
     
     po.status = "sent"
-    po.ordered_at = datetime.utcnow()
+    po.ordered_at = datetime.now(timezone.utc)
     po.sent_by = user.uid
     
     await db.commit()
@@ -263,7 +263,7 @@ async def receive_purchase_order(
         diff = new_received # We assume the request provides the *newly* received amount for this batch
         
         po_line.quantity_received = old_received + diff
-        po_line.received_at = datetime.utcnow()
+        po_line.received_at = datetime.now(timezone.utc)
         po_line.manufacture_date = receive_line.manufacture_date
         
         if po_line.quantity_received != po_line.quantity_ordered:
@@ -285,21 +285,22 @@ async def receive_purchase_order(
         if not inventory:
             # Create new inventory record
             inventory = Inventory(
+                tenant_id=user.tenant_id,
                 variant_id=po_line.variant_id,
                 stock_location_id=po.receiving_location_id,
                 quantity_on_hand=diff,
-                last_received_at=datetime.utcnow()
+                last_received_at=datetime.now(timezone.utc)
             )
             db.add(inventory)
         else:
             inventory.quantity_on_hand += diff
-            inventory.last_received_at = datetime.utcnow()
+            inventory.last_received_at = datetime.now(timezone.utc)
         
         lines_received += 1
     
     if all_fully_received:
         po.status = "received"
-        po.received_at = datetime.utcnow()
+        po.received_at = datetime.now(timezone.utc)
     else:
         po.status = "partial"
     
@@ -347,7 +348,7 @@ async def create_stock_transfer(
         quantity_transferred=transfer_in.quantity_transferred,
         status="in_transit",
         initiated_by=user.uid,
-        initiated_at=datetime.utcnow(),
+        initiated_at=datetime.now(timezone.utc),
         notes=transfer_in.notes
     )
     db.add(transfer)
@@ -385,19 +386,20 @@ async def receive_stock_transfer(
     
     if not dest_inv:
         dest_inv = Inventory(
+            tenant_id=user.tenant_id,
             variant_id=transfer.variant_id,
             stock_location_id=transfer.destination_location_id,
             quantity_on_hand=transfer.quantity_transferred,
-            last_received_at=datetime.utcnow()
+            last_received_at=datetime.now(timezone.utc)
         )
         db.add(dest_inv)
     else:
         dest_inv.quantity_on_hand += transfer.quantity_transferred
-        dest_inv.last_received_at = datetime.utcnow()
+        dest_inv.last_received_at = datetime.now(timezone.utc)
     
     transfer.status = "received"
     transfer.received_by = user.uid
-    transfer.received_at = datetime.utcnow()
+    transfer.received_at = datetime.now(timezone.utc)
     transfer.quantity_received = transfer.quantity_transferred
     
     await db.commit()

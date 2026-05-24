@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Text, Boolean, Integer, SmallInteger, Num
 from sqlalchemy.orm import relationship
 from shared.db import Base, engine
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Schema name for platform-wide tables (not used for tenant tables in SQLite mode)
 SCHEMA = "kloudshop_platform" if "sqlite" not in engine.url.drivername else None
@@ -58,8 +58,8 @@ class Product(Base):
     
     # Metadata
     created_by = Column(String, nullable=False) # staff_user_id
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     variants = relationship("Variant", back_populates="product", cascade="all, delete-orphan")
@@ -131,8 +131,8 @@ class Variant(Base):
     
     # Metadata
     position = Column(Integer, nullable=False, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     product = relationship("Product", back_populates="variants")
@@ -172,8 +172,8 @@ class Collection(Base):
     is_visible = Column(Boolean, nullable=False, default=True)
     position = Column(Integer, nullable=False, default=0)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     products = relationship("Product", secondary="collection_products", back_populates="collections")
@@ -193,7 +193,7 @@ class CollectionProduct(Base):
     collection_id = Column(String, ForeignKey("collections.collection_id", ondelete="CASCADE"), primary_key=True)
     product_id = Column(String, ForeignKey("products.product_id", ondelete="CASCADE"), primary_key=True)
     sort_order = Column(Integer, nullable=False, default=0)
-    added_at = Column(DateTime, default=datetime.utcnow)
+    added_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 class ImportJob(Base):
     __tablename__ = "import_jobs"
@@ -208,8 +208,8 @@ class ImportJob(Base):
     
     error_log = Column(JSON, default=[]) # List of {row: N, error: "msg"}
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class RedirectRule(Base):
     __tablename__ = "redirect_rules"
@@ -223,7 +223,7 @@ class RedirectRule(Base):
     is_auto_generated = Column(Boolean, nullable=False, default=False)
 
     created_by = Column(String) # staff_user_id
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint(redirect_type.in_([301, 302]), name='redirect_rules_type_check'),

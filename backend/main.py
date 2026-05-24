@@ -13,6 +13,31 @@ async def lifespan(app: FastAPI):
         if "sqlite" in engine.url.drivername:
             print("Running local SQLite - automatically creating tables...")
             from shared.db import Base
+            
+            # Force import all models to register them on Base.metadata
+            from modules.auth.models import Invitation, StaffUser, StaffRoleAssignment, B2BInvitation, BuyerUser, ConsumerUser
+            from modules.platform.models import Tenant
+            from modules.billing.models import Subscription
+            from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
+            from modules.orders.models import Order, OrderItem, OrderEvent, OrderNote
+            from modules.inventory.models import (
+                StockLocation, Inventory, Supplier, PurchaseOrder, PurchaseOrderLine,
+                SupplierPerformanceEvent, StockTransfer, PackagingPreset,
+                SupplierScoreWeights, ShippingSettings
+            )
+            from modules.storefront.models import (
+                BrandProfile, StorefrontContent, StaticPage,
+                MerchantCarrierConnection, CarrierCheckoutOption
+            )
+            from modules.onboarding.models import OnboardingSession, ImportMapping
+            from modules.themes.models import Theme, ThemeConfiguration
+            from modules.features.models import Feature, TenantFeatureActivation, TenantFeatureConfig, FeatureRequest, FeatureRequestVote
+            from modules.ai.models import BrandVoiceProfile, AICopywriterLog
+            from modules.export.models import ExportJob
+            from modules.channels.models import ChannelConnection, ChannelSyncLog
+            from modules.pricing.models import PricingRule
+            from modules.b2b.models import B2BAccount, PriceList, PriceListItem, ApprovalWorkflow, ApprovalRequest, B2BInvoice
+
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
                 

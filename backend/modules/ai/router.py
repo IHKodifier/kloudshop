@@ -6,7 +6,7 @@ from shared.db import get_db
 from shared.auth import UserClaims, validate_token
 from shared.rbac import has_permissions
 from . import models, schemas
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 
 router = APIRouter(tags=["AI Copywriter"])
@@ -54,7 +54,7 @@ async def get_brand_voice(
             tone="Professional",
             brand_adjectives=[],
             negative_brands=[],
-            configured_at=datetime.utcnow()
+            configured_at=datetime.now(timezone.utc)
         )
     return profile
 
@@ -77,13 +77,13 @@ async def update_brand_voice(
     if profile:
         for key, value in data.items():
             setattr(profile, key, value)
-        profile.configured_at = datetime.utcnow()
+        profile.configured_at = datetime.now(timezone.utc)
         profile.configured_by = user.uid
     else:
         profile = models.BrandVoiceProfile(
             tenant_id=user.tenant_id,
             brand_profile_id=brand_profile_id,
-            configured_at=datetime.utcnow(),
+            configured_at=datetime.now(timezone.utc),
             configured_by=user.uid,
             **data
         )

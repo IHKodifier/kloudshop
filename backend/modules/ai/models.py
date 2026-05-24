@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Text, Boolean, Integer, SmallInteger, Dat
 from sqlalchemy.orm import relationship
 from shared.db import Base, engine
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class BrandVoiceProfile(Base):
     __tablename__ = "brand_voice_profiles"
@@ -16,7 +16,7 @@ class BrandVoiceProfile(Base):
     writing_style_rules = Column(Text)
     negative_brands = Column(JSON, nullable=False, default=[]) # List of strings
     
-    configured_at = Column(DateTime, default=datetime.utcnow)
+    configured_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     configured_by = Column(String) # user_id
 
 class AICopywriterLog(Base):
@@ -33,7 +33,7 @@ class AICopywriterLog(Base):
     variant_accepted = Column(SmallInteger) # 1, 2, or 3
     was_edited = Column(Boolean, default=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint(content_type.in_(['product_title', 'product_description', 'blog_title', 'blog_body']), name='ai_copywriter_content_type_check'),

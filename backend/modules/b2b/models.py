@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Text, Boolean, Integer, Numeric, DateTime
 from sqlalchemy.orm import relationship
 from shared.db import Base, engine
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Schema name for platform-wide tables (not used for tenant tables in SQLite mode)
 SCHEMA = "kloudshop_platform" if "sqlite" not in engine.url.drivername else None
@@ -53,8 +53,8 @@ class B2BAccount(Base):
     last_login_at = Column(DateTime)
 
     # Metadata
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint(account_status.in_(['invited', 'pending_approval', 'active', 'suspended', 'archived']), name='b2b_accounts_status_check'),
@@ -79,8 +79,8 @@ class PriceList(Base):
     effective_to = Column(DateTime)
 
     created_by = Column(String, nullable=False) # staff_user_id
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     items = relationship("PriceListItem", back_populates="price_list", cascade="all, delete-orphan")
 
@@ -100,8 +100,8 @@ class PriceListItem(Base):
     override_discount_pct = Column(Numeric(6, 3))
 
     created_by = Column(String, nullable=False) # staff_user_id
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     price_list = relationship("PriceList", back_populates="items")
 
@@ -125,7 +125,7 @@ class ApprovalWorkflow(Base):
     approver_roles = Column(JSON, nullable=False, default=["owner", "admin"])
     escalation_hours = Column(Integer)
 
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint('auto_approve_under IS NULL OR auto_approve_under >= 0', name='approval_workflows_auto_approve_non_negative'),
@@ -151,8 +151,8 @@ class ApprovalRequest(Base):
     decline_reason = Column(Text)
     
     escalation_sent_at = Column(DateTime)
-    requested_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    requested_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint(status.in_(['pending', 'approved', 'auto_approved', 'declined']), name='approval_requests_status_check'),
@@ -175,8 +175,8 @@ class B2BInvoice(Base):
     invoice_amount = Column(Numeric(12, 2), nullable=False)
     currency_code = Column(CHAR(3), nullable=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint(payment_status.in_(['draft', 'open', 'paid', 'void', 'uncollectible']), name='b2b_invoices_payment_status_check'),

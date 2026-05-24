@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy import Column, String, DateTime, Boolean, JSON
-from datetime import datetime
+from datetime import datetime, timezone
 from shared.db import Base, engine
 
 # Schema name for platform-wide tables
@@ -13,7 +13,7 @@ class Tenant(Base):
 
     id = Column(String, primary_key=True) # e.g. 'acme'
     name = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     is_active = Column(Boolean, default=True)
     
     # GCP Metadata

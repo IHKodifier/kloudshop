@@ -41,6 +41,7 @@ async def test_order_checkout_flow(client: AsyncClient, db_session: AsyncSession
     # Create Stock Location
     location = StockLocation(
         name="Main Warehouse",
+        tenant_id=tenant_id,
         is_default=True,
         is_active=True
     )
@@ -51,7 +52,8 @@ async def test_order_checkout_flow(client: AsyncClient, db_session: AsyncSession
     inventory = Inventory(
         variant_id=variant.variant_id,
         stock_location_id=location.stock_location_id,
-        quantity_on_hand=10
+        quantity_on_hand=10,
+        tenant_id=tenant_id
     )
     db_session.add(inventory)
     await db_session.commit()
@@ -70,6 +72,7 @@ async def test_order_checkout_flow(client: AsyncClient, db_session: AsyncSession
     # 3. Step 2: Confirm Order
     confirm_data = {
         "payment_intent_id": pi_id,
+        "tenant_id": tenant_id,
         "items": [{"variant_id": variant.variant_id, "quantity": 2}],
         "shipping_name": "John Doe",
         "shipping_address1": "123 Main St",
@@ -101,15 +104,16 @@ async def test_insufficient_stock(client: AsyncClient, db_session: AsyncSession)
     variant = Variant(sku="FAIL-01", price=Decimal("10"), product_id=product.product_id, tenant_id=tenant_id)
     db_session.add(variant)
     await db_session.flush()
-    location = StockLocation(name="W1", is_default=True)
+    location = StockLocation(name="W1", is_default=True, tenant_id=tenant_id)
     db_session.add(location)
     await db_session.flush()
-    inventory = Inventory(variant_id=variant.variant_id, stock_location_id=location.stock_location_id, quantity_on_hand=1)
+    inventory = Inventory(variant_id=variant.variant_id, stock_location_id=location.stock_location_id, quantity_on_hand=1, tenant_id=tenant_id)
     db_session.add(inventory)
     await db_session.commit()
     
     confirm_data = {
         "payment_intent_id": "pi_any",
+        "tenant_id": tenant_id,
         "items": [{"variant_id": variant.variant_id, "quantity": 5}],
         "shipping_name": "J", "shipping_address1": "A", "shipping_city": "C", "shipping_state": "S", "shipping_postcode": "P"
     }

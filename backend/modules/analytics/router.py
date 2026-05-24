@@ -6,7 +6,7 @@ from shared.auth import UserClaims, validate_token
 from modules.orders.models import Order
 from modules.inventory.models import Inventory, StockLocation
 from modules.b2b.models import B2BAccount
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List
 import random
 
@@ -38,7 +38,7 @@ async def get_revenue_overview(
     aov = gmv / order_count if order_count > 0 else 0
     
     # Sales & Order History (Last 14 days)
-    fourteen_days_ago = datetime.utcnow() - timedelta(days=14)
+    fourteen_days_ago = datetime.now(timezone.utc) - timedelta(days=14)
     history_result = await db.execute(
         select(
             func.date(Order.placed_at).label("day"),
@@ -58,7 +58,7 @@ async def get_revenue_overview(
     # Mock all 6 metrics if empty
     if not sales_history:
         for i in range(120, -1, -1): # Extended to 120 days for 90D view
-            dt = datetime.utcnow() - timedelta(days=i)
+            dt = datetime.now(timezone.utc) - timedelta(days=i)
             date_str = dt.strftime("%Y-%m-%d")
             day = dt.day
             
@@ -95,7 +95,7 @@ async def get_revenue_overview(
     # Generate hourly data for Today and 24H
     today_history = []
     h24_history = []
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     for i in range(23, -1, -1):
         hr_dt = now - timedelta(hours=i)
         val = random.uniform(50, 500)
@@ -108,7 +108,7 @@ async def get_revenue_overview(
         "aov": round(aov, 2),
         "conversion_rate": 0.035,
         "currency": "USD",
-        "refreshed_at": datetime.utcnow().isoformat(),
+        "refreshed_at": datetime.now(timezone.utc).isoformat(),
         "sales_history": sales_history,
         "order_history": order_history,
         "aov_history": aov_history,
@@ -131,7 +131,7 @@ async def get_needs_attention(
     - B2B Approvals (Pending)
     """
     # 1. Pending Orders > 24h
-    day_ago = datetime.utcnow() - timedelta(hours=24)
+    day_ago = datetime.now(timezone.utc) - timedelta(hours=24)
     pending_orders_result = await db.execute(
         select(func.count(Order.order_id)).where(
             Order.tenant_id == user.tenant_id,

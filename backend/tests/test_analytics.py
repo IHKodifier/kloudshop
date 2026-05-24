@@ -5,7 +5,7 @@ from modules.inventory.models import Inventory, StockLocation
 from modules.catalog.models import Product, Variant
 from modules.b2b.models import B2BAccount
 from shared.auth import UserClaims
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 @pytest.mark.asyncio
 async def test_analytics_overview(client: AsyncClient, db_session, auth_override):
@@ -21,7 +21,7 @@ async def test_analytics_overview(client: AsyncClient, db_session, auth_override
         grand_total=100.00, 
         payment_status="paid",
         fulfilment_status="unfulfilled",
-        placed_at=datetime.utcnow()
+        placed_at=datetime.now(timezone.utc)
     )
     order2 = Order(
         tenant_id=tenant_id, 
@@ -31,7 +31,7 @@ async def test_analytics_overview(client: AsyncClient, db_session, auth_override
         grand_total=50.00, 
         payment_status="paid",
         fulfilment_status="unfulfilled",
-        placed_at=datetime.utcnow()
+        placed_at=datetime.now(timezone.utc)
     )
     db_session.add_all([order1, order2])
     await db_session.commit()
@@ -50,7 +50,7 @@ async def test_analytics_needs_attention(client: AsyncClient, db_session, auth_o
     auth_override(UserClaims(uid="u1", email="a@t.com", tenant_id=tenant_id, roles=["owner"]))
     
     # 1. Overdue Order
-    overdue_date = datetime.utcnow() - timedelta(hours=48)
+    overdue_date = datetime.now(timezone.utc) - timedelta(hours=48)
     order = Order(
         tenant_id=tenant_id, 
         order_number="KS-OVERDUE",

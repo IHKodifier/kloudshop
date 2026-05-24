@@ -42,9 +42,9 @@ async def serve_storefront_home(
     )
     
     return templates.TemplateResponse(
+        request,
         "storefront.html",
         {
-            "request": request,
             "type": "home",
             **meta
         }
@@ -85,9 +85,9 @@ async def serve_storefront_product(
     )
     
     return templates.TemplateResponse(
+        request,
         "storefront.html",
         {
-            "request": request,
             "type": "product",
             "price": price,
             "structured_data": structured_data,
@@ -125,9 +125,9 @@ async def serve_storefront_blog_post(
     )
     
     return templates.TemplateResponse(
+        request,
         "storefront.html",
         {
-            "request": request,
             "type": "blog",
             "structured_data": structured_data,
             **meta
@@ -162,9 +162,9 @@ async def serve_order_success(
     )
 
     return templates.TemplateResponse(
+        request,
         "storefront.html",
         {
-            "request": request,
             "type": "order_success",
             "order_id": order_id,
             "customer_email": order.email,

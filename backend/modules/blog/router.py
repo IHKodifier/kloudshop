@@ -7,7 +7,7 @@ from shared.auth import UserClaims
 from shared.rbac import has_permissions
 from . import models, schemas
 from typing import List, Optional, Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(tags=["Blog Admin"])
 
@@ -174,7 +174,7 @@ async def update_post(
                 db.add(db_tag)
             db_post.tags.append(db_tag)
             
-    db_post.updated_at = datetime.utcnow()
+    db_post.updated_at = datetime.now(timezone.utc)
     await db.commit()
     
     # Re-fetch with all relations

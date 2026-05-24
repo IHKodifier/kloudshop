@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Boolean, Text, JSON, DateTime, ForeignKey, Integer, Numeric, Index
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from shared.db import Base
@@ -31,8 +31,8 @@ class BrandProfile(Base):
     default_meta_title = Column(Text)
     default_meta_description = Column(Text)
     is_published = Column(Boolean, nullable=False, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class StorefrontContent(Base):
     __tablename__ = "storefront_content"
@@ -43,7 +43,7 @@ class StorefrontContent(Base):
     slot_type = Column(String(16), nullable=False)
     content_value = Column(Text)
     is_auto_translated = Column(Boolean, nullable=False, default=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     updated_by = Column(String) # Changed from UUID
 
 class StaticPage(Base):
@@ -61,8 +61,8 @@ class StaticPage(Base):
     show_in_nav = Column(Boolean, nullable=False, default=False)
     nav_label = Column(Text)
     created_by = Column(String, nullable=False) # Changed from UUID
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class MerchantCarrierConnection(Base):
     __tablename__ = "merchant_carrier_connections"
@@ -75,8 +75,8 @@ class MerchantCarrierConnection(Base):
     is_active = Column(Boolean, nullable=False, default=True)
     last_verified_at = Column(DateTime)
     connected_by = Column(String, nullable=False) # Changed from UUID
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class CarrierCheckoutOption(Base):
     __tablename__ = "carrier_checkout_options"
@@ -89,5 +89,5 @@ class CarrierCheckoutOption(Base):
     handling_markup_type = Column(String(16), nullable=False, default="none")
     handling_markup_value = Column(Numeric(10, 2), nullable=False, default=0.00)
     allowed_destination_countries = Column(JSON, nullable=False, default=[]) # Changed from ARRAY
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

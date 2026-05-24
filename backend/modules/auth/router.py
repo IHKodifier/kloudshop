@@ -227,7 +227,7 @@ async def register_b2b_buyer(
     db: AsyncSession = Depends(get_db)
 ):
     """Register a B2B buyer using an invitation token."""
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     # 1. Validate token
     result = await db.execute(
@@ -237,7 +237,7 @@ async def register_b2b_buyer(
         )
     )
     invitation = result.scalar_one_or_none()
-    if not invitation or invitation.expires_at < datetime.utcnow():
+    if not invitation or invitation.expires_at < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Invalid or expired invitation token")
 
     # 2. Create Firebase User
@@ -262,7 +262,7 @@ async def register_b2b_buyer(
         auth.set_custom_user_claims(fb_user.uid, claims)
 
         # 4. Update DB
-        invitation.accepted_at = datetime.utcnow()
+        invitation.accepted_at = datetime.now(timezone.utc)
         new_buyer = BuyerUser(
             uid=fb_user.uid,
             email=invitation.email,

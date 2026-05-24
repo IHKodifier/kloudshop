@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, DateTime, Numeric, Text, CheckConstraint, Index, Date
 from sqlalchemy.orm import relationship
 from shared.db import Base
@@ -26,8 +26,8 @@ class StockLocation(Base):
     is_default = Column(Boolean, nullable=False, default=False)
     is_active = Column(Boolean, nullable=False, default=True)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     inventory_items = relationship("Inventory", back_populates="location")
     purchase_orders = relationship("PurchaseOrder", back_populates="receiving_location")
@@ -53,8 +53,8 @@ class Inventory(Base):
     last_received_at = Column(DateTime)
     last_sold_at = Column(DateTime)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     location = relationship("StockLocation", back_populates="inventory_items")
     variant = relationship("Variant", back_populates="inventory_items")
@@ -91,8 +91,8 @@ class Supplier(Base):
     notes = Column(Text)
     
     created_by = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     purchase_orders = relationship("PurchaseOrder", back_populates="supplier")
     performance_events = relationship("SupplierPerformanceEvent", back_populates="supplier")
@@ -125,8 +125,8 @@ class PurchaseOrder(Base):
     sent_by = Column(String)
     created_by = Column(String, nullable=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     supplier = relationship("Supplier", back_populates="purchase_orders")
     receiving_location = relationship("StockLocation", back_populates="purchase_orders")
@@ -155,8 +155,8 @@ class PurchaseOrderLine(Base):
     discrepancy_flag = Column(Boolean, nullable=False, default=False)
     discrepancy_notes = Column(Text)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     po = relationship("PurchaseOrder", back_populates="lines")
     variant = relationship("Variant")
@@ -173,7 +173,7 @@ class SupplierPerformanceEvent(Base):
     notes = Column(Text)
     
     logged_by = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     supplier = relationship("Supplier", back_populates="performance_events")
 
@@ -198,8 +198,8 @@ class StockTransfer(Base):
     received_at = Column(DateTime)
     
     notes = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint(source_location_id != destination_location_id, name="stock_transfers_different_locations"),
@@ -222,8 +222,8 @@ class PackagingPreset(Base):
     max_weight_unit = Column(String(4), nullable=False, default="kg")
     
     is_default = Column(Boolean, nullable=False, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class SupplierScoreWeights(Base):
     __tablename__ = "supplier_score_weights"
@@ -236,7 +236,7 @@ class SupplierScoreWeights(Base):
     quality_weight = Column(Numeric(4, 2), nullable=False, default=0.25)
     price_stability_weight = Column(Numeric(4, 2), nullable=False, default=0.15)
     
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class ShippingSettings(Base):
     __tablename__ = "shipping_settings"
@@ -250,4 +250,4 @@ class ShippingSettings(Base):
     handling_days = Column(Integer, nullable=False, default=1)
     order_cutoff_time = Column(String(5)) # e.g. "14:00"
     
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

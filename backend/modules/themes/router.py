@@ -52,6 +52,9 @@ async def get_active_theme_config(
     db: AsyncSession = Depends(get_db),
     user: UserClaims = Depends(validate_token)
 ):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
     result = await db.execute(
         select(ThemeConfiguration)
         .where(ThemeConfiguration.tenant_id == user.tenant_id, ThemeConfiguration.is_active == True)
@@ -67,6 +70,9 @@ async def select_theme(
     db: AsyncSession = Depends(get_db),
     user: UserClaims = Depends(validate_token)
 ):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
     # Check if theme exists
     theme_res = await db.execute(select(Theme).where(Theme.theme_id == req.theme_id))
     theme = theme_res.scalar_one_or_none()
@@ -127,6 +133,9 @@ async def update_theme_config_draft(
     db: AsyncSession = Depends(get_db),
     user: UserClaims = Depends(validate_token)
 ):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
     result = await db.execute(
         select(ThemeConfiguration)
         .where(ThemeConfiguration.tenant_id == user.tenant_id, ThemeConfiguration.is_active == True)
@@ -154,6 +163,9 @@ async def publish_theme_config(
     db: AsyncSession = Depends(get_db),
     user: UserClaims = Depends(validate_token)
 ):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
     result = await db.execute(
         select(ThemeConfiguration)
         .where(ThemeConfiguration.tenant_id == user.tenant_id, ThemeConfiguration.is_active == True)

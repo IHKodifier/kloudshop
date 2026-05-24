@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Boolean, Text, JSON, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from shared.db import Base
@@ -16,8 +16,8 @@ class OnboardingSession(Base):
     import_status = Column(String(32), default="none") # none | analyzing | executing | completed | failed
     import_progress = Column(Integer, default=0)
     last_error = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class ImportMapping(Base):
     __tablename__ = "import_mappings"
@@ -26,4 +26,4 @@ class ImportMapping(Base):
     tenant_id = Column(String, nullable=False, index=True)
     entity_type = Column(String(32), nullable=False) # product | customer | order
     header_mapping = Column(JSON, nullable=False) # {csv_column: model_field}
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

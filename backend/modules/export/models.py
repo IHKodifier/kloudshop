@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Text, Boolean, Integer, DateTime, JSON, F
 from sqlalchemy.orm import relationship
 from shared.db import Base, engine
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ExportJob(Base):
     __tablename__ = "export_jobs"
@@ -20,7 +20,7 @@ class ExportJob(Base):
     
     error_message = Column(Text)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime)
 
     __table_args__ = (

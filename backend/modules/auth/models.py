@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, DateTime, JSON, Boolean, ForeignKey
 from shared.db import Base, engine
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Schema name for platform-wide tables
 # Disable schema for SQLite tests
@@ -15,7 +15,7 @@ class Invitation(Base):
     tenant_id = Column(String, nullable=False, index=True)
     roles = Column(JSON, nullable=False, default=[])
     invited_by = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     accepted_at = Column(DateTime, nullable=True)
     is_cancelled = Column(Boolean, default=False)
 
@@ -25,7 +25,7 @@ class StaffUser(Base):
     uid = Column(String, primary_key=True) # Firebase UID
     email = Column(String, nullable=False, unique=True, index=True)
     display_name = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 class StaffRoleAssignment(Base):
     __tablename__ = "staff_role_assignments"
@@ -35,7 +35,7 @@ class StaffRoleAssignment(Base):
     tenant_id = Column(String, nullable=False, index=True)
     roles = Column(JSON, nullable=False, default=[])
     is_owner = Column(Boolean, default=False)
-    invited_at = Column(DateTime, default=datetime.utcnow)
+    invited_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     accepted_at = Column(DateTime, nullable=True)
 
 class B2BInvitation(Base):
@@ -46,7 +46,7 @@ class B2BInvitation(Base):
     tenant_id = Column(String, nullable=False, index=True)
     buyer_account_id = Column(String, nullable=True) # Corporate account grouping
     token = Column(String, unique=True, index=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     expires_at = Column(DateTime, nullable=False)
     accepted_at = Column(DateTime, nullable=True)
 
@@ -57,7 +57,7 @@ class BuyerUser(Base):
     email = Column(String, nullable=False, unique=True, index=True)
     tenant_id = Column(String, nullable=False, index=True)
     buyer_account_id = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 class ConsumerUser(Base):
     __tablename__ = "consumer_users"
@@ -67,4 +67,4 @@ class ConsumerUser(Base):
     tenant_id = Column(String, nullable=False, index=True)
     full_name = Column(String)
     default_shipping_address = Column(JSON) # {address1, address2, city, state, zip, country}
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

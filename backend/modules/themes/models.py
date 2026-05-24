@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Boolean, Text, JSON, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from shared.db import Base
@@ -13,7 +13,7 @@ class Theme(Base):
     description = Column(Text)
     preview_url = Column(Text)
     base_config = Column(JSON, nullable=False) # Default tokens and slots
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 class ThemeConfiguration(Base):
     __tablename__ = "theme_configurations"
@@ -30,6 +30,6 @@ class ThemeConfiguration(Base):
     live_slots = Column(JSON, nullable=False, default={})
     
     is_active = Column(Boolean, nullable=False, default=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     theme = relationship("Theme")

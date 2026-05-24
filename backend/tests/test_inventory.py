@@ -34,7 +34,7 @@ async def test_purchase_order_lifecycle(client: AsyncClient, db_session: AsyncSe
     headers = {"Authorization": "Bearer valid_token"}
     tenant_id = "t_abc"
     # Setup: Location, Supplier, Product
-    loc = StockLocation(name="Main Warehouse", location_type="warehouse")
+    loc = StockLocation(name="Main Warehouse", location_type="warehouse", tenant_id="t_abc")
     db_session.add(loc)
     sup = Supplier(name="Tech Distro", tenant_id="test-tenant", created_by="user-1")
     db_session.add(sup)
@@ -85,8 +85,8 @@ async def test_stock_transfer(client: AsyncClient, db_session: AsyncSession, moc
     headers = {"Authorization": "Bearer valid_token"}
     tenant_id = "t_abc"
     # Setup: 2 Locations, 1 Variant with stock
-    loc1 = StockLocation(name="Store A", location_type="store")
-    loc2 = StockLocation(name="Store B", location_type="store")
+    loc1 = StockLocation(name="Store A", location_type="store", tenant_id="t_abc")
+    loc2 = StockLocation(name="Store B", location_type="store", tenant_id="t_abc")
     db_session.add_all([loc1, loc2])
     prod = Product(title="Mouse", tenant_id="test-tenant", slug="mouse", created_by="user-1")
     db_session.add(prod)
@@ -94,7 +94,7 @@ async def test_stock_transfer(client: AsyncClient, db_session: AsyncSession, moc
     var = Variant(product_id=prod.product_id, sku="MOU-001", price=20, tenant_id="test-tenant")
     db_session.add(var)
     await db_session.flush()
-    inv1 = Inventory(variant_id=var.variant_id, stock_location_id=loc1.stock_location_id, quantity_on_hand=50)
+    inv1 = Inventory(variant_id=var.variant_id, stock_location_id=loc1.stock_location_id, quantity_on_hand=50, tenant_id="t_abc")
     db_session.add(inv1)
     await db_session.commit()
     
