@@ -42,3 +42,6 @@ backend/service_account.json
 # Database
 *.db
 *.sqlite
+
+# Scratch / Temporary diagnostics
+scratch/
