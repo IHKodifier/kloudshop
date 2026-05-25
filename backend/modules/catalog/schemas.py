@@ -9,9 +9,7 @@ from decimal import Decimal
 class VariantBase(BaseModel):
     sku: str
     barcode: Optional[str] = None
-    option_1: Optional[str] = None
-    option_2: Optional[str] = None
-    option_3: Optional[str] = None
+    option_values: Dict[str, str] = {}
     pricing_model: str = "fixed"
     price: Decimal = Field(ge=0)
     compare_at_price: Optional[Decimal] = Field(None, gt=0)
@@ -28,9 +26,8 @@ class VariantBase(BaseModel):
     digital_asset_url: Optional[str] = None
     download_limit: Optional[int] = None
     download_expiry_hours: Optional[int] = None
-    is_perishable: bool = False
-    best_before_days: Optional[int] = None
-    lot_number: Optional[str] = None
+    image_url: Optional[str] = None
+    images: List[str] = []
     pet_species: List[str] = []
     is_active: bool = True
     requires_shipping: bool = True
@@ -44,13 +41,19 @@ class VariantUpdate(BaseModel):
     variant_id: Optional[str] = None # If provided, update; else create
     sku: Optional[str] = None
     barcode: Optional[str] = None
-    option_1: Optional[str] = None
-    option_2: Optional[str] = None
-    option_3: Optional[str] = None
+    option_values: Optional[Dict[str, str]] = None
     pricing_model: Optional[str] = None
     price: Optional[Decimal] = Field(None, ge=0)
     compare_at_price: Optional[Decimal] = Field(None, gt=0)
     cost_per_item: Optional[Decimal] = Field(None, ge=0)
+    weight_value: Optional[Decimal] = Field(None, ge=0)
+    weight_unit: Optional[str] = Field(None, pattern="^(kg|lb)$")
+    length_value: Optional[Decimal] = Field(None, ge=0)
+    width_value: Optional[Decimal] = Field(None, ge=0)
+    height_value: Optional[Decimal] = Field(None, ge=0)
+    dimension_unit: Optional[str] = Field(None, pattern="^(cm|in)$")
+    image_url: Optional[str] = None
+    images: Optional[List[str]] = None
     is_active: Optional[bool] = None
     requires_shipping: Optional[bool] = None
     taxable: Optional[bool] = None
@@ -72,6 +75,8 @@ class ProductBase(BaseModel):
     slug: str = Field(..., pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
     image_url: Optional[str] = None
     images: List[str] = []
+    options_schema: List[Dict[str, Any]] = []
+    is_perishable: bool = False
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     is_digital: bool = False
@@ -163,6 +168,8 @@ class ProductUpdate(BaseModel):
     slug: Optional[str] = Field(None, pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
     image_url: Optional[str] = None
     images: Optional[List[str]] = None
+    options_schema: Optional[List[Dict[str, Any]]] = None
+    is_perishable: Optional[bool] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     is_digital: Optional[bool] = None

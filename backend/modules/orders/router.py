@@ -8,7 +8,7 @@ from typing import List, Optional
 import uuid
 import csv
 import io
-from datetime import datetime, timezone
+from datetime import datetime, timezone 
 from decimal import Decimal
 
 from shared.db import get_db
@@ -230,11 +230,12 @@ async def confirm_order(
             
             # Create Order Item (Snapshotting price and title)
             item_tax = Decimal(str(variant.price * item.quantity * Decimal("0.08")))
+            options_str = " / ".join(f"{k}: {v}" for k, v in variant.option_values.items()) if variant.option_values else "Default"
             order_item = OrderItem(
                 order_id=new_order.order_id,
                 variant_id=variant.variant_id,
                 product_id=variant.product_id,
-                title=f"{variant.product.title} ({variant.option_1 or 'Default'})",
+                title=f"{variant.product.title} ({options_str})",
                 sku=variant.sku,
                 quantity=item.quantity,
                 unit_price=variant.price,

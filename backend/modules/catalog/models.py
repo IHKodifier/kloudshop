@@ -41,6 +41,10 @@ class Product(Base):
     height_value = Column(Numeric(10, 2))
     dimension_unit = Column(String(4)) # cm | in
     
+    # Options & Perishable Flags
+    options_schema = Column(JSON, nullable=False, default=[])
+    is_perishable = Column(Boolean, nullable=False, default=False)
+    
     # Compliance & Regulatory
     compliance_metadata = Column(JSON, nullable=False, default={})
     compliance_document_url = Column(Text)
@@ -86,9 +90,11 @@ class Variant(Base):
     barcode = Column(String(128))
     
     # Options
-    option_1 = Column(Text)
-    option_2 = Column(Text)
-    option_3 = Column(Text)
+    option_values = Column(JSON, nullable=False, default={})
+    
+    # Media Overrides
+    image_url = Column(Text) # Variant specific main image
+    images = Column(JSON, nullable=False, default=[]) # Variant specific gallery
     
     # Pricing Model
     pricing_model = Column(String(16), nullable=False, default='fixed') # fixed | pwyw | donation
@@ -116,11 +122,6 @@ class Variant(Base):
     download_limit = Column(Integer)
     download_expiry_hours = Column(Integer)
     
-    # Perishable / Batch Tracking
-    is_perishable = Column(Boolean, nullable=False, default=False)
-    best_before_days = Column(Integer)
-    lot_number = Column(Text)
-    
     # Pet Species
     pet_species = Column(JSON, nullable=False, default=[]) # Stored as list in JSON
     
@@ -133,11 +134,11 @@ class Variant(Base):
     position = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-
+ 
     # Relationships
     product = relationship("Product", back_populates="variants")
     inventory_items = relationship("Inventory", back_populates="variant", cascade="all, delete-orphan")
-
+ 
     __table_args__ = (
         UniqueConstraint('tenant_id', 'sku', name='uix_variant_tenant_sku'),
         CheckConstraint(pricing_model.in_(['fixed', 'pwyw', 'donation']), name='variants_pricing_model_check'),
@@ -146,7 +147,6 @@ class Variant(Base):
         CheckConstraint(dimension_unit.in_(['cm', 'in']), name='variants_dimension_unit_check'),
         CheckConstraint("pricing_model = 'fixed' OR compare_at_price IS NULL", name='variants_pwyw_no_compare_at'),
         CheckConstraint("digital_asset_url IS NOT NULL OR (download_limit IS NULL AND download_expiry_hours IS NULL)", name='variants_download_fields_require_digital'),
-        CheckConstraint("is_perishable = 1 OR best_before_days IS NULL", name='variants_perishable_logic'),
         CheckConstraint("pwyw_minimum_price IS NULL OR pwyw_minimum_price >= 0", name='variants_pwyw_minimum_non_negative'),
         CheckConstraint("pricing_model IN ('pwyw', 'donation') OR (pwyw_minimum_price IS NULL AND pwyw_suggested_price IS NULL)", name='variants_pwyw_fields_require_pwyw_model'),
         CheckConstraint("compare_at_price IS NULL OR compare_at_price > price", name='variants_compare_at_price_check'),

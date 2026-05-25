@@ -63,3 +63,29 @@ if "sqlite" in engine.url.drivername:
 **Issue:** Console logs filled with 404 errors for assets like `landing_hero_dark.png`.
 **Root Cause:** Incorrect pathing in `pubspec.yaml` or missing conditional logic for Dark Mode asset variants.
 **Fix:** Verify asset declarations in `pubspec.yaml` and ensure the `web/` directory is correctly mapped in the build configuration.
+
+---
+
+## 5. Catalog & Variants Schema Redesign
+
+### 🔴 Legacy Option Columns (`option_1`, `option_2`, `option_3`) are Removed
+**Issue:** Errors querying or writing `option_1/2/3` on the `Variant` model.
+**Root Cause:** The database was refactored to support arbitrary, dynamic options. The legacy columns `option_1`, `option_2`, and `option_3` are completely deleted.
+**Fix:** 
+- The list of allowed options is stored as a JSON array (`options_schema`) at the `Product` level (e.g. `[{"name": "Color", "values": ["Red", "Blue"]}, {"name": "Size", "values": ["S", "M"]}]`).
+- The actual values for a specific variant are stored as a JSON dictionary (`option_values`) at the `Variant` level (e.g. `{"Color": "Red", "Size": "S"}`).
+
+### 🔴 Catalog Variants do NOT store Inventory Batches / Expiry
+**Issue:** Database errors trying to access `best_before_days` or `lot_number` on catalog `Variant`.
+**Root Cause:** These are batch-specific attributes that belong strictly in inventory stocks/receipts, not in the static catalog definitions. They have been deleted from `Variant`.
+**Fix:** 
+- Keep catalog schemas clean of inventory batch details.
+- `is_perishable` is defined as a boolean flag at the `Product` level to indicate if batch tracking is required during receiving.
+
+### 🔴 Shipping Weights and Dimensions Overrides
+**Issue:** Missing weight/dimension data or confusion about where to store shipping attributes.
+**Root Cause:** Weight and dimension overrides are crucial for shipping calculations, especially when size/material changes. They have dedicated columns on both `Product` and `Variant` models (e.g., `weight_value`, `weight_unit`, `length_value`, `width_value`, `height_value`, `dimension_unit`). They must **not** be stored inside the JSON `option_values` map.
+**Fix:**
+- Always check the `Variant` fields first. If they are null (`None`), fallback to the default fields at the `Product` level.
+- Products without variants will specify these at the `Product` level.
+

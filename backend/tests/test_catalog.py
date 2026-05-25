@@ -17,18 +17,20 @@ async def test_create_product_success(client: AsyncClient, mock_firebase_user, d
         "description": "Premium waterproof jacket",
         "status": "active",
         "slug": "hiking-jacket",
+        "options_schema": [
+            {"name": "Color", "values": ["Blue", "Red"]},
+            {"name": "Size", "values": ["Medium", "Large"]}
+        ],
         "variants": [
             {
                 "sku": "HJ-BL-L",
                 "price": 129.99,
-                "option_1": "Blue",
-                "option_2": "Large"
+                "option_values": {"Color": "Blue", "Size": "Large"}
             },
             {
                 "sku": "HJ-RD-M",
                 "price": 119.99,
-                "option_1": "Red",
-                "option_2": "Medium"
+                "option_values": {"Color": "Red", "Size": "Medium"}
             }
         ]
     }
@@ -121,19 +123,20 @@ async def test_product_prescription_logic(client: AsyncClient, mock_firebase_use
     assert response.status_code == 400
 
 @pytest.mark.asyncio
-async def test_variant_perishable_logic(client: AsyncClient, mock_firebase_user, db_session):
-    """Verify that best_before_days requires is_perishable=True."""
+async def test_product_is_perishable(client: AsyncClient, mock_firebase_user, db_session):
+    """Verify that is_perishable flag is saved correctly on Product."""
     headers = {"Authorization": "Bearer valid_token"}
     payload = {
         "title": "Fresh Milk",
         "slug": "milk",
+        "is_perishable": True,
         "variants": [{
-            "sku": "MILK-1",
-            "price": 3.0,
-            "is_perishable": False,
-            "best_before_days": 7 # INVALID
+            "sku": "MILK-1", 
+            "price": 3.0
         }]
     }
     
     response = await client.post("/api/v1/products/", json=payload, headers=headers)
-    assert response.status_code == 400
+    assert response.status_code == 201
+    data = response.json()
+    assert data["is_perishable"] is True

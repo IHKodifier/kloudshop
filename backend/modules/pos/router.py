@@ -55,7 +55,7 @@ async def get_my_pos_location(
 async def create_pos_order(
     order_in: POSOrderCreate,
     db: AsyncSession = Depends(get_db),
-    user: UserClaims = has_permissions(["pos:write"])
+    user: UserClaims = has_permissions(["pos:write"]) 
 ):
     # 1. Get staff location
     assignment = await get_staff_location(user.uid, user.tenant_id, db)
@@ -110,10 +110,10 @@ async def create_pos_order(
         total_subtotal += item_subtotal
         
         variant_title = f"{variant.product.title}"
-        if variant.option_1:
-            variant_title += f" - {variant.option_1}"
-            if variant.option_2:
-                variant_title += f" / {variant.option_2}"
+        if variant.option_values:
+            options_str = " / ".join(f"{k}: {v}" for k, v in variant.option_values.items())
+            if options_str:
+                variant_title += f" - {options_str}"
         
         order_item = OrderItem(
             variant_id=variant.variant_id,

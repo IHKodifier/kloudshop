@@ -5,9 +5,17 @@ class Product {
   final String? description;
   final String status;
   final bool isDigital;
+  final bool isPerishable;
   final String? metaTitle;
   final String? metaDescription;
   final List<String> images;
+  final List<Map<String, dynamic>> optionsSchema;
+  final double? weightValue;
+  final String? weightUnit;
+  final double? lengthValue;
+  final double? widthValue;
+  final double? heightValue;
+  final String? dimensionUnit;
   final DateTime createdAt;
   final List<ProductVariant> variants;
 
@@ -18,9 +26,17 @@ class Product {
     this.description,
     required this.status,
     required this.isDigital,
+    required this.isPerishable,
     this.metaTitle,
     this.metaDescription,
     this.images = const [],
+    this.optionsSchema = const [],
+    this.weightValue,
+    this.weightUnit,
+    this.lengthValue,
+    this.widthValue,
+    this.heightValue,
+    this.dimensionUnit,
     required this.createdAt,
     required this.variants,
   });
@@ -33,15 +49,33 @@ class Product {
       description: json['description'] as String?,
       status: json['status'] as String? ?? 'draft',
       isDigital: json['is_digital'] as bool? ?? false,
+      isPerishable: json['is_perishable'] as bool? ?? false,
       metaTitle: json['meta_title'] as String?,
       metaDescription: json['meta_description'] as String?,
       images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      optionsSchema: (json['options_schema'] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          [],
+      weightValue: json['weight_value'] != null ? _toDouble(json['weight_value']) : null,
+      weightUnit: json['weight_unit'] as String?,
+      lengthValue: json['length_value'] != null ? _toDouble(json['length_value']) : null,
+      widthValue: json['width_value'] != null ? _toDouble(json['width_value']) : null,
+      heightValue: json['height_value'] != null ? _toDouble(json['height_value']) : null,
+      dimensionUnit: json['dimension_unit'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       variants: (json['variants'] as List<dynamic>?)
               ?.map((v) => ProductVariant.fromJson(v as Map<String, dynamic>))
               .toList() ??
           [],
     );
+  }
+
+  static double _toDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 }
 
@@ -50,24 +84,36 @@ class ProductVariant {
   final String sku;
   final double price;
   final double? compareAtPrice;
-  final String? option1;
-  final String? option2;
-  final String? option3;
+  final Map<String, String> optionValues;
   final int? stock;
   final bool isDefault;
   final bool isActive;
+  final String? imageUrl;
+  final List<String> images;
+  final double? weightValue;
+  final String? weightUnit;
+  final double? lengthValue;
+  final double? widthValue;
+  final double? heightValue;
+  final String? dimensionUnit;
 
   ProductVariant({
     required this.id,
     required this.sku,
     required this.price,
     this.compareAtPrice,
-    this.option1,
-    this.option2,
-    this.option3,
+    this.optionValues = const {},
     this.stock,
     required this.isDefault,
     required this.isActive,
+    this.imageUrl,
+    this.images = const [],
+    this.weightValue,
+    this.weightUnit,
+    this.lengthValue,
+    this.widthValue,
+    this.heightValue,
+    this.dimensionUnit,
   });
 
   factory ProductVariant.fromJson(Map<String, dynamic> json) {
@@ -78,12 +124,20 @@ class ProductVariant {
       compareAtPrice: json['compare_at_price'] != null
           ? _toDouble(json['compare_at_price'])
           : null,
-      option1: json['option_1'] as String?,
-      option2: json['option_2'] as String?,
-      option3: json['option_3'] as String?,
+      optionValues: json['option_values'] != null
+          ? Map<String, String>.from(json['option_values'] as Map)
+          : const {},
       stock: _toInt(json['stock']),
       isDefault: json['is_default'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
+      imageUrl: json['image_url'] as String?,
+      images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      weightValue: json['weight_value'] != null ? _toDouble(json['weight_value']) : null,
+      weightUnit: json['weight_unit'] as String?,
+      lengthValue: json['length_value'] != null ? _toDouble(json['length_value']) : null,
+      widthValue: json['width_value'] != null ? _toDouble(json['width_value']) : null,
+      heightValue: json['height_value'] != null ? _toDouble(json['height_value']) : null,
+      dimensionUnit: json['dimension_unit'] as String?,
     );
   }
 
