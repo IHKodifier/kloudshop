@@ -13,6 +13,51 @@ class ProductEditorView extends ConsumerStatefulWidget {
   final Product? product; // null if creating new
   const ProductEditorView({super.key, this.product});
 
+  static Future<void> show(BuildContext context, {Product? product}) {
+    return showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss Product Editor',
+      barrierColor: Colors.black.withValues(alpha: 0.55),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, anim1, anim2) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final screenHeight = MediaQuery.of(context).size.height;
+        final dialogWidth = screenWidth > 900 ? screenWidth * 0.75 : screenWidth * 0.95;
+        final dialogHeight = screenHeight * 0.9;
+        
+        return Center(
+          child: Container(
+            width: dialogWidth,
+            height: dialogHeight,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 24,
+                  spreadRadius: 4,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ProductEditorView(product: product),
+          ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: anim1, curve: Curves.easeOutQuad),
+          child: FadeTransition(
+            opacity: anim1,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   ConsumerState<ProductEditorView> createState() => _ProductEditorViewState();
 }

@@ -309,10 +309,7 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
   }
 
   Future<void> _showCreateProductDialog(BuildContext context) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ProductEditorView()),
-    );
+    ProductEditorView.show(context);
   }
 }
 
@@ -336,12 +333,7 @@ class _ProductCard extends ConsumerWidget {
           filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ProductEditorView(product: product)),
-              );
+              ProductEditorView.show(context, product: product);
             },
             borderRadius: BorderRadius.circular(16),
             child: Container(
