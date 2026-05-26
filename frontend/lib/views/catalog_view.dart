@@ -309,7 +309,22 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
   }
 
   Future<void> _showCreateProductDialog(BuildContext context) async {
-    ProductEditorView.show(context);
+    final result = await ProductEditorView.show(context);
+    if (result == true && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(LucideIcons.checkCircle2, color: Colors.white, size: 16),
+              SizedBox(width: 8),
+              Text('Product saved successfully', style: TextStyle(fontWeight: FontWeight.w600)),
+            ],
+          ),
+          backgroundColor: AppTheme.brandEmerald500,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 }
 
@@ -332,8 +347,23 @@ class _ProductCard extends ConsumerWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
           child: InkWell(
-            onTap: () {
-              ProductEditorView.show(context, product: product);
+            onTap: () async {
+              final result = await ProductEditorView.show(context, product: product);
+              if (result == true && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: const [
+                        Icon(LucideIcons.checkCircle2, color: Colors.white, size: 16),
+                        SizedBox(width: 8),
+                        Text('Product saved successfully', style: TextStyle(fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                    backgroundColor: AppTheme.brandEmerald500,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
             },
             borderRadius: BorderRadius.circular(16),
             child: Container(

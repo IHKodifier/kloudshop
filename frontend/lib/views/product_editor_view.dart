@@ -13,8 +13,8 @@ class ProductEditorView extends ConsumerStatefulWidget {
   final Product? product; // null if creating new
   const ProductEditorView({super.key, this.product});
 
-  static Future<void> show(BuildContext context, {Product? product}) {
-    return showGeneralDialog(
+  static Future<bool?> show(BuildContext context, {Product? product}) {
+    return showGeneralDialog<bool>(
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Dismiss Product Editor',
@@ -64,6 +64,44 @@ class ProductEditorView extends ConsumerStatefulWidget {
 
 class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
   final _formKey = GlobalKey<FormState>();
+  final _messengerKey = GlobalKey<ScaffoldMessengerState>();
+
+  void _showNotification(String message, {bool isError = false}) {
+    _messengerKey.currentState?.clearSnackBars();
+    _messengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isError ? LucideIcons.alertCircle : LucideIcons.checkCircle2,
+              color: Colors.white,
+              size: 16,
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: isError ? Colors.redAccent : AppTheme.brandEmerald500,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(milliseconds: 1500),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      ),
+    );
+  }
+
   late TextEditingController _titleController;
   late TextEditingController _slugController;
   late TextEditingController _descriptionController;
@@ -135,11 +173,11 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
         });
       }
     } else {
-      _addVariant();
+      _addVariant(showToast: false);
     }
   }
 
-  void _addVariant() {
+  void _addVariant({bool showToast = true}) {
     setState(() {
       final Map<String, String> defaultOptionValues = {};
       for (var opt in _optionsSchema) {
@@ -170,6 +208,9 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
         'is_expanded': true,
       });
     });
+    if (showToast) {
+      _showNotification('Variant added');
+    }
   }
 
   void _generateVariantsFromOptions() {
@@ -230,6 +271,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
         });
       }
     });
+    _showNotification('Generated ${permutations.length} variants');
   }
 
   void _removeVariant(int index) {
@@ -240,6 +282,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           _variants[0]['is_default'] = true;
         }
       });
+      _showNotification('Variant deleted');
     }
   }
 
@@ -265,15 +308,11 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       });
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Variant image uploaded successfully')),
-        );
+        _showNotification('Variant image uploaded successfully');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e'), backgroundColor: Colors.red),
-        );
+        _showNotification('Upload failed: $e', isError: true);
       }
     } finally {
       if (mounted) setState(() => _isUploading = false);
@@ -299,9 +338,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
 
     final skus = _variants.map((v) => v['sku'] as String).toList();
     if (skus.toSet().length != skus.length) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error: Each variant must have a unique SKU'), backgroundColor: Colors.red),
-      );
+      _showNotification('Error: Each variant must have a unique SKU', isError: true);
       return;
     }
     
@@ -372,16 +409,11 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       }
       ref.invalidate(productsProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Product saved successfully'), backgroundColor: Colors.green),
-        );
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
+        _showNotification('Error: $e', isError: true);
       }
     }
   }
@@ -391,7 +423,9 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     
-    return Scaffold(
+    return ScaffoldMessenger(
+      key: _messengerKey,
+      child: Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(widget.product == null ? 'New Product' : 'Edit Product', style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -702,8 +736,9 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildGlassCard({
     required String title,
@@ -1357,15 +1392,11 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       setState(() {});
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Image uploaded successfully')),
-        );
+        _showNotification('Image uploaded successfully');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e'), backgroundColor: Colors.red),
-        );
+        _showNotification('Upload failed: $e', isError: true);
       }
     } finally {
       if (mounted) setState(() => _isUploading = false);
