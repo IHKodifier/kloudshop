@@ -991,25 +991,33 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                           Expanded(
                             child: Row(
                               children: [
-                                Text(
-                                  optionVals.isEmpty 
-                                      ? 'Default Variant' 
-                                      : optionVals.entries.map((e) => e.value).join(' / '),
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                Flexible(
+                                  child: Text(
+                                    optionVals.isEmpty 
+                                        ? 'Default Variant' 
+                                        : optionVals.entries.map((e) => e.value).join(' / '),
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
                                 if (variant['sku']?.toString().isNotEmpty == true) ...[
                                   const SizedBox(width: 12),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: isDark ? Colors.blueGrey.withValues(alpha: 0.2) : Colors.blueGrey.withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      'SKU: ${variant['sku']}',
-                                      style: TextStyle(
-                                        fontSize: 11, 
-                                        color: isDark ? Colors.grey[300] : Colors.grey[700],
+                                  Flexible(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: isDark ? Colors.blueGrey.withValues(alpha: 0.2) : Colors.blueGrey.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        'SKU: ${variant['sku']}',
+                                        style: TextStyle(
+                                          fontSize: 11, 
+                                          color: isDark ? Colors.grey[300] : Colors.grey[700],
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                       ),
                                     ),
                                   ),
