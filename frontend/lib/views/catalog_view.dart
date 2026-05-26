@@ -315,13 +315,24 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
         SnackBar(
           content: Row(
             children: const [
-              Icon(LucideIcons.checkCircle2, color: Colors.white, size: 16),
+              Icon(LucideIcons.checkCircle2, color: Color(0xFF166534), size: 16),
               SizedBox(width: 8),
-              Text('Product saved successfully', style: TextStyle(fontWeight: FontWeight.w600)),
+              Text(
+                'Product saved successfully',
+                style: TextStyle(
+                  color: Color(0xFF166534),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
             ],
           ),
-          backgroundColor: AppTheme.brandEmerald500,
+          backgroundColor: const Color(0xFFF0FDF4),
           behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: const BorderSide(color: Color(0xFFBBF7D0), width: 1),
+          ),
         ),
       );
     }
@@ -354,13 +365,24 @@ class _ProductCard extends ConsumerWidget {
                   SnackBar(
                     content: Row(
                       children: const [
-                        Icon(LucideIcons.checkCircle2, color: Colors.white, size: 16),
+                        Icon(LucideIcons.checkCircle2, color: Color(0xFF166534), size: 16),
                         SizedBox(width: 8),
-                        Text('Product saved successfully', style: TextStyle(fontWeight: FontWeight.w600)),
+                        Text(
+                          'Product saved successfully',
+                          style: TextStyle(
+                            color: Color(0xFF166534),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
                       ],
                     ),
-                    backgroundColor: AppTheme.brandEmerald500,
+                    backgroundColor: const Color(0xFFF0FDF4),
                     behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(color: Color(0xFFBBF7D0), width: 1),
+                    ),
                   ),
                 );
               }

@@ -66,7 +66,12 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
   final _formKey = GlobalKey<FormState>();
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
 
-  void _showNotification(String message, {bool isError = false}) {
+  void _showNotification(String message, {bool isError = false, bool isDeletion = false}) {
+    final bool isFailure = isError || isDeletion;
+    final backgroundColor = isFailure ? const Color(0xFFFEF2F2) : const Color(0xFFF0FDF4);
+    final contentColor = isFailure ? const Color(0xFF991B1B) : const Color(0xFF166534);
+    final borderColor = isFailure ? const Color(0xFFFECACA) : const Color(0xFFBBF7D0);
+
     _messengerKey.currentState?.clearSnackBars();
     _messengerKey.currentState?.showSnackBar(
       SnackBar(
@@ -74,16 +79,16 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              isError ? LucideIcons.alertCircle : LucideIcons.checkCircle2,
-              color: Colors.white,
+              isFailure ? LucideIcons.alertCircle : LucideIcons.checkCircle2,
+              color: contentColor,
               size: 16,
             ),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
                 message,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: contentColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
@@ -91,11 +96,12 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
             ),
           ],
         ),
-        backgroundColor: isError ? Colors.redAccent : AppTheme.brandEmerald500,
+        backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(milliseconds: 1500),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: borderColor, width: 1),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       ),
@@ -282,7 +288,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           _variants[0]['is_default'] = true;
         }
       });
-      _showNotification('Variant deleted');
+      _showNotification('Variant deleted', isDeletion: true);
     }
   }
 
