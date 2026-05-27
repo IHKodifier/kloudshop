@@ -964,6 +964,10 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
             final Map<String, String> optionVals = Map<String, String>.from(variant['option_values'] ?? {});
             final bool isExpanded = variant['is_expanded'] ?? false;
             
+            final customInputStyle = theme.textTheme.bodyMedium?.copyWith(fontSize: 12);
+            final customLabelStyle = theme.textTheme.bodySmall?.copyWith(fontSize: 11);
+            const customPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 6);
+
             // Build dynamic option dropdowns
             final List<Widget> optionDropdowns = [];
             for (var opt in _optionsSchema) {
@@ -978,10 +982,12 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       initialValue: optionVals[name],
+                      style: customInputStyle,
                       decoration: InputDecoration(
                         labelText: name,
+                        labelStyle: customLabelStyle,
                         border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        contentPadding: customPadding,
                       ),
                       items: vals.map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
                       onChanged: (newVal) {
@@ -1100,10 +1106,12 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                           flex: 3,
                           child: TextFormField(
                             initialValue: variant['sku'],
-                            decoration: const InputDecoration(
+                            style: customInputStyle,
+                            decoration: InputDecoration(
                               labelText: 'SKU',
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              labelStyle: customLabelStyle,
+                              border: const OutlineInputBorder(),
+                              contentPadding: customPadding,
                             ),
                             onChanged: (v) {
                               setState(() {
@@ -1118,11 +1126,14 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                           flex: 2,
                           child: TextFormField(
                             initialValue: variant['price'],
-                            decoration: const InputDecoration(
+                            style: customInputStyle,
+                            decoration: InputDecoration(
                               labelText: 'Price', 
+                              labelStyle: customLabelStyle,
                               prefixText: '\$',
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              prefixStyle: customInputStyle,
+                              border: const OutlineInputBorder(),
+                              contentPadding: customPadding,
                             ),
                             keyboardType: TextInputType.number,
                             onChanged: (v) {
@@ -1138,11 +1149,14 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                           flex: 2,
                           child: TextFormField(
                             initialValue: variant['compare_at_price'],
-                            decoration: const InputDecoration(
+                            style: customInputStyle,
+                            decoration: InputDecoration(
                               labelText: 'Compare At', 
+                              labelStyle: customLabelStyle,
                               prefixText: '\$',
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              prefixStyle: customInputStyle,
+                              border: const OutlineInputBorder(),
+                              contentPadding: customPadding,
                             ),
                             keyboardType: TextInputType.number,
                             onChanged: (v) {
@@ -1158,10 +1172,12 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                             flex: 3,
                             child: TextFormField(
                               initialValue: variant['stock'],
-                              decoration: const InputDecoration(
+                              style: customInputStyle,
+                              decoration: InputDecoration(
                                 labelText: 'Initial Stock Inventory',
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                labelStyle: customLabelStyle,
+                                border: const OutlineInputBorder(),
+                                contentPadding: customPadding,
                               ),
                               keyboardType: TextInputType.number,
                               onChanged: (v) {
@@ -1263,6 +1279,10 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
 
   Widget _buildVariantShippingOverrides(Map<String, dynamic> variant) {
     final bool showOverrides = variant['show_shipping_overrides'] ?? false;
+    final theme = Theme.of(context);
+    final customInputStyle = theme.textTheme.bodyMedium?.copyWith(fontSize: 12);
+    final customLabelStyle = theme.textTheme.bodySmall?.copyWith(fontSize: 11);
+    const customPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 6);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1295,10 +1315,14 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                 flex: 3,
                 child: TextFormField(
                   initialValue: variant['weight_value']?.toString() ?? '',
-                  decoration: const InputDecoration(
+                  style: customInputStyle,
+                  decoration: InputDecoration(
                     labelText: 'Variant Weight',
+                    labelStyle: customLabelStyle,
                     hintText: 'variant weight',
-                    border: OutlineInputBorder(),
+                    hintStyle: customInputStyle,
+                    border: const OutlineInputBorder(),
+                    contentPadding: customPadding,
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (v) => variant['weight_value'] = v,
@@ -1309,9 +1333,12 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
                 flex: 2,
                 child: DropdownButtonFormField<String>(
                   initialValue: variant['weight_unit'] ?? 'kg',
-                  decoration: const InputDecoration(
+                  style: customInputStyle,
+                  decoration: InputDecoration(
                     labelText: 'Unit',
-                    border: OutlineInputBorder(),
+                    labelStyle: customLabelStyle,
+                    border: const OutlineInputBorder(),
+                    contentPadding: customPadding,
                   ),
                   items: const [
                     DropdownMenuItem(value: 'kg', child: Text('kg')),
@@ -1328,10 +1355,14 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               Expanded(
                 child: TextFormField(
                   initialValue: variant['length_value']?.toString() ?? '',
-                  decoration: const InputDecoration(
+                  style: customInputStyle,
+                  decoration: InputDecoration(
                     labelText: 'Variant Length',
+                    labelStyle: customLabelStyle,
                     hintText: 'variant length',
-                    border: OutlineInputBorder(),
+                    hintStyle: customInputStyle,
+                    border: const OutlineInputBorder(),
+                    contentPadding: customPadding,
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (v) => variant['length_value'] = v,
@@ -1341,10 +1372,14 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               Expanded(
                 child: TextFormField(
                   initialValue: variant['width_value']?.toString() ?? '',
-                  decoration: const InputDecoration(
+                  style: customInputStyle,
+                  decoration: InputDecoration(
                     labelText: 'Variant Width',
+                    labelStyle: customLabelStyle,
                     hintText: 'variant width',
-                    border: OutlineInputBorder(),
+                    hintStyle: customInputStyle,
+                    border: const OutlineInputBorder(),
+                    contentPadding: customPadding,
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (v) => variant['width_value'] = v,
@@ -1354,10 +1389,14 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               Expanded(
                 child: TextFormField(
                   initialValue: variant['height_value']?.toString() ?? '',
-                  decoration: const InputDecoration(
+                  style: customInputStyle,
+                  decoration: InputDecoration(
                     labelText: 'Variant Height',
+                    labelStyle: customLabelStyle,
                     hintText: 'variant height',
-                    border: OutlineInputBorder(),
+                    hintStyle: customInputStyle,
+                    border: const OutlineInputBorder(),
+                    contentPadding: customPadding,
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (v) => variant['height_value'] = v,
@@ -1367,9 +1406,12 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               Expanded(
                 child: DropdownButtonFormField<String>(
                   initialValue: variant['dimension_unit'] ?? 'cm',
-                  decoration: const InputDecoration(
+                  style: customInputStyle,
+                  decoration: InputDecoration(
                     labelText: 'Unit',
-                    border: OutlineInputBorder(),
+                    labelStyle: customLabelStyle,
+                    border: const OutlineInputBorder(),
+                    contentPadding: customPadding,
                   ),
                   items: const [
                     DropdownMenuItem(value: 'cm', child: Text('cm')),
