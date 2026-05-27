@@ -51,11 +51,13 @@ class Order {
       shippingAddress1: json['shipping_address1'] as String?,
       shippingCity: json['shipping_city'] as String?,
       placedAt: DateTime.parse(json['placed_at'] as String),
-      items: (json['items'] as List<dynamic>?)
+      items:
+          (json['items'] as List<dynamic>?)
               ?.map((v) => OrderItem.fromJson(v as Map<String, dynamic>))
               .toList() ??
           [],
-      events: (json['events'] as List<dynamic>?)
+      events:
+          (json['events'] as List<dynamic>?)
               ?.map((v) => OrderEvent.fromJson(v as Map<String, dynamic>))
               .toList() ??
           [],

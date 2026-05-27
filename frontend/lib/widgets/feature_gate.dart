@@ -27,7 +27,9 @@ class FeatureGate extends ConsumerWidget {
   bool _hasAccess(SubscriptionTier tier) {
     switch (feature) {
       case Feature.dtcStorefront:
-        return tier == SubscriptionTier.dtc || tier == SubscriptionTier.hybrid || tier == SubscriptionTier.free;
+        return tier == SubscriptionTier.dtc ||
+            tier == SubscriptionTier.hybrid ||
+            tier == SubscriptionTier.free;
       case Feature.b2bPortal:
       case Feature.priceLists:
       case Feature.approvalWorkflows:
@@ -69,7 +71,9 @@ class FeatureGate extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             'Feature Locked',
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(

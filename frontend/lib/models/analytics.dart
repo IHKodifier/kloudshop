@@ -9,7 +9,7 @@ class DataPoint {
     return DataPoint(
       date: DateTime.parse(json['date']),
       value: _toDouble(json['value']),
-      secondaryValue: json['secondary_value'] != null 
+      secondaryValue: json['secondary_value'] != null
           ? _toDouble(json['secondary_value'])
           : null,
     );
@@ -30,7 +30,7 @@ class AnalyticsOverview {
   final double conversionRate;
   final String currency;
   final DateTime refreshedAt;
-  
+
   // Historical Lists
   final List<DataPoint> salesHistory;
   final List<DataPoint> orderHistory;

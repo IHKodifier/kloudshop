@@ -8,7 +8,8 @@ class OrdersStatusFilter extends Notifier<String?> {
   void setStatus(String? status) => state = status;
 }
 
-final ordersStatusFilterProvider = NotifierProvider<OrdersStatusFilter, String?>(OrdersStatusFilter.new);
+final ordersStatusFilterProvider =
+    NotifierProvider<OrdersStatusFilter, String?>(OrdersStatusFilter.new);
 
 final ordersProvider = FutureProvider<List<Order>>((ref) async {
   final apiService = ref.watch(apiServiceProvider);
@@ -16,7 +17,10 @@ final ordersProvider = FutureProvider<List<Order>>((ref) async {
   return apiService.listOrders(status: status);
 });
 
-final orderDetailsProvider = FutureProvider.family<Order, String>((ref, id) async {
+final orderDetailsProvider = FutureProvider.family<Order, String>((
+  ref,
+  id,
+) async {
   final apiService = ref.watch(apiServiceProvider);
   return apiService.getOrderDetails(id);
 });
@@ -27,4 +31,6 @@ class OrderActionLoading extends Notifier<bool> {
   void setLoading(bool loading) => state = loading;
 }
 
-final orderActionLoadingProvider = NotifierProvider<OrderActionLoading, bool>(OrderActionLoading.new);
+final orderActionLoadingProvider = NotifierProvider<OrderActionLoading, bool>(
+  OrderActionLoading.new,
+);

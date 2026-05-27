@@ -8,6 +8,8 @@ import 'package:kloudshop/providers/blog_providers.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kloudshop/services/file_uploader.dart';
+import 'package:kloudshop/widgets/upload/single_image_uploader.dart';
 
 class BlogPostEditor extends ConsumerStatefulWidget {
   final BlogPost? post;
@@ -26,26 +28,33 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
   String _status = 'draft';
   String? _coverImageUrl;
   bool _isSubmitting = false;
-  bool _isUploadingCover = false;
+  late final FileUploader _uploader;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.post?.title ?? '');
     _slugController = TextEditingController(text: widget.post?.slug ?? '');
-    _excerptController = TextEditingController(text: widget.post?.excerpt ?? '');
+    _excerptController = TextEditingController(
+      text: widget.post?.excerpt ?? '',
+    );
     _bodyController = TextEditingController(text: widget.post?.body ?? '');
     _status = widget.post?.status ?? 'draft';
     _coverImageUrl = widget.post?.coverImageUrl;
+    _uploader = MockFileUploader(
+      apiUpload: (bytes, name) =>
+          ref.read(apiServiceProvider).uploadMedia(bytes, name),
+    );
 
     _titleController.addListener(_updateSlug);
   }
 
   void _updateSlug() {
     if (widget.post == null) {
-      final slug = _titleController.text
-          .toLowerCase()
-          .replaceAll(RegExp(r'[^a-z0-9]'), '-');
+      final slug = _titleController.text.toLowerCase().replaceAll(
+        RegExp(r'[^a-z0-9]'),
+        '-',
+      );
       _slugController.text = slug;
     }
   }
@@ -58,12 +67,22 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
       _bodyController.text = newText;
       return;
     }
-    
+
     final selectedText = text.substring(selection.start, selection.end);
-    final newText = text.replaceRange(selection.start, selection.end, '$prefix$selectedText$suffix');
+    final newText = text.replaceRange(
+      selection.start,
+      selection.end,
+      '$prefix$selectedText$suffix',
+    );
     _bodyController.value = TextEditingValue(
       text: newText,
-      selection: TextSelection.collapsed(offset: selection.start + prefix.length + selectedText.length + suffix.length),
+      selection: TextSelection.collapsed(
+        offset:
+            selection.start +
+            prefix.length +
+            selectedText.length +
+            suffix.length,
+      ),
     );
   }
 
@@ -75,34 +94,6 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
     _excerptController.dispose();
     _bodyController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickAndUploadCover() async {
-    final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery);
-    if (file == null) return;
-
-    setState(() => _isUploadingCover = true);
-    try {
-      final bytes = await file.readAsBytes();
-      final url = await ref.read(apiServiceProvider).uploadMedia(bytes, file.name);
-      setState(() {
-        _coverImageUrl = "http://127.0.0.1:8000$url";
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cover image uploaded successfully')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isUploadingCover = false);
-    }
   }
 
   Future<void> _save() async {
@@ -131,10 +122,14 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Post ${widget.post == null ? 'created' : 'updated'} successfully'),
+            content: Text(
+              'Post ${widget.post == null ? 'created' : 'updated'} successfully',
+            ),
             backgroundColor: AppTheme.brandEmerald600,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -142,10 +137,12 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'), 
+            content: Text('Error: $e'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -164,7 +161,10 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(widget.post == null ? 'Create New Post' : 'Edit Blog Post', style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          widget.post == null ? 'Create New Post' : 'Edit Blog Post',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
         bottom: PreferredSize(
@@ -179,8 +179,13 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                 OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                   child: const Text('Discard'),
                 ),
@@ -188,14 +193,36 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                 HoverScale(
                   child: ElevatedButton.icon(
                     onPressed: _isSubmitting ? null : _save,
-                    icon: _isSubmitting 
-                      ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                      : const Icon(LucideIcons.save, size: 14, color: Colors.white),
-                    label: const Text('Save Post', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                    icon: _isSubmitting
+                        ? const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(
+                            LucideIcons.save,
+                            size: 14,
+                            color: Colors.white,
+                          ),
+                    label: const Text(
+                      'Save Post',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.brandEmerald500,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
@@ -231,11 +258,14 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                             hintText: 'Enter a catchy title...',
                             border: OutlineInputBorder(),
                           ),
-                          style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                          validator: (v) => v?.isEmpty ?? true ? 'Title is required' : null,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          validator: (v) =>
+                              v?.isEmpty ?? true ? 'Title is required' : null,
                         ),
                         const SizedBox(height: 20),
-                        
+
                         // Slug Input
                         TextFormField(
                           controller: _slugController,
@@ -245,10 +275,11 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                             prefixText: 'blog/',
                             border: OutlineInputBorder(),
                           ),
-                          validator: (v) => v?.isEmpty ?? true ? 'Slug is required' : null,
+                          validator: (v) =>
+                              v?.isEmpty ?? true ? 'Slug is required' : null,
                         ),
                         const SizedBox(height: 20),
-                        
+
                         // Excerpt Input
                         TextFormField(
                           controller: _excerptController,
@@ -262,7 +293,7 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Main Editor Content & Toolbars
                     _buildGlassCard(
                       title: 'Article Body',
@@ -275,31 +306,80 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                            color: isDark
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFF1F5F9),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(10),
+                            ),
                             border: Border.all(color: theme.dividerColor),
                           ),
                           child: Row(
                             children: [
-                              _buildToolbarIcon(LucideIcons.bold, 'Bold', () => _applyFormat('**', '**')),
-                              _buildToolbarIcon(LucideIcons.italic, 'Italic', () => _applyFormat('*', '*')),
-                              _buildToolbarIcon(LucideIcons.underline, 'Underline', () => _applyFormat('<u>', '</u>')),
+                              _buildToolbarIcon(
+                                LucideIcons.bold,
+                                'Bold',
+                                () => _applyFormat('**', '**'),
+                              ),
+                              _buildToolbarIcon(
+                                LucideIcons.italic,
+                                'Italic',
+                                () => _applyFormat('*', '*'),
+                              ),
+                              _buildToolbarIcon(
+                                LucideIcons.underline,
+                                'Underline',
+                                () => _applyFormat('<u>', '</u>'),
+                              ),
                               const SizedBox(width: 8),
-                              Container(height: 16, width: 1, color: theme.dividerColor),
+                              Container(
+                                height: 16,
+                                width: 1,
+                                color: theme.dividerColor,
+                              ),
                               const SizedBox(width: 8),
-                              _buildToolbarIcon(LucideIcons.alignLeft, 'Align Left', () => _applyFormat('<p align="left">', '</p>')),
-                              _buildToolbarIcon(LucideIcons.alignCenter, 'Align Center', () => _applyFormat('<p align="center">', '</p>')),
-                              _buildToolbarIcon(LucideIcons.alignRight, 'Align Right', () => _applyFormat('<p align="right">', '</p>')),
+                              _buildToolbarIcon(
+                                LucideIcons.alignLeft,
+                                'Align Left',
+                                () => _applyFormat('<p align="left">', '</p>'),
+                              ),
+                              _buildToolbarIcon(
+                                LucideIcons.alignCenter,
+                                'Align Center',
+                                () =>
+                                    _applyFormat('<p align="center">', '</p>'),
+                              ),
+                              _buildToolbarIcon(
+                                LucideIcons.alignRight,
+                                'Align Right',
+                                () => _applyFormat('<p align="right">', '</p>'),
+                              ),
                               const SizedBox(width: 8),
-                              Container(height: 16, width: 1, color: theme.dividerColor),
+                              Container(
+                                height: 16,
+                                width: 1,
+                                color: theme.dividerColor,
+                              ),
                               const SizedBox(width: 8),
-                              _buildToolbarIcon(LucideIcons.link, 'Insert Link', () => _applyFormat('[', '](https://)')),
-                              _buildToolbarIcon(LucideIcons.image, 'Insert Image', () => _applyFormat('![', '](image_url)')),
-                              _buildToolbarIcon(LucideIcons.code, 'Code Block', () => _applyFormat('\n```\n', '\n```\n')),
+                              _buildToolbarIcon(
+                                LucideIcons.link,
+                                'Insert Link',
+                                () => _applyFormat('[', '](https://)'),
+                              ),
+                              _buildToolbarIcon(
+                                LucideIcons.image,
+                                'Insert Image',
+                                () => _applyFormat('![', '](image_url)'),
+                              ),
+                              _buildToolbarIcon(
+                                LucideIcons.code,
+                                'Code Block',
+                                () => _applyFormat('\n```\n', '\n```\n'),
+                              ),
                             ],
                           ),
                         ),
-                        
+
                         // Editor Textarea
                         TextFormField(
                           controller: _bodyController,
@@ -307,27 +387,38 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                           decoration: InputDecoration(
                             hintText: 'Start writing your story here...',
                             border: OutlineInputBorder(
-                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(10),
+                              ),
                               borderSide: BorderSide(color: theme.dividerColor),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(10),
+                              ),
                               borderSide: BorderSide(color: theme.dividerColor),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
-                              borderSide: const BorderSide(color: AppTheme.brandEmerald500, width: 1.5),
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(10),
+                              ),
+                              borderSide: const BorderSide(
+                                color: AppTheme.brandEmerald500,
+                                width: 1.5,
+                              ),
                             ),
                             contentPadding: const EdgeInsets.all(16),
                           ),
-                          validator: (v) => v?.isEmpty ?? true ? 'Body content is required' : null,
+                          validator: (v) => v?.isEmpty ?? true
+                              ? 'Body content is required'
+                              : null,
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              
+
               // Right Column - Meta & Publishing Sidebar
               if (isDesktop) ...[
                 const SizedBox(width: 32),
@@ -347,26 +438,42 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                             value: _status,
                             decoration: InputDecoration(
                               labelText: 'Status',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: AppTheme.brandEmerald500, width: 1.5),
+                                borderSide: const BorderSide(
+                                  color: AppTheme.brandEmerald500,
+                                  width: 1.5,
+                                ),
                               ),
                             ),
                             items: const [
-                              DropdownMenuItem(value: 'draft', child: Text('Draft')),
-                              DropdownMenuItem(value: 'published', child: Text('Published')),
-                              DropdownMenuItem(value: 'archived', child: Text('Archived')),
+                              DropdownMenuItem(
+                                value: 'draft',
+                                child: Text('Draft'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'published',
+                                child: Text('Published'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'archived',
+                                child: Text('Archived'),
+                              ),
                             ],
                             onChanged: (v) => setState(() => _status = v!),
                           ),
                           const SizedBox(height: 20),
-                          const _ReadOnlyRow(label: 'Author', value: 'Store Admin'),
+                          const _ReadOnlyRow(
+                            label: 'Author',
+                            value: 'Store Admin',
+                          ),
                         ],
                       ),
                       const SizedBox(height: 32),
-                      
-                      // Featured Cover Image Card
+
                       _buildGlassCard(
                         title: 'Cover Image',
                         icon: LucideIcons.image,
@@ -374,31 +481,19 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                         isDark: isDark,
                         theme: theme,
                         children: [
-                          if (_coverImageUrl != null) ...[
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 160,
-                                width: double.infinity,
-                                color: theme.colorScheme.surfaceContainerLow,
-                                child: Image.network(_coverImageUrl!, fit: BoxFit.cover),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                          SizedBox(
-                            width: double.infinity,
-                            child: OutlinedButton.icon(
-                              onPressed: _isUploadingCover ? null : _pickAndUploadCover,
-                              icon: _isUploadingCover
-                                ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
-                                : const Icon(LucideIcons.upload, size: 14),
-                              label: Text(_coverImageUrl == null ? 'Upload Cover Image' : 'Change Image'),
-                              style: OutlinedButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                              ),
-                            ),
+                          SingleImageUploader(
+                            imageUrl: _coverImageUrl,
+                            uploader: _uploader,
+                            onUploadCompleted: (url) {
+                              setState(() {
+                                _coverImageUrl = url;
+                              });
+                            },
+                            onImageRemoved: () {
+                              setState(() {
+                                _coverImageUrl = null;
+                              });
+                            },
                           ),
                         ],
                       ),
@@ -428,7 +523,9 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B).withOpacity(0.7) : Colors.white.withOpacity(0.85),
+            color: isDark
+                ? const Color(0xFF1E293B).withOpacity(0.7)
+                : Colors.white.withOpacity(0.85),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: color.withOpacity(0.15)),
             boxShadow: [
@@ -453,7 +550,12 @@ class _BlogPostEditorState extends ConsumerState<BlogPostEditor> {
                     child: Icon(icon, size: 18, color: color),
                   ),
                   const SizedBox(width: 12),
-                  Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -495,8 +597,18 @@ class _ReadOnlyRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-        Text(value, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }

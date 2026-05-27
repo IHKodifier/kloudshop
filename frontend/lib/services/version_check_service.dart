@@ -6,7 +6,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 // Conditional imports
 import 'version_check/version_check_none.dart'
-    if (dart.library.html) 'version_check/version_check_web.dart' as platform;
+    if (dart.library.html) 'version_check/version_check_web.dart'
+    as platform;
 
 class VersionCheckService {
   static const String _versionFilePath = 'version.json';
@@ -21,7 +22,9 @@ class VersionCheckService {
       final currentBuildNumber = packageInfo.buildNumber;
 
       final response = await http.get(
-        Uri.parse('$_versionFilePath?t=${DateTime.now().millisecondsSinceEpoch}'),
+        Uri.parse(
+          '$_versionFilePath?t=${DateTime.now().millisecondsSinceEpoch}',
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -29,9 +32,12 @@ class VersionCheckService {
         final serverVersion = data['version'] as String;
         final serverBuildNumber = data['build_number'] as String;
 
-        log('Version Check: Local ($currentVersion+$currentBuildNumber) vs Server ($serverVersion+$serverBuildNumber)');
+        log(
+          'Version Check: Local ($currentVersion+$currentBuildNumber) vs Server ($serverVersion+$serverBuildNumber)',
+        );
 
-        if (serverVersion != currentVersion || serverBuildNumber != currentBuildNumber) {
+        if (serverVersion != currentVersion ||
+            serverBuildNumber != currentBuildNumber) {
           log('New version detected!');
           await platform.platformReload();
         }

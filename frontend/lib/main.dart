@@ -25,10 +25,5 @@ void main() async {
   // ASM-06: Check for new version and force reload if necessary.
   await VersionCheckService.checkVersion();
 
-  runApp(
-    const ProviderScope(
-      child: KloudShopApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: KloudShopApp()));
 }
-

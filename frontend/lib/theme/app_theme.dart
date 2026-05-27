@@ -48,22 +48,21 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? textBody,
     Color? textPlaceholder,
     Color? borderSubtle,
-  }) =>
-      AppColors(
-        success: success ?? this.success,
-        onSuccess: onSuccess ?? this.onSuccess,
-        successContainer: successContainer ?? this.successContainer,
-        warning: warning ?? this.warning,
-        onWarning: onWarning ?? this.onWarning,
-        warningContainer: warningContainer ?? this.warningContainer,
-        navBackground: navBackground ?? this.navBackground,
-        onNavBackground: onNavBackground ?? this.onNavBackground,
-        onNavBackgroundMuted: onNavBackgroundMuted ?? this.onNavBackgroundMuted,
-        navActive: navActive ?? this.navActive,
-        textBody: textBody ?? this.textBody,
-        textPlaceholder: textPlaceholder ?? this.textPlaceholder,
-        borderSubtle: borderSubtle ?? this.borderSubtle,
-      );
+  }) => AppColors(
+    success: success ?? this.success,
+    onSuccess: onSuccess ?? this.onSuccess,
+    successContainer: successContainer ?? this.successContainer,
+    warning: warning ?? this.warning,
+    onWarning: onWarning ?? this.onWarning,
+    warningContainer: warningContainer ?? this.warningContainer,
+    navBackground: navBackground ?? this.navBackground,
+    onNavBackground: onNavBackground ?? this.onNavBackground,
+    onNavBackgroundMuted: onNavBackgroundMuted ?? this.onNavBackgroundMuted,
+    navActive: navActive ?? this.navActive,
+    textBody: textBody ?? this.textBody,
+    textPlaceholder: textPlaceholder ?? this.textPlaceholder,
+    borderSubtle: borderSubtle ?? this.borderSubtle,
+  );
 
   @override
   AppColors lerp(AppColors? other, double t) {
@@ -71,17 +70,29 @@ class AppColors extends ThemeExtension<AppColors> {
     return AppColors(
       success: Color.lerp(success, other.success, t) ?? success,
       onSuccess: Color.lerp(onSuccess, other.onSuccess, t) ?? onSuccess,
-      successContainer: Color.lerp(successContainer, other.successContainer, t) ?? successContainer,
+      successContainer:
+          Color.lerp(successContainer, other.successContainer, t) ??
+          successContainer,
       warning: Color.lerp(warning, other.warning, t) ?? warning,
       onWarning: Color.lerp(onWarning, other.onWarning, t) ?? onWarning,
-      warningContainer: Color.lerp(warningContainer, other.warningContainer, t) ?? warningContainer,
-      navBackground: Color.lerp(navBackground, other.navBackground, t) ?? navBackground,
-      onNavBackground: Color.lerp(onNavBackground, other.onNavBackground, t) ?? onNavBackground,
-      onNavBackgroundMuted: Color.lerp(onNavBackgroundMuted, other.onNavBackgroundMuted, t) ?? onNavBackgroundMuted,
+      warningContainer:
+          Color.lerp(warningContainer, other.warningContainer, t) ??
+          warningContainer,
+      navBackground:
+          Color.lerp(navBackground, other.navBackground, t) ?? navBackground,
+      onNavBackground:
+          Color.lerp(onNavBackground, other.onNavBackground, t) ??
+          onNavBackground,
+      onNavBackgroundMuted:
+          Color.lerp(onNavBackgroundMuted, other.onNavBackgroundMuted, t) ??
+          onNavBackgroundMuted,
       navActive: Color.lerp(navActive, other.navActive, t) ?? navActive,
       textBody: Color.lerp(textBody, other.textBody, t) ?? textBody,
-      textPlaceholder: Color.lerp(textPlaceholder, other.textPlaceholder, t) ?? textPlaceholder,
-      borderSubtle: Color.lerp(borderSubtle, other.borderSubtle, t) ?? borderSubtle,
+      textPlaceholder:
+          Color.lerp(textPlaceholder, other.textPlaceholder, t) ??
+          textPlaceholder,
+      borderSubtle:
+          Color.lerp(borderSubtle, other.borderSubtle, t) ?? borderSubtle,
     );
   }
 }
@@ -104,25 +115,65 @@ class AppTheme {
   static const Color neutral700 = Color(0xFF374151);
   static const Color neutral900 = Color(0xFF111827);
 
-  static TextTheme _buildTextTheme(TextTheme base, Color baseColor, Color mutedColor) {
+  static TextTheme _buildTextTheme(
+    TextTheme base,
+    Color baseColor,
+    Color mutedColor,
+  ) {
     final displayStyle = GoogleFonts.outfit(color: baseColor);
     final bodyStyle = GoogleFonts.inter(color: mutedColor);
 
     return base.copyWith(
-      displayLarge: displayStyle.copyWith(fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: -0.72),
-      displayMedium: displayStyle.copyWith(fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: -0.6),
-      displaySmall: displayStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: -0.48),
-      headlineLarge: displayStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
-      headlineMedium: displayStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-      headlineSmall: displayStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-      titleLarge: displayStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
-      titleMedium: displayStyle.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
-      titleSmall: displayStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
+      displayLarge: displayStyle.copyWith(
+        fontSize: 36,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.72,
+      ),
+      displayMedium: displayStyle.copyWith(
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.6,
+      ),
+      displaySmall: displayStyle.copyWith(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.48,
+      ),
+      headlineLarge: displayStyle.copyWith(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+      headlineMedium: displayStyle.copyWith(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+      headlineSmall: displayStyle.copyWith(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      titleLarge: displayStyle.copyWith(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
+      titleMedium: displayStyle.copyWith(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+      titleSmall: displayStyle.copyWith(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
       bodyLarge: bodyStyle.copyWith(fontSize: 16),
       bodyMedium: bodyStyle.copyWith(fontSize: 14),
       bodySmall: bodyStyle.copyWith(fontSize: 12),
-      labelLarge: displayStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
-      labelMedium: bodyStyle.copyWith(fontSize: 12, fontWeight: FontWeight.w500),
+      labelLarge: displayStyle.copyWith(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+      labelMedium: bodyStyle.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
       labelSmall: bodyStyle.copyWith(fontSize: 10, fontWeight: FontWeight.w500),
     );
   }
@@ -150,15 +201,25 @@ class AppTheme {
         error: Color(0xFFEF4444),
         errorContainer: Color(0xFFFEF2F2),
       ),
+      chipTheme: const ChipThemeData(
+        side: BorderSide(color: neutral200, width: 1.2),
+      ),
       navigationRailTheme: const NavigationRailThemeData(
         indicatorColor: brandTeal50,
         backgroundColor: Colors.transparent,
         selectedIconTheme: IconThemeData(color: brandTeal500, size: 24),
         unselectedIconTheme: IconThemeData(color: neutral500, size: 24),
-        selectedLabelTextStyle: TextStyle(color: brandTeal500, fontWeight: FontWeight.bold),
+        selectedLabelTextStyle: TextStyle(
+          color: brandTeal500,
+          fontWeight: FontWeight.bold,
+        ),
         unselectedLabelTextStyle: TextStyle(color: neutral500),
       ),
-      textTheme: _buildTextTheme(ThemeData.light().textTheme, neutral900, neutral700),
+      textTheme: _buildTextTheme(
+        ThemeData.light().textTheme,
+        neutral900,
+        neutral700,
+      ),
       extensions: const [
         AppColors(
           success: brandEmerald500,
@@ -194,6 +255,9 @@ class AppTheme {
         outline: Color(0xFF475569), // Slate 600
         onSurfaceVariant: Color(0xFFCBD5E1), // Slate 300
       ),
+      chipTheme: const ChipThemeData(
+        side: BorderSide(color: Color(0xFF475569), width: 1.2),
+      ),
       primaryColor: brandTeal500,
       scaffoldBackgroundColor: const Color(0xFF020617),
       navigationRailTheme: const NavigationRailThemeData(
@@ -201,13 +265,20 @@ class AppTheme {
         backgroundColor: Color(0xFF0F172A),
         selectedIconTheme: IconThemeData(color: Colors.white, size: 24),
         unselectedIconTheme: IconThemeData(color: Color(0xFF94A3B8), size: 24),
-        selectedLabelTextStyle: TextStyle(color: brandTeal500, fontWeight: FontWeight.bold),
+        selectedLabelTextStyle: TextStyle(
+          color: brandTeal500,
+          fontWeight: FontWeight.bold,
+        ),
         unselectedLabelTextStyle: TextStyle(color: Color(0xFF94A3B8)),
       ),
       cardColor: const Color(0xFF1E293B), // Slate 800
       hintColor: const Color(0xFF94A3B8), // Slate 400
       dividerColor: const Color(0xFF334155), // Slate 700
-      textTheme: _buildTextTheme(ThemeData.dark().textTheme, const Color(0xFFF1F5F9), const Color(0xFFCBD5E1)),
+      textTheme: _buildTextTheme(
+        ThemeData.dark().textTheme,
+        const Color(0xFFF1F5F9),
+        const Color(0xFFCBD5E1),
+      ),
       extensions: const [
         AppColors(
           success: Color(0xFF34D399),

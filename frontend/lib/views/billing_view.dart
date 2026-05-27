@@ -40,10 +40,13 @@ class _BillingViewState extends ConsumerState<BillingView> {
         const SnackBar(content: Text('Preparing upgrade...')),
       );
 
-      final successUrl = '${Uri.base.origin}/#/dashboard?session_id={CHECKOUT_SESSION_ID}';
+      final successUrl =
+          '${Uri.base.origin}/#/dashboard?session_id={CHECKOUT_SESSION_ID}';
       final cancelUrl = '${Uri.base.origin}/#/dashboard';
 
-      final url = await ref.read(apiServiceProvider).createUpgradeSession(
+      final url = await ref
+          .read(apiServiceProvider)
+          .createUpgradeSession(
             planId,
             successUrl: successUrl,
             cancelUrl: cancelUrl,
@@ -79,7 +82,7 @@ class _BillingViewState extends ConsumerState<BillingView> {
           children: [
             // Variant Switcher Header
             _buildVariantSwitcherHeader(theme, isDark),
-            
+
             // PageView content
             Expanded(
               child: PageView(
@@ -111,10 +114,17 @@ class _BillingViewState extends ConsumerState<BillingView> {
                   color: const Color(0xFFEF4444).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(LucideIcons.alertCircle, color: Color(0xFFEF4444), size: 32),
+                child: const Icon(
+                  LucideIcons.alertCircle,
+                  color: Color(0xFFEF4444),
+                  size: 32,
+                ),
               ),
               const SizedBox(height: 16),
-              Text('Failed to load billing info: $e', textAlign: TextAlign.center),
+              Text(
+                'Failed to load billing info: $e',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(subscriptionProvider),
@@ -139,18 +149,26 @@ class _BillingViewState extends ConsumerState<BillingView> {
         children: [
           Row(
             children: [
-              const Icon(LucideIcons.creditCard, size: 24, color: AppTheme.brandEmerald500),
+              const Icon(
+                LucideIcons.creditCard,
+                size: 24,
+                color: AppTheme.brandEmerald500,
+              ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Billing & Subscription',
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     'Compare billing interface variants by clicking chips or swiping.',
-                    style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.hintColor,
+                    ),
                   ),
                 ],
               ),
@@ -160,12 +178,20 @@ class _BillingViewState extends ConsumerState<BillingView> {
             children: List.generate(3, (index) {
               final isSelected = _currentVariantIndex == index;
               final labels = ['Zurich Layout', 'Bento Usage', 'Mobile Stack'];
-              final icons = [LucideIcons.layoutGrid, LucideIcons.barChart3, LucideIcons.smartphone];
+              final icons = [
+                LucideIcons.layoutGrid,
+                LucideIcons.barChart3,
+                LucideIcons.smartphone,
+              ];
               return Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: HoverScale(
                   child: ChoiceChip(
-                    avatar: Icon(icons[index], size: 14, color: isSelected ? Colors.white : theme.hintColor),
+                    avatar: Icon(
+                      icons[index],
+                      size: 14,
+                      color: isSelected ? Colors.white : theme.hintColor,
+                    ),
                     label: Text(labels[index]),
                     selected: isSelected,
                     onSelected: (selected) {
@@ -180,14 +206,20 @@ class _BillingViewState extends ConsumerState<BillingView> {
                     },
                     selectedColor: AppTheme.brandEmerald500,
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected
+                          ? Colors.white
+                          : theme.colorScheme.onSurface,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       fontSize: 12,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: BorderSide(
-                        color: isSelected ? Colors.transparent : theme.dividerColor,
+                        color: isSelected
+                            ? Colors.transparent
+                            : theme.dividerColor,
                       ),
                     ),
                   ),
@@ -201,7 +233,11 @@ class _BillingViewState extends ConsumerState<BillingView> {
   }
 
   // --- VARIANT 1: ZURICH BILLING LAYOUT ---
-  Widget _buildZurichBillingLayout(ThemeData theme, bool isDark, SubscriptionModel sub) {
+  Widget _buildZurichBillingLayout(
+    ThemeData theme,
+    bool isDark,
+    SubscriptionModel sub,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -210,19 +246,32 @@ class _BillingViewState extends ConsumerState<BillingView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Active Plan: ${sub.tier.toString().split('.').last.toUpperCase()}', 
-                  style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Active Plan: ${sub.tier.toString().split('.').last.toUpperCase()}',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               ElevatedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Redirecting to Stripe Portal...')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Redirecting to Stripe Portal...'),
+                    ),
+                  );
                 },
                 icon: const Icon(LucideIcons.externalLink, size: 14),
                 label: const Text('Manage via Stripe'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.brandEmerald500,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ],
@@ -232,7 +281,12 @@ class _BillingViewState extends ConsumerState<BillingView> {
           const SizedBox(height: 36),
           _buildBillingHistoryTable(theme, isDark),
           const SizedBox(height: 36),
-          Text('Available Plans', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            'Available Plans',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           _buildPricingTable(context, sub),
         ],
@@ -241,7 +295,11 @@ class _BillingViewState extends ConsumerState<BillingView> {
   }
 
   // --- VARIANT 2: BENTO BILLING LAYOUT (Resource Metrics Focus) ---
-  Widget _buildBentoBillingLayout(ThemeData theme, bool isDark, SubscriptionModel sub) {
+  Widget _buildBentoBillingLayout(
+    ThemeData theme,
+    bool isDark,
+    SubscriptionModel sub,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -249,11 +307,17 @@ class _BillingViewState extends ConsumerState<BillingView> {
         children: [
           Row(
             children: [
-              const Icon(LucideIcons.barChart3, size: 22, color: AppTheme.brandEmerald500),
+              const Icon(
+                LucideIcons.barChart3,
+                size: 22,
+                color: AppTheme.brandEmerald500,
+              ),
               const SizedBox(width: 12),
               Text(
                 'Bento Billing & System Usage',
-                style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -269,27 +333,43 @@ class _BillingViewState extends ConsumerState<BillingView> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF1E293B) : Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppTheme.brandEmerald500.withOpacity(0.2), width: 1.5),
+                  border: Border.all(
+                    color: AppTheme.brandEmerald500.withOpacity(0.2),
+                    width: 1.5,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.shieldCheck, color: AppTheme.brandEmerald500),
+                        const Icon(
+                          LucideIcons.shieldCheck,
+                          color: AppTheme.brandEmerald500,
+                        ),
                         const SizedBox(width: 12),
-                        Text('Plan Status', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'Plan Status',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'Hybrid Enterprise',
-                      style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: AppTheme.brandEmerald500),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.brandEmerald500,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Supports dual storefronts (DTC + B2B wholesale portals) with priority global routing.',
-                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.hintColor,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
@@ -298,14 +378,16 @@ class _BillingViewState extends ConsumerState<BillingView> {
                         backgroundColor: AppTheme.brandEmerald500,
                         foregroundColor: Colors.white,
                         minimumSize: const Size.fromHeight(42),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       child: const Text('Manage Stripe Portal'),
-                    )
+                    ),
                   ],
                 ),
               ),
-              
+
               // Bento Card 2: Performance Metrics & Limits
               Container(
                 width: 480,
@@ -320,21 +402,47 @@ class _BillingViewState extends ConsumerState<BillingView> {
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.activity, color: Color(0xFF6366F1)),
+                        const Icon(
+                          LucideIcons.activity,
+                          color: Color(0xFF6366F1),
+                        ),
                         const SizedBox(width: 12),
-                        Text('System Resource Usage', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'System Resource Usage',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildUsageBar(theme, 'API Requests', '8.4M / 10M', 0.84, const Color(0xFF6366F1)),
+                    _buildUsageBar(
+                      theme,
+                      'API Requests',
+                      '8.4M / 10M',
+                      0.84,
+                      const Color(0xFF6366F1),
+                    ),
                     const SizedBox(height: 16),
-                    _buildUsageBar(theme, 'Database Storage', '210 GB / 500 GB', 0.42, const Color(0xFF06B6D4)),
+                    _buildUsageBar(
+                      theme,
+                      'Database Storage',
+                      '210 GB / 500 GB',
+                      0.42,
+                      const Color(0xFF06B6D4),
+                    ),
                     const SizedBox(height: 16),
-                    _buildUsageBar(theme, 'Compute Units', '12,104 / 25,000', 0.48, const Color(0xFFEC4899)),
+                    _buildUsageBar(
+                      theme,
+                      'Compute Units',
+                      '12,104 / 25,000',
+                      0.48,
+                      const Color(0xFFEC4899),
+                    ),
                   ],
                 ),
               ),
-              
+
               // Bento Card 3: Invoices History
               Container(
                 width: 954,
@@ -353,15 +461,31 @@ class _BillingViewState extends ConsumerState<BillingView> {
     );
   }
 
-  Widget _buildUsageBar(ThemeData theme, String title, String val, double progress, Color color) {
+  Widget _buildUsageBar(
+    ThemeData theme,
+    String title,
+    String val,
+    double progress,
+    Color color,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
-            Text(val, style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor)),
+            Text(
+              title,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              val,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.hintColor,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -373,13 +497,17 @@ class _BillingViewState extends ConsumerState<BillingView> {
             valueColor: AlwaysStoppedAnimation(color),
             minHeight: 8,
           ),
-        )
+        ),
       ],
     );
   }
 
   // --- VARIANT 3: MOBILE STACK LAYOUT ---
-  Widget _buildMobileStackBillingLayout(ThemeData theme, bool isDark, SubscriptionModel sub) {
+  Widget _buildMobileStackBillingLayout(
+    ThemeData theme,
+    bool isDark,
+    SubscriptionModel sub,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Center(
@@ -396,31 +524,47 @@ class _BillingViewState extends ConsumerState<BillingView> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(LucideIcons.smartphone, color: AppTheme.brandEmerald500, size: 20),
+                    const Icon(
+                      LucideIcons.smartphone,
+                      color: AppTheme.brandEmerald500,
+                      size: 20,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Optimized stacked view for handheld screens.',
-                        style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               ExpansionTile(
-                leading: const Icon(LucideIcons.award, color: AppTheme.brandEmerald500),
-                title: const Text('Active Plan', style: TextStyle(fontWeight: FontWeight.bold)),
+                leading: const Icon(
+                  LucideIcons.award,
+                  color: AppTheme.brandEmerald500,
+                ),
+                title: const Text(
+                  'Active Plan',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 childrenPadding: const EdgeInsets.all(16),
-                children: [
-                  _buildStatusCard(context, sub),
-                ],
+                children: [_buildStatusCard(context, sub)],
               ),
               const Divider(height: 1),
               ExpansionTile(
-                leading: const Icon(LucideIcons.history, color: Color(0xFFF59E0B)),
-                title: const Text('Invoice History', style: TextStyle(fontWeight: FontWeight.bold)),
+                leading: const Icon(
+                  LucideIcons.history,
+                  color: Color(0xFFF59E0B),
+                ),
+                title: const Text(
+                  'Invoice History',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 childrenPadding: const EdgeInsets.all(16),
                 children: [
                   ListView.builder(
@@ -428,12 +572,22 @@ class _BillingViewState extends ConsumerState<BillingView> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: 3,
                     itemBuilder: (context, index) {
-                      final dates = ['Oct 12, 2023', 'Sep 12, 2023', 'Aug 12, 2023'];
+                      final dates = [
+                        'Oct 12, 2023',
+                        'Sep 12, 2023',
+                        'Aug 12, 2023',
+                      ];
                       final amounts = ['\$49.99', '\$49.99', '\$49.99'];
                       return ListTile(
                         title: Text(dates[index]),
-                        subtitle: const Text('Status: PAID', style: TextStyle(color: Colors.green, fontSize: 11)),
-                        trailing: Text(amounts[index], style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: const Text(
+                          'Status: PAID',
+                          style: TextStyle(color: Colors.green, fontSize: 11),
+                        ),
+                        trailing: Text(
+                          amounts[index],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       );
                     },
                   ),
@@ -441,21 +595,42 @@ class _BillingViewState extends ConsumerState<BillingView> {
               ),
               const Divider(height: 1),
               ExpansionTile(
-                leading: const Icon(LucideIcons.creditCard, color: Color(0xFF6366F1)),
-                title: const Text('Change Subscription', style: TextStyle(fontWeight: FontWeight.bold)),
+                leading: const Icon(
+                  LucideIcons.creditCard,
+                  color: Color(0xFF6366F1),
+                ),
+                title: const Text(
+                  'Change Subscription',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        _buildPricingOptionRow(theme, 'DTC Plan', '\$24.99/mo', () => _handleUpgrade(context, 'dtc')),
+                        _buildPricingOptionRow(
+                          theme,
+                          'DTC Plan',
+                          '\$24.99/mo',
+                          () => _handleUpgrade(context, 'dtc'),
+                        ),
                         const SizedBox(height: 12),
-                        _buildPricingOptionRow(theme, 'B2B Plan', '\$39.99/mo', () => _handleUpgrade(context, 'b2b')),
+                        _buildPricingOptionRow(
+                          theme,
+                          'B2B Plan',
+                          '\$39.99/mo',
+                          () => _handleUpgrade(context, 'b2b'),
+                        ),
                         const SizedBox(height: 12),
-                        _buildPricingOptionRow(theme, 'Hybrid Plan', '\$49.99/mo', () => _handleUpgrade(context, 'hybrid')),
+                        _buildPricingOptionRow(
+                          theme,
+                          'Hybrid Plan',
+                          '\$49.99/mo',
+                          () => _handleUpgrade(context, 'hybrid'),
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ],
@@ -465,7 +640,12 @@ class _BillingViewState extends ConsumerState<BillingView> {
     );
   }
 
-  Widget _buildPricingOptionRow(ThemeData theme, String name, String price, VoidCallback onTap) {
+  Widget _buildPricingOptionRow(
+    ThemeData theme,
+    String name,
+    String price,
+    VoidCallback onTap,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -479,14 +659,22 @@ class _BillingViewState extends ConsumerState<BillingView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(price, style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor)),
+              Text(
+                price,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.hintColor,
+                ),
+              ),
             ],
           ),
           ElevatedButton(
             onPressed: onTap,
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.brandEmerald500, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.brandEmerald500,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('Choose'),
-          )
+          ),
         ],
       ),
     );
@@ -511,10 +699,7 @@ class _BillingViewState extends ConsumerState<BillingView> {
                       AppTheme.brandTeal900.withOpacity(0.9),
                       const Color(0xFF065F46).withOpacity(0.8),
                     ]
-                  : [
-                      AppTheme.brandTeal500,
-                      AppTheme.brandEmerald600,
-                    ],
+                  : [AppTheme.brandTeal500, AppTheme.brandEmerald600],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -530,7 +715,10 @@ class _BillingViewState extends ConsumerState<BillingView> {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
@@ -548,17 +736,25 @@ class _BillingViewState extends ConsumerState<BillingView> {
                         if (sub.isTrialing) ...[
                           const SizedBox(width: 12),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white.withOpacity(0.3)),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
                             ),
                             child: Text(
                               sub.trialEnd != null
                                   ? 'Trial ends ${dateFormat.format(sub.trialEnd!)}'
                                   : 'Trial active',
-                              style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
@@ -566,7 +762,9 @@ class _BillingViewState extends ConsumerState<BillingView> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      sub.status == SubscriptionStatus.active ? 'Active' : 'Trialing',
+                      sub.status == SubscriptionStatus.active
+                          ? 'Active'
+                          : 'Trialing',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 32,
@@ -577,11 +775,18 @@ class _BillingViewState extends ConsumerState<BillingView> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(LucideIcons.calendar, size: 14, color: Colors.white.withOpacity(0.7)),
+                        Icon(
+                          LucideIcons.calendar,
+                          size: 14,
+                          color: Colors.white.withOpacity(0.7),
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Next payment: ${dateFormat.format(sub.currentPeriodEnd ?? DateTime.now().add(const Duration(days: 30)))}',
-                          style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 13),
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.85),
+                            fontSize: 13,
+                          ),
                         ),
                       ],
                     ),
@@ -595,7 +800,11 @@ class _BillingViewState extends ConsumerState<BillingView> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.white.withOpacity(0.2)),
                 ),
-                child: const Icon(LucideIcons.creditCard, color: Colors.white, size: 40),
+                child: const Icon(
+                  LucideIcons.creditCard,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
             ],
           ),
@@ -618,11 +827,18 @@ class _BillingViewState extends ConsumerState<BillingView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Billing History', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Billing History',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               IconButton(
                 icon: const Icon(LucideIcons.download, size: 16),
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Downloading invoices...')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Downloading invoices...')),
+                  );
                 },
                 tooltip: 'Download All Invoices',
               ),
@@ -638,12 +854,26 @@ class _BillingViewState extends ConsumerState<BillingView> {
             },
             children: [
               TableRow(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: theme.dividerColor))),
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: theme.dividerColor)),
+                ),
                 children: [
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text('DATE', style: theme.textTheme.labelSmall)),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text('AMOUNT', style: theme.textTheme.labelSmall)),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text('STATUS', style: theme.textTheme.labelSmall)),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text('ACTION', style: theme.textTheme.labelSmall)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text('DATE', style: theme.textTheme.labelSmall),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text('AMOUNT', style: theme.textTheme.labelSmall),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text('STATUS', style: theme.textTheme.labelSmall),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text('ACTION', style: theme.textTheme.labelSmall),
+                  ),
                 ],
               ),
               _buildInvoiceTableRow(theme, 'Oct 12, 2023', '\$49.99', 'PAID'),
@@ -656,29 +886,60 @@ class _BillingViewState extends ConsumerState<BillingView> {
     );
   }
 
-  TableRow _buildInvoiceTableRow(ThemeData theme, String date, String amount, String status) {
+  TableRow _buildInvoiceTableRow(
+    ThemeData theme,
+    String date,
+    String amount,
+    String status,
+  ) {
     return TableRow(
       children: [
-        Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Text(date, style: theme.textTheme.bodyMedium)),
-        Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Text(amount, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold))),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Text(status, style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.brandEmerald500, fontWeight: FontWeight.bold)),
+          child: Text(date, style: theme.textTheme.bodyMedium),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            amount,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            status,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppTheme.brandEmerald500,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: InkWell(
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Downloading invoice for $date')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Downloading invoice for $date')),
+              );
             },
-            child: const Icon(LucideIcons.downloadCloud, size: 16, color: AppTheme.brandEmerald500),
+            child: const Icon(
+              LucideIcons.downloadCloud,
+              size: 16,
+              color: AppTheme.brandEmerald500,
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildPricingTable(BuildContext context, SubscriptionModel currentSub) {
+  Widget _buildPricingTable(
+    BuildContext context,
+    SubscriptionModel currentSub,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -785,14 +1046,16 @@ class _PricingCardState extends State<_PricingCard> {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E293B).withOpacity(0.7) : Colors.white.withOpacity(0.9),
+                color: isDark
+                    ? const Color(0xFF1E293B).withOpacity(0.7)
+                    : Colors.white.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(28),
                 border: Border.all(
                   color: widget.isPopular
                       ? AppTheme.brandEmerald500
                       : _isHovered
-                          ? AppTheme.brandEmerald500.withOpacity(0.5)
-                          : theme.dividerColor.withOpacity(0.6),
+                      ? AppTheme.brandEmerald500.withOpacity(0.5)
+                      : theme.dividerColor.withOpacity(0.6),
                   width: widget.isPopular ? 2 : 1,
                 ),
                 boxShadow: _isHovered || widget.isPopular
@@ -817,10 +1080,16 @@ class _PricingCardState extends State<_PricingCard> {
                   if (widget.isPopular)
                     Container(
                       margin: const EdgeInsets.only(bottom: 16),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [AppTheme.brandEmerald500, AppTheme.brandEmerald600],
+                          colors: [
+                            AppTheme.brandEmerald500,
+                            AppTheme.brandEmerald600,
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -840,12 +1109,26 @@ class _PricingCardState extends State<_PricingCard> {
                       color: AppTheme.brandEmerald500.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(widget.icon, size: 22, color: AppTheme.brandEmerald500),
+                    child: Icon(
+                      widget.icon,
+                      size: 22,
+                      color: AppTheme.brandEmerald500,
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  Text(widget.title, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    widget.title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(widget.tagline, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                  Text(
+                    widget.tagline,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -860,31 +1143,47 @@ class _PricingCardState extends State<_PricingCard> {
                       const SizedBox(width: 4),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4),
-                        child: Text('/month', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                        child: Text(
+                          '/month',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 24),
-                  Divider(color: theme.dividerColor.withOpacity(0.4), height: 1),
+                  Divider(
+                    color: theme.dividerColor.withOpacity(0.4),
+                    height: 1,
+                  ),
                   const SizedBox(height: 24),
-                  ...widget.features.map((f) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: AppTheme.brandEmerald500.withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(LucideIcons.check, size: 12, color: AppTheme.brandEmerald500),
+                  ...widget.features.map(
+                    (f) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: AppTheme.brandEmerald500.withOpacity(0.1),
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(width: 10),
-                            Flexible(child: Text(f, style: theme.textTheme.bodyMedium)),
-                          ],
-                        ),
-                      )),
+                            child: const Icon(
+                              LucideIcons.check,
+                              size: 12,
+                              color: AppTheme.brandEmerald500,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: Text(f, style: theme.textTheme.bodyMedium),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
@@ -894,15 +1193,29 @@ class _PricingCardState extends State<_PricingCard> {
                             decoration: BoxDecoration(
                               color: AppTheme.brandEmerald500.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: AppTheme.brandEmerald500.withOpacity(0.4)),
+                              border: Border.all(
+                                color: AppTheme.brandEmerald500.withOpacity(
+                                  0.4,
+                                ),
+                              ),
                             ),
                             child: const Center(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                    Icon(LucideIcons.checkCircle2, size: 16, color: AppTheme.brandEmerald500),
-                                    SizedBox(width: 8),
-                                    Text('Current Plan', style: TextStyle(color: AppTheme.brandEmerald500, fontWeight: FontWeight.bold)),
+                                  Icon(
+                                    LucideIcons.checkCircle2,
+                                    size: 16,
+                                    color: AppTheme.brandEmerald500,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Current Plan',
+                                    style: TextStyle(
+                                      color: AppTheme.brandEmerald500,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -911,10 +1224,19 @@ class _PricingCardState extends State<_PricingCard> {
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: widget.isPopular
-                                    ? const LinearGradient(colors: [AppTheme.brandEmerald500, AppTheme.brandEmerald600])
+                                    ? const LinearGradient(
+                                        colors: [
+                                          AppTheme.brandEmerald500,
+                                          AppTheme.brandEmerald600,
+                                        ],
+                                      )
                                     : null,
                                 borderRadius: BorderRadius.circular(14),
-                                border: widget.isPopular ? null : Border.all(color: theme.colorScheme.outline),
+                                border: widget.isPopular
+                                    ? null
+                                    : Border.all(
+                                        color: theme.colorScheme.outline,
+                                      ),
                               ),
                               child: ElevatedButton(
                                 onPressed: widget.onPressed,
@@ -923,12 +1245,16 @@ class _PricingCardState extends State<_PricingCard> {
                                   shadowColor: Colors.transparent,
                                   elevation: 0,
                                   minimumSize: const Size.fromHeight(48),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
                                 ),
                                 child: Text(
                                   'Choose ${widget.title}',
                                   style: TextStyle(
-                                    color: widget.isPopular ? Colors.white : theme.colorScheme.onSurface,
+                                    color: widget.isPopular
+                                        ? Colors.white
+                                        : theme.colorScheme.onSurface,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

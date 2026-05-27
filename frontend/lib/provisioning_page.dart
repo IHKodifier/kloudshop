@@ -85,8 +85,9 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
 
     setState(() => _isCheckingAvailability = true);
     try {
-      final available =
-          await ref.read(apiServiceProvider).checkTenantAvailability(tenantId);
+      final available = await ref
+          .read(apiServiceProvider)
+          .checkTenantAvailability(tenantId);
       if (mounted) {
         setState(() {
           _isAvailable = available;
@@ -133,8 +134,9 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
         await Future.delayed(const Duration(milliseconds: 800));
         try {
           await ref.read(authServiceProvider).getIdToken(forceRefresh: true);
-          final claims =
-              await ref.read(apiServiceProvider).getMe(forceRefresh: true);
+          final claims = await ref
+              .read(apiServiceProvider)
+              .getMe(forceRefresh: true);
           if (claims?.tenantId != null) {
             synced = true;
           }
@@ -155,7 +157,8 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
               backgroundColor: AppTheme.brandEmerald600,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         }
@@ -175,8 +178,10 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final displayId =
-        _tenantIdController.text.trim().toLowerCase().replaceAll(' ', '-');
+    final displayId = _tenantIdController.text.trim().toLowerCase().replaceAll(
+      ' ',
+      '-',
+    );
 
     return Scaffold(
       body: Container(
@@ -190,11 +195,7 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                     const Color(0xFF0F172A),
                     const Color(0xFF134E4A).withValues(alpha: 0.3),
                   ]
-                : [
-                    AppTheme.brandEmerald50,
-                    AppTheme.brandTeal50,
-                    Colors.white,
-                  ],
+                : [AppTheme.brandEmerald50, AppTheme.brandTeal50, Colors.white],
           ),
         ),
         child: Center(
@@ -219,7 +220,9 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.brandEmerald500.withValues(alpha: 0.08),
+                          color: AppTheme.brandEmerald500.withValues(
+                            alpha: 0.08,
+                          ),
                           blurRadius: 40,
                           offset: const Offset(0, 20),
                         ),
@@ -239,16 +242,19 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                               decoration: BoxDecoration(
                                 gradient: RadialGradient(
                                   colors: [
-                                    AppTheme.brandEmerald500
-                                        .withValues(alpha: 0.3 * _pulseAnimation.value),
-                                    AppTheme.brandEmerald500
-                                        .withValues(alpha: 0.05),
+                                    AppTheme.brandEmerald500.withValues(
+                                      alpha: 0.3 * _pulseAnimation.value,
+                                    ),
+                                    AppTheme.brandEmerald500.withValues(
+                                      alpha: 0.05,
+                                    ),
                                   ],
                                 ),
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: AppTheme.brandEmerald500
-                                      .withValues(alpha: 0.4 * _pulseAnimation.value),
+                                  color: AppTheme.brandEmerald500.withValues(
+                                    alpha: 0.4 * _pulseAnimation.value,
+                                  ),
                                   width: 1.5,
                                 ),
                               ),
@@ -268,14 +274,15 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                           style: theme.textTheme.displaySmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             foreground: Paint()
-                              ..shader = const LinearGradient(
-                                colors: [
-                                  AppTheme.brandTeal900,
-                                  AppTheme.brandEmerald500,
-                                ],
-                              ).createShader(
-                                const Rect.fromLTWH(0, 0, 300, 60),
-                              ),
+                              ..shader =
+                                  const LinearGradient(
+                                    colors: [
+                                      AppTheme.brandTeal900,
+                                      AppTheme.brandEmerald500,
+                                    ],
+                                  ).createShader(
+                                    const Rect.fromLTWH(0, 0, 300, 60),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -314,37 +321,51 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                                     ),
                                   )
                                 : _isAvailable == true
-                                    ? const Icon(LucideIcons.checkCircle2,
-                                        color: AppTheme.brandEmerald500)
-                                    : _isAvailable == false
-                                        ? Icon(LucideIcons.xCircle,
-                                            color: theme.colorScheme.error)
-                                        : null,
+                                ? const Icon(
+                                    LucideIcons.checkCircle2,
+                                    color: AppTheme.brandEmerald500,
+                                  )
+                                : _isAvailable == false
+                                ? Icon(
+                                    LucideIcons.xCircle,
+                                    color: theme.colorScheme.error,
+                                  )
+                                : null,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(
-                                  color: theme.colorScheme.outline),
+                                color: theme.colorScheme.outline,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(
-                                  color: theme.colorScheme.outline),
+                                color: theme.colorScheme.outline,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: const BorderSide(
-                                  color: AppTheme.brandEmerald500, width: 2),
-                            ),
-                            errorText: _errorMessage.isEmpty ? null : _errorMessage,
-                            helperText:
-                                _isAvailable == true ? '✓ ID is available!' : null,
-                            helperStyle: const TextStyle(
                                 color: AppTheme.brandEmerald500,
-                                fontWeight: FontWeight.w500),
+                                width: 2,
+                              ),
+                            ),
+                            errorText: _errorMessage.isEmpty
+                                ? null
+                                : _errorMessage,
+                            helperText: _isAvailable == true
+                                ? '✓ ID is available!'
+                                : null,
+                            helperStyle: const TextStyle(
+                              color: AppTheme.brandEmerald500,
+                              fontWeight: FontWeight.w500,
+                            ),
                             filled: true,
                             fillColor: isDark
                                 ? Colors.white.withValues(alpha: 0.05)
-                                : AppTheme.brandEmerald50.withValues(alpha: 0.5),
+                                : AppTheme.brandEmerald50.withValues(
+                                    alpha: 0.5,
+                                  ),
                           ),
                           onChanged: _onIdChanged,
                         ),
@@ -354,17 +375,23 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                         // URL Preview Card
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 14),
+                            horizontal: 18,
+                            vertical: 14,
+                          ),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                AppTheme.brandEmerald500.withValues(alpha: 0.06),
+                                AppTheme.brandEmerald500.withValues(
+                                  alpha: 0.06,
+                                ),
                                 AppTheme.brandTeal500.withValues(alpha: 0.04),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: AppTheme.brandEmerald500.withValues(alpha: 0.2),
+                              color: AppTheme.brandEmerald500.withValues(
+                                alpha: 0.2,
+                              ),
                             ),
                           ),
                           child: Row(
@@ -372,19 +399,24 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                               Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.brandEmerald500
-                                      .withValues(alpha: 0.1),
+                                  color: AppTheme.brandEmerald500.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: const Icon(LucideIcons.globe,
-                                    size: 14, color: AppTheme.brandEmerald500),
+                                child: const Icon(
+                                  LucideIcons.globe,
+                                  size: 14,
+                                  color: AppTheme.brandEmerald500,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: RichText(
                                   text: TextSpan(
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.onSurfaceVariant),
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
                                     children: [
                                       const TextSpan(text: 'kloudshop.com/'),
                                       TextSpan(
@@ -441,10 +473,14 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                                         width: 20,
                                         height: 20,
                                         child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white))
-                                    : const Icon(LucideIcons.rocket,
-                                        color: Colors.white),
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Icon(
+                                        LucideIcons.rocket,
+                                        color: Colors.white,
+                                      ),
                                 label: Text(
                                   _isLoading
                                       ? 'Launching Store...'
@@ -457,9 +493,11 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 20),
+                                    vertical: 20,
+                                  ),
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14)),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                   elevation: 0,
@@ -473,12 +511,12 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
                         TextButton(
                           onPressed: _isLoading
                               ? null
-                              : () =>
-                                  ref.read(authServiceProvider).signOut(),
+                              : () => ref.read(authServiceProvider).signOut(),
                           child: Text(
                             'Cancel and sign out',
                             style: TextStyle(
-                                color: theme.colorScheme.onSurfaceVariant),
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ],

@@ -37,15 +37,12 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
         children: [
           // Header Bar (replaces AppBar for premium look)
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
               color: isDark
                   ? const Color(0xFF1E293B).withValues(alpha: 0.8)
                   : Colors.white.withValues(alpha: 0.9),
-              border: Border(
-                bottom: BorderSide(color: theme.dividerColor),
-              ),
+              border: Border(bottom: BorderSide(color: theme.dividerColor)),
             ),
             child: Row(
               children: [
@@ -79,7 +76,9 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.brandEmerald500.withValues(alpha: 0.35),
+                          color: AppTheme.brandEmerald500.withValues(
+                            alpha: 0.35,
+                          ),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -87,19 +86,29 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                     ),
                     child: ElevatedButton.icon(
                       onPressed: () => _showCreateProductDialog(context),
-                      icon: const Icon(LucideIcons.plus,
-                          size: 18, color: Colors.white),
-                      label: const Text('New Product',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold)),
+                      icon: const Icon(
+                        LucideIcons.plus,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        'New Product',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 14),
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
@@ -122,30 +131,38 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                       controller: _searchController,
                       decoration: InputDecoration(
                         hintText: 'Search products by title or slug...',
-                        prefixIcon: Icon(LucideIcons.search,
-                            size: 18,
-                            color: theme.colorScheme.onSurfaceVariant),
+                        prefixIcon: Icon(
+                          LucideIcons.search,
+                          size: 18,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              BorderSide(color: theme.colorScheme.outline),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.outline,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              BorderSide(color: theme.colorScheme.outline),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.outline,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: const BorderSide(
-                              color: AppTheme.brandEmerald500, width: 1.5),
+                            color: AppTheme.brandEmerald500,
+                            width: 1.5,
+                          ),
                         ),
                         filled: true,
                         fillColor: isDark
                             ? Colors.white.withValues(alpha: 0.04)
                             : AppTheme.neutral50,
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(LucideIcons.x, size: 16),
@@ -196,8 +213,9 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                               }
                             },
                             showCheckmark: false,
-                            selectedColor:
-                                AppTheme.brandEmerald500.withValues(alpha: 0.15),
+                            selectedColor: AppTheme.brandEmerald500.withValues(
+                              alpha: 0.15,
+                            ),
                             backgroundColor: Colors.transparent,
                             side: BorderSide(
                               color: isSelected
@@ -210,9 +228,12 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                                   : theme.colorScheme.onSurfaceVariant,
                             ),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                           ),
                         ),
                       );
@@ -227,7 +248,9 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Divider(
-                color: theme.dividerColor.withValues(alpha: 0.5), height: 1),
+              color: theme.dividerColor.withValues(alpha: 0.5),
+              height: 1,
+            ),
           ),
 
           // Product List
@@ -245,7 +268,8 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                     ),
               loading: () => Center(
                 child: CircularProgressIndicator(
-                    color: AppTheme.brandEmerald500),
+                  color: AppTheme.brandEmerald500,
+                ),
               ),
               error: (e, s) => Center(child: Text('Error: $e')),
             ),
@@ -266,20 +290,28 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
               color: AppTheme.brandEmerald500.withValues(alpha: 0.08),
               shape: BoxShape.circle,
               border: Border.all(
-                  color: AppTheme.brandEmerald500.withValues(alpha: 0.2)),
+                color: AppTheme.brandEmerald500.withValues(alpha: 0.2),
+              ),
             ),
-            child: const Icon(LucideIcons.shoppingBag,
-                size: 48, color: AppTheme.brandEmerald500),
+            child: const Icon(
+              LucideIcons.shoppingBag,
+              size: 48,
+              color: AppTheme.brandEmerald500,
+            ),
           ),
           const SizedBox(height: 24),
-          Text('No products found',
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            'No products found',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             'Try adjusting your filters or search query.',
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 28),
           HoverScale(
@@ -292,13 +324,15 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                 _searchController.clear();
               },
               style: OutlinedButton.styleFrom(
-                side:
-                    const BorderSide(color: AppTheme.brandEmerald500),
+                side: const BorderSide(color: AppTheme.brandEmerald500),
                 foregroundColor: AppTheme.brandEmerald500,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 28, vertical: 14),
+                  horizontal: 28,
+                  vertical: 14,
+                ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text('Clear all filters'),
             ),
@@ -315,7 +349,11 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
         SnackBar(
           content: Row(
             children: const [
-              Icon(LucideIcons.checkCircle2, color: Color(0xFF166534), size: 16),
+              Icon(
+                LucideIcons.checkCircle2,
+                color: Color(0xFF166534),
+                size: 16,
+              ),
               SizedBox(width: 8),
               Text(
                 'Product saved successfully',
@@ -359,13 +397,20 @@ class _ProductCard extends ConsumerWidget {
           filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
           child: InkWell(
             onTap: () async {
-              final result = await ProductEditorView.show(context, product: product);
+              final result = await ProductEditorView.show(
+                context,
+                product: product,
+              );
               if (result == true && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Row(
                       children: const [
-                        Icon(LucideIcons.checkCircle2, color: Color(0xFF166534), size: 16),
+                        Icon(
+                          LucideIcons.checkCircle2,
+                          color: Color(0xFF166534),
+                          size: 16,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           'Product saved successfully',
@@ -381,7 +426,10 @@ class _ProductCard extends ConsumerWidget {
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
-                      side: const BorderSide(color: Color(0xFFBBF7D0), width: 1),
+                      side: const BorderSide(
+                        color: Color(0xFFBBF7D0),
+                        width: 1,
+                      ),
                     ),
                   ),
                 );
@@ -461,28 +509,33 @@ class _ProductCard extends ConsumerWidget {
                         Text(
                           '/${product.slug}',
                           style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant),
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Wrap(
                           spacing: 16,
                           children: [
                             _InfoChip(
-                                label: '$variantCount variants',
-                                icon: LucideIcons.layers),
+                              label: '$variantCount variants',
+                              icon: LucideIcons.layers,
+                            ),
                             _InfoChip(
-                                label:
-                                    'From \$${minPrice.toStringAsFixed(2)}',
-                                icon: LucideIcons.tag),
+                              label: 'From \$${minPrice.toStringAsFixed(2)}',
+                              icon: LucideIcons.tag,
+                            ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  Icon(LucideIcons.chevronRight,
-                      size: 18,
-                      color: theme.colorScheme.onSurfaceVariant
-                          .withValues(alpha: 0.5)),
+                  Icon(
+                    LucideIcons.chevronRight,
+                    size: 18,
+                    color: theme.colorScheme.onSurfaceVariant.withValues(
+                      alpha: 0.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -524,7 +577,11 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: TextStyle(
-            color: color, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+          color: color,
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -543,9 +600,12 @@ class _InfoChip extends StatelessWidget {
       children: [
         Icon(icon, size: 13, color: theme.colorScheme.onSurfaceVariant),
         const SizedBox(width: 4),
-        Text(label,
-            style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant)),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }

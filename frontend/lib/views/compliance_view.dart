@@ -23,7 +23,9 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
 
     setState(() => _isErasing = true);
     try {
-      await ref.read(apiServiceProvider).triggerGdprErasure(_emailController.text);
+      await ref
+          .read(apiServiceProvider)
+          .triggerGdprErasure(_emailController.text);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -38,7 +40,7 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'), 
+            content: Text('Error: $e'),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
@@ -59,7 +61,10 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Compliance & Hygiene', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Compliance & Hygiene',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
         bottom: PreferredSize(
@@ -75,9 +80,18 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
             // Section 1: System Info
             Row(
               children: [
-                const Icon(LucideIcons.binary, size: 20, color: AppTheme.brandEmerald500),
+                const Icon(
+                  LucideIcons.binary,
+                  size: 20,
+                  color: AppTheme.brandEmerald500,
+                ),
                 const SizedBox(width: 12),
-                Text('System Environment', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  'System Environment',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -95,7 +109,8 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
                       theme: theme,
                     ),
                     loading: () => _buildLoadingCard(theme, isDark),
-                    error: (e, s) => _buildErrorCard(e.toString(), theme, isDark),
+                    error: (e, s) =>
+                        _buildErrorCard(e.toString(), theme, isDark),
                   ),
                 ),
                 const SizedBox(width: 24),
@@ -106,31 +121,45 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
                       value: health.status.toUpperCase(),
                       subtitle: 'Database Type: ${health.databaseType}',
                       icon: LucideIcons.database,
-                      color: health.status == 'healthy' ? AppTheme.brandEmerald500 : const Color(0xFFF59E0B),
+                      color: health.status == 'healthy'
+                          ? AppTheme.brandEmerald500
+                          : const Color(0xFFF59E0B),
                       isDark: isDark,
                       theme: theme,
                     ),
                     loading: () => _buildLoadingCard(theme, isDark),
-                    error: (e, s) => _buildErrorCard(e.toString(), theme, isDark),
+                    error: (e, s) =>
+                        _buildErrorCard(e.toString(), theme, isDark),
                   ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 48),
-            
+
             // Section 2: GDPR Erasure
             Row(
               children: [
-                const Icon(LucideIcons.shieldAlert, size: 20, color: Colors.redAccent),
+                const Icon(
+                  LucideIcons.shieldAlert,
+                  size: 20,
+                  color: Colors.redAccent,
+                ),
                 const SizedBox(width: 12),
-                Text('GDPR / Privacy Tools', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  'GDPR / Privacy Tools',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               'Right-to-Erasure: Provide a customer email address to redact and anonymize all associated personally identifiable information (PII) from orders and customer records.',
-              style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.hintColor,
+              ),
             ),
             const SizedBox(height: 24),
             _buildGlassCard(
@@ -146,10 +175,15 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
                     labelText: 'Customer Email Address',
                     hintText: 'e.g. customer@example.com',
                     prefixIcon: const Icon(LucideIcons.mail, size: 16),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: Colors.redAccent,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -163,12 +197,24 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         elevation: 0,
                       ),
-                      child: _isErasing 
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : const Text('Anonymize All Customer PII', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: _isErasing
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'Anonymize All Customer PII',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ),
                 ),
@@ -178,16 +224,26 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFF59E0B).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFF59E0B).withOpacity(0.2)),
+                    border: Border.all(
+                      color: const Color(0xFFF59E0B).withOpacity(0.2),
+                    ),
                   ),
                   child: const Row(
                     children: [
-                      Icon(LucideIcons.alertTriangle, size: 16, color: Color(0xFFF59E0B)),
+                      Icon(
+                        LucideIcons.alertTriangle,
+                        size: 16,
+                        color: Color(0xFFF59E0B),
+                      ),
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'Warning: This action is permanent and completely irreversible. All orders and customer profiles matching this email will have their names, addresses, and email details redacted.',
-                          style: TextStyle(fontSize: 12, color: Color(0xFFD97706), fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFFD97706),
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -217,7 +273,9 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
           width: double.infinity,
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B).withOpacity(0.7) : Colors.white.withOpacity(0.85),
+            color: isDark
+                ? const Color(0xFF1E293B).withOpacity(0.7)
+                : Colors.white.withOpacity(0.85),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: color.withOpacity(0.15)),
             boxShadow: [
@@ -242,7 +300,12 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
                     child: Icon(icon, size: 18, color: color),
                   ),
                   const SizedBox(width: 12),
-                  Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -270,9 +333,18 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
       isDark: isDark,
       theme: theme,
       children: [
-        Text(value, style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: color)),
+        Text(
+          value,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(subtitle, style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor)),
+        Text(
+          subtitle,
+          style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+        ),
       ],
     );
   }
@@ -285,7 +357,9 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: theme.dividerColor),
       ),
-      child: const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500)),
+      child: const Center(
+        child: CircularProgressIndicator(color: AppTheme.brandEmerald500),
+      ),
     );
   }
 
@@ -297,7 +371,10 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.red.withOpacity(0.2)),
       ),
-      child: Text('Error loading status: $error', style: const TextStyle(color: Colors.redAccent, fontSize: 12)),
+      child: Text(
+        'Error loading status: $error',
+        style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+      ),
     );
   }
 }

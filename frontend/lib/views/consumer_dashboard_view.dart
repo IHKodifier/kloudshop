@@ -12,7 +12,8 @@ class ConsumerDashboardView extends ConsumerStatefulWidget {
   const ConsumerDashboardView({super.key});
 
   @override
-  ConsumerState<ConsumerDashboardView> createState() => _ConsumerDashboardViewState();
+  ConsumerState<ConsumerDashboardView> createState() =>
+      _ConsumerDashboardViewState();
 }
 
 class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
@@ -38,7 +39,10 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('My Account', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'My Account',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
         actions: [
@@ -54,7 +58,9 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
         future: _ordersFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500));
+            return const Center(
+              child: CircularProgressIndicator(color: AppTheme.brandEmerald500),
+            );
           }
           if (snapshot.hasError) {
             return Center(
@@ -63,9 +69,16 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(LucideIcons.alertCircle, color: Colors.redAccent, size: 40),
+                    const Icon(
+                      LucideIcons.alertCircle,
+                      color: Colors.redAccent,
+                      size: 40,
+                    ),
                     const SizedBox(height: 16),
-                    Text('Error: ${snapshot.error}', textAlign: TextAlign.center),
+                    Text(
+                      'Error: ${snapshot.error}',
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -85,11 +98,17 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
                 // Order history header
                 Row(
                   children: [
-                    const Icon(LucideIcons.shoppingBag, size: 20, color: AppTheme.brandEmerald500),
+                    const Icon(
+                      LucideIcons.shoppingBag,
+                      size: 20,
+                      color: AppTheme.brandEmerald500,
+                    ),
                     const SizedBox(width: 12),
                     Text(
                       'Order History',
-                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -102,7 +121,8 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: orders.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 16),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 16),
                     itemBuilder: (context, index) {
                       final order = orders[index];
                       return _buildOrderCard(context, order, theme, isDark);
@@ -135,7 +155,7 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
             color: Colors.black.withOpacity(0.02),
             blurRadius: 16,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -143,12 +163,17 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
         children: [
           Text(
             'Hello there!',
-            style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: AppTheme.brandEmerald600),
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppTheme.brandEmerald600,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             'Track your active purchases, download invoices, or request return services directly.',
-            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -168,25 +193,37 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
         children: [
           const Icon(LucideIcons.packageOpen, size: 48, color: Colors.grey),
           const SizedBox(height: 16),
-          Text('No orders yet', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            'No orders yet',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text('All the purchases you place will appear here.', style: TextStyle(color: theme.hintColor, fontSize: 13)),
+          Text(
+            'All the purchases you place will appear here.',
+            style: TextStyle(color: theme.hintColor, fontSize: 13),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildOrderCard(BuildContext context, Order order, ThemeData theme, bool isDark) {
+  Widget _buildOrderCard(
+    BuildContext context,
+    Order order,
+    ThemeData theme,
+    bool isDark,
+  ) {
     final placedDate = DateFormat('MMM dd, yyyy').format(order.placedAt);
     final statusColor = _getStatusColor(order.fulfilmentStatus);
 
     return HoverScale(
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed(
-            '/storefront/orders/details',
-            arguments: order.id,
-          );
+          Navigator.of(
+            context,
+          ).pushNamed('/storefront/orders/details', arguments: order.id);
         },
         borderRadius: BorderRadius.circular(16),
         child: Container(
@@ -200,7 +237,7 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
                 color: Colors.black.withOpacity(0.02),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
-              )
+              ),
             ],
           ),
           child: Row(
@@ -212,7 +249,11 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
                   color: AppTheme.brandEmerald500.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(LucideIcons.package, color: AppTheme.brandEmerald500, size: 22),
+                child: const Icon(
+                  LucideIcons.package,
+                  color: AppTheme.brandEmerald500,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 16),
               // Order Number & Date
@@ -222,26 +263,38 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
                   children: [
                     Text(
                       'Order ${order.orderNumber}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Placed on $placedDate',
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.hintColor,
+                      ),
                     ),
                   ],
                 ),
               ),
               // Status Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   order.fulfilmentStatus.toUpperCase(),
-                  style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(width: 24),
@@ -251,16 +304,26 @@ class _ConsumerDashboardViewState extends ConsumerState<ConsumerDashboardView> {
                 children: [
                   Text(
                     '\$${order.grandTotal.toStringAsFixed(2)}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.brandEmerald500),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppTheme.brandEmerald500,
+                    ),
                   ),
                   Text(
                     order.currency,
-                    style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.hintColor,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(width: 8),
-              const Icon(LucideIcons.chevronRight, size: 16, color: Colors.grey),
+              const Icon(
+                LucideIcons.chevronRight,
+                size: 16,
+                color: Colors.grey,
+              ),
             ],
           ),
         ),

@@ -15,12 +15,14 @@ class BlogView extends ConsumerWidget {
   final UserClaims claims;
   const BlogView({super.key, required this.claims});
 
-  void _navigateToEditor(BuildContext context, WidgetRef ref,
-      [BlogPost? post]) {
+  void _navigateToEditor(
+    BuildContext context,
+    WidgetRef ref, [
+    BlogPost? post,
+  ]) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => BlogPostEditor(post: post)),
+      MaterialPageRoute(builder: (context) => BlogPostEditor(post: post)),
     );
   }
 
@@ -36,14 +38,12 @@ class BlogView extends ConsumerWidget {
         children: [
           // Premium Header
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
               color: isDark
                   ? const Color(0xFF1E293B).withValues(alpha: 0.8)
                   : Colors.white.withValues(alpha: 0.9),
-              border: Border(
-                  bottom: BorderSide(color: theme.dividerColor)),
+              border: Border(bottom: BorderSide(color: theme.dividerColor)),
             ),
             child: Row(
               children: [
@@ -52,13 +52,15 @@ class BlogView extends ConsumerWidget {
                   children: [
                     Text(
                       'Blog Management',
-                      style: theme.textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       'Create and manage your store\'s content',
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant),
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -75,8 +77,9 @@ class BlogView extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.brandEmerald500
-                              .withValues(alpha: 0.35),
+                          color: AppTheme.brandEmerald500.withValues(
+                            alpha: 0.35,
+                          ),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -84,20 +87,29 @@ class BlogView extends ConsumerWidget {
                     ),
                     child: ElevatedButton.icon(
                       onPressed: () => _navigateToEditor(context, ref),
-                      icon: const Icon(LucideIcons.plus,
-                          size: 16, color: Colors.white),
-                      label: const Text('New Post',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                      icon: const Icon(
+                        LucideIcons.plus,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        'New Post',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 14),
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
@@ -120,17 +132,16 @@ class BlogView extends ConsumerWidget {
                         final post = posts[index];
                         return _PostCard(
                           post: post,
-                          onEdit: () =>
-                              _navigateToEditor(context, ref, post),
+                          onEdit: () => _navigateToEditor(context, ref, post),
                         );
                       },
                     ),
               loading: () => Center(
                 child: CircularProgressIndicator(
-                    color: AppTheme.brandEmerald500),
+                  color: AppTheme.brandEmerald500,
+                ),
               ),
-              error: (e, s) =>
-                  Center(child: Text('Error: $e')),
+              error: (e, s) => Center(child: Text('Error: $e')),
             ),
           ),
         ],
@@ -139,7 +150,10 @@ class BlogView extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(
-      BuildContext context, WidgetRef ref, ThemeData theme) {
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -150,30 +164,35 @@ class BlogView extends ConsumerWidget {
               color: AppTheme.brandEmerald500.withValues(alpha: 0.08),
               shape: BoxShape.circle,
               border: Border.all(
-                  color: AppTheme.brandEmerald500.withValues(alpha: 0.2)),
+                color: AppTheme.brandEmerald500.withValues(alpha: 0.2),
+              ),
             ),
-            child: const Icon(LucideIcons.bookOpen,
-                size: 48, color: AppTheme.brandEmerald500),
+            child: const Icon(
+              LucideIcons.bookOpen,
+              size: 48,
+              color: AppTheme.brandEmerald500,
+            ),
           ),
           const SizedBox(height: 24),
-          Text('No blog posts yet',
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            'No blog posts yet',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             'Start sharing your stories with your customers.',
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant),
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 28),
           HoverScale(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [
-                    AppTheme.brandEmerald500,
-                    AppTheme.brandEmerald600,
-                  ],
+                  colors: [AppTheme.brandEmerald500, AppTheme.brandEmerald600],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
@@ -185,22 +204,30 @@ class BlogView extends ConsumerWidget {
                 ],
               ),
               child: ElevatedButton.icon(
-                onPressed: () =>
-                    _navigateToEditor(context, ref),
-                icon: const Icon(LucideIcons.plus,
-                    size: 16, color: Colors.white),
-                label: const Text('Write Your First Post',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold)),
+                onPressed: () => _navigateToEditor(context, ref),
+                icon: const Icon(
+                  LucideIcons.plus,
+                  size: 16,
+                  color: Colors.white,
+                ),
+                label: const Text(
+                  'Write Your First Post',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24, vertical: 14),
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -233,7 +260,8 @@ class _PostCard extends StatelessWidget {
                   : Colors.white.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                  color: theme.dividerColor.withValues(alpha: 0.6)),
+                color: theme.dividerColor.withValues(alpha: 0.6),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
@@ -273,8 +301,9 @@ class _PostCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               post.title,
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -287,36 +316,42 @@ class _PostCard extends StatelessWidget {
                       Text(
                         post.excerpt ?? 'No excerpt provided.',
                         style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant),
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 14),
                       Row(
                         children: [
-                          Icon(LucideIcons.calendar,
-                              size: 12,
-                              color: theme.colorScheme.onSurfaceVariant),
+                          Icon(
+                            LucideIcons.calendar,
+                            size: 12,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             DateFormat('MMM d, y').format(post.createdAt),
                             style: TextStyle(
-                                fontSize: 11,
-                                color: theme.colorScheme.onSurfaceVariant),
+                              fontSize: 11,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                           if (post.categories.isNotEmpty) ...[
                             const SizedBox(width: 14),
-                            Icon(LucideIcons.tag,
-                                size: 12,
-                                color: theme.colorScheme.onSurfaceVariant),
+                            Icon(
+                              LucideIcons.tag,
+                              size: 12,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
                             const SizedBox(width: 4),
                             Flexible(
                               child: Text(
                                 post.categories.map((c) => c.name).join(', '),
                                 style: TextStyle(
-                                    fontSize: 11,
-                                    color:
-                                        theme.colorScheme.onSurfaceVariant),
+                                  fontSize: 11,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -336,14 +371,18 @@ class _PostCard extends StatelessWidget {
                       scale: 1.1,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: AppTheme.brandEmerald500
-                              .withValues(alpha: 0.08),
+                          color: AppTheme.brandEmerald500.withValues(
+                            alpha: 0.08,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: IconButton(
                           onPressed: onEdit,
-                          icon: const Icon(LucideIcons.edit,
-                              size: 18, color: AppTheme.brandEmerald500),
+                          icon: const Icon(
+                            LucideIcons.edit,
+                            size: 18,
+                            color: AppTheme.brandEmerald500,
+                          ),
                           tooltip: 'Edit Post',
                         ),
                       ),
@@ -354,8 +393,9 @@ class _PostCard extends StatelessWidget {
                         scale: 1.1,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEF4444)
-                                .withValues(alpha: 0.08),
+                            color: const Color(
+                              0xFFEF4444,
+                            ).withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: IconButton(
@@ -364,37 +404,45 @@ class _PostCard extends StatelessWidget {
                                 context: context,
                                 builder: (context) => BackdropFilter(
                                   filter: ImageFilter.blur(
-                                      sigmaX: 8, sigmaY: 8),
+                                    sigmaX: 8,
+                                    sigmaY: 8,
+                                  ),
                                   child: AlertDialog(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
                                     title: const Row(
                                       children: [
-                                        Icon(LucideIcons.alertTriangle,
-                                            color: Color(0xFFEF4444),
-                                            size: 20),
+                                        Icon(
+                                          LucideIcons.alertTriangle,
+                                          color: Color(0xFFEF4444),
+                                          size: 20,
+                                        ),
                                         SizedBox(width: 8),
                                         Text('Delete Post'),
                                       ],
                                     ),
                                     content: const Text(
-                                        'Are you sure you want to delete this post? This action cannot be undone.'),
+                                      'Are you sure you want to delete this post? This action cannot be undone.',
+                                    ),
                                     actions: [
                                       TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, false),
-                                          child: const Text('Cancel')),
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text('Cancel'),
+                                      ),
                                       ElevatedButton(
                                         onPressed: () =>
                                             Navigator.pop(context, true),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFFEF4444),
+                                          backgroundColor: const Color(
+                                            0xFFEF4444,
+                                          ),
                                         ),
-                                        child: const Text('Delete',
-                                            style: TextStyle(
-                                                color: Colors.white)),
+                                        child: const Text(
+                                          'Delete',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -409,19 +457,23 @@ class _PostCard extends StatelessWidget {
                                   ref.invalidate(blogPostsProvider);
                                 } catch (e) {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          content: Text('Error: $e'),
-                                          backgroundColor:
-                                              const Color(0xFFEF4444)),
+                                        content: Text('Error: $e'),
+                                        backgroundColor: const Color(
+                                          0xFFEF4444,
+                                        ),
+                                      ),
                                     );
                                   }
                                 }
                               }
                             },
-                            icon: const Icon(LucideIcons.trash2,
-                                size: 18, color: Color(0xFFEF4444)),
+                            icon: const Icon(
+                              LucideIcons.trash2,
+                              size: 18,
+                              color: Color(0xFFEF4444),
+                            ),
                             tooltip: 'Delete Post',
                           ),
                         ),
@@ -445,10 +497,14 @@ class _PostCard extends StatelessWidget {
         color: AppTheme.brandEmerald500.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: AppTheme.brandEmerald500.withValues(alpha: 0.2)),
+          color: AppTheme.brandEmerald500.withValues(alpha: 0.2),
+        ),
       ),
-      child: const Icon(LucideIcons.image,
-          color: AppTheme.brandEmerald500, size: 28),
+      child: const Icon(
+        LucideIcons.image,
+        color: AppTheme.brandEmerald500,
+        size: 28,
+      ),
     );
   }
 }
@@ -474,10 +530,11 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: TextStyle(
-            color: color,
-            fontSize: 9,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5),
+          color: color,
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }

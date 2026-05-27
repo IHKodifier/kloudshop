@@ -56,7 +56,7 @@ class AuthService {
         final googleProvider = GoogleAuthProvider();
         googleProvider.addScope('email');
         googleProvider.addScope('profile');
-        
+
         // This handles both Google Sign-In and Firebase linking in one step
         return await _auth.signInWithPopup(googleProvider);
       } else {
@@ -64,7 +64,7 @@ class AuthService {
         if (_googleSignIn == null) {
           throw Exception("Google Sign-In not initialized.");
         }
-        
+
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return null;
 

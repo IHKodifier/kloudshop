@@ -35,14 +35,12 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
         children: [
           // Premium Header
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
               color: isDark
                   ? const Color(0xFF1E293B).withValues(alpha: 0.8)
                   : Colors.white.withValues(alpha: 0.9),
-              border: Border(
-                  bottom: BorderSide(color: theme.dividerColor)),
+              border: Border(bottom: BorderSide(color: theme.dividerColor)),
             ),
             child: Row(
               children: [
@@ -51,47 +49,59 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
                   children: [
                     Text(
                       'Customer Directory',
-                      style: theme.textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       'View and manage your customer base',
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant),
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
                 const Spacer(),
                 // Stats summary
                 customersAsync.whenData((customers) {
-                  if (customers.isEmpty) return const SizedBox.shrink();
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.brandEmerald500.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: AppTheme.brandEmerald500
-                              .withValues(alpha: 0.25)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(LucideIcons.users,
-                            size: 14, color: AppTheme.brandEmerald500),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${customers.length} customers',
-                          style: const TextStyle(
-                            color: AppTheme.brandEmerald500,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                      if (customers.isEmpty) return const SizedBox.shrink();
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.brandEmerald500.withValues(
+                            alpha: 0.1,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppTheme.brandEmerald500.withValues(
+                              alpha: 0.25,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                }).value ?? const SizedBox.shrink(),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.users,
+                              size: 14,
+                              color: AppTheme.brandEmerald500,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${customers.length} customers',
+                              style: const TextStyle(
+                                color: AppTheme.brandEmerald500,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).value ??
+                    const SizedBox.shrink(),
               ],
             ),
           ),
@@ -107,30 +117,34 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Search customers by email...',
-                    prefixIcon: Icon(LucideIcons.search,
-                        size: 18,
-                        color: theme.colorScheme.onSurfaceVariant),
+                    prefixIcon: Icon(
+                      LucideIcons.search,
+                      size: 18,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                          BorderSide(color: theme.colorScheme.outline),
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                          BorderSide(color: theme.colorScheme.outline),
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(
-                          color: AppTheme.brandEmerald500, width: 1.5),
+                        color: AppTheme.brandEmerald500,
+                        width: 1.5,
+                      ),
                     ),
                     filled: true,
                     fillColor: isDark
                         ? Colors.white.withValues(alpha: 0.04)
                         : AppTheme.neutral50,
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
                             icon: const Icon(LucideIcons.x, size: 16),
@@ -157,8 +171,7 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
               data: (customers) => customers.isEmpty
                   ? _buildEmptyState(theme)
                   : ListView.separated(
-                      padding:
-                          const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                       itemCount: customers.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 10),
@@ -167,7 +180,8 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
                     ),
               loading: () => Center(
                 child: CircularProgressIndicator(
-                    color: AppTheme.brandEmerald500),
+                  color: AppTheme.brandEmerald500,
+                ),
               ),
               error: (e, s) => Center(child: Text('Error: $e')),
             ),
@@ -188,20 +202,28 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
               color: AppTheme.brandEmerald500.withValues(alpha: 0.08),
               shape: BoxShape.circle,
               border: Border.all(
-                  color: AppTheme.brandEmerald500.withValues(alpha: 0.2)),
+                color: AppTheme.brandEmerald500.withValues(alpha: 0.2),
+              ),
             ),
-            child: const Icon(LucideIcons.users,
-                size: 48, color: AppTheme.brandEmerald500),
+            child: const Icon(
+              LucideIcons.users,
+              size: 48,
+              color: AppTheme.brandEmerald500,
+            ),
           ),
           const SizedBox(height: 24),
-          Text('No customers found',
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            'No customers found',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             'Try adjusting your search query.',
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -245,7 +267,8 @@ class _CustomerCard extends StatelessWidget {
                   : Colors.white.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                  color: theme.dividerColor.withValues(alpha: 0.6)),
+                color: theme.dividerColor.withValues(alpha: 0.6),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
@@ -265,7 +288,8 @@ class _CustomerCard extends StatelessWidget {
                     color: avatarColor.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: avatarColor.withValues(alpha: 0.4)),
+                      color: avatarColor.withValues(alpha: 0.4),
+                    ),
                   ),
                   child: Center(
                     child: Text(
@@ -287,8 +311,9 @@ class _CustomerCard extends StatelessWidget {
                     children: [
                       Text(
                         customer.email,
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Row(
@@ -314,18 +339,22 @@ class _CustomerCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('Last order',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                            color:
-                                theme.colorScheme.onSurfaceVariant)),
+                    Text(
+                      'Last order',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       customer.lastOrderAt != null
-                          ? DateFormat('MMM d, yyyy')
-                              .format(customer.lastOrderAt!)
+                          ? DateFormat(
+                              'MMM d, yyyy',
+                            ).format(customer.lastOrderAt!)
                           : '—',
                       style: theme.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -354,9 +383,13 @@ class _StatChip extends StatelessWidget {
       children: [
         Icon(icon, size: 12, color: c),
         const SizedBox(width: 4),
-        Text(label,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: c, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: c,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
     );
   }

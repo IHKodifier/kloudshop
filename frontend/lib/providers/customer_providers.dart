@@ -13,7 +13,8 @@ class CustomerSearchQuery extends Notifier<String> {
   void setQuery(String query) => state = query;
 }
 
-final customerSearchQueryProvider = NotifierProvider<CustomerSearchQuery, String>(CustomerSearchQuery.new);
+final customerSearchQueryProvider =
+    NotifierProvider<CustomerSearchQuery, String>(CustomerSearchQuery.new);
 
 final filteredCustomersProvider = Provider<AsyncValue<List<Customer>>>((ref) {
   final customersAsync = ref.watch(customersProvider);
@@ -21,8 +22,8 @@ final filteredCustomersProvider = Provider<AsyncValue<List<Customer>>>((ref) {
 
   return customersAsync.whenData((customers) {
     if (searchQuery.isEmpty) return customers;
-    return customers.where((c) => 
-      c.email.toLowerCase().contains(searchQuery)
-    ).toList();
+    return customers
+        .where((c) => c.email.toLowerCase().contains(searchQuery))
+        .toList();
   });
 });

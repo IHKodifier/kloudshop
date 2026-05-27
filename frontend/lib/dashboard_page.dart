@@ -45,14 +45,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   Future<void> _handleBillingSession() async {
     // Wait for the next frame to avoid build context issues during initState
     await Future.delayed(Duration.zero);
-    
+
     final uri = Uri.base;
     String? sessionId = uri.queryParameters['session_id'];
-    
+
     // Support hash routing (fragment) session_id
     if (sessionId == null && uri.fragment.isNotEmpty) {
       try {
-        final fragmentPath = uri.fragment.startsWith('/') ? uri.fragment : '/${uri.fragment}';
+        final fragmentPath = uri.fragment.startsWith('/')
+            ? uri.fragment
+            : '/${uri.fragment}';
         final fragmentUri = Uri.parse('http://localhost$fragmentPath');
         sessionId = fragmentUri.queryParameters['session_id'];
       } catch (_) {}
@@ -61,26 +63,31 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     if (sessionId != null) {
       try {
         await ref.read(apiServiceProvider).verifyUpgradeSession(sessionId);
-        
+
         // Invalidate relevant providers to force fresh data
         ref.invalidate(subscriptionProvider);
         ref.invalidate(tenantSettingsProvider);
-        
+
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Plan upgraded successfully! Welcome to your new tier.'),
+            content: Text(
+              'Plan upgraded successfully! Welcome to your new tier.',
+            ),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
           ),
         );
-        
+
         // Switch to Billing tab (index 4)
         setState(() => _selectedIndex = 4);
       } catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Verification failed: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Verification failed: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -93,13 +100,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         children: [
           // Sidebar / Navigation Rail
           _buildSidebar(context),
-          
+
           const VerticalDivider(thickness: 1, width: 1),
-          
+
           // Main Content Area
-          Expanded(
-            child: _buildMainContent(),
-          ),
+          Expanded(child: _buildMainContent()),
         ],
       ),
     );
@@ -130,9 +135,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               children: [
                 // Header section (Fixed height, always visible)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 16.0,
+                  ),
                   child: Row(
-                    mainAxisAlignment: _isRailExtended ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                    mainAxisAlignment: _isRailExtended
+                        ? MainAxisAlignment.spaceBetween
+                        : MainAxisAlignment.center,
                     children: [
                       if (_isRailExtended) ...[
                         Row(
@@ -160,7 +170,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                             const SizedBox(width: 12),
                             const Text(
                               'KloudShop',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: -0.5),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: -0.5,
+                              ),
                             ),
                           ],
                         ),
@@ -189,13 +203,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       if (_isRailExtended)
                         IconButton(
                           icon: const Icon(LucideIcons.chevronLeft, size: 20),
-                          onPressed: () => setState(() => _isRailExtended = false),
+                          onPressed: () =>
+                              setState(() => _isRailExtended = false),
                           tooltip: 'Collapse',
                         ),
                     ],
                   ),
                 ),
-                
+
                 // Menu toggle when collapsed
                 if (!_isRailExtended) ...[
                   IconButton(
@@ -216,41 +231,52 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         if (_isRailExtended) ...[
                           Consumer(
                             builder: (context, ref, child) {
-                              final settingsAsync = ref.watch(tenantSettingsProvider);
+                              final settingsAsync = ref.watch(
+                                tenantSettingsProvider,
+                              );
                               return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0,
+                                ),
                                 child: settingsAsync.when(
                                   data: (settings) => Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: theme.colorScheme.surfaceContainerLow,
+                                      color:
+                                          theme.colorScheme.surfaceContainerLow,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
                                           settings.name.toUpperCase(),
-                                          style: theme.textTheme.labelSmall?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.2,
-                                            color: theme.primaryColor,
-                                          ),
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 1.2,
+                                                color: theme.primaryColor,
+                                              ),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          (settings.config['sector'] as String?)?.toUpperCase() ?? 'MERCHANT',
-                                          style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
+                                          (settings.config['sector'] as String?)
+                                                  ?.toUpperCase() ??
+                                              'MERCHANT',
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(fontSize: 10),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
                                         ),
                                       ],
                                     ),
                                   ),
-                                  loading: () => const LinearProgressIndicator(),
+                                  loading: () =>
+                                      const LinearProgressIndicator(),
                                   error: (e, s) => const SizedBox.shrink(),
                                 ),
                               );
@@ -258,7 +284,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        
+
                         // Navigation Menu Items
                         _SidebarItemTile(
                           index: 0,
@@ -344,12 +370,15 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     ),
                   ),
                 ),
-                
+
                 const Divider(height: 1),
-                
+
                 // Footer section (Fixed height, always visible)
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 4.0,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -357,22 +386,39 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         builder: (context, ref, child) {
                           final themeMode = ref.watch(themeModeProvider);
                           final isDark = themeMode == ThemeMode.dark;
-                          
+
                           if (_isRailExtended) {
                             return ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                              leading: Icon(isDark ? LucideIcons.moon : LucideIcons.sun, size: 20),
-                              title: Text(isDark ? 'Dark Mode' : 'Light Mode', style: const TextStyle(fontSize: 14)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              leading: Icon(
+                                isDark ? LucideIcons.moon : LucideIcons.sun,
+                                size: 20,
+                              ),
+                              title: Text(
+                                isDark ? 'Dark Mode' : 'Light Mode',
+                                style: const TextStyle(fontSize: 14),
+                              ),
                               trailing: Switch(
                                 value: isDark,
-                                onChanged: (val) => ref.read(themeModeProvider.notifier).toggleTheme(val),
+                                onChanged: (val) => ref
+                                    .read(themeModeProvider.notifier)
+                                    .toggleTheme(val),
                               ),
                             );
                           } else {
                             return IconButton(
-                              icon: Icon(isDark ? LucideIcons.moon : LucideIcons.sun, size: 20),
-                              onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(!isDark),
-                              tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                              icon: Icon(
+                                isDark ? LucideIcons.moon : LucideIcons.sun,
+                                size: 20,
+                              ),
+                              onPressed: () => ref
+                                  .read(themeModeProvider.notifier)
+                                  .toggleTheme(!isDark),
+                              tooltip: isDark
+                                  ? 'Switch to Light Mode'
+                                  : 'Switch to Dark Mode',
                             );
                           }
                         },
@@ -381,15 +427,33 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         builder: (context, ref, child) {
                           if (_isRailExtended) {
                             return ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                              leading: const Icon(LucideIcons.logOut, size: 20, color: Colors.redAccent),
-                              title: const Text('Sign Out', style: TextStyle(fontSize: 14, color: Colors.redAccent)),
-                              onTap: () => ref.read(authServiceProvider).signOut(),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              leading: const Icon(
+                                LucideIcons.logOut,
+                                size: 20,
+                                color: Colors.redAccent,
+                              ),
+                              title: const Text(
+                                'Sign Out',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                              onTap: () =>
+                                  ref.read(authServiceProvider).signOut(),
                             );
                           } else {
                             return IconButton(
-                              icon: const Icon(LucideIcons.logOut, size: 20, color: Colors.redAccent),
-                              onPressed: () => ref.read(authServiceProvider).signOut(),
+                              icon: const Icon(
+                                LucideIcons.logOut,
+                                size: 20,
+                                color: Colors.redAccent,
+                              ),
+                              onPressed: () =>
+                                  ref.read(authServiceProvider).signOut(),
                               tooltip: 'Sign Out',
                             );
                           }
@@ -432,9 +496,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       case 9:
         return const SettingsView();
       default:
-        return Center(
-          child: Text('Module Coming Soon: $_selectedIndex'),
-        );
+        return Center(child: Text('Module Coming Soon: $_selectedIndex'));
     }
   }
 }
@@ -451,7 +513,12 @@ class _OverviewView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard Overview', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+        title: Text(
+          'Dashboard Overview',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 48,
@@ -462,134 +529,193 @@ class _OverviewView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            // Welcome Section
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome back,',
-                  style: theme.textTheme.bodyLarge?.copyWith(color: theme.hintColor),
-                ),
-                Text(
-                  claims.email?.split('@')[0] ?? claims.uid,
-                  style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _buildChip(context, 'Tenant: ${claims.tenantId}', theme.primaryColor),
-                    _buildChip(context, 'Role: ${claims.roles.join(", ")}', Colors.orange),
-                    if (claims.isOwner) _buildChip(context, 'OWNER', Colors.redAccent),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+              // Welcome Section
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome back,',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.hintColor,
+                    ),
+                  ),
+                  Text(
+                    claims.email?.split('@')[0] ?? claims.uid,
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _buildChip(
+                        context,
+                        'Tenant: ${claims.tenantId}',
+                        theme.primaryColor,
+                      ),
+                      _buildChip(
+                        context,
+                        'Role: ${claims.roles.join(", ")}',
+                        Colors.orange,
+                      ),
+                      if (claims.isOwner)
+                        _buildChip(context, 'OWNER', Colors.redAccent),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
 
-            // Trend Chart (Full Bleed)
-            SizedBox(
-              height: 360,
-              width: double.infinity,
-              child: statsAsync.when(
-                data: (stats) => _TrendChart(stats: stats),
-                loading: () => const Center(
-                  child: SizedBox(
-                    width: 200,
-                    child: LinearProgressIndicator(),
+              // Trend Chart (Full Bleed)
+              SizedBox(
+                height: 360,
+                width: double.infinity,
+                child: statsAsync.when(
+                  data: (stats) => _TrendChart(stats: stats),
+                  loading: () => const Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: LinearProgressIndicator(),
+                    ),
+                  ),
+                  error: (e, s) => const SizedBox.shrink(),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Stats Row
+              statsAsync.when(
+                data: (stats) => SizedBox(
+                  height: 180,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _StatCard(
+                          title: 'Total GMV',
+                          value:
+                              '${stats.currency} ${stats.gmv.toStringAsFixed(2)}',
+                          icon: LucideIcons.dollarSign,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      Expanded(
+                        child: _StatCard(
+                          title: 'Orders',
+                          value: stats.orderCount.toString(),
+                          icon: LucideIcons.shoppingBag,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      Expanded(
+                        child: _StatCard(
+                          title: 'Avg. Order',
+                          value:
+                              '${stats.currency} ${stats.aov.toStringAsFixed(2)}',
+                          icon: LucideIcons.trendingUp,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                error: (e, s) => const SizedBox.shrink(),
+                loading: () => const Center(
+                  child: SizedBox(width: 300, child: LinearProgressIndicator()),
+                ),
+                error: (e, s) => Text('Error loading stats: $e'),
               ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Stats Row
-            statsAsync.when(
-              data: (stats) => SizedBox(
-                height: 180,
-                child: Row(
-                  children: [
-                    Expanded(child: _StatCard(title: 'Total GMV', value: '${stats.currency} ${stats.gmv.toStringAsFixed(2)}', icon: LucideIcons.dollarSign)),
-                    const SizedBox(width: 24),
-                    Expanded(child: _StatCard(title: 'Orders', value: stats.orderCount.toString(), icon: LucideIcons.shoppingBag)),
-                    const SizedBox(width: 24),
-                    Expanded(child: _StatCard(title: 'Avg. Order', value: '${stats.currency} ${stats.aov.toStringAsFixed(2)}', icon: LucideIcons.trendingUp)),
-                  ],
+
+              const SizedBox(height: 20),
+
+              // Needs Attention Row
+              Text(
+                'Needs Attention',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              loading: () => const Center(
-                child: SizedBox(
-                  width: 300,
-                  child: LinearProgressIndicator(),
+              const SizedBox(height: 16),
+              alertsAsync.when(
+                data: (alerts) => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _AlertItem(
+                        label: 'Overdue Orders',
+                        count: alerts.pendingOrdersOverdue,
+                        icon: LucideIcons.clock,
+                        color: alerts.pendingOrdersOverdue > 0
+                            ? Colors.redAccent
+                            : Colors.green,
+                      ),
+                      const SizedBox(width: 16),
+                      _AlertItem(
+                        label: 'Low Stock',
+                        count: alerts.lowStockVariants,
+                        icon: LucideIcons.alertTriangle,
+                        color: alerts.lowStockVariants > 0
+                            ? Colors.orange
+                            : Colors.green,
+                      ),
+                      const SizedBox(width: 16),
+                      _AlertItem(
+                        label: 'B2B Approvals',
+                        count: alerts.pendingB2bApprovals,
+                        icon: LucideIcons.userCheck,
+                        color: alerts.pendingB2bApprovals > 0
+                            ? Colors.blue
+                            : Colors.green,
+                      ),
+                    ],
+                  ),
+                ),
+                loading: () => const CircularProgressIndicator(),
+                error: (e, s) => Container(),
+              ),
+
+              const SizedBox(height: 32),
+              const Divider(),
+              const SizedBox(height: 16),
+              Text(
+                'Platform Activity',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.hintColor,
                 ),
               ),
-              error: (e, s) => Text('Error loading stats: $e'),
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Needs Attention Row
-            Text('Needs Attention', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            alertsAsync.when(
-              data: (alerts) => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _AlertItem(
-                      label: 'Overdue Orders', 
-                      count: alerts.pendingOrdersOverdue, 
-                      icon: LucideIcons.clock,
-                      color: alerts.pendingOrdersOverdue > 0 ? Colors.redAccent : Colors.green,
-                    ),
-                    const SizedBox(width: 16),
-                    _AlertItem(
-                      label: 'Low Stock', 
-                      count: alerts.lowStockVariants, 
-                      icon: LucideIcons.alertTriangle,
-                      color: alerts.lowStockVariants > 0 ? Colors.orange : Colors.green,
-                    ),
-                    const SizedBox(width: 16),
-                    _AlertItem(
-                      label: 'B2B Approvals', 
-                      count: alerts.pendingB2bApprovals, 
-                      icon: LucideIcons.userCheck,
-                      color: alerts.pendingB2bApprovals > 0 ? Colors.blue : Colors.green,
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 16),
+              const SizedBox(
+                height: 100,
+                child: Center(child: Text('Activity Feed Coming Soon')),
               ),
-              loading: () => const CircularProgressIndicator(),
-              error: (e, s) => Container(),
-            ),
-            
-            const SizedBox(height: 32),
-            const Divider(),
-            const SizedBox(height: 16),
-            Text('Platform Activity', style: theme.textTheme.titleMedium?.copyWith(color: theme.hintColor)),
-            const SizedBox(height: 16),
-            const SizedBox(height: 100, child: Center(child: Text('Activity Feed Coming Soon'))),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildChip(BuildContext context, String label, Color color) {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.1),
+        color: color.withValues(
+          alpha: theme.brightness == Brightness.dark ? 0.2 : 0.1,
+        ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: theme.brightness == Brightness.dark ? 0.4 : 0.2)),
+        border: Border.all(
+          color: color.withValues(
+            alpha: theme.brightness == Brightness.dark ? 0.4 : 0.2,
+          ),
+        ),
       ),
       child: Text(
         label,
-        style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -601,7 +727,12 @@ class _AlertItem extends StatelessWidget {
   final IconData icon;
   final Color color;
 
-  const _AlertItem({required this.label, required this.count, required this.icon, required this.color});
+  const _AlertItem({
+    required this.label,
+    required this.count,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -610,32 +741,52 @@ class _AlertItem extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.15)),
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: color.withValues(
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? 0.1
+                    : 0.05,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: color.withValues(
+                  alpha: Theme.of(context).brightness == Brightness.dark
+                      ? 0.3
+                      : 0.15,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 16, color: color),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      count.toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      label,
+                      style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(count.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 16)),
-              Text(label, style: theme.textTheme.bodySmall?.copyWith(fontSize: 10)),
-            ],
-          ),
-        ],
-      ),
         ),
-      ),
       ),
     );
   }
@@ -646,7 +797,11 @@ class _StatCard extends StatelessWidget {
   final String value;
   final IconData icon;
 
-  const _StatCard({required this.title, required this.value, required this.icon});
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -655,50 +810,68 @@ class _StatCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: theme.cardColor.withValues(alpha: theme.brightness == Brightness.dark ? 0.6 : 0.8),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 15,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
+          filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha: theme.brightness == Brightness.dark ? 0.25 : 0.1),
-              shape: BoxShape.circle,
+              color: theme.cardColor.withValues(
+                alpha: theme.brightness == Brightness.dark ? 0.6 : 0.8,
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: theme.dividerColor.withValues(alpha: 0.5),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: Icon(icon, color: theme.colorScheme.primary, size: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(
+                      alpha: theme.brightness == Brightness.dark ? 0.25 : 0.1,
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: theme.colorScheme.primary, size: 20),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.hintColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          Text(title, style: theme.textTheme.labelMedium?.copyWith(color: theme.hintColor)),
-          const SizedBox(height: 4),
-          Text(value, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-        ],
-      ),
         ),
-      ),
       ),
     );
   }
 }
 
 enum ChartType { line, bar }
+
 enum TimeRange { today, h24, d7, d14, d28, d90 }
+
 enum MetricType { sales, orders, aov, customers, conversion, returns }
 
 class _TrendChart extends StatefulWidget {
@@ -720,12 +893,24 @@ class _TrendChartState extends State<_TrendChart> {
 
     List<DataPoint> source;
     switch (_selectedMetric) {
-      case MetricType.sales: source = widget.stats.salesHistory; break;
-      case MetricType.orders: source = widget.stats.orderHistory; break;
-      case MetricType.aov: source = widget.stats.aovHistory; break;
-      case MetricType.customers: source = widget.stats.customerHistory; break;
-      case MetricType.conversion: source = widget.stats.conversionHistory; break;
-      case MetricType.returns: source = widget.stats.returnHistory; break;
+      case MetricType.sales:
+        source = widget.stats.salesHistory;
+        break;
+      case MetricType.orders:
+        source = widget.stats.orderHistory;
+        break;
+      case MetricType.aov:
+        source = widget.stats.aovHistory;
+        break;
+      case MetricType.customers:
+        source = widget.stats.customerHistory;
+        break;
+      case MetricType.conversion:
+        source = widget.stats.conversionHistory;
+        break;
+      case MetricType.returns:
+        source = widget.stats.returnHistory;
+        break;
     }
 
     final days = switch (_timeRange) {
@@ -756,7 +941,7 @@ class _TrendChartState extends State<_TrendChart> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final data = _getFilteredData();
-    
+
     if (data.isEmpty) return const Center(child: Text('No data available'));
 
     return Column(
@@ -767,22 +952,50 @@ class _TrendChartState extends State<_TrendChart> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _FilterChip(label: 'Sales', isSelected: _selectedMetric == MetricType.sales, onTap: () => setState(() => _selectedMetric = MetricType.sales)),
+              _FilterChip(
+                label: 'Sales',
+                isSelected: _selectedMetric == MetricType.sales,
+                onTap: () => setState(() => _selectedMetric = MetricType.sales),
+              ),
               const SizedBox(width: 8),
-              _FilterChip(label: 'Orders', isSelected: _selectedMetric == MetricType.orders, onTap: () => setState(() => _selectedMetric = MetricType.orders)),
+              _FilterChip(
+                label: 'Orders',
+                isSelected: _selectedMetric == MetricType.orders,
+                onTap: () =>
+                    setState(() => _selectedMetric = MetricType.orders),
+              ),
               const SizedBox(width: 8),
-              _FilterChip(label: 'AOV', isSelected: _selectedMetric == MetricType.aov, onTap: () => setState(() => _selectedMetric = MetricType.aov)),
+              _FilterChip(
+                label: 'AOV',
+                isSelected: _selectedMetric == MetricType.aov,
+                onTap: () => setState(() => _selectedMetric = MetricType.aov),
+              ),
               const SizedBox(width: 8),
-              _FilterChip(label: 'Customers', isSelected: _selectedMetric == MetricType.customers, onTap: () => setState(() => _selectedMetric = MetricType.customers)),
+              _FilterChip(
+                label: 'Customers',
+                isSelected: _selectedMetric == MetricType.customers,
+                onTap: () =>
+                    setState(() => _selectedMetric = MetricType.customers),
+              ),
               const SizedBox(width: 8),
-              _FilterChip(label: 'Conversion', isSelected: _selectedMetric == MetricType.conversion, onTap: () => setState(() => _selectedMetric = MetricType.conversion)),
+              _FilterChip(
+                label: 'Conversion',
+                isSelected: _selectedMetric == MetricType.conversion,
+                onTap: () =>
+                    setState(() => _selectedMetric = MetricType.conversion),
+              ),
               const SizedBox(width: 8),
-              _FilterChip(label: 'Returns', isSelected: _selectedMetric == MetricType.returns, onTap: () => setState(() => _selectedMetric = MetricType.returns)),
+              _FilterChip(
+                label: 'Returns',
+                isSelected: _selectedMetric == MetricType.returns,
+                onTap: () =>
+                    setState(() => _selectedMetric = MetricType.returns),
+              ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Middle Toolbar: Chart Type & Time Range
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -790,12 +1003,24 @@ class _TrendChartState extends State<_TrendChart> {
             Row(
               children: [
                 IconButton(
-                  icon: Icon(LucideIcons.lineChart, size: 18, color: _chartType == ChartType.line ? theme.primaryColor : theme.hintColor),
+                  icon: Icon(
+                    LucideIcons.lineChart,
+                    size: 18,
+                    color: _chartType == ChartType.line
+                        ? theme.primaryColor
+                        : theme.hintColor,
+                  ),
                   onPressed: () => setState(() => _chartType = ChartType.line),
                   tooltip: 'Line Chart',
                 ),
                 IconButton(
-                  icon: Icon(LucideIcons.barChart3, size: 18, color: _chartType == ChartType.bar ? theme.primaryColor : theme.hintColor),
+                  icon: Icon(
+                    LucideIcons.barChart3,
+                    size: 18,
+                    color: _chartType == ChartType.bar
+                        ? theme.primaryColor
+                        : theme.hintColor,
+                  ),
                   onPressed: () => setState(() => _chartType = ChartType.bar),
                   tooltip: 'Bar Chart',
                 ),
@@ -807,17 +1032,41 @@ class _TrendChartState extends State<_TrendChart> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _RangeChip(label: 'To Date', isSelected: _timeRange == TimeRange.today, onTap: () => setState(() => _timeRange = TimeRange.today)),
+                    _RangeChip(
+                      label: 'To Date',
+                      isSelected: _timeRange == TimeRange.today,
+                      onTap: () => setState(() => _timeRange = TimeRange.today),
+                    ),
                     const SizedBox(width: 4),
-                    _RangeChip(label: '24H', isSelected: _timeRange == TimeRange.h24, onTap: () => setState(() => _timeRange = TimeRange.h24)),
+                    _RangeChip(
+                      label: '24H',
+                      isSelected: _timeRange == TimeRange.h24,
+                      onTap: () => setState(() => _timeRange = TimeRange.h24),
+                    ),
                     const SizedBox(width: 4),
-                    _RangeChip(label: '7D', isSelected: _timeRange == TimeRange.d7, onTap: () => setState(() => _timeRange = TimeRange.d7)),
+                    _RangeChip(
+                      label: '7D',
+                      isSelected: _timeRange == TimeRange.d7,
+                      onTap: () => setState(() => _timeRange = TimeRange.d7),
+                    ),
                     const SizedBox(width: 4),
-                    _RangeChip(label: '14D', isSelected: _timeRange == TimeRange.d14, onTap: () => setState(() => _timeRange = TimeRange.d14)),
+                    _RangeChip(
+                      label: '14D',
+                      isSelected: _timeRange == TimeRange.d14,
+                      onTap: () => setState(() => _timeRange = TimeRange.d14),
+                    ),
                     const SizedBox(width: 4),
-                    _RangeChip(label: '28D', isSelected: _timeRange == TimeRange.d28, onTap: () => setState(() => _timeRange = TimeRange.d28)),
+                    _RangeChip(
+                      label: '28D',
+                      isSelected: _timeRange == TimeRange.d28,
+                      onTap: () => setState(() => _timeRange = TimeRange.d28),
+                    ),
                     const SizedBox(width: 4),
-                    _RangeChip(label: '90D', isSelected: _timeRange == TimeRange.d90, onTap: () => setState(() => _timeRange = TimeRange.d90)),
+                    _RangeChip(
+                      label: '90D',
+                      isSelected: _timeRange == TimeRange.d90,
+                      onTap: () => setState(() => _timeRange = TimeRange.d90),
+                    ),
                   ],
                 ),
               ),
@@ -825,7 +1074,7 @@ class _TrendChartState extends State<_TrendChart> {
           ],
         ),
         const SizedBox(height: 12),
-        
+
         // Chart Area
         Expanded(
           child: AnimatedSwitcher(
@@ -844,9 +1093,9 @@ class _TrendChartState extends State<_TrendChart> {
             },
             child: KeyedSubtree(
               key: ValueKey('$_selectedMetric-$_chartType-$_timeRange'),
-              child: _chartType == ChartType.line 
-                ? _buildLineChart(data, theme) 
-                : _buildBarChart(data, theme),
+              child: _chartType == ChartType.line
+                  ? _buildLineChart(data, theme)
+                  : _buildBarChart(data, theme),
             ),
           ),
         ),
@@ -860,7 +1109,11 @@ class _TrendChartState extends State<_TrendChart> {
 
     final bars = <LineChartBarData>[
       LineChartBarData(
-        spots: data.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.value)).toList(),
+        spots: data
+            .asMap()
+            .entries
+            .map((e) => FlSpot(e.key.toDouble(), e.value.value))
+            .toList(),
         isCurved: true,
         color: theme.primaryColor,
         barWidth: 3,
@@ -884,7 +1137,11 @@ class _TrendChartState extends State<_TrendChart> {
     if (hasSecondary) {
       bars.add(
         LineChartBarData(
-          spots: data.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.secondaryValue ?? 0)).toList(),
+          spots: data
+              .asMap()
+              .entries
+              .map((e) => FlSpot(e.key.toDouble(), e.value.secondaryValue ?? 0))
+              .toList(),
           isCurved: true,
           color: theme.colorScheme.secondary.withValues(alpha: 0.4),
           barWidth: 2,
@@ -911,23 +1168,32 @@ class _TrendChartState extends State<_TrendChart> {
                 if (spot.barIndex != 0) return null;
 
                 final dp = data[spot.spotIndex];
-                final format = (_timeRange == TimeRange.today || _timeRange == TimeRange.h24) 
-                    ? DateFormat('HH:mm') 
+                final format =
+                    (_timeRange == TimeRange.today ||
+                        _timeRange == TimeRange.h24)
+                    ? DateFormat('HH:mm')
                     : DateFormat('MMM d');
                 final dateStr = format.format(dp.date);
-                
+
                 return LineTooltipItem(
                   '$dateStr\n',
                   theme.textTheme.labelSmall!,
                   children: [
                     TextSpan(
                       text: 'Actual: ${_formatValue(dp.value)}',
-                      style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: theme.primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (hasSecondary)
                       TextSpan(
                         text: '\nRef: ${_formatValue(dp.secondaryValue ?? 0)}',
-                        style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.bold, fontSize: 10),
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
                       ),
                   ],
                 );
@@ -955,7 +1221,9 @@ class _TrendChartState extends State<_TrendChart> {
               toY: e.value.value,
               color: theme.primaryColor,
               width: hasSecondary ? 6 : 10,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(4),
+              ),
             ),
           ];
 
@@ -965,16 +1233,14 @@ class _TrendChartState extends State<_TrendChart> {
                 toY: e.value.secondaryValue!,
                 color: theme.colorScheme.secondary.withValues(alpha: 0.6),
                 width: 6,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(4),
+                ),
               ),
             );
           }
 
-          return BarChartGroupData(
-            x: e.key,
-            barsSpace: 4,
-            barRods: rods,
-          );
+          return BarChartGroupData(x: e.key, barsSpace: 4, barRods: rods);
         }).toList(),
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
@@ -982,7 +1248,7 @@ class _TrendChartState extends State<_TrendChart> {
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               final dp = data[groupIndex];
               final dateStr = DateFormat('MMM d').format(dp.date);
-              
+
               String text = '$dateStr\n';
               if (hasSecondary) {
                 if (rodIndex == 0) {
@@ -1014,7 +1280,11 @@ class _FilterChip extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _FilterChip({required this.label, required this.isSelected, required this.onTap});
+  const _FilterChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1025,16 +1295,24 @@ class _FilterChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? theme.primaryColor : theme.colorScheme.surfaceContainerLow,
+          color: isSelected
+              ? theme.primaryColor
+              : theme.colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isSelected ? theme.primaryColor : theme.dividerColor.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: isSelected
+                ? theme.primaryColor
+                : theme.dividerColor.withValues(alpha: 0.1),
+          ),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : theme.textTheme.bodyMedium?.color,
+            color: isSelected
+                ? Colors.white
+                : theme.textTheme.bodyMedium?.color,
           ),
         ),
       ),
@@ -1047,7 +1325,11 @@ class _RangeChip extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _RangeChip({required this.label, required this.isSelected, required this.onTap});
+  const _RangeChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1057,7 +1339,9 @@ class _RangeChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: isSelected ? theme.primaryColor.withValues(alpha: 0.15) : Colors.transparent,
+          color: isSelected
+              ? theme.primaryColor.withValues(alpha: 0.15)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
@@ -1083,14 +1367,22 @@ class _B2BWholesalePlaceholder extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.usersRound, size: 64, color: theme.primaryColor.withValues(alpha: 0.5)),
+            Icon(
+              LucideIcons.usersRound,
+              size: 64,
+              color: theme.primaryColor.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 24),
             Text(
               'B2B Wholesale Infrastructure',
-              style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
-            const Text('Manage wholesale customers, custom price lists, and net terms.'),
+            const Text(
+              'Manage wholesale customers, custom price lists, and net terms.',
+            ),
             const SizedBox(height: 48),
             // Example of what would be here
             Row(
@@ -1113,7 +1405,12 @@ class _B2BWholesalePlaceholder extends StatelessWidget {
     final theme = Theme.of(context);
     return Column(
       children: [
-        Text(value, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Text(label, style: theme.textTheme.bodySmall),
       ],
     );
@@ -1148,17 +1445,23 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
-    final activeBgColor = theme.primaryColor.withValues(alpha: isDark ? 0.15 : 0.08);
-    final hoverBgColor = theme.primaryColor.withValues(alpha: isDark ? 0.08 : 0.03);
+
+    final activeBgColor = theme.primaryColor.withValues(
+      alpha: isDark ? 0.15 : 0.08,
+    );
+    final hoverBgColor = theme.primaryColor.withValues(
+      alpha: isDark ? 0.08 : 0.03,
+    );
     final activeTextColor = theme.primaryColor;
     final inactiveTextColor = isDark ? Colors.grey[400]! : Colors.grey[700]!;
-    
-    final currentBgColor = widget.isSelected 
-        ? activeBgColor 
+
+    final currentBgColor = widget.isSelected
+        ? activeBgColor
         : (_isHovered ? hoverBgColor : Colors.transparent);
-    final currentTextColor = widget.isSelected ? activeTextColor : inactiveTextColor;
-    
+    final currentTextColor = widget.isSelected
+        ? activeTextColor
+        : inactiveTextColor;
+
     Widget content;
     if (widget.isExtended) {
       content = Padding(
@@ -1170,23 +1473,23 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
               width: 4,
               height: 20,
               decoration: BoxDecoration(
-                color: widget.isSelected ? theme.primaryColor : Colors.transparent,
+                color: widget.isSelected
+                    ? theme.primaryColor
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(width: 12),
-            Icon(
-              widget.icon,
-              size: 20,
-              color: currentTextColor,
-            ),
+            Icon(widget.icon, size: 20, color: currentTextColor),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
                 widget.label,
                 style: TextStyle(
                   color: currentTextColor,
-                  fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                  fontWeight: widget.isSelected
+                      ? FontWeight.w600
+                      : FontWeight.w500,
                   fontSize: 14,
                 ),
               ),
@@ -1211,16 +1514,14 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
                   width: 4,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: widget.isSelected ? theme.primaryColor : Colors.transparent,
+                    color: widget.isSelected
+                        ? theme.primaryColor
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-              Icon(
-                widget.icon,
-                size: 22,
-                color: currentTextColor,
-              ),
+              Icon(widget.icon, size: 22, color: currentTextColor),
             ],
           ),
         ),

@@ -10,7 +10,10 @@ final themesProvider = FutureProvider<List<ThemeModel>>((ref) async {
   return apiService.listThemes();
 });
 
-final activeThemeConfigProvider = AsyncNotifierProvider<ActiveThemeConfigNotifier, ThemeConfigModel?>(ActiveThemeConfigNotifier.new);
+final activeThemeConfigProvider =
+    AsyncNotifierProvider<ActiveThemeConfigNotifier, ThemeConfigModel?>(
+      ActiveThemeConfigNotifier.new,
+    );
 
 class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
   Timer? _saveTimer;
@@ -21,7 +24,7 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
   @override
   FutureOr<ThemeConfigModel?> build() async {
     ref.onDispose(() => _saveTimer?.cancel());
-    
+
     final config = await ref.watch(apiServiceProvider).getActiveTheme();
     if (config != null && _history.isEmpty) {
       _addToHistory(config);
@@ -33,7 +36,7 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
     if (_historyIndex < _history.length - 1) {
       _history.removeRange(_historyIndex + 1, _history.length);
     }
-    
+
     _history.add(config);
     if (_history.length > _maxHistory) {
       _history.removeAt(0);
@@ -61,12 +64,16 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
 
   Future<void> fetch() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => ref.read(apiServiceProvider).getActiveTheme());
+    state = await AsyncValue.guard(
+      () => ref.read(apiServiceProvider).getActiveTheme(),
+    );
   }
 
   Future<void> selectTheme(String themeId) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => ref.read(apiServiceProvider).selectTheme(themeId));
+    state = await AsyncValue.guard(
+      () => ref.read(apiServiceProvider).selectTheme(themeId),
+    );
     if (state.value != null) {
       _history.clear();
       _historyIndex = -1;
@@ -134,10 +141,12 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
     if (current == null) return;
 
     try {
-      await ref.read(apiServiceProvider).updateThemeConfig(
-        tokens: current.draftTokens,
-        slots: current.draftSlots,
-      );
+      await ref
+          .read(apiServiceProvider)
+          .updateThemeConfig(
+            tokens: current.draftTokens,
+            slots: current.draftSlots,
+          );
     } catch (e) {
       // Log error but keep local state for now
       log('Failed to save theme draft: $e');
@@ -146,7 +155,8 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
 
   Future<void> publish() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => ref.read(apiServiceProvider).publishTheme());
+    state = await AsyncValue.guard(
+      () => ref.read(apiServiceProvider).publishTheme(),
+    );
   }
-  
 }

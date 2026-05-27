@@ -26,15 +26,12 @@ class OrdersView extends ConsumerWidget {
         children: [
           // Premium Header
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
               color: isDark
                   ? const Color(0xFF1E293B).withValues(alpha: 0.8)
                   : Colors.white.withValues(alpha: 0.9),
-              border: Border(
-                bottom: BorderSide(color: theme.dividerColor),
-              ),
+              border: Border(bottom: BorderSide(color: theme.dividerColor)),
             ),
             child: Row(
               children: [
@@ -43,13 +40,15 @@ class OrdersView extends ConsumerWidget {
                   children: [
                     Text(
                       'Orders',
-                      style: theme.textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       'Track and fulfil customer orders',
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant),
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -103,7 +102,8 @@ class OrdersView extends ConsumerWidget {
                     ),
               loading: () => Center(
                 child: CircularProgressIndicator(
-                    color: AppTheme.brandEmerald500),
+                  color: AppTheme.brandEmerald500,
+                ),
               ),
               error: (e, s) => Center(child: Text('Error: $e')),
             ),
@@ -124,20 +124,28 @@ class OrdersView extends ConsumerWidget {
               color: AppTheme.brandEmerald500.withValues(alpha: 0.08),
               shape: BoxShape.circle,
               border: Border.all(
-                  color: AppTheme.brandEmerald500.withValues(alpha: 0.2)),
+                color: AppTheme.brandEmerald500.withValues(alpha: 0.2),
+              ),
             ),
-            child: const Icon(LucideIcons.shoppingBag,
-                size: 48, color: AppTheme.brandEmerald500),
+            child: const Icon(
+              LucideIcons.shoppingBag,
+              size: 48,
+              color: AppTheme.brandEmerald500,
+            ),
           ),
           const SizedBox(height: 24),
-          Text('No orders yet',
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            'No orders yet',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             'Customer orders will appear here once they are placed.',
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -180,10 +188,11 @@ class _OrderCard extends ConsumerWidget {
             ),
             child: InkWell(
               onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          OrderDetailView(orderId: order.id))),
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderDetailView(orderId: order.id),
+                ),
+              ),
               borderRadius: BorderRadius.circular(20),
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -199,13 +208,15 @@ class _OrderCard extends ConsumerWidget {
                             Text(
                               order.orderNumber,
                               style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               dateFormat.format(order.placedAt),
                               style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant),
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
@@ -213,14 +224,14 @@ class _OrderCard extends ConsumerWidget {
                           children: [
                             _PremiumStatusBadge(
                               label: order.paymentStatus,
-                              color:
-                                  _getPaymentColor(order.paymentStatus),
+                              color: _getPaymentColor(order.paymentStatus),
                             ),
                             const SizedBox(width: 8),
                             _PremiumStatusBadge(
                               label: order.fulfilmentStatus,
                               color: _getFulfilmentColor(
-                                  order.fulfilmentStatus),
+                                order.fulfilmentStatus,
+                              ),
                             ),
                           ],
                         ),
@@ -230,8 +241,9 @@ class _OrderCard extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Divider(
-                          color: theme.dividerColor.withValues(alpha: 0.4),
-                          height: 1),
+                        color: theme.dividerColor.withValues(alpha: 0.4),
+                        height: 1,
+                      ),
                     ),
 
                     // Customer + Total
@@ -257,19 +269,20 @@ class _OrderCard extends ConsumerWidget {
                             ),
                             const SizedBox(width: 12),
                             Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    order.shippingName ?? 'No Name',
-                                    style: theme.textTheme.bodyMedium
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w600)),
-                                Text(order.email,
-                                    style: theme.textTheme.bodySmall
-                                        ?.copyWith(
-                                            color: theme.colorScheme
-                                                .onSurfaceVariant)),
+                                  order.shippingName ?? 'No Name',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  order.email,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -284,10 +297,12 @@ class _OrderCard extends ConsumerWidget {
                                 color: AppTheme.brandEmerald500,
                               ),
                             ),
-                            Text('Grand Total',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme
-                                        .onSurfaceVariant)),
+                            Text(
+                              'Grand Total',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -327,15 +342,19 @@ class _OrderCard extends ConsumerWidget {
                                     shadowColor: Colors.transparent,
                                     elevation: 0,
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
+                                      vertical: 12,
+                                    ),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                   ),
-                                  child: const Text('Mark as Fulfilled',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
+                                  child: const Text(
+                                    'Mark as Fulfilled',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -346,18 +365,22 @@ class _OrderCard extends ConsumerWidget {
                           child: HoverScale(
                             child: OutlinedButton(
                               onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => OrderDetailView(
-                                          orderId: order.id))),
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      OrderDetailView(orderId: order.id),
+                                ),
+                              ),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                    color: theme.colorScheme.outline),
+                                  color: theme.colorScheme.outline,
+                                ),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
+                                  vertical: 12,
+                                ),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                               child: const Text('View Details'),
                             ),
@@ -386,13 +409,12 @@ class _OrderCard extends ConsumerWidget {
       builder: (context) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: AlertDialog(
-          backgroundColor: isDark
-              ? const Color(0xFF1E293B)
-              : Colors.white,
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
             side: BorderSide(
-                color: AppTheme.brandEmerald500.withValues(alpha: 0.2)),
+              color: AppTheme.brandEmerald500.withValues(alpha: 0.2),
+            ),
           ),
           title: Row(
             children: [
@@ -402,8 +424,11 @@ class _OrderCard extends ConsumerWidget {
                   color: AppTheme.brandEmerald500.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(LucideIcons.truck,
-                    color: AppTheme.brandEmerald500, size: 20),
+                child: const Icon(
+                  LucideIcons.truck,
+                  color: AppTheme.brandEmerald500,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               const Text('Fulfil Order'),
@@ -417,14 +442,19 @@ class _OrderCard extends ConsumerWidget {
                 decoration: InputDecoration(
                   labelText: 'Carrier (e.g. DHL, FedEx)',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                        color: AppTheme.brandEmerald500),
+                      color: AppTheme.brandEmerald500,
+                    ),
                   ),
-                  prefixIcon: const Icon(LucideIcons.truck,
-                      size: 18, color: AppTheme.brandEmerald500),
+                  prefixIcon: const Icon(
+                    LucideIcons.truck,
+                    size: 18,
+                    color: AppTheme.brandEmerald500,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -433,36 +463,41 @@ class _OrderCard extends ConsumerWidget {
                 decoration: InputDecoration(
                   labelText: 'Tracking Number',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                        color: AppTheme.brandEmerald500),
+                      color: AppTheme.brandEmerald500,
+                    ),
                   ),
-                  prefixIcon: const Icon(LucideIcons.hash,
-                      size: 18, color: AppTheme.brandEmerald500),
+                  prefixIcon: const Icon(
+                    LucideIcons.hash,
+                    size: 18,
+                    color: AppTheme.brandEmerald500,
+                  ),
                 ),
               ),
             ],
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [
-                    AppTheme.brandEmerald500,
-                    AppTheme.brandEmerald600
-                  ],
+                  colors: [AppTheme.brandEmerald500, AppTheme.brandEmerald600],
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    await ref.read(apiServiceProvider).fulfilOrder(
+                    await ref
+                        .read(apiServiceProvider)
+                        .fulfilOrder(
                           order.id,
                           carrier: carrierController.text,
                           trackingNumber: trackingController.text,
@@ -471,9 +506,12 @@ class _OrderCard extends ConsumerWidget {
                     if (context.mounted) Navigator.pop(context);
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
                           content: Text('Error: $e'),
-                          backgroundColor: Colors.red));
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
                   }
                 },
@@ -482,10 +520,13 @@ class _OrderCard extends ConsumerWidget {
                   shadowColor: Colors.transparent,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-                child: const Text('Confirm Fulfilment',
-                    style: TextStyle(color: Colors.white)),
+                child: const Text(
+                  'Confirm Fulfilment',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],
@@ -541,8 +582,7 @@ class _PremiumFilterChip extends StatelessWidget {
         onTap: onSelected,
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
             color: isSelected
                 ? color.withValues(alpha: 0.12)
@@ -557,10 +597,8 @@ class _PremiumFilterChip extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color:
-                  isSelected ? color : theme.colorScheme.onSurfaceVariant,
-              fontWeight:
-                  isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? color : theme.colorScheme.onSurfaceVariant,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 13,
             ),
           ),
@@ -587,10 +625,11 @@ class _PremiumStatusBadge extends StatelessWidget {
       child: Text(
         label.toUpperCase(),
         style: TextStyle(
-            color: color,
-            fontSize: 9,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5),
+          color: color,
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }

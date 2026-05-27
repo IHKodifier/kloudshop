@@ -29,18 +29,10 @@ class BlogTag {
   final String name;
   final String slug;
 
-  BlogTag({
-    required this.id,
-    required this.name,
-    required this.slug,
-  });
+  BlogTag({required this.id, required this.name, required this.slug});
 
   factory BlogTag.fromJson(Map<String, dynamic> json) {
-    return BlogTag(
-      id: json['id'],
-      name: json['name'],
-      slug: json['slug'],
-    );
+    return BlogTag(id: json['id'], name: json['name'], slug: json['slug']);
   }
 }
 
@@ -80,10 +72,18 @@ class BlogPost {
       body: json['body'],
       coverImageUrl: json['cover_image_url'],
       status: json['status'],
-      publishedAt: json['published_at'] != null ? DateTime.parse(json['published_at']) : null,
+      publishedAt: json['published_at'] != null
+          ? DateTime.parse(json['published_at'])
+          : null,
       createdAt: DateTime.parse(json['created_at']),
-      categories: (json['categories'] as List?)?.map((c) => BlogCategory.fromJson(c)).toList() ?? [],
-      tags: (json['tags'] as List?)?.map((t) => BlogTag.fromJson(t)).toList() ?? [],
+      categories:
+          (json['categories'] as List?)
+              ?.map((c) => BlogCategory.fromJson(c))
+              .toList() ??
+          [],
+      tags:
+          (json['tags'] as List?)?.map((t) => BlogTag.fromJson(t)).toList() ??
+          [],
     );
   }
 }

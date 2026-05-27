@@ -26,7 +26,10 @@ class OrderDetailView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Order Details', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Order Details',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
         bottom: PreferredSize(
@@ -45,7 +48,7 @@ class OrderDetailView extends ConsumerWidget {
                   // Page Header
                   _buildHeader(context, ref, order, theme, dateFormat),
                   const SizedBox(height: 32),
-                  
+
                   // Responsiveness: Side-by-side on desktop, stacked on mobile
                   if (isDesktop)
                     Row(
@@ -58,7 +61,12 @@ class OrderDetailView extends ConsumerWidget {
                             children: [
                               _buildItemsCard(order, theme, isDark),
                               const SizedBox(height: 32),
-                              _buildTimelineCard(order, theme, dateFormat, isDark),
+                              _buildTimelineCard(
+                                order,
+                                theme,
+                                dateFormat,
+                                isDark,
+                              ),
                             ],
                           ),
                         ),
@@ -95,14 +103,20 @@ class OrderDetailView extends ConsumerWidget {
                 ],
               ),
             ),
-            loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500)),
+            loading: () => const Center(
+              child: CircularProgressIndicator(color: AppTheme.brandEmerald500),
+            ),
             error: (e, s) => Center(
               child: Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(LucideIcons.alertCircle, color: Colors.redAccent, size: 40),
+                    const Icon(
+                      LucideIcons.alertCircle,
+                      color: Colors.redAccent,
+                      size: 40,
+                    ),
                     const SizedBox(height: 16),
                     Text('Failed to load order: $e'),
                   ],
@@ -110,7 +124,7 @@ class OrderDetailView extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           if (isActionLoading)
             Container(
               color: Colors.black38,
@@ -125,9 +139,17 @@ class OrderDetailView extends ConsumerWidget {
                       child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          CircularProgressIndicator(color: AppTheme.brandEmerald500),
+                          CircularProgressIndicator(
+                            color: AppTheme.brandEmerald500,
+                          ),
                           SizedBox(height: 16),
-                          Text('Updating order...', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          Text(
+                            'Updating order...',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -140,7 +162,13 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, WidgetRef ref, Order order, ThemeData theme, DateFormat dateFormat) {
+  Widget _buildHeader(
+    BuildContext context,
+    WidgetRef ref,
+    Order order,
+    ThemeData theme,
+    DateFormat dateFormat,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -149,13 +177,23 @@ class OrderDetailView extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Text(order.orderNumber, style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  order.orderNumber,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 _buildStatusBadge(order),
               ],
             ),
             const SizedBox(height: 4),
-            Text('Placed on ${dateFormat.format(order.placedAt)}', style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor)),
+            Text(
+              'Placed on ${dateFormat.format(order.placedAt)}',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.hintColor,
+              ),
+            ),
           ],
         ),
         Row(
@@ -164,27 +202,60 @@ class OrderDetailView extends ConsumerWidget {
               HoverScale(
                 child: ElevatedButton.icon(
                   onPressed: () => _showFulfilDialog(context, ref, order),
-                  icon: const Icon(LucideIcons.packageCheck, size: 16, color: Colors.white),
-                  label: const Text('Fulfil Order', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  icon: const Icon(
+                    LucideIcons.packageCheck,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Fulfil Order',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.brandEmerald500,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
-            if (order.fulfilmentStatus == 'unfulfilled' && (order.paymentStatus == 'paid' || order.paymentStatus == 'partially_refunded'))
+            if (order.fulfilmentStatus == 'unfulfilled' &&
+                (order.paymentStatus == 'paid' ||
+                    order.paymentStatus == 'partially_refunded'))
               const SizedBox(width: 12),
-            if (order.paymentStatus == 'paid' || order.paymentStatus == 'partially_refunded')
+            if (order.paymentStatus == 'paid' ||
+                order.paymentStatus == 'partially_refunded')
               HoverScale(
                 child: OutlinedButton.icon(
                   onPressed: () => _showRefundDialog(context, ref, order),
-                  icon: const Icon(LucideIcons.undo2, size: 16, color: Colors.redAccent),
-                  label: const Text('Refund', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                  icon: const Icon(
+                    LucideIcons.undo2,
+                    size: 16,
+                    color: Colors.redAccent,
+                  ),
+                  label: const Text(
+                    'Refund',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.redAccent),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -211,8 +282,14 @@ class OrderDetailView extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
-      child: Text(txt, style: TextStyle(color: fg, fontSize: 11, fontWeight: FontWeight.bold)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        txt,
+        style: TextStyle(color: fg, fontSize: 11, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -232,7 +309,9 @@ class OrderDetailView extends ConsumerWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B).withOpacity(0.7) : Colors.white.withOpacity(0.85),
+            color: isDark
+                ? const Color(0xFF1E293B).withOpacity(0.7)
+                : Colors.white.withOpacity(0.85),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: color.withOpacity(0.15)),
             boxShadow: [
@@ -257,7 +336,12 @@ class OrderDetailView extends ConsumerWidget {
                     child: Icon(icon, size: 18, color: color),
                   ),
                   const SizedBox(width: 12),
-                  Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
@@ -294,22 +378,46 @@ class OrderDetailView extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: theme.dividerColor),
                   ),
-                  child: const Icon(LucideIcons.shoppingCart, size: 22, color: AppTheme.brandEmerald500),
+                  child: const Icon(
+                    LucideIcons.shoppingCart,
+                    size: 22,
+                    color: AppTheme.brandEmerald500,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(
+                        item.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                       const SizedBox(height: 4),
-                      Text('SKU: ${item.sku ?? 'N/A'}', style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor)),
+                      Text(
+                        'SKU: ${item.sku ?? 'N/A'}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.hintColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                Text('${item.quantity} x \$${item.unitPrice.toStringAsFixed(2)}', style: theme.textTheme.bodyMedium),
+                Text(
+                  '${item.quantity} x \$${item.unitPrice.toStringAsFixed(2)}',
+                  style: theme.textTheme.bodyMedium,
+                ),
                 const SizedBox(width: 24),
-                Text('\$${item.totalPrice.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                Text(
+                  '\$${item.totalPrice.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
               ],
             );
           },
@@ -324,20 +432,47 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildPriceRow(ThemeData theme, String label, double amount, {bool isBold = false}) {
+  Widget _buildPriceRow(
+    ThemeData theme,
+    String label,
+    double amount, {
+    bool isBold = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: isBold ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant)),
-          Text('\$${amount.toStringAsFixed(2)}', style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: isBold ? 18 : 14, color: isBold ? AppTheme.brandEmerald500 : theme.colorScheme.onSurface)),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              color: isBold
+                  ? theme.colorScheme.onSurface
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            '\$${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              fontSize: isBold ? 18 : 14,
+              color: isBold
+                  ? AppTheme.brandEmerald500
+                  : theme.colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTimelineCard(Order order, ThemeData theme, DateFormat dateFormat, bool isDark) {
+  Widget _buildTimelineCard(
+    Order order,
+    ThemeData theme,
+    DateFormat dateFormat,
+    bool isDark,
+  ) {
     return _buildGlassCard(
       title: 'Timeline Events',
       icon: LucideIcons.history,
@@ -358,13 +493,14 @@ class OrderDetailView extends ConsumerWidget {
                 children: [
                   Column(
                     children: [
-                      const Icon(LucideIcons.circleDot, size: 14, color: AppTheme.brandEmerald500),
+                      const Icon(
+                        LucideIcons.circleDot,
+                        size: 14,
+                        color: AppTheme.brandEmerald500,
+                      ),
                       if (!isLast)
                         Expanded(
-                          child: Container(
-                            width: 2,
-                            color: theme.dividerColor,
-                          ),
+                          child: Container(width: 2, color: theme.dividerColor),
                         ),
                     ],
                   ),
@@ -377,16 +513,25 @@ class OrderDetailView extends ConsumerWidget {
                         children: [
                           Text(
                             event.eventType.replaceAll('_', ' ').toUpperCase(),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 0.5),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                           if (event.description != null) ...[
                             const SizedBox(height: 4),
-                            Text(event.description!, style: theme.textTheme.bodyMedium),
+                            Text(
+                              event.description!,
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ],
                           const SizedBox(height: 4),
                           Text(
                             dateFormat.format(event.createdAt),
-                            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.hintColor,
+                            ),
                           ),
                         ],
                       ),
@@ -414,17 +559,30 @@ class OrderDetailView extends ConsumerWidget {
             CircleAvatar(
               radius: 20,
               backgroundColor: const Color(0xFFF59E0B).withOpacity(0.1),
-              child: const Icon(LucideIcons.user, size: 18, color: Color(0xFFF59E0B)),
+              child: const Icon(
+                LucideIcons.user,
+                size: 18,
+                color: Color(0xFFF59E0B),
+              ),
             ),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(order.shippingName ?? 'Unknown Customer', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                Text(
+                  order.shippingName ?? 'Unknown Customer',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(order.email, style: TextStyle(color: theme.hintColor, fontSize: 13)),
+                Text(
+                  order.email,
+                  style: TextStyle(color: theme.hintColor, fontSize: 13),
+                ),
               ],
-            )
+            ),
           ],
         ),
       ],
@@ -439,12 +597,21 @@ class OrderDetailView extends ConsumerWidget {
       isDark: isDark,
       theme: theme,
       children: [
-        Text(order.shippingName ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        Text(
+          order.shippingName ?? '',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
         const SizedBox(height: 8),
-        Text(order.shippingAddress1 ?? 'No address provided', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+        Text(
+          order.shippingAddress1 ?? 'No address provided',
+          style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+        ),
         if (order.shippingCity != null) ...[
           const SizedBox(height: 4),
-          Text(order.shippingCity!, style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+          Text(
+            order.shippingCity!,
+            style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+          ),
         ],
       ],
     );
@@ -463,19 +630,33 @@ class OrderDetailView extends ConsumerWidget {
           children: [
             const Row(
               children: [
-                Icon(LucideIcons.creditCard, size: 16, color: Colors.blueAccent),
+                Icon(
+                  LucideIcons.creditCard,
+                  size: 16,
+                  color: Colors.blueAccent,
+                ),
                 SizedBox(width: 8),
-                Text('Visa ending in 4242', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                Text(
+                  'Visa ending in 4242',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
-            Text(order.grandTotal.toStringAsFixed(2), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text(
+              order.grandTotal.toStringAsFixed(2),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Future<void> _showFulfilDialog(BuildContext context, WidgetRef ref, Order order) async {
+  Future<void> _showFulfilDialog(
+    BuildContext context,
+    WidgetRef ref,
+    Order order,
+  ) async {
     final trackingController = TextEditingController();
     final carrierController = TextEditingController();
 
@@ -488,25 +669,40 @@ class OrderDetailView extends ConsumerWidget {
           children: [
             TextField(
               controller: carrierController,
-              decoration: const InputDecoration(labelText: 'Carrier (e.g. FedEx, UPS)', hintText: 'FedEx'),
+              decoration: const InputDecoration(
+                labelText: 'Carrier (e.g. FedEx, UPS)',
+                hintText: 'FedEx',
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: trackingController,
-              decoration: const InputDecoration(labelText: 'Tracking Number', hintText: 'TRK123456789'),
+              decoration: const InputDecoration(
+                labelText: 'Tracking Number',
+                hintText: 'TRK123456789',
+              ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              await _performAction(context, ref, () => ref.read(apiServiceProvider).fulfilOrder(
-                order.id,
-                trackingNumber: trackingController.text,
-                carrier: carrierController.text,
-              ));
+              await _performAction(
+                context,
+                ref,
+                () => ref
+                    .read(apiServiceProvider)
+                    .fulfilOrder(
+                      order.id,
+                      trackingNumber: trackingController.text,
+                      carrier: carrierController.text,
+                    ),
+              );
             },
             child: const Text('Confirm Fulfilment'),
           ),
@@ -515,8 +711,14 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Future<void> _showRefundDialog(BuildContext context, WidgetRef ref, Order order) async {
-    final amountController = TextEditingController(text: order.grandTotal.toStringAsFixed(2));
+  Future<void> _showRefundDialog(
+    BuildContext context,
+    WidgetRef ref,
+    Order order,
+  ) async {
+    final amountController = TextEditingController(
+      text: order.grandTotal.toStringAsFixed(2),
+    );
     final reasonController = TextEditingController();
 
     return showDialog(
@@ -528,29 +730,49 @@ class OrderDetailView extends ConsumerWidget {
           children: [
             TextField(
               controller: amountController,
-              decoration: const InputDecoration(labelText: 'Refund Amount', prefixText: '\$'),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(
+                labelText: 'Refund Amount',
+                prefixText: '\$',
+              ),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: reasonController,
-              decoration: const InputDecoration(labelText: 'Reason for Refund', hintText: 'Customer requested cancellation'),
+              decoration: const InputDecoration(
+                labelText: 'Reason for Refund',
+                hintText: 'Customer requested cancellation',
+              ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
               final amount = double.tryParse(amountController.text);
-              await _performAction(context, ref, () => ref.read(apiServiceProvider).refundOrder(
-                order.id,
-                amount: amount,
-                reason: reasonController.text,
-              ));
+              await _performAction(
+                context,
+                ref,
+                () => ref
+                    .read(apiServiceProvider)
+                    .refundOrder(
+                      order.id,
+                      amount: amount,
+                      reason: reasonController.text,
+                    ),
+              );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('Confirm Refund'),
           ),
         ],
@@ -558,18 +780,26 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Future<void> _performAction(BuildContext context, WidgetRef ref, Future<void> Function() action) async {
+  Future<void> _performAction(
+    BuildContext context,
+    WidgetRef ref,
+    Future<void> Function() action,
+  ) async {
     ref.read(orderActionLoadingProvider.notifier).setLoading(true);
     try {
       await action();
       ref.invalidate(orderDetailsProvider(orderId));
       ref.invalidate(ordersProvider);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Action completed successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Action completed successfully')),
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
       }
     } finally {
       ref.read(orderActionLoadingProvider.notifier).setLoading(false);

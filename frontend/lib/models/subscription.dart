@@ -1,12 +1,6 @@
 enum SubscriptionTier { free, dtc, b2b, hybrid }
 
-enum SubscriptionStatus {
-  trialing,
-  active,
-  pastDue,
-  canceled,
-  incomplete,
-}
+enum SubscriptionStatus { trialing, active, pastDue, canceled, incomplete }
 
 class SubscriptionModel {
   final String id;
@@ -39,17 +33,17 @@ class SubscriptionModel {
       tenantId: json['tenant_id'],
       tier: _parseTier(json['tier']),
       status: _parseStatus(json['status']),
-      currentPeriodStart: json['current_period_start'] != null 
-          ? DateTime.parse(json['current_period_start']) 
+      currentPeriodStart: json['current_period_start'] != null
+          ? DateTime.parse(json['current_period_start'])
           : null,
-      currentPeriodEnd: json['current_period_end'] != null 
-          ? DateTime.parse(json['current_period_end']) 
+      currentPeriodEnd: json['current_period_end'] != null
+          ? DateTime.parse(json['current_period_end'])
           : null,
-      trialStart: json['trial_start'] != null 
-          ? DateTime.parse(json['trial_start']) 
+      trialStart: json['trial_start'] != null
+          ? DateTime.parse(json['trial_start'])
           : null,
-      trialEnd: json['trial_end'] != null 
-          ? DateTime.parse(json['trial_end']) 
+      trialEnd: json['trial_end'] != null
+          ? DateTime.parse(json['trial_end'])
           : null,
       cancelAtPeriodEnd: json['cancel_at_period_end'] ?? false,
       createdAt: DateTime.parse(json['created_at']),
@@ -87,5 +81,7 @@ class SubscriptionModel {
   }
 
   bool get isTrialing => status == SubscriptionStatus.trialing;
-  bool get isActive => status == SubscriptionStatus.active || status == SubscriptionStatus.trialing;
+  bool get isActive =>
+      status == SubscriptionStatus.active ||
+      status == SubscriptionStatus.trialing;
 }

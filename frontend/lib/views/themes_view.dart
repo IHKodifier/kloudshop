@@ -24,14 +24,12 @@ class ThemesView extends ConsumerWidget {
         children: [
           // Premium Header
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
               color: isDark
                   ? const Color(0xFF1E293B).withValues(alpha: 0.8)
                   : Colors.white.withValues(alpha: 0.9),
-              border: Border(
-                  bottom: BorderSide(color: theme.dividerColor)),
+              border: Border(bottom: BorderSide(color: theme.dividerColor)),
             ),
             child: Row(
               children: [
@@ -40,13 +38,15 @@ class ThemesView extends ConsumerWidget {
                   children: [
                     Text(
                       'Theme Library',
-                      style: theme.textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       'Choose and customize your storefront look',
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant),
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -61,7 +61,8 @@ class ThemesView extends ConsumerWidget {
                     tooltip: 'Refresh themes',
                     style: IconButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                 ),
@@ -74,20 +75,25 @@ class ThemesView extends ConsumerWidget {
             child: themesAsync.when(
               data: (themes) => activeConfigAsync.when(
                 data: (activeConfig) => _buildThemeGrid(
-                    context, ref, themes, activeConfig?.themeId),
+                  context,
+                  ref,
+                  themes,
+                  activeConfig?.themeId,
+                ),
                 loading: () => Center(
                   child: CircularProgressIndicator(
-                      color: AppTheme.brandEmerald500),
+                    color: AppTheme.brandEmerald500,
+                  ),
                 ),
                 error: (e, s) =>
                     Center(child: Text('Error loading config: $e')),
               ),
               loading: () => Center(
                 child: CircularProgressIndicator(
-                    color: AppTheme.brandEmerald500),
+                  color: AppTheme.brandEmerald500,
+                ),
               ),
-              error: (e, s) =>
-                  Center(child: Text('Error loading themes: $e')),
+              error: (e, s) => Center(child: Text('Error loading themes: $e')),
             ),
           ),
         ],
@@ -95,8 +101,12 @@ class ThemesView extends ConsumerWidget {
     );
   }
 
-  Widget _buildThemeGrid(BuildContext context, WidgetRef ref,
-      List<ThemeModel> themes, String? activeThemeId) {
+  Widget _buildThemeGrid(
+    BuildContext context,
+    WidgetRef ref,
+    List<ThemeModel> themes,
+    String? activeThemeId,
+  ) {
     return GridView.builder(
       padding: const EdgeInsets.all(24),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -119,7 +129,10 @@ class ThemesView extends ConsumerWidget {
   }
 
   Future<void> _handleSelect(
-      BuildContext context, WidgetRef ref, ThemeModel themeModel) async {
+    BuildContext context,
+    WidgetRef ref,
+    ThemeModel themeModel,
+  ) async {
     try {
       await ref
           .read(activeThemeConfigProvider.notifier)
@@ -131,7 +144,8 @@ class ThemesView extends ConsumerWidget {
             backgroundColor: AppTheme.brandEmerald600,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
@@ -139,8 +153,9 @@ class ThemesView extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Error activating theme: $e'),
-              backgroundColor: const Color(0xFFEF4444)),
+            content: Text('Error activating theme: $e'),
+            backgroundColor: const Color(0xFFEF4444),
+          ),
         );
       }
     }
@@ -195,15 +210,16 @@ class _ThemeCardState extends State<_ThemeCard> {
                   color: widget.isActive
                       ? AppTheme.brandEmerald500
                       : _isHovered
-                          ? AppTheme.brandEmerald500.withValues(alpha: 0.4)
-                          : themeData.dividerColor.withValues(alpha: 0.6),
+                      ? AppTheme.brandEmerald500.withValues(alpha: 0.4)
+                      : themeData.dividerColor.withValues(alpha: 0.6),
                   width: widget.isActive ? 2 : 1,
                 ),
                 boxShadow: widget.isActive || _isHovered
                     ? [
                         BoxShadow(
-                          color: AppTheme.brandEmerald500
-                              .withValues(alpha: 0.15),
+                          color: AppTheme.brandEmerald500.withValues(
+                            alpha: 0.15,
+                          ),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -226,7 +242,8 @@ class _ThemeCardState extends State<_ThemeCard> {
                     Expanded(
                       child: ClipRRect(
                         borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(19)),
+                          top: Radius.circular(19),
+                        ),
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -244,8 +261,7 @@ class _ThemeCardState extends State<_ThemeCard> {
                             Padding(
                               padding: const EdgeInsets.all(16),
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // "Nav bar" mock
                                   Row(
@@ -254,10 +270,12 @@ class _ThemeCardState extends State<_ThemeCard> {
                                         width: 60,
                                         height: 8,
                                         decoration: BoxDecoration(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.8),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                       ),
                                       const Spacer(),
@@ -265,8 +283,9 @@ class _ThemeCardState extends State<_ThemeCard> {
                                         width: 8,
                                         height: 8,
                                         decoration: BoxDecoration(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.6),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.6,
+                                          ),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
@@ -278,10 +297,10 @@ class _ThemeCardState extends State<_ThemeCard> {
                                     width: 100,
                                     height: 10,
                                     decoration: BoxDecoration(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.9),
-                                      borderRadius:
-                                          BorderRadius.circular(5),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
                                   ),
                                   const SizedBox(height: 6),
@@ -289,33 +308,35 @@ class _ThemeCardState extends State<_ThemeCard> {
                                     width: 70,
                                     height: 7,
                                     decoration: BoxDecoration(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.6),
-                                      borderRadius:
-                                          BorderRadius.circular(4),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.6,
+                                      ),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                   ),
                                   const SizedBox(height: 14),
                                   // "Product cards" mock
                                   Row(
                                     children: List.generate(
-                                        3,
-                                        (i) => Expanded(
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: i < 2 ? 6 : 0),
-                                                child: Container(
-                                                  height: 36,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white
-                                                        .withValues(alpha: 0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                  ),
-                                                ),
+                                      3,
+                                      (i) => Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            right: i < 2 ? 6 : 0,
+                                          ),
+                                          child: Container(
+                                            height: 36,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withValues(
+                                                alpha: 0.2,
                                               ),
-                                            )),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -326,11 +347,13 @@ class _ThemeCardState extends State<_ThemeCard> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: AppTheme.brandEmerald500
-                                            .withValues(alpha: 0.5),
-                                        width: 2),
+                                      color: AppTheme.brandEmerald500
+                                          .withValues(alpha: 0.5),
+                                      width: 2,
+                                    ),
                                     borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(19)),
+                                      top: Radius.circular(19),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -351,28 +374,33 @@ class _ThemeCardState extends State<_ThemeCard> {
                                 child: Text(
                                   widget.theme.name,
                                   style: themeData.textTheme.titleSmall
-                                      ?.copyWith(
-                                          fontWeight: FontWeight.bold),
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                               ),
                               if (widget.isActive)
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 3),
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: AppTheme.brandEmerald500
-                                        .withValues(alpha: 0.1),
+                                    color: AppTheme.brandEmerald500.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                        color: AppTheme.brandEmerald500
-                                            .withValues(alpha: 0.4)),
+                                      color: AppTheme.brandEmerald500
+                                          .withValues(alpha: 0.4),
+                                    ),
                                   ),
                                   child: const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(LucideIcons.check,
-                                          size: 10,
-                                          color: AppTheme.brandEmerald500),
+                                      Icon(
+                                        LucideIcons.check,
+                                        size: 10,
+                                        color: AppTheme.brandEmerald500,
+                                      ),
                                       SizedBox(width: 4),
                                       Text(
                                         'ACTIVE',
@@ -395,8 +423,8 @@ class _ThemeCardState extends State<_ThemeCard> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: themeData.textTheme.bodySmall?.copyWith(
-                                color:
-                                    themeData.colorScheme.onSurfaceVariant),
+                              color: themeData.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           if (!widget.isActive)
@@ -407,14 +435,15 @@ class _ThemeCardState extends State<_ThemeCard> {
                                   onPressed: widget.onSelect,
                                   style: OutlinedButton.styleFrom(
                                     side: const BorderSide(
-                                        color: AppTheme.brandEmerald500),
-                                    foregroundColor:
-                                        AppTheme.brandEmerald500,
+                                      color: AppTheme.brandEmerald500,
+                                    ),
+                                    foregroundColor: AppTheme.brandEmerald500,
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
+                                      vertical: 10,
+                                    ),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                   ),
                                   child: const Text('Select Theme'),
                                 ),
@@ -446,25 +475,32 @@ class _ThemeCardState extends State<_ThemeCard> {
                                     onPressed: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                            builder: (_) =>
-                                                const WysiwygView()),
+                                          builder: (_) => const WysiwygView(),
+                                        ),
                                       );
                                     },
-                                    icon: const Icon(LucideIcons.edit,
-                                        size: 14, color: Colors.white),
-                                    label: const Text('Customize',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
+                                    icon: const Icon(
+                                      LucideIcons.edit,
+                                      size: 14,
+                                      color: Colors.white,
+                                    ),
+                                    label: const Text(
+                                      'Customize',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.transparent,
                                       shadowColor: Colors.transparent,
                                       elevation: 0,
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
+                                        vertical: 10,
+                                      ),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
                                     ),
                                   ),
                                 ),

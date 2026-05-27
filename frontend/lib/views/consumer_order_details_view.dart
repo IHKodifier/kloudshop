@@ -13,16 +13,20 @@ class ConsumerOrderDetailsView extends ConsumerStatefulWidget {
   const ConsumerOrderDetailsView({super.key, required this.orderId});
 
   @override
-  ConsumerState<ConsumerOrderDetailsView> createState() => _ConsumerOrderDetailsViewState();
+  ConsumerState<ConsumerOrderDetailsView> createState() =>
+      _ConsumerOrderDetailsViewState();
 }
 
-class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsView> {
+class _ConsumerOrderDetailsViewState
+    extends ConsumerState<ConsumerOrderDetailsView> {
   late Future<Order> _orderFuture;
 
   @override
   void initState() {
     super.initState();
-    _orderFuture = ref.read(apiServiceProvider).getConsumerOrderDetails(widget.orderId);
+    _orderFuture = ref
+        .read(apiServiceProvider)
+        .getConsumerOrderDetails(widget.orderId);
   }
 
   Future<void> _showReturnDialog(Order order) async {
@@ -30,12 +34,17 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Request Return / Refund', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Request Return / Refund',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Please provide a reason for the return request below. Our support team will review it.'),
+            const Text(
+              'Please provide a reason for the return request below. Our support team will review it.',
+            ),
             const SizedBox(height: 16),
             TextField(
               controller: reasonController,
@@ -54,7 +63,10 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('Submit Request'),
           ),
         ],
@@ -63,11 +75,17 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
 
     if (result == true && reasonController.text.isNotEmpty) {
       try {
-        await ref.read(apiServiceProvider).requestReturn(
-          order.id,
-          reason: reasonController.text,
-          items: order.items.map((i) => {'variant_id': i.variantId, 'quantity': i.quantity}).toList(),
-        );
+        await ref
+            .read(apiServiceProvider)
+            .requestReturn(
+              order.id,
+              reason: reasonController.text,
+              items: order.items
+                  .map(
+                    (i) => {'variant_id': i.variantId, 'quantity': i.quantity},
+                  )
+                  .toList(),
+            );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -76,13 +94,18 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
             ),
           );
           setState(() {
-            _orderFuture = ref.read(apiServiceProvider).getConsumerOrderDetails(widget.orderId);
+            _orderFuture = ref
+                .read(apiServiceProvider)
+                .getConsumerOrderDetails(widget.orderId);
           });
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error submitting return: $e'), backgroundColor: Colors.redAccent),
+            SnackBar(
+              content: Text('Error submitting return: $e'),
+              backgroundColor: Colors.redAccent,
+            ),
           );
         }
       }
@@ -98,7 +121,10 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Order Details', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Order Details',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
         bottom: PreferredSize(
@@ -110,7 +136,9 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
         future: _orderFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500));
+            return const Center(
+              child: CircularProgressIndicator(color: AppTheme.brandEmerald500),
+            );
           }
           if (snapshot.hasError) {
             return Center(
@@ -119,16 +147,25 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(LucideIcons.alertCircle, color: Colors.redAccent, size: 40),
+                    const Icon(
+                      LucideIcons.alertCircle,
+                      color: Colors.redAccent,
+                      size: 40,
+                    ),
                     const SizedBox(height: 16),
-                    Text('Error: ${snapshot.error}', textAlign: TextAlign.center),
+                    Text(
+                      'Error: ${snapshot.error}',
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
             );
           }
           final order = snapshot.data!;
-          final isEligibleForReturn = order.fulfilmentStatus == 'delivered' || order.fulfilmentStatus == 'fulfilled';
+          final isEligibleForReturn =
+              order.fulfilmentStatus == 'delivered' ||
+              order.fulfilmentStatus == 'fulfilled';
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(32),
@@ -142,20 +179,39 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Order ${order.orderNumber}', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'Order ${order.orderNumber}',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text('Placed on ${DateFormat('MMMM dd, yyyy').format(order.placedAt)}', style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor)),
+                        Text(
+                          'Placed on ${DateFormat('MMMM dd, yyyy').format(order.placedAt)}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.hintColor,
+                          ),
+                        ),
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(order.fulfilmentStatus).withOpacity(0.12),
+                        color: _getStatusColor(
+                          order.fulfilmentStatus,
+                        ).withOpacity(0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         order.fulfilmentStatus.toUpperCase(),
-                        style: TextStyle(color: _getStatusColor(order.fulfilmentStatus), fontSize: 11, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: _getStatusColor(order.fulfilmentStatus),
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -178,41 +234,78 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                             isDark: isDark,
                             theme: theme,
                             children: [
-                              ...order.items.map((item) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 48,
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.brandEmerald500.withOpacity(0.08),
-                                        borderRadius: BorderRadius.circular(8),
+                              ...order.items.map(
+                                (item) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.brandEmerald500
+                                              .withOpacity(0.08),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          LucideIcons.package,
+                                          color: AppTheme.brandEmerald500,
+                                          size: 20,
+                                        ),
                                       ),
-                                      child: const Icon(LucideIcons.package, color: AppTheme.brandEmerald500, size: 20),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(item.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                          Text('Qty: ${item.quantity}', style: TextStyle(color: theme.hintColor, fontSize: 12)),
-                                        ],
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.title,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Qty: ${item.quantity}',
+                                              style: TextStyle(
+                                                color: theme.hintColor,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Text('\$${item.totalPrice.toStringAsFixed(2)} ${order.currency}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                  ],
+                                      Text(
+                                        '\$${item.totalPrice.toStringAsFixed(2)} ${order.currency}',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              )),
+                              ),
                               const Divider(height: 32),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Total Amount Paid', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                                  Text(
+                                    'Total Amount Paid',
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
                                   Text(
                                     '\$${order.grandTotal.toStringAsFixed(2)} ${order.currency}',
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.brandEmerald500),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.brandEmerald500,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -237,7 +330,9 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                               isDark: isDark,
                               theme: theme,
                               children: [
-                                const Text('If you have any issues with your items, you can request a refund or return service below.'),
+                                const Text(
+                                  'If you have any issues with your items, you can request a refund or return service below.',
+                                ),
                                 const SizedBox(height: 20),
                                 SizedBox(
                                   width: double.infinity,
@@ -245,11 +340,25 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                                   child: HoverScale(
                                     child: ElevatedButton.icon(
                                       onPressed: () => _showReturnDialog(order),
-                                      icon: const Icon(LucideIcons.undo2, size: 16, color: Colors.white),
-                                      label: const Text('Request Return / Refund', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                                      icon: const Icon(
+                                        LucideIcons.undo2,
+                                        size: 16,
+                                        color: Colors.white,
+                                      ),
+                                      label: const Text(
+                                        'Request Return / Refund',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.redAccent,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -264,15 +373,20 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                               isDark: isDark,
                               theme: theme,
                               children: [
-                                Text('This order is currently ${order.fulfilmentStatus.toUpperCase()}.'),
+                                Text(
+                                  'This order is currently ${order.fulfilmentStatus.toUpperCase()}.',
+                                ),
                                 const SizedBox(height: 12),
                                 Text(
                                   'Once delivered, return and refund options will become available.',
-                                  style: TextStyle(color: theme.hintColor, fontSize: 13),
+                                  style: TextStyle(
+                                    color: theme.hintColor,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
-                            )
-                          ]
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -302,7 +416,9 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
           width: double.infinity,
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B).withOpacity(0.7) : Colors.white.withOpacity(0.85),
+            color: isDark
+                ? const Color(0xFF1E293B).withOpacity(0.7)
+                : Colors.white.withOpacity(0.85),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: color.withOpacity(0.15)),
             boxShadow: [
@@ -327,7 +443,12 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                     child: Icon(icon, size: 18, color: color),
                   ),
                   const SizedBox(width: 12),
-                  Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -339,7 +460,12 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
     );
   }
 
-  Widget _buildTimelineCard(Order order, ThemeData theme, DateFormat dateFormat, bool isDark) {
+  Widget _buildTimelineCard(
+    Order order,
+    ThemeData theme,
+    DateFormat dateFormat,
+    bool isDark,
+  ) {
     return _buildGlassCard(
       title: 'Order Status Log',
       icon: LucideIcons.history,
@@ -360,13 +486,14 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                 children: [
                   Column(
                     children: [
-                      const Icon(LucideIcons.circleDot, size: 14, color: AppTheme.brandEmerald500),
+                      const Icon(
+                        LucideIcons.circleDot,
+                        size: 14,
+                        color: AppTheme.brandEmerald500,
+                      ),
                       if (!isLast)
                         Expanded(
-                          child: Container(
-                            width: 2,
-                            color: theme.dividerColor,
-                          ),
+                          child: Container(width: 2, color: theme.dividerColor),
                         ),
                     ],
                   ),
@@ -379,16 +506,25 @@ class _ConsumerOrderDetailsViewState extends ConsumerState<ConsumerOrderDetailsV
                         children: [
                           Text(
                             event.eventType.replaceAll('_', ' ').toUpperCase(),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 0.5),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                           if (event.description != null) ...[
                             const SizedBox(height: 4),
-                            Text(event.description!, style: theme.textTheme.bodyMedium),
+                            Text(
+                              event.description!,
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ],
                           const SizedBox(height: 4),
                           Text(
                             dateFormat.format(event.createdAt),
-                            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.hintColor,
+                            ),
                           ),
                         ],
                       ),

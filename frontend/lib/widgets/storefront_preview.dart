@@ -19,10 +19,12 @@ class StorefrontPreview extends StatelessWidget {
     final primaryColor = _parseColor(tokens['primary'], Colors.blue);
     final secondaryColor = _parseColor(tokens['secondary'], Colors.grey);
     final backgroundColor = _parseColor(tokens['background'], Colors.white);
-    
-    final textColor = backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-    final surfaceColor = backgroundColor.computeLuminance() > 0.5 
-        ? Colors.grey.withValues(alpha: 0.05) 
+
+    final textColor = backgroundColor.computeLuminance() > 0.5
+        ? Colors.black
+        : Colors.white;
+    final surfaceColor = backgroundColor.computeLuminance() > 0.5
+        ? Colors.grey.withValues(alpha: 0.05)
         : Colors.white.withValues(alpha: 0.1);
 
     return Container(
@@ -34,20 +36,20 @@ class StorefrontPreview extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, 10),
-          )
+          ),
         ],
       ),
       child: Column(
         children: [
           // Header
           _buildHeader(primaryColor, textColor),
-          
+
           // Hero Section
           _buildHero(primaryColor, textColor, slots['hero'] ?? 'Full-width'),
-          
+
           // Featured Products Mock
           _buildFeaturedProducts(surfaceColor, textColor, primaryColor),
-          
+
           // Footer
           _buildFooter(surfaceColor, textColor),
         ],
@@ -64,7 +66,11 @@ class StorefrontPreview extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             'MY STORE',
-            style: TextStyle(color: text, fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              color: text,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
           const Spacer(),
           if (!isMobile) ...[
@@ -87,12 +93,14 @@ class StorefrontPreview extends StatelessWidget {
 
   Widget _buildHero(Color primary, Color text, String type) {
     final isCentered = type == 'centered';
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
       child: Column(
-        crossAxisAlignment: isCentered ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment: isCentered
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
         children: [
           Text(
             slots['hero_heading'] ?? 'Modern. Sleek. Professional.',
@@ -106,12 +114,10 @@ class StorefrontPreview extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            slots['hero_subheading'] ?? 'The next generation of e-commerce is here.',
+            slots['hero_subheading'] ??
+                'The next generation of e-commerce is here.',
             textAlign: isCentered ? TextAlign.center : TextAlign.start,
-            style: TextStyle(
-              color: text.withValues(alpha: 0.7),
-              fontSize: 18,
-            ),
+            style: TextStyle(color: text.withValues(alpha: 0.7), fontSize: 18),
           ),
           const SizedBox(height: 32),
           ElevatedButton(
@@ -120,7 +126,9 @@ class StorefrontPreview extends StatelessWidget {
               backgroundColor: primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Shop Collection'),
           ),
@@ -135,16 +143,47 @@ class StorefrontPreview extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Featured Products', style: TextStyle(color: text, fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            'Featured Products',
+            style: TextStyle(
+              color: text,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 24),
           Row(
             children: [
-              Expanded(child: _productCard(surface, text, primary, 'Premium Jacket', '\$129')),
+              Expanded(
+                child: _productCard(
+                  surface,
+                  text,
+                  primary,
+                  'Premium Jacket',
+                  '\$129',
+                ),
+              ),
               const SizedBox(width: 16),
-              Expanded(child: _productCard(surface, text, primary, 'Urban Sneakers', '\$89')),
+              Expanded(
+                child: _productCard(
+                  surface,
+                  text,
+                  primary,
+                  'Urban Sneakers',
+                  '\$89',
+                ),
+              ),
               if (!isMobile) ...[
                 const SizedBox(width: 16),
-                Expanded(child: _productCard(surface, text, primary, 'Classic Watch', '\$199')),
+                Expanded(
+                  child: _productCard(
+                    surface,
+                    text,
+                    primary,
+                    'Classic Watch',
+                    '\$199',
+                  ),
+                ),
               ],
             ],
           ),
@@ -153,7 +192,13 @@ class StorefrontPreview extends StatelessWidget {
     );
   }
 
-  Widget _productCard(Color surface, Color text, Color primary, String name, String price) {
+  Widget _productCard(
+    Color surface,
+    Color text,
+    Color primary,
+    String name,
+    String price,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: surface,
@@ -167,9 +212,15 @@ class StorefrontPreview extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: text.withValues(alpha: 0.05),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
               ),
-              child: Icon(LucideIcons.package, color: text.withValues(alpha: 0.2), size: 40),
+              child: Icon(
+                LucideIcons.package,
+                color: text.withValues(alpha: 0.2),
+                size: 40,
+              ),
             ),
           ),
           Padding(
@@ -177,9 +228,15 @@ class StorefrontPreview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: TextStyle(color: text, fontWeight: FontWeight.bold)),
+                Text(
+                  name,
+                  style: TextStyle(color: text, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 4),
-                Text(price, style: TextStyle(color: primary, fontWeight: FontWeight.bold)),
+                Text(
+                  price,
+                  style: TextStyle(color: primary, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
@@ -195,7 +252,10 @@ class StorefrontPreview extends StatelessWidget {
       color: surface,
       child: Column(
         children: [
-          Text('© 2026 KloudShop Storefront', style: TextStyle(color: text.withValues(alpha: 0.5), fontSize: 12)),
+          Text(
+            '© 2026 KloudShop Storefront',
+            style: TextStyle(color: text.withValues(alpha: 0.5), fontSize: 12),
+          ),
         ],
       ),
     );

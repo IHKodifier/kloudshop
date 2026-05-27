@@ -16,8 +16,8 @@ class Customer {
       email: json['email'] as String,
       orderCount: json['order_count'] as int,
       totalSpent: (json['total_spent'] as num).toDouble(),
-      lastOrderAt: json['last_order_at'] != null 
-          ? DateTime.parse(json['last_order_at'] as String) 
+      lastOrderAt: json['last_order_at'] != null
+          ? DateTime.parse(json['last_order_at'] as String)
           : null,
     );
   }

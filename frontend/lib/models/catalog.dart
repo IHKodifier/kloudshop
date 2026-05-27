@@ -52,19 +52,33 @@ class Product {
       isPerishable: json['is_perishable'] as bool? ?? false,
       metaTitle: json['meta_title'] as String?,
       metaDescription: json['meta_description'] as String?,
-      images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
-      optionsSchema: (json['options_schema'] as List<dynamic>?)
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      optionsSchema:
+          (json['options_schema'] as List<dynamic>?)
               ?.map((e) => Map<String, dynamic>.from(e as Map))
               .toList() ??
           [],
-      weightValue: json['weight_value'] != null ? _toDouble(json['weight_value']) : null,
+      weightValue: json['weight_value'] != null
+          ? _toDouble(json['weight_value'])
+          : null,
       weightUnit: json['weight_unit'] as String?,
-      lengthValue: json['length_value'] != null ? _toDouble(json['length_value']) : null,
-      widthValue: json['width_value'] != null ? _toDouble(json['width_value']) : null,
-      heightValue: json['height_value'] != null ? _toDouble(json['height_value']) : null,
+      lengthValue: json['length_value'] != null
+          ? _toDouble(json['length_value'])
+          : null,
+      widthValue: json['width_value'] != null
+          ? _toDouble(json['width_value'])
+          : null,
+      heightValue: json['height_value'] != null
+          ? _toDouble(json['height_value'])
+          : null,
       dimensionUnit: json['dimension_unit'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
-      variants: (json['variants'] as List<dynamic>?)
+      variants:
+          (json['variants'] as List<dynamic>?)
               ?.map((v) => ProductVariant.fromJson(v as Map<String, dynamic>))
               .toList() ??
           [],
@@ -131,12 +145,24 @@ class ProductVariant {
       isDefault: json['is_default'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
       imageUrl: json['image_url'] as String?,
-      images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
-      weightValue: json['weight_value'] != null ? _toDouble(json['weight_value']) : null,
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      weightValue: json['weight_value'] != null
+          ? _toDouble(json['weight_value'])
+          : null,
       weightUnit: json['weight_unit'] as String?,
-      lengthValue: json['length_value'] != null ? _toDouble(json['length_value']) : null,
-      widthValue: json['width_value'] != null ? _toDouble(json['width_value']) : null,
-      heightValue: json['height_value'] != null ? _toDouble(json['height_value']) : null,
+      lengthValue: json['length_value'] != null
+          ? _toDouble(json['length_value'])
+          : null,
+      widthValue: json['width_value'] != null
+          ? _toDouble(json['width_value'])
+          : null,
+      heightValue: json['height_value'] != null
+          ? _toDouble(json['height_value'])
+          : null,
       dimensionUnit: json['dimension_unit'] as String?,
     );
   }

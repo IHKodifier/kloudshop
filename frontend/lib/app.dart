@@ -56,7 +56,10 @@ class KloudShopApp extends ConsumerWidget {
                 padding: const EdgeInsets.all(24),
                 child: SelectableText(
                   'KloudShop Rendering Exception:\n\n$details',
-                  style: const TextStyle(color: Colors.red, fontFamily: 'monospace'),
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontFamily: 'monospace',
+                  ),
                 ),
               ),
             ),
@@ -85,12 +88,15 @@ class AuthGate extends ConsumerWidget {
         return claimsState.when(
           data: (claims) {
             if (claims == null) {
-              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
             }
 
             // If the user is authenticated but has no tenant_id, send them to provisioning
             // Platform admins are exempt as they see the global dashboard.
-            if (claims.tenantId == null && claims.accountType != 'platform_admin') {
+            if (claims.tenantId == null &&
+                claims.accountType != 'platform_admin') {
               return ProvisioningPage(email: user.email);
             }
 
@@ -119,13 +125,19 @@ class AuthGate extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text('Backend Error: $e'),
                     const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: () {
-                        ref.read(forceRefreshClaimsProvider.notifier).toggle(true);
+                        ref
+                            .read(forceRefreshClaimsProvider.notifier)
+                            .toggle(true);
                         ref.invalidate(userClaimsProvider);
                       },
                       child: const Text('Retry Connection & Sync'),
@@ -141,12 +153,10 @@ class AuthGate extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (e, s) => Scaffold(
-        body: Center(child: Text('Firebase Error: $e')),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, s) =>
+          Scaffold(body: Center(child: Text('Firebase Error: $e'))),
     );
   }
 }
