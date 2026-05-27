@@ -245,8 +245,14 @@ class _HeroSection extends ConsumerWidget {
                 child: Container(
                   height: 420,
                   color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                  child: Center(
-                    child: Icon(LucideIcons.cloudLightning, size: 84, color: AppTheme.brandEmerald500.withOpacity(0.5)),
+                  child: Image.asset(
+                    'assets/landing_hero.png',
+                    fit: BoxFit.fitHeight,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Icon(LucideIcons.cloudLightning, size: 84, color: AppTheme.brandEmerald500.withOpacity(0.5)),
+                      );
+                    },
                   ),
                 ),
               ),
