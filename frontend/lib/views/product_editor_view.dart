@@ -288,7 +288,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           _variants[0]['is_default'] = true;
         }
       });
-      _showNotification('Variant deleted', isDeletion: true);
+      _showNotification('Variant deleted Successfully', isDeletion: true);
     }
   }
 
