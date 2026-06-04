@@ -36,7 +36,7 @@ class ProductEditorView extends ConsumerStatefulWidget {
         final screenWidth = MediaQuery.of(context).size.width;
         final screenHeight = MediaQuery.of(context).size.height;
         final dialogWidth = screenWidth > 900
-            ? screenWidth * 0.75
+            ? screenWidth * 0.82
             : screenWidth * 0.95;
         final dialogHeight = screenHeight * 0.9;
 
@@ -76,6 +76,7 @@ class ProductEditorView extends ConsumerStatefulWidget {
 class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
   final _formKey = GlobalKey<FormState>();
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
+  int _currentStep = 0;
 
   void _showNotification(
     String message, {
@@ -578,6 +579,113 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     }
   }
 
+  Widget _buildStepperHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final steps = [
+      'Basic Info & Media',
+      'Logistics & SEO',
+      'Options & Variants',
+    ];
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 32.0),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.grey[50],
+        border: Border(bottom: BorderSide(color: theme.dividerColor)),
+      ),
+      child: Row(
+        children: List.generate(steps.length, (index) {
+          final isActive = _currentStep == index;
+          final isCompleted = _currentStep > index;
+
+          return Expanded(
+            child: InkWell(
+              onTap: () {
+                if (index < _currentStep || _formKey.currentState!.validate()) {
+                  setState(() {
+                    _currentStep = index;
+                  });
+                }
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Row(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? AppTheme.brandEmerald500
+                          : (isCompleted
+                                ? AppTheme.brandEmerald500.withValues(
+                                    alpha: 0.15,
+                                  )
+                                : Colors.transparent),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isActive || isCompleted
+                            ? AppTheme.brandEmerald500
+                            : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: isCompleted
+                          ? const Icon(
+                              LucideIcons.check,
+                              size: 16,
+                              color: AppTheme.brandEmerald500,
+                            )
+                          : Text(
+                              '${index + 1}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                                color: isActive
+                                    ? Colors.white
+                                    : (isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600]),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      steps[index],
+                      style: TextStyle(
+                        fontWeight: isActive
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                        color: isActive
+                            ? AppTheme.brandEmerald500
+                            : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (index < steps.length - 1)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Icon(
+                        LucideIcons.chevronRight,
+                        size: 18,
+                        color: isDark ? Colors.grey[700] : Colors.grey[300],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -601,6 +709,111 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
           }
         });
       }
+    }
+
+    Widget stepContent;
+    switch (_currentStep) {
+      case 0:
+        stepContent = Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 7,
+              child: ProductGeneralInfoCard(
+                titleController: _titleController,
+                slugController: _slugController,
+                descriptionController: _descriptionController,
+                isNewProduct: widget.product == null,
+              ),
+            ),
+            const SizedBox(width: 32),
+            Expanded(
+              flex: 5,
+              child: GlassCard(
+                title: 'Media Gallery',
+                icon: LucideIcons.image,
+                color: const Color(0xFFEC4899),
+                children: [
+                  MediaGalleryUploader(
+                    images: _images,
+                    uploader: _uploader,
+                    onImagesChanged: (newImages) {
+                      setState(() {
+                        _images = newImages;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+        break;
+      case 1:
+        stepContent = Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 6,
+              child: ProductClassificationCard(
+                status: _status,
+                onStatusChanged: (v) => setState(() => _status = v),
+                isDigital: _isDigital,
+                onIsDigitalChanged: (v) => setState(() => _isDigital = v),
+                isPerishable: _isPerishable,
+                onIsPerishableChanged: (v) => setState(() => _isPerishable = v),
+                weightController: _productWeightController,
+                weightUnit: _productWeightUnit,
+                onWeightUnitChanged: (v) =>
+                    setState(() => _productWeightUnit = v),
+                lengthController: _productLengthController,
+                widthController: _productWidthController,
+                heightController: _productHeightController,
+                dimensionUnit: _productDimensionUnit,
+                onDimensionUnitChanged: (v) =>
+                    setState(() => _productDimensionUnit = v),
+              ),
+            ),
+            const SizedBox(width: 32),
+            Expanded(
+              flex: 6,
+              child: Column(
+                children: [
+                  ProductSeoCard(
+                    metaTitleController: _metaTitleController,
+                    metaDescriptionController: _metaDescriptionController,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+        break;
+      case 2:
+      default:
+        stepContent = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ProductOptionsCard(
+              optionsSchema: _optionsSchema,
+              onGenerateVariants: _generateVariantsFromOptions,
+              onChanged: () => setState(() {}),
+            ),
+            const SizedBox(height: 32),
+            ProductVariantsSection(
+              variants: _variants,
+              optionsSchema: _optionsSchema,
+              isNewProduct: widget.product == null,
+              isDigital: _isDigital,
+              uploader: _uploader,
+              showVariantChangeAnimation: _showVariantChangeAnimation,
+              onAddVariant: _addVariant,
+              onRemoveVariant: _removeVariant,
+              onChanged: () => setState(() {}),
+            ),
+          ],
+        );
+        break;
     }
 
     return ScaffoldMessenger(
@@ -654,98 +867,97 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
         ),
         body: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Left Column (General info, Media, SEO)
-                Expanded(
-                  flex: 7,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ProductGeneralInfoCard(
-                        titleController: _titleController,
-                        slugController: _slugController,
-                        descriptionController: _descriptionController,
-                        isNewProduct: widget.product == null,
-                      ),
-                      const SizedBox(height: 32),
-                      GlassCard(
-                        title: 'Media Gallery',
-                        icon: LucideIcons.image,
-                        color: const Color(0xFFEC4899),
-                        children: [
-                          MediaGalleryUploader(
-                            images: _images,
-                            uploader: _uploader,
-                            onImagesChanged: (newImages) {
-                              setState(() {
-                                _images = newImages;
-                              });
-                            },
+          child: Column(
+            children: [
+              _buildStepperHeader(context),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(32.0),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.easeIn,
+                    switchOutCurve: Curves.easeOut,
+                    child: KeyedSubtree(
+                      key: ValueKey<int>(_currentStep),
+                      child: stepContent,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32.0,
+                  vertical: 20.0,
+                ),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.grey[50],
+                  border: Border(top: BorderSide(color: theme.dividerColor)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (_currentStep > 0)
+                      ElevatedButton.icon(
+                        onPressed: () => setState(() => _currentStep--),
+                        icon: const Icon(LucideIcons.arrowLeft, size: 16),
+                        label: const Text('Back'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDark
+                              ? const Color(0xFF334155)
+                              : Colors.grey[200],
+                          foregroundColor: isDark
+                              ? Colors.grey[200]
+                              : Colors.black87,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 14,
                           ),
-                        ],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      )
+                    else
+                      const SizedBox.shrink(),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        if (_currentStep < 2) {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => _currentStep++);
+                          }
+                        } else {
+                          _save();
+                        }
+                      },
+                      icon: Icon(
+                        _currentStep < 2
+                            ? LucideIcons.arrowRight
+                            : LucideIcons.save,
+                        size: 16,
+                        color: Colors.white,
                       ),
-                      const SizedBox(height: 32),
-                      ProductSeoCard(
-                        metaTitleController: _metaTitleController,
-                        metaDescriptionController: _metaDescriptionController,
+                      label: Text(
+                        _currentStep < 2 ? 'Next' : 'Save Product',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ],
-                  ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.brandEmerald500,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 32),
-                // Right Column (Variants, Status)
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ProductClassificationCard(
-                        status: _status,
-                        onStatusChanged: (v) => setState(() => _status = v),
-                        isDigital: _isDigital,
-                        onIsDigitalChanged: (v) =>
-                            setState(() => _isDigital = v),
-                        isPerishable: _isPerishable,
-                        onIsPerishableChanged: (v) =>
-                            setState(() => _isPerishable = v),
-                        weightController: _productWeightController,
-                        weightUnit: _productWeightUnit,
-                        onWeightUnitChanged: (v) =>
-                            setState(() => _productWeightUnit = v),
-                        lengthController: _productLengthController,
-                        widthController: _productWidthController,
-                        heightController: _productHeightController,
-                        dimensionUnit: _productDimensionUnit,
-                        onDimensionUnitChanged: (v) =>
-                            setState(() => _productDimensionUnit = v),
-                      ),
-                      const SizedBox(height: 32),
-                      ProductOptionsCard(
-                        optionsSchema: _optionsSchema,
-                        onGenerateVariants: _generateVariantsFromOptions,
-                        onChanged: () => setState(() {}),
-                      ),
-                      const SizedBox(height: 32),
-                      ProductVariantsSection(
-                        variants: _variants,
-                        optionsSchema: _optionsSchema,
-                        isNewProduct: widget.product == null,
-                        isDigital: _isDigital,
-                        uploader: _uploader,
-                        showVariantChangeAnimation: _showVariantChangeAnimation,
-                        onAddVariant: _addVariant,
-                        onRemoveVariant: _removeVariant,
-                        onChanged: () => setState(() {}),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

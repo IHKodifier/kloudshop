@@ -29,6 +29,8 @@ class ProductGeneralInfoCard extends StatelessWidget {
           label: 'Product Title',
           controller: titleController,
           hint: 'e.g. Classic Cotton T-Shirt',
+          tooltipMessage:
+              'The primary name of the product displayed to shoppers in the catalog, search results, and checkout.',
           validator: (v) => v?.isEmpty == true ? 'Title is required' : null,
           onChanged: (v) {
             if (slugController.text.isEmpty ||
@@ -51,6 +53,8 @@ class ProductGeneralInfoCard extends StatelessWidget {
           controller: slugController,
           hint: 'e.g. classic-cotton-t-shirt',
           prefixText: '/products/',
+          tooltipMessage:
+              'The web-friendly URL path for this product page. E.g., /products/my-cool-product.',
           validator: (v) => v?.isEmpty == true ? 'Slug is required' : null,
         ),
         const SizedBox(height: 20),
@@ -59,6 +63,9 @@ class ProductGeneralInfoCard extends StatelessWidget {
           controller: descriptionController,
           hint: 'Describe your product...',
           maxLines: 4,
+          tooltipMessage:
+              'Detailed product description explaining features, materials, and benefits to storefront visitors.',
+          hasRichTextToolbar: true,
         ),
       ],
     );

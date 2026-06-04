@@ -122,15 +122,11 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
             );
             final bool isExpanded = variant['is_expanded'] ?? false;
 
-            final customInputStyle = theme.textTheme.bodyMedium?.copyWith(
-              fontSize: 10,
-            );
-            final customLabelStyle = theme.textTheme.bodySmall?.copyWith(
-              fontSize: 11,
-            );
+            final customInputStyle = theme.textTheme.bodyMedium;
+            final customLabelStyle = theme.textTheme.bodySmall;
             const customPadding = EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 6,
+              horizontal: 12,
+              vertical: 10,
             );
 
             // Build dynamic option dropdowns
@@ -449,13 +445,12 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
   Widget _buildVariantShippingOverrides(Map<String, dynamic> variant) {
     final bool showOverrides = variant['show_shipping_overrides'] ?? false;
     final theme = Theme.of(context);
-    final customInputStyle = theme.textTheme.bodyMedium?.copyWith(fontSize: 10);
-    final customLabelStyle = theme.textTheme.bodySmall?.copyWith(fontSize: 11);
+    final customInputStyle = theme.textTheme.bodyMedium;
+    final customLabelStyle = theme.textTheme.bodySmall;
     final customHintStyle = theme.textTheme.bodyMedium?.copyWith(
-      fontSize: 10,
       fontStyle: FontStyle.italic,
     );
-    const customPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 6);
+    const customPadding = EdgeInsets.symmetric(horizontal: 12, vertical: 10);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
