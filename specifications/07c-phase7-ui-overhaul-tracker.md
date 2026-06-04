@@ -47,16 +47,23 @@ Each view must fully implement the following five states (unless explicitly mark
 
 | View / Screen | Mockup PNG (Archive Path) | Dart Target File | Riverpod Provider |
 | :--- | :--- | :--- | :--- |
+| **App Splash Screen** | `mock-screens/app_splash.png` | [splash_page.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/splash_page.dart) | N/A (Static Timer) |
 | **Merchant Login** | `mock-screens/merchant_login.png` | [login_page.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/login_page.dart) | `authProvider` |
 | **Provisioning / Setup** | `mock-screens/provisioning_setup.png` | [provisioning_page.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/provisioning_page.dart) | `tenantProvisioningProvider` |
 | **Landing Page** | `mock-screens/landing_page.png` | [landing_page.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/landing_page.dart) | N/A (Static Routing) |
 
-- [ ] **Merchant Login**
-  - [ ] Default/Active State
-  - [ ] Loading/Submitting State (Disable inputs, show progress spinner)
-  - [ ] Error/Failure State (Invalid credentials banner)
-  - [ ] Empty State (`N/A`)
-  - [ ] Input Validation State (Verify Gmail format before sending)
+- [x] **App Splash Screen**
+  - [x] Default/Active State (Centered 300px 3D logo with white background, continuously pulsing and rotating as a progress loader)
+  - [x] Loading/Submitting State (`N/A`)
+  - [x] Error/Failure State (`N/A`)
+  - [x] Empty State (`N/A`)
+  - [x] Input Validation State (`N/A`)
+- [x] **Merchant Login**
+  - [x] Default/Active State (Split-pane layout with custom data center photo background and tealed opacity overlay behind white quote text)
+  - [x] Loading/Submitting State (TextFormFields and buttons disabled, showing a loader inside the Sign In button)
+  - [x] Error/Failure State (Refined floating red error SnackBar with rounded corners)
+  - [x] Empty State (`N/A`)
+  - [x] Input Validation State (Verify Gmail syntax and empty checks before form submission)
 - [ ] **Provisioning / Setup**
   - [ ] Default/Active State
   - [ ] Loading/Submitting State (Animated rocket pulse, database setup logs)

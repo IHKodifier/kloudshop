@@ -73,10 +73,47 @@ class KloudShopLandingPage extends ConsumerWidget {
                   HoverScale(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
+                        showGeneralDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierLabel: 'Merchant Login',
+                          barrierColor: Colors.transparent,
+                          transitionDuration: const Duration(milliseconds: 300),
+                          pageBuilder: (context, animation, secondaryAnimation) {
+                            return const LoginPage();
+                          },
+                          transitionBuilder: (context, animation, secondaryAnimation, child) {
+                            return Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.of(context).pop(),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 5 * animation.value,
+                                        sigmaY: 5 * animation.value,
+                                      ),
+                                      child: Container(
+                                        color: Colors.black.withOpacity(0.4 * animation.value),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: ScaleTransition(
+                                      scale: CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeOutCubic,
+                                      ),
+                                      child: child,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         );
                       },
                       style: TextButton.styleFrom(

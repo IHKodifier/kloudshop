@@ -11,6 +11,7 @@ import 'package:kloudshop/provisioning_page.dart';
 import 'package:kloudshop/views/consumer_registration_view.dart';
 import 'package:kloudshop/views/consumer_dashboard_view.dart';
 import 'package:kloudshop/views/consumer_order_details_view.dart';
+import 'package:kloudshop/views/splash_page.dart';
 
 class KloudShopApp extends ConsumerWidget {
   const KloudShopApp({super.key});
@@ -25,7 +26,7 @@ class KloudShopApp extends ConsumerWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
-      home: const AuthGate(),
+      home: const SplashPage(),
       onGenerateRoute: (settings) {
         if (settings.name == '/storefront/register') {
           final args = settings.arguments as Map<String, String?>?;
