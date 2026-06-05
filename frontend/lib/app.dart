@@ -12,6 +12,7 @@ import 'package:kloudshop/views/consumer_registration_view.dart';
 import 'package:kloudshop/views/consumer_dashboard_view.dart';
 import 'package:kloudshop/views/consumer_order_details_view.dart';
 import 'package:kloudshop/views/splash_page.dart';
+import 'package:kloudshop/views/unblock_verification_page.dart';
 
 class KloudShopApp extends ConsumerWidget {
   const KloudShopApp({super.key});
@@ -48,6 +49,7 @@ class KloudShopApp extends ConsumerWidget {
       routes: {
         '/dashboard': (context) => const AuthGate(),
         '/storefront/dashboard': (context) => const ConsumerDashboardView(),
+        '/unblock': (context) => const UnblockVerificationPage(),
       },
       builder: (context, child) {
         ErrorWidget.builder = (FlutterErrorDetails details) {
@@ -135,10 +137,8 @@ class AuthGate extends ConsumerWidget {
                     Text('Backend Error: $e'),
                     const SizedBox(height: 24),
                     ElevatedButton(
-                      onPressed: () {
-                        ref
-                            .read(forceRefreshClaimsProvider.notifier)
-                            .toggle(true);
+                      onPressed: () async {
+                        await ref.read(authServiceProvider).getIdToken(forceRefresh: true);
                         ref.invalidate(userClaimsProvider);
                       },
                       child: const Text('Retry Connection & Sync'),

@@ -8,6 +8,7 @@ import 'package:kloudshop/models/analytics.dart';
 import 'package:kloudshop/models/user_claims.dart';
 import 'package:kloudshop/services/auth_service.dart';
 import 'package:kloudshop/services/api_service.dart';
+import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/views/billing_view.dart';
 import 'package:kloudshop/views/blog_view.dart';
 import 'package:kloudshop/views/compliance_view.dart';
@@ -22,6 +23,7 @@ import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/views/themes_view.dart';
 import 'package:kloudshop/widgets/feature_gate.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/provisioning_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final UserClaims claims;
@@ -562,6 +564,20 @@ class _OverviewView extends ConsumerWidget {
                       ),
                       if (claims.isOwner)
                         _buildChip(context, 'OWNER', Colors.redAccent),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProvisioningPage(email: claims.email),
+                            ),
+                          );
+                        },
+                        child: _buildChip(
+                          context,
+                          'Configure Infrastructure ↗',
+                          AppTheme.brandEmerald500,
+                        ),
+                      ),
                     ],
                   ),
                 ],

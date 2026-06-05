@@ -52,6 +52,15 @@
 * CREATE INDEX idx_audit_log_tenant; — *Critical for multi-tenant data isolation and fast tenant-scoped queries.*
 * CREATE INDEX idx_audit_log_action_type; — *Accelerates foreign key joins and common filtering patterns.*
 
+### Table: kloudshop_platform.staff_login_history
+*Dominant query patterns:* Fetch recent logins for a user (security review), fetch logins for a tenant (audit trail), and fetch geo-coordinates.
+* CREATE INDEX idx_staff_login_user_time; — *Speeds up "show recent logins for user X" security alerts.*
+* CREATE INDEX idx_staff_login_tenant_time; — *Speeds up tenant compliance dashboards audit searches.*
+
+### Table: kloudshop_platform.staff_security_states
+*Dominant query patterns:* Check block status on login, check cool-off windows, and manage unblock tokens.
+* CREATE INDEX idx_staff_security_blocked; — *Optimizes lookup scans for active lockouts.*
+
 ### Table: kloudshop_platform.migration_jobs
 *Dominant query patterns:* Primary key lookups, foreign key traversals, and status/active filtering.
 * CREATE INDEX idx_migration_jobs_tenant; — *Critical for multi-tenant data isolation and fast tenant-scoped queries.*

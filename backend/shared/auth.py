@@ -35,9 +35,14 @@ except ValueError:
         # Fallback to default credentials (ADC)
         firebase_admin.initialize_app()
 
+from sqlalchemy.ext.asyncio import AsyncSession
+from shared.db import get_db
+from sqlalchemy import select
+
 async def validate_token(
     request: Request,
-    token: HTTPAuthorizationCredentials = Depends(security)
+    token: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_db)
 ) -> UserClaims:
     """
     Dependency to validate Firebase JWT and extract custom claims.
@@ -54,9 +59,36 @@ async def validate_token(
         roles = decoded_token.get("roles", [])
         is_owner = decoded_token.get("is_owner", False)
         
-        # tenant_id is now optional in validate_token to allow /auth/me for new users.
-        # Enforcement for tenant-scoped operations is moved to PermissionChecker (RBAC).
-
+        # Check security state for staff users (brute-force lockout and cool-off check)
+        if account_type == "staff" and decoded_token.get("email"):
+            email = decoded_token["email"].lower()
+            from modules.auth.models import StaffSecurityState
+            
+            result = await db.execute(
+                select(StaffSecurityState).where(StaffSecurityState.gmail == email)
+            )
+            sec_state = result.scalar_one_or_none()
+            if sec_state:
+                from datetime import datetime, timezone
+                now_utc = datetime.now(timezone.utc)
+                
+                # Check permanent block
+                if sec_state.is_blocked:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="Account blocked. Please verify your email to unlock."
+                    )
+                
+                # Check active cool-off
+                if sec_state.cool_off_until:
+                    cool_off = sec_state.cool_off_until
+                    if cool_off.tzinfo is None:
+                        cool_off = cool_off.replace(tzinfo=timezone.utc)
+                    if cool_off > now_utc:
+                        raise HTTPException(
+                            status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Sign-in cool-off active. Please wait."
+                        )
             
         return UserClaims(
             uid=decoded_token["uid"],
@@ -77,6 +109,9 @@ async def validate_token(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has expired.",
         )
+    except HTTPException:
+        rethrow = True
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

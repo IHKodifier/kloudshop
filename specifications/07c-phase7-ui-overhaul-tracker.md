@@ -64,18 +64,18 @@ Each view must fully implement the following five states (unless explicitly mark
   - [x] Error/Failure State (Refined floating red error SnackBar with rounded corners)
   - [x] Empty State (`N/A`)
   - [x] Input Validation State (Verify Gmail syntax and empty checks before form submission)
-- [ ] **Provisioning / Setup**
-  - [ ] Default/Active State
-  - [ ] Loading/Submitting State (Animated rocket pulse, database setup logs)
-  - [ ] Error/Failure State (Provisioning timeout / retry button)
-  - [ ] Empty State (`N/A`)
-  - [ ] Input Validation State (Required field validation)
-- [ ] **Landing Page**
-  - [ ] Default/Active State (Vibrant emerald/teal gradients, hover micro-animations)
-  - [ ] Loading/Submitting State (`N/A`)
-  - [ ] Error/Failure State (`N/A`)
-  - [ ] Empty State (`N/A`)
-  - [ ] Input Validation State (`N/A`)
+- [x] **Provisioning / Setup**
+  - [x] Default/Active State (Region selection dropdown, distance badges, 2D vector map, failover configuration, cost surcharge calculation)
+  - [x] Loading/Submitting State (Animated rocket pulse, database setup logs checklist)
+  - [x] Error/Failure State (Provisioning timeout / error visual details, retry button)
+  - [x] Empty State ("No Region Selected" placeholder setup card)
+  - [x] Input Validation State (Required field validation: minimum characters, alphanumeric, hyphens constraints)
+- [x] **Landing Page** (Note: Landing page design is so far so good. It's only good so far. We will be coming back at some later stage, just before the launch, to give it a very premium polish)
+  - [x] Default/Active State (Vibrant emerald/teal gradients, hover micro-animations)
+  - [x] Loading/Submitting State (`N/A`)
+  - [x] Error/Failure State (`N/A`)
+  - [x] Empty State (`N/A`)
+  - [x] Input Validation State (`N/A`)
 
 ---
 

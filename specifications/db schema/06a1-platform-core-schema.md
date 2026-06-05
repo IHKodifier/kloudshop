@@ -7,10 +7,11 @@
 > **Reads from:** `01-product-brief.md`, `01b-tech-stack.md`, `02-architecture.md`,
 >   `03-user-journeys.md`, `04-feature-stories.md`, `04b-mvp-scope.md`,
 >   `00-carry-forward-flags.md` (DMF-01 through DMF-10)
-> **Tables:** 16 (tenants, tenant_regions, gcip_tenant_registry, staff_users,
->   staff_role_assignments, platform_staff, platform_audit_log, migration_jobs,
->   billing_cycles, billing_line_items, trial_visitor_counts, platform_announcements,
->   feature_request_channel, feature_request_votes, order_sources,
+> **Tables:** 18 (tenants, tenant_regions, gcip_tenant_registry, staff_users,
+>   staff_role_assignments, platform_staff, platform_audit_log, staff_login_history,
+>   staff_security_states, migration_jobs, billing_cycles, billing_line_items,
+>   trial_visitor_counts, platform_announcements, feature_request_channel,
+>   feature_request_votes, order_sources,
 >   re_engagement_sequences [tombstone — dropped])
 > **Status:** ✅ Generated
 
@@ -874,6 +875,139 @@ CREATE INDEX idx_audit_log_tenant
 CREATE INDEX idx_audit_log_action_type
     ON kloudshop_platform.platform_audit_log (action_type, created_at DESC);
 -- Rationale: Compliance queries by action type — "all suspensions this month".
+```
+
+---
+
+## Table: `staff_login_history`
+
+```sql
+-- ============================================================
+-- TABLE: staff_login_history
+-- SCHEMA: kloudshop_platform
+-- PURPOSE: Immutable append-only log of all successful staff, owner,
+--   and merchant logins. Used for auditing, compliance, and user-facing
+--   sign-in history checks.
+--
+-- BUSINESS RULES:
+--   1. Immutable and append-only. No UPDATE or DELETE statements allowed.
+--   2. Only successful logins are logged in the database.
+--   3. ForeignKey: staff_user_id references staff_users(staff_user_id) ON DELETE SET NULL.
+--      If a staff/owner account is removed, the audit trail remains intact.
+--   4. Geolocation fields are populated asynchronously via an in-process
+--      background task (using free IP triangulation APIs) to ensure
+--      zero GCP cost and no request blocking latency.
+-- ============================================================
+
+CREATE TABLE kloudshop_platform.staff_login_history (
+    login_id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    
+    staff_user_id    UUID REFERENCES kloudshop_platform.staff_users (staff_user_id)
+                     ON DELETE SET NULL,
+    -- Who logged in (stores owner/merchant or staff).
+
+    tenant_id        UUID REFERENCES kloudshop_platform.tenants (tenant_id)
+                     ON DELETE SET NULL,
+    -- Tenant context logged into. NULL if logging into platform-wide control plane.
+
+    ip_address       INET NOT NULL,
+    -- Client IP address. Supports IPv4/IPv6.
+
+    user_agent       TEXT,
+    -- Client browser User-Agent.
+
+    -- ── Triangulated Geolocation ──────────────────────────────
+    country_code     CHAR(2),       -- ISO 3166-1 alpha-2
+    country_name     VARCHAR(100),
+    region_name      VARCHAR(100),  -- e.g. 'Ontario'
+    city_name        VARCHAR(100),
+    latitude         DECIMAL(9, 6),
+    longitude        DECIMAL(9, 6),
+
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE kloudshop_platform.staff_login_history IS
+    'Immutable sign-in audit trail for all successful merchant, owner, and staff logins.';
+
+-- Indexes
+CREATE INDEX idx_staff_login_user_time
+    ON kloudshop_platform.staff_login_history (staff_user_id, created_at DESC);
+-- Rationale: "Show me all logins by this user" — security review query.
+
+CREATE INDEX idx_staff_login_tenant_time
+    ON kloudshop_platform.staff_login_history (tenant_id, created_at DESC)
+    WHERE tenant_id IS NOT NULL;
+-- Rationale: "Show me all logins under this merchant tenant" — admin auditing.
+```
+
+---
+
+## Table: `staff_security_states`
+
+```sql
+-- ============================================================
+-- TABLE: staff_security_states
+-- SCHEMA: kloudshop_platform
+-- PURPOSE: Tracks failed login attempts, cool-off windows, blocks,
+--   and unblock tokens. Supports brute-force lockout and recovery.
+--
+-- BUSINESS RULES:
+--   1. 180-Second Cool-Off: Enforced after each failed login attempt.
+--      Sign-in attempts are rejected if cool_off_until > NOW().
+--   2. 3-Strikes lockout (24-hour cycle): Lock account if 3 failed attempts
+--      occur within 24 hours.
+--   3. Multi-Day Lockout: Lock account if failure activity is logged
+--      on 3 or more distinct calendar days (tracked via last_failed_day).
+--   4. Recoverable unblocking: Owners can self-service unblock via email link
+--      (180s TTL token) without logging in. Staff can be unblocked directly
+--      by tenant admins/owners in the admin dashboard.
+--   5. Unblock token email rate limiting: Max 3 requests in a 24h cycle.
+-- ============================================================
+
+CREATE TABLE kloudshop_platform.staff_security_states (
+    gmail                    TEXT PRIMARY KEY,
+    -- Attempted user email, lowercased.
+
+    failed_attempts_count    INT NOT NULL DEFAULT 0,
+    -- Consecutive failures in current 24-hour cycle.
+
+    last_failed_attempt_at   TIMESTAMPTZ,
+    
+    cool_off_until           TIMESTAMPTZ,
+    -- Blocks logins until this timestamp (last_failed_attempt_at + 180 seconds).
+
+    failed_days_count        INT NOT NULL DEFAULT 0,
+    -- Number of distinct calendar days with failed logins.
+
+    last_failed_day          DATE,
+    -- Tracks the last day a failed login occurred (to increment days count).
+
+    is_blocked               BOOLEAN NOT NULL DEFAULT FALSE,
+    -- True if locked out (exceeded 3 strikes or 3 failed days).
+
+    unblock_token            TEXT,
+    -- Secure verification token.
+
+    unblock_token_expires_at TIMESTAMPTZ,
+    -- Set to token generation time + 180 seconds.
+
+    unblock_request_count    INT NOT NULL DEFAULT 0,
+    -- Tracks number of unblock emails sent in 24-hour cycle (max 3).
+
+    last_unblock_request_at  TIMESTAMPTZ,
+
+    updated_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE kloudshop_platform.staff_security_states IS
+    'Manages sign-in cool-offs, lockout blocks, and 180-second unblock tokens.';
+
+-- Indexes
+CREATE INDEX idx_staff_security_blocked
+    ON kloudshop_platform.staff_security_states (is_blocked)
+    WHERE is_blocked = TRUE;
+-- Rationale: Fast lookup scan for active lockouts.
 ```
 
 ---

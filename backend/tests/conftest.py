@@ -15,7 +15,7 @@ async def client():
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from shared.db import Base
-from modules.auth.models import Invitation, StaffUser, StaffRoleAssignment, B2BInvitation, BuyerUser, ConsumerUser
+from modules.auth.models import Invitation, StaffUser, StaffRoleAssignment, B2BInvitation, BuyerUser, ConsumerUser, StaffLoginHistory, StaffSecurityState
 from modules.platform.models import Tenant
 from modules.billing.models import Subscription
 from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
@@ -120,3 +120,8 @@ def auth_override():
     
     yield _override
     app.dependency_overrides.clear()
+
+@pytest.fixture
+def anyio_backend():
+    return 'asyncio'
+

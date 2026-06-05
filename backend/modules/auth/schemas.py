@@ -41,3 +41,14 @@ class ConsumerRegistration(BaseModel):
     full_name: Optional[str] = None
     shipping_address: Optional[dict] = None
     order_id: Optional[str] = None # Link this order to the new consumer
+
+class FailedLoginAlert(BaseModel):
+    email: EmailStr
+    tenant_id: Optional[str] = None
+    user_agent: Optional[str] = None
+
+class UnblockRequest(BaseModel):
+    email: EmailStr
+
+class UnblockVerify(BaseModel):
+    token: str

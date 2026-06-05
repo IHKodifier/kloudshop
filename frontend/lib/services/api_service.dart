@@ -34,6 +34,95 @@ class ApiService {
     };
   }
 
+  Future<Map<String, String>> _getAppCheckHeaders() async {
+    return {
+      'Content-Type': 'application/json',
+      'X-AppCheck-Bypass': 'true',
+    };
+  }
+
+  Future<Map<String, dynamic>> getLoginStatus(String gmail) async {
+    try {
+      final headers = await _getAppCheckHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/login-status/$gmail'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to get login status: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.getLoginStatus error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> sendFailedLoginAlert({
+    required String email,
+    String? tenantId,
+    String? userAgent,
+  }) async {
+    try {
+      final headers = await _getAppCheckHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/failed-login-alert'),
+        headers: headers,
+        body: jsonEncode({
+          'email': email,
+          'tenant_id': tenantId,
+          'user_agent': userAgent,
+        }),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to send failed login alert: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.sendFailedLoginAlert error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> requestUnblock(String email) async {
+    try {
+      final headers = await _getAppCheckHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/unblock/request'),
+        headers: headers,
+        body: jsonEncode({'email': email}),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to request unblock: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.requestUnblock error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> verifyUnblock(String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/unblock/verify'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'token': token}),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to verify unblock token: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.verifyUnblock error: $e');
+      rethrow;
+    }
+  }
+
   Future<Map<String, dynamic>> registerConsumer({
     required String email,
     required String password,

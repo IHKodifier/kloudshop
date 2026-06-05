@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     # Default to a local postgres instance or Cloud SQL proxy
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/kloudshop"
     TESTING: bool = False
+    ENV: Optional[str] = None
     
     # Stripe Configuration
     STRIPE_SECRET_KEY: Optional[str] = None
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
     
     class Config:
         env_file = os.path.join(os.path.dirname(__file__), "..", ".env")
+        extra = "ignore"
 
 settings = Settings()
 

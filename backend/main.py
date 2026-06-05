@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
             from shared.db import Base
             
             # Force import all models to register them on Base.metadata
-            from modules.auth.models import Invitation, StaffUser, StaffRoleAssignment, B2BInvitation, BuyerUser, ConsumerUser
+            from modules.auth.models import Invitation, StaffUser, StaffRoleAssignment, B2BInvitation, BuyerUser, ConsumerUser, StaffLoginHistory, StaffSecurityState
             from modules.platform.models import Tenant
             from modules.billing.models import Subscription
             from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
