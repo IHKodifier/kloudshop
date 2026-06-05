@@ -122,7 +122,7 @@ This changelog records the architecture, model, provider, and UI changes made du
     - Schema **`UnblockRequest`** ([schemas.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)): `email: EmailStr`.
   - `POST /api/v1/auth/unblock/verify` (Payload: `UnblockVerify`): Validates recovery token expiration and resets security states on success.
     - Schema **`UnblockVerify`** ([schemas.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)): `token: str`.
-  - `POST /api/v1/auth/staff/{uid}/unblock`: Restricts unblocking of locked staff to authenticated admins/owners.
+  - `POST /api/v1/auth/staff/{uid}/unblock`: Restricts unblocking of locked staff to authenticated admins/owners. Re-secured by verifying the target user belongs to the caller's tenant boundary, returning 403 Forbidden on mismatch.
 
 - **New Client-Side API & UI Integration**:
   - `ApiService` methods ([api_service.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/api_service.dart)):
@@ -135,11 +135,13 @@ This changelog records the architecture, model, provider, and UI changes made du
   - `App` routing ([app.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart)): Registered the `/unblock` route pattern.
 
 - **Verification & Lockout Unit Tests**:
-  - Created [test_auth_lockout.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_lockout.py) implementing 5 comprehensive unit tests:
+  - Created [test_auth_lockout.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_lockout.py) implementing 6 comprehensive unit tests:
     - `test_failed_login_alert_cool_off`: Prevents login re-attempts during active 180s cool-offs.
     - `test_failed_login_alert_lockout_3_strikes`: Locks out account on 3 strikes.
     - `test_failed_login_alert_lockout_3_distinct_days`: Locks out account on failures across 3+ calendar days.
     - `test_unblock_email_rate_limit_and_verify`: Limits unblock requests to 3 per 24 hours.
     - `test_unblock_token_ttl`: Verifies that unblock tokens expire after 180 seconds.
-  - Successfully verified execution with all 5/5 lockout tests and all 11/11 existing auth tests passing cleanly.
+    - `test_admin_unblock_staff_tenant_boundary` [NEW]: Verifies cross-tenant admin unblock attempts fail with 403 Forbidden.
+  - Restrained AnyIO testing loop context ([conftest.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py)) to run exclusively on `asyncio` backend to resolve dependencies errors (missing `trio` module).
+  - Successfully verified execution with all 6/6 lockout tests and all 11/11 existing auth tests passing cleanly.
 
