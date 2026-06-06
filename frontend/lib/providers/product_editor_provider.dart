@@ -92,10 +92,13 @@ class ProductEditorState {
   }
 }
 
-class ProductEditorNotifier extends AutoDisposeFamilyNotifier<ProductEditorState, Product?> {
+class ProductEditorNotifier extends Notifier<ProductEditorState> {
+  final Product? product;
+  ProductEditorNotifier(this.product);
+
   @override
-  ProductEditorState build(Product? arg) {
-    final product = arg;
+  ProductEditorState build() {
+    final product = this.product;
     if (product == null) {
       return ProductEditorState(
         optionsSchema: const [
@@ -129,7 +132,7 @@ class ProductEditorNotifier extends AutoDisposeFamilyNotifier<ProductEditorState
     }
 
     final List<Map<String, dynamic>> opts = [];
-    for (var opt in product!.optionsSchema) {
+    for (var opt in product.optionsSchema) {
       opts.add({
         'name': opt['name'] as String,
         'values': List<String>.from(opt['values'] as List),
@@ -137,7 +140,7 @@ class ProductEditorNotifier extends AutoDisposeFamilyNotifier<ProductEditorState
     }
 
     final List<Map<String, dynamic>> vars = [];
-    for (var v in product!.variants) {
+    for (var v in product.variants) {
       vars.add({
         'variant_id': v.id,
         'sku': v.sku,
@@ -160,21 +163,21 @@ class ProductEditorNotifier extends AutoDisposeFamilyNotifier<ProductEditorState
     }
 
     return ProductEditorState(
-      title: product!.title,
-      slug: product!.slug,
-      description: product!.description ?? '',
-      metaTitle: product!.metaTitle ?? '',
-      metaDescription: product!.metaDescription ?? '',
-      images: List.from(product!.images),
-      status: product!.status,
-      isDigital: product!.isDigital,
-      isPerishable: product!.isPerishable,
-      weightValue: product!.weightValue?.toString() ?? '',
-      weightUnit: product!.weightUnit ?? 'kg',
-      lengthValue: product!.lengthValue?.toString() ?? '',
-      widthValue: product!.widthValue?.toString() ?? '',
-      heightValue: product!.heightValue?.toString() ?? '',
-      dimensionUnit: product!.dimensionUnit ?? 'cm',
+      title: product.title,
+      slug: product.slug,
+      description: product.description ?? '',
+      metaTitle: product.metaTitle ?? '',
+      metaDescription: product.metaDescription ?? '',
+      images: List.from(product.images),
+      status: product.status,
+      isDigital: product.isDigital,
+      isPerishable: product.isPerishable,
+      weightValue: product.weightValue?.toString() ?? '',
+      weightUnit: product.weightUnit ?? 'kg',
+      lengthValue: product.lengthValue?.toString() ?? '',
+      widthValue: product.widthValue?.toString() ?? '',
+      heightValue: product.heightValue?.toString() ?? '',
+      dimensionUnit: product.dimensionUnit ?? 'cm',
       optionsSchema: opts,
       variants: vars,
     );
