@@ -945,7 +945,7 @@ class _LottieToggleState extends State<_LottieToggle>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 3600),
     );
     _controller.value = widget.value ? 0.5 : 0.0;
     _initialized = true;
