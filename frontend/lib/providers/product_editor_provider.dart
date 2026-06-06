@@ -92,12 +92,10 @@ class ProductEditorState {
   }
 }
 
-class ProductEditorNotifier extends Notifier<ProductEditorState> {
-  final Product? product;
-  ProductEditorNotifier(this.product);
-
+class ProductEditorNotifier extends AutoDisposeFamilyNotifier<ProductEditorState, Product?> {
   @override
-  ProductEditorState build() {
+  ProductEditorState build(Product? arg) {
+    final product = arg;
     if (product == null) {
       return ProductEditorState(
         optionsSchema: const [
@@ -462,4 +460,4 @@ final productEditorProvider =
       ProductEditorNotifier,
       ProductEditorState,
       Product?
-    >((arg) => ProductEditorNotifier(arg));
+    >(ProductEditorNotifier.new);
