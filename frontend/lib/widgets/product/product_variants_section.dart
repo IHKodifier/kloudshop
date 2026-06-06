@@ -255,8 +255,10 @@ class _VariantItemCardState extends State<_VariantItemCard>
       setState(() {
         _isCollapsing = true;
       });
-      _controller.duration = const Duration(milliseconds: 1800);
-      _controller.reverse().then((_) {
+      _controller.animateBack(
+        0.0,
+        duration: const Duration(milliseconds: 1800),
+      ).then((_) {
         widget.onToggleActive(val);
         if (mounted) {
           setState(() {
@@ -972,12 +974,18 @@ class _LottieToggleState extends State<_LottieToggle>
         if (_controller.value >= 0.9) {
           _controller.value = 0.0;
         }
-        _controller.animateTo(0.5);
+        _controller.animateTo(
+          0.5,
+          duration: const Duration(milliseconds: 1800),
+        );
       } else {
         if (_controller.value <= 0.1) {
           _controller.value = 0.5;
         }
-        _controller.animateTo(1.0);
+        _controller.animateTo(
+          1.0,
+          duration: const Duration(milliseconds: 1800),
+        );
       }
     }
   }
@@ -996,7 +1004,10 @@ class _LottieToggleState extends State<_LottieToggle>
       if (_controller.value >= 0.9) {
         _controller.value = 0.0;
       }
-      _controller.animateTo(0.5).then((_) {
+      _controller.animateTo(
+        0.5,
+        duration: const Duration(milliseconds: 1800),
+      ).then((_) {
         if (mounted) {
           widget.onChanged(true);
         }
@@ -1005,7 +1016,10 @@ class _LottieToggleState extends State<_LottieToggle>
       if (_controller.value <= 0.1) {
         _controller.value = 0.5;
       }
-      _controller.animateTo(1.0).then((_) {
+      _controller.animateTo(
+        1.0,
+        duration: const Duration(milliseconds: 1800),
+      ).then((_) {
         if (mounted) {
           widget.onChanged(false);
         }
