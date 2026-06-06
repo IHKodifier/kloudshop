@@ -217,55 +217,81 @@ class _VariantItemCard extends StatefulWidget {
   State<_VariantItemCard> createState() => _VariantItemCardState();
 }
 
-class _VariantItemCardState extends State<_VariantItemCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _heightAnimation;
-  late Animation<double> _reorderLottieAnimation;
-  bool _isCollapsing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _heightAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
-    _reorderLottieAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+class _VariantItemCardState extends State<_VariantItemCard> {
+  bool _isProcessing = false;
 
   void _handleToggle(bool val) {
-    if (_isCollapsing) return;
-    Future.delayed(const Duration(milliseconds: 400), () {
-      if (!mounted) return;
-      setState(() {
-        _isCollapsing = true;
-      });
-      _controller.animateBack(
-        0.0,
-        duration: const Duration(milliseconds: 1800),
-      ).then((_) {
-        widget.onToggleActive(val);
-        if (mounted) {
-          setState(() {
-            _isCollapsing = false;
-          });
+    if (_isProcessing) return;
+    setState(() {
+      _isProcessing = true;
+    });
+
+    BuildContext? dialogContext;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dContext) {
+        dialogContext = dContext;
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+              decoration: BoxDecoration(
+                color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: widget.theme.dividerColor,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(widget.isDark ? 0.5 : 0.15),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppTheme.brandEmerald500,
+                      ),
+                      strokeWidth: 3,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Re-arranging your variants',
+                    style: widget.theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        if (dialogContext != null) {
+          Navigator.of(dialogContext!).pop();
         }
-      });
+        widget.onToggleActive(val);
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     });
   }
 
@@ -326,50 +352,27 @@ class _VariantItemCardState extends State<_VariantItemCard>
 
     final List<String> vImages = List<String>.from(variant['images'] ?? []);
 
-    return SizeTransition(
-      sizeFactor: _heightAnimation,
-      alignment: Alignment.topCenter,
-      child: _isCollapsing
-          ? Container(
-              height: isExpanded ? 240.0 : 80.0,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF0F172A).withValues(alpha: 0.5)
-                    : Colors.grey[50],
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: theme.dividerColor.withValues(alpha: 0.5),
-                  width: 0.8,
-                ),
-              ),
-              child: Lottie.asset(
-                'assets/fdbb8162-1189-11ee-978e-974a5236323e.json',
-                controller: _reorderLottieAnimation,
-                fit: BoxFit.contain,
-              ),
-            )
-          : AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              padding: isExpanded
-                  ? const EdgeInsets.all(20)
-                  : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? (isDark ? const Color(0xFF1E293B) : Colors.white)
-                    : (isDark
-                          ? const Color(0xFF0F172A).withValues(alpha: 0.5)
-                          : Colors.grey[50]),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isActive
-                      ? theme.dividerColor
-                      : theme.dividerColor.withValues(alpha: 0.5),
-                  width: isActive ? 1.0 : 0.8,
-                ),
-              ),
-              child: Column(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      padding: isExpanded
+          ? const EdgeInsets.all(20)
+          : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isActive
+            ? (isDark ? const Color(0xFF1E293B) : Colors.white)
+            : (isDark
+                  ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+                  : Colors.grey[50]),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isActive
+              ? theme.dividerColor
+              : theme.dividerColor.withValues(alpha: 0.5),
+          width: isActive ? 1.0 : 0.8,
+        ),
+      ),
+      child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Collapse / Expand Header Row
@@ -648,8 +651,7 @@ class _VariantItemCardState extends State<_VariantItemCard>
                   ),
                 ],
               ),
-            ),
-    );
+            );
   }
 
   Widget _buildVariantShippingOverrides(Map<String, dynamic> variant) {

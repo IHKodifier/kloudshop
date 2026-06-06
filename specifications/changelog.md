@@ -145,3 +145,4 @@ This changelog records the architecture, model, provider, and UI changes made du
   - Restrained AnyIO testing loop context ([conftest.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py)) to run exclusively on `asyncio` backend to resolve dependencies errors (missing `trio` module).
   - Successfully verified execution with all 6/6 lockout tests and all 11/11 existing auth tests passing cleanly.
 
+- Updated modal display duration for variant toggle from 3000ms to 1500ms in `product_variants_section.dart`.
