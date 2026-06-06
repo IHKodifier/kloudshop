@@ -110,8 +110,12 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
         const SizedBox(height: 16),
         Builder(
           builder: (context) {
-            final activeVariants = widget.variants.where((v) => v['is_active'] ?? true).toList();
-            final inactiveVariants = widget.variants.where((v) => !(v['is_active'] ?? true)).toList();
+            final activeVariants = widget.variants
+                .where((v) => v['is_active'] ?? true)
+                .toList();
+            final inactiveVariants = widget.variants
+                .where((v) => !(v['is_active'] ?? true))
+                .toList();
             final sortedVariants = [...activeVariants, ...inactiveVariants];
 
             return ListView.separated(
@@ -122,7 +126,8 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
               itemBuilder: (context, index) {
                 final variant = sortedVariants[index];
                 // Unique key based on ID, SKU, and active state to trigger transition when reordered
-                final keyString = '${variant['variant_id'] ?? ''}_${variant['sku'] ?? ''}_${variant['is_active'] ?? true}';
+                final keyString =
+                    '${variant['variant_id'] ?? ''}_${variant['sku'] ?? ''}_${variant['is_active'] ?? true}';
 
                 return _VariantItemCard(
                   key: ValueKey(keyString),
@@ -138,16 +143,18 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
                     setState(() {
                       final bool wasDefault = variant['is_default'] ?? false;
                       variant['is_active'] = val;
-                      
+
                       if (!val) {
                         variant['is_expanded'] = false;
                       }
-                      
+
                       if (!val && wasDefault) {
                         variant['is_default'] = false;
                         // Promote the first other active variant to default
                         final firstActive = widget.variants
-                            .where((v) => v != variant && (v['is_active'] ?? true))
+                            .where(
+                              (v) => v != variant && (v['is_active'] ?? true),
+                            )
                             .firstOrNull;
                         if (firstActive != null) {
                           firstActive['is_default'] = true;
@@ -158,7 +165,9 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
                       } else if (val) {
                         // If activating and there is no active default variant, make this default
                         final hasActiveDefault = widget.variants.any(
-                          (v) => (v['is_active'] ?? true) && (v['is_default'] ?? false)
+                          (v) =>
+                              (v['is_active'] ?? true) &&
+                              (v['is_default'] ?? false),
                         );
                         if (!hasActiveDefault) {
                           for (var v in widget.variants) {
@@ -173,7 +182,7 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
                 );
               },
             );
-          }
+          },
         ),
       ],
     );
@@ -226,9 +235,10 @@ class _VariantItemCardState extends State<_VariantItemCard>
       parent: _controller,
       curve: Curves.easeInOut,
     );
-    _reorderLottieAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.linear),
-    );
+    _reorderLottieAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
     _controller.forward();
   }
 
@@ -243,7 +253,7 @@ class _VariantItemCardState extends State<_VariantItemCard>
     setState(() {
       _isCollapsing = true;
     });
-    _controller.duration = const Duration(milliseconds: 1000);
+    _controller.duration = const Duration(milliseconds: 1800);
     _controller.reverse().then((_) {
       widget.onToggleActive(val);
       if (mounted) {
@@ -267,10 +277,7 @@ class _VariantItemCardState extends State<_VariantItemCard>
 
     final customInputStyle = theme.textTheme.bodyMedium;
     final customLabelStyle = theme.textTheme.bodySmall;
-    const customPadding = EdgeInsets.symmetric(
-      horizontal: 12,
-      vertical: 10,
-    );
+    const customPadding = EdgeInsets.symmetric(horizontal: 12, vertical: 10);
 
     // Build dynamic option dropdowns
     final List<Widget> optionDropdowns = [];
@@ -294,9 +301,7 @@ class _VariantItemCardState extends State<_VariantItemCard>
                 contentPadding: customPadding,
               ),
               items: vals
-                  .map(
-                    (v) => DropdownMenuItem(value: v, child: Text(v)),
-                  )
+                  .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                   .toList(),
               onChanged: isActive
                   ? (newVal) {
@@ -314,9 +319,7 @@ class _VariantItemCardState extends State<_VariantItemCard>
       }
     }
 
-    final List<String> vImages = List<String>.from(
-      variant['images'] ?? [],
-    );
+    final List<String> vImages = List<String>.from(variant['images'] ?? []);
 
     return SizeTransition(
       sizeFactor: _heightAnimation,
@@ -326,7 +329,9 @@ class _VariantItemCardState extends State<_VariantItemCard>
               height: isExpanded ? 240.0 : 80.0,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : Colors.grey[50],
+                color: isDark
+                    ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+                    : Colors.grey[50],
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: theme.dividerColor.withValues(alpha: 0.5),
@@ -348,7 +353,9 @@ class _VariantItemCardState extends State<_VariantItemCard>
               decoration: BoxDecoration(
                 color: isActive
                     ? (isDark ? const Color(0xFF1E293B) : Colors.white)
-                    : (isDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : Colors.grey[50]),
+                    : (isDark
+                          ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+                          : Colors.grey[50]),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isActive
@@ -357,280 +364,286 @@ class _VariantItemCardState extends State<_VariantItemCard>
                   width: isActive ? 1.0 : 0.8,
                 ),
               ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Collapse / Expand Header Row
-            InkWell(
-              onTap: () {
-                setState(() {
-                  variant['is_expanded'] = !isExpanded;
-                });
-              },
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  children: [
-                    Opacity(
-                      opacity: isActive ? 1.0 : 0.5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Collapse / Expand Header Row
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        variant['is_expanded'] = !isExpanded;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            isExpanded
-                                ? LucideIcons.chevronUp
-                                : LucideIcons.chevronDown,
-                            size: 20,
-                            color: AppTheme.brandEmerald500,
+                          Opacity(
+                            opacity: isActive ? 1.0 : 0.5,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  isExpanded
+                                      ? LucideIcons.chevronUp
+                                      : LucideIcons.chevronDown,
+                                  size: 20,
+                                  color: AppTheme.brandEmerald500,
+                                ),
+                                const SizedBox(width: 12),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Opacity(
+                              opacity: isActive ? 1.0 : 0.5,
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      optionVals.isEmpty
+                                          ? 'Default Variant'
+                                          : optionVals.entries
+                                                .map((e) => e.value)
+                                                .join(' / '),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        decoration: isActive
+                                            ? null
+                                            : TextDecoration.lineThrough,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  if (variant['sku']?.toString().isNotEmpty ==
+                                      true) ...[
+                                    const SizedBox(width: 12),
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isDark
+                                              ? Colors.blueGrey.withValues(
+                                                  alpha: 0.2,
+                                                )
+                                              : Colors.blueGrey.withValues(
+                                                  alpha: 0.1,
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'SKU: ${variant['sku']}',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: isDark
+                                                ? Colors.grey[300]
+                                                : Colors.grey[700],
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Opacity(
+                            opacity: isActive ? 1.0 : 0.5,
+                            child: Text(
+                              variant['price']?.toString().isNotEmpty == true
+                                  ? '\$${variant['price']}'
+                                  : '\$0.00',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.brandEmerald500,
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 12),
+                          _LottieToggle(
+                            value: isActive,
+                            onChanged: _handleToggle,
+                          ),
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: Opacity(
-                        opacity: isActive ? 1.0 : 0.5,
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                optionVals.isEmpty
-                                    ? 'Default Variant'
-                                    : optionVals.entries
-                                          .map((e) => e.value)
-                                          .join(' / '),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  decoration: isActive
-                                      ? null
-                                      : TextDecoration.lineThrough,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            if (variant['sku']?.toString().isNotEmpty ==
-                                true) ...[
-                              const SizedBox(width: 12),
-                              Flexible(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.blueGrey.withValues(
-                                            alpha: 0.2,
-                                          )
-                                        : Colors.blueGrey.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    'SKU: ${variant['sku']}',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: isDark
-                                          ? Colors.grey[300]
-                                          : Colors.grey[700],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Opacity(
-                      opacity: isActive ? 1.0 : 0.5,
-                      child: Text(
-                        variant['price']?.toString().isNotEmpty == true
-                            ? '\$${variant['price']}'
-                            : '\$0.00',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.brandEmerald500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    _LottieToggle(
-                      value: isActive,
-                      onChanged: _handleToggle,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
 
-            AnimatedSize(
-              duration: const Duration(milliseconds: 600),
-              curve: const ElasticOutCurve(0.25),
-              alignment: Alignment.topCenter,
-              child: isExpanded
-                  ? Opacity(
-                      opacity: isActive ? 1.0 : 0.5,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Divider(height: 24),
-                          if (optionDropdowns.isNotEmpty) ...[
-                            Row(children: optionDropdowns),
-                            const SizedBox(height: 12),
-                          ],
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: TextFormField(
-                                  initialValue: variant['sku'],
-                                  style: customInputStyle,
-                                  enabled: isActive,
-                                  decoration: InputDecoration(
-                                    labelText: 'SKU',
-                                    labelStyle: customLabelStyle,
-                                    border: const OutlineInputBorder(),
-                                    contentPadding: customPadding,
-                                  ),
-                                  onChanged: (v) {
-                                    variant['sku'] = v;
-                                    widget.onChanged();
-                                  },
-                                  validator: (v) => v?.isEmpty == true
-                                      ? 'Required'
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                flex: 2,
-                                child: TextFormField(
-                                  initialValue: variant['price'],
-                                  style: customInputStyle,
-                                  enabled: isActive,
-                                  decoration: InputDecoration(
-                                    labelText: 'Price',
-                                    labelStyle: customLabelStyle,
-                                    prefixText: '\$',
-                                    prefixStyle: customInputStyle,
-                                    border: const OutlineInputBorder(),
-                                    contentPadding: customPadding,
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                  onChanged: (v) {
-                                    setState(() {
-                                      variant['price'] = v;
-                                    });
-                                    widget.onChanged();
-                                  },
-                                  validator: (v) =>
-                                      double.tryParse(v ?? '') == null
-                                      ? 'Invalid'
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                flex: 2,
-                                child: TextFormField(
-                                  initialValue: variant['compare_at_price'],
-                                  style: customInputStyle,
-                                  enabled: isActive,
-                                  decoration: InputDecoration(
-                                    labelText: 'Compare At',
-                                    labelStyle: customLabelStyle,
-                                    prefixText: '\$',
-                                    prefixStyle: customInputStyle,
-                                    border: const OutlineInputBorder(),
-                                    contentPadding: customPadding,
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                  onChanged: (v) {
-                                    variant['compare_at_price'] = v;
-                                    widget.onChanged();
-                                  },
-                                ),
-                              ),
-                              if (widget.isNewProduct) ...[
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  flex: 3,
-                                  child: TextFormField(
-                                    initialValue: variant['stock'],
-                                    style: customInputStyle,
-                                    enabled: isActive,
-                                    decoration: InputDecoration(
-                                      labelText: 'Initial Stock Inventory',
-                                      labelStyle: customLabelStyle,
-                                      border: const OutlineInputBorder(),
-                                      contentPadding: customPadding,
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 600),
+                    curve: const ElasticOutCurve(0.25),
+                    alignment: Alignment.topCenter,
+                    child: isExpanded
+                        ? Opacity(
+                            opacity: isActive ? 1.0 : 0.5,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Divider(height: 24),
+                                if (optionDropdowns.isNotEmpty) ...[
+                                  Row(children: optionDropdowns),
+                                  const SizedBox(height: 12),
+                                ],
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: TextFormField(
+                                        initialValue: variant['sku'],
+                                        style: customInputStyle,
+                                        enabled: isActive,
+                                        decoration: InputDecoration(
+                                          labelText: 'SKU',
+                                          labelStyle: customLabelStyle,
+                                          border: const OutlineInputBorder(),
+                                          contentPadding: customPadding,
+                                        ),
+                                        onChanged: (v) {
+                                          variant['sku'] = v;
+                                          widget.onChanged();
+                                        },
+                                        validator: (v) => v?.isEmpty == true
+                                            ? 'Required'
+                                            : null,
+                                      ),
                                     ),
-                                    keyboardType: TextInputType.number,
-                                    onChanged: (v) {
-                                      variant['stock'] = v;
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      flex: 2,
+                                      child: TextFormField(
+                                        initialValue: variant['price'],
+                                        style: customInputStyle,
+                                        enabled: isActive,
+                                        decoration: InputDecoration(
+                                          labelText: 'Price',
+                                          labelStyle: customLabelStyle,
+                                          prefixText: '\$',
+                                          prefixStyle: customInputStyle,
+                                          border: const OutlineInputBorder(),
+                                          contentPadding: customPadding,
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (v) {
+                                          setState(() {
+                                            variant['price'] = v;
+                                          });
+                                          widget.onChanged();
+                                        },
+                                        validator: (v) =>
+                                            double.tryParse(v ?? '') == null
+                                            ? 'Invalid'
+                                            : null,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      flex: 2,
+                                      child: TextFormField(
+                                        initialValue:
+                                            variant['compare_at_price'],
+                                        style: customInputStyle,
+                                        enabled: isActive,
+                                        decoration: InputDecoration(
+                                          labelText: 'Compare At',
+                                          labelStyle: customLabelStyle,
+                                          prefixText: '\$',
+                                          prefixStyle: customInputStyle,
+                                          border: const OutlineInputBorder(),
+                                          contentPadding: customPadding,
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (v) {
+                                          variant['compare_at_price'] = v;
+                                          widget.onChanged();
+                                        },
+                                      ),
+                                    ),
+                                    if (widget.isNewProduct) ...[
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        flex: 3,
+                                        child: TextFormField(
+                                          initialValue: variant['stock'],
+                                          style: customInputStyle,
+                                          enabled: isActive,
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                'Initial Stock Inventory',
+                                            labelStyle: customLabelStyle,
+                                            border: const OutlineInputBorder(),
+                                            contentPadding: customPadding,
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          onChanged: (v) {
+                                            variant['stock'] = v;
+                                            widget.onChanged();
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+
+                                // Media Section for Variant
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Variant Images',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                IgnorePointer(
+                                  ignoring: !isActive,
+                                  child: CompactMediaListUploader(
+                                    images: vImages,
+                                    uploader: widget.uploader,
+                                    onImagesChanged: (newImages) {
+                                      setState(() {
+                                        variant['images'] = newImages;
+                                        if (variant['image_url'] == null ||
+                                            !newImages.contains(
+                                              variant['image_url'],
+                                            )) {
+                                          variant['image_url'] =
+                                              newImages.firstOrNull;
+                                        }
+                                      });
                                       widget.onChanged();
                                     },
                                   ),
                                 ),
+
+                                // Shipping Overrides Section
+                                if (!widget.isDigital) ...[
+                                  const Divider(height: 24),
+                                  IgnorePointer(
+                                    ignoring: !isActive,
+                                    child: _buildVariantShippingOverrides(
+                                      variant,
+                                    ),
+                                  ),
+                                ],
                               ],
-                            ],
-                          ),
-
-                          // Media Section for Variant
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Variant Images',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          IgnorePointer(
-                            ignoring: !isActive,
-                            child: CompactMediaListUploader(
-                              images: vImages,
-                              uploader: widget.uploader,
-                              onImagesChanged: (newImages) {
-                                setState(() {
-                                  variant['images'] = newImages;
-                                  if (variant['image_url'] == null ||
-                                      !newImages.contains(
-                                        variant['image_url'],
-                                      )) {
-                                    variant['image_url'] =
-                                        newImages.firstOrNull;
-                                  }
-                                });
-                                widget.onChanged();
-                              },
-                            ),
-                          ),
-
-                          // Shipping Overrides Section
-                          if (!widget.isDigital) ...[
-                            const Divider(height: 24),
-                            IgnorePointer(
-                              ignoring: !isActive,
-                              child: _buildVariantShippingOverrides(variant),
-                            ),
-                          ],
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -926,10 +939,7 @@ class _LottieToggle extends StatefulWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
-  const _LottieToggle({
-    required this.value,
-    required this.onChanged,
-  });
+  const _LottieToggle({required this.value, required this.onChanged});
 
   @override
   State<_LottieToggle> createState() => _LottieToggleState();
@@ -977,7 +987,7 @@ class _LottieToggleState extends State<_LottieToggle>
 
   void _toggle() {
     if (_controller.isAnimating) return;
-    
+
     final bool nextVal = !widget.value;
     if (nextVal) {
       if (_controller.value >= 0.9) {
