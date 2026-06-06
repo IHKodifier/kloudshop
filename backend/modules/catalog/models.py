@@ -230,3 +230,17 @@ class RedirectRule(Base):
         CheckConstraint("source_path LIKE '/%'", name='redirect_rules_source_starts_with_slash'),
         CheckConstraint("source_path != destination_path", name='redirect_rules_no_self_redirect'),
     )
+
+class ColorPreset(Base):
+    __tablename__ = "color_presets"
+
+    preset_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    tenant_id = Column(String, nullable=False, index=True)
+    name = Column(String(100), nullable=False)
+    hex_code = Column(String(10), nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    __table_args__ = (
+        UniqueConstraint('tenant_id', 'name', name='uix_color_preset_tenant_name'),
+    )
+

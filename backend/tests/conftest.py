@@ -18,7 +18,7 @@ from shared.db import Base
 from modules.auth.models import Invitation, StaffUser, StaffRoleAssignment, B2BInvitation, BuyerUser, ConsumerUser, StaffLoginHistory, StaffSecurityState
 from modules.platform.models import Tenant
 from modules.billing.models import Subscription
-from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
+from modules.catalog.models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule, ColorPreset
 from modules.orders.models import Order, OrderItem, OrderEvent, OrderNote
 from modules.inventory.models import (
     StockLocation, Inventory, Supplier, PurchaseOrder, PurchaseOrderLine,

@@ -86,19 +86,26 @@ Each view must fully implement the following five states (unless explicitly mark
 | :--- | :--- | :--- | :--- |
 | **Catalog Overview** | `mock-screens/catalog_overview.png` | [catalog_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) | `catalogProvider` |
 | **Product & Variant Editor** | `mock-screens/product_editor.png` | [product_editor_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) | `productEditorProvider` |
+| **Color Presets CRUD** | `N/A` | [option_category_editor.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/option_category_editor.dart) | `colorPresetsProvider` |
 
-- [ ] **Catalog Overview**
-  - [ ] Default/Active State (Frosted cards, emerald filter chips)
-  - [ ] Loading/Submitting State (Card-skeleton placeholder grids)
-  - [ ] Error/Failure State (Fetch error toast with reload prompt)
-  - [ ] Empty State (Illustration indicating "No Products Found" + "Add Product" CTA)
-  - [ ] Input Validation State (`N/A`)
-- [ ] **Product & Variant Editor**
-  - [ ] Default/Active State (Slug, status, Compare-At price, digital toggles)
-  - [ ] Loading/Submitting State (Save progress loader, image uploading placeholders)
-  - [ ] Error/Failure State (Error modal on save failure)
-  - [ ] Empty State (`N/A`)
-  - [ ] Input Validation State (Highlight empty title, price ≤ 0 validation)
+- [x] **Catalog Overview**
+  - [x] Default/Active State (Frosted cards, emerald filter chips)
+  - [x] Loading/Submitting State (Card-skeleton placeholder grids)
+  - [x] Error/Failure State (Fetch error toast with reload prompt)
+  - [x] Empty State (Illustration indicating "No Products Found" + "Add Product" CTA)
+  - [x] Input Validation State (`N/A`)
+- [x] **Product & Variant Editor**
+  - [x] Default/Active State (Slug, status, Compare-At price, digital toggles)
+  - [x] Loading/Submitting State (Save progress loader, image uploading placeholders)
+  - [x] Error/Failure State (Error modal on save failure)
+  - [x] Empty State (`N/A`)
+  - [x] Input Validation State (Highlight empty title, price ≤ 0 validation)
+- [x] **Color Presets CRUD**
+  - [x] Default/Active State (Visual preset chips shelf in option editor, visual picker dialog)
+  - [x] Loading/Submitting State (Colors.json cache-first display, background DB sync)
+  - [x] Error/Failure State (Rollback and error banner on api save failure)
+  - [x] Empty State (`N/A`)
+  - [x] Input Validation State (Verify hex code format before preset submission)
 
 ---
 

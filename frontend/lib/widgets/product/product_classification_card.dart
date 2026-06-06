@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/glass_card.dart';
 
@@ -72,16 +73,6 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
             if (v != null) widget.onStatusChanged(v);
           },
         ),
-        const SizedBox(height: 20),
-        SwitchListTile(
-          title: const Text('Digital Product'),
-          subtitle: const Text(
-            'This product is a file or service and does not require shipping',
-          ),
-          value: widget.isDigital,
-          activeThumbColor: AppTheme.brandEmerald500,
-          onChanged: widget.onIsDigitalChanged,
-        ),
         const SizedBox(height: 12),
         SwitchListTile(
           title: const Text('Perishable Product'),
@@ -91,23 +82,56 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
           value: widget.isPerishable,
           activeThumbColor: AppTheme.brandEmerald500,
           onChanged: widget.onIsPerishableChanged,
+          dense: true,
+          contentPadding: EdgeInsets.zero,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
+        SwitchListTile(
+          title: const Text('Digital Product'),
+          subtitle: const Text(
+            'This product is a file or service and does not require shipping',
+          ),
+          value: widget.isDigital,
+          activeThumbColor: AppTheme.brandEmerald500,
+          onChanged: widget.onIsDigitalChanged,
+          dense: true,
+          contentPadding: EdgeInsets.zero,
+        ),
+        const SizedBox(height: 8),
         AnimatedSize(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOutBack,
           child: !widget.isDigital
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Divider(height: 24),
-                    const Text(
-                      'Default Physical Shipping Specs',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
+                    const Divider(height: 16),
+                    Row(
+                      children: [
+                        const Text(
+                          'Default Physical Shipping Specs',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Lottie.network(
+                          'https://lottie.host/d19b48b5-55ff-4c28-bb73-90d569653a99/cSwQ8f00Tq.json',
+                          width: 28,
+                          height: 28,
+                          repeat: false,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              LucideIcons.package,
+                              size: 20,
+                              color: AppTheme.brandEmerald500,
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
@@ -142,7 +166,7 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         final isNarrow = constraints.maxWidth < 450;

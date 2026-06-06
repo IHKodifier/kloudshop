@@ -4,22 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/models/catalog.dart';
 import 'package:kloudshop/services/api_service.dart';
-import 'package:kloudshop/providers/catalog_providers.dart';
-import 'package:lottie/lottie.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
-import 'package:kloudshop/widgets/glass_card.dart';
-
-// Services & Shared Widgets
-import 'package:kloudshop/services/file_uploader.dart';
-import 'package:kloudshop/widgets/upload/media_gallery_uploader.dart';
-
-// Product-specific Components
-import 'package:kloudshop/widgets/product/product_general_info_card.dart';
-import 'package:kloudshop/widgets/product/product_seo_card.dart';
-import 'package:kloudshop/widgets/product/product_classification_card.dart';
-import 'package:kloudshop/widgets/product/product_options_card.dart';
-import 'package:kloudshop/widgets/product/product_variants_section.dart';
+import 'package:kloudshop/providers/product_editor_provider.dart';
+import 'package:kloudshop/widgets/product/product_editor_info_step.dart';
+import 'package:kloudshop/widgets/product/product_editor_logistics_step.dart';
+import 'package:kloudshop/widgets/product/product_editor_variants_step.dart';
+import 'package:kloudshop/widgets/product/product_editor_stepper_header.dart';
 
 class ProductEditorView extends ConsumerStatefulWidget {
   final Product? product; // null if creating new
@@ -130,366 +121,41 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
     );
   }
 
-  late TextEditingController _titleController;
-  late TextEditingController _slugController;
-  late TextEditingController _descriptionController;
-  late TextEditingController _metaTitleController;
-  late TextEditingController _metaDescriptionController;
-  List<String> _images = [];
-  late String _status;
-  late bool _isDigital;
-  late final FileUploader _uploader;
-
-  late TextEditingController _productWeightController;
-  late TextEditingController _productLengthController;
-  late TextEditingController _productWidthController;
-  late TextEditingController _productHeightController;
-  String _productWeightUnit = 'kg';
-  String _productDimensionUnit = 'cm';
-  bool _isPerishable = false;
-
-  final List<Map<String, dynamic>> _optionsSchema = [];
-  final List<Map<String, dynamic>> _variants = [];
-  int _lastVariantCount = 0;
-  bool _showVariantChangeAnimation = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _uploader = MockFileUploader(
-      apiUpload: (bytes, name) =>
-          ref.read(apiServiceProvider).uploadMedia(bytes, name),
-    );
-    _titleController = TextEditingController(text: widget.product?.title ?? '');
-    _slugController = TextEditingController(text: widget.product?.slug ?? '');
-    _descriptionController = TextEditingController(
-      text: widget.product?.description ?? '',
-    );
-    _metaTitleController = TextEditingController(
-      text: widget.product?.metaTitle ?? '',
-    );
-    _metaDescriptionController = TextEditingController(
-      text: widget.product?.metaDescription ?? '',
-    );
-    _images = List.from(widget.product?.images ?? []);
-
-    _productWeightController = TextEditingController(
-      text: widget.product?.weightValue?.toString() ?? '',
-    );
-    _productLengthController = TextEditingController(
-      text: widget.product?.lengthValue?.toString() ?? '',
-    );
-    _productWidthController = TextEditingController(
-      text: widget.product?.widthValue?.toString() ?? '',
-    );
-    _productHeightController = TextEditingController(
-      text: widget.product?.heightValue?.toString() ?? '',
-    );
-    _productWeightUnit = widget.product?.weightUnit ?? 'kg';
-    _productDimensionUnit = widget.product?.dimensionUnit ?? 'cm';
-    _isPerishable = widget.product?.isPerishable ?? false;
-
-    _status = widget.product?.status ?? 'draft';
-    _isDigital = widget.product?.isDigital ?? false;
-
-    if (widget.product != null) {
-      for (var opt in widget.product!.optionsSchema) {
-        _optionsSchema.add({
-          'name': opt['name'] as String,
-          'values': List<String>.from(opt['values'] as List),
-        });
-      }
-      for (var v in widget.product!.variants) {
-        _variants.add({
-          'variant_id': v.id,
-          'sku': v.sku,
-          'price': v.price.toString(),
-          'compare_at_price': v.compareAtPrice?.toString() ?? '',
-          'stock': v.stock?.toString() ?? '0',
-          'is_default': v.isDefault,
-          'option_values': Map<String, String>.from(v.optionValues),
-          'images': List<String>.from(v.images),
-          'image_url': v.imageUrl,
-          'weight_value': v.weightValue?.toString() ?? '',
-          'weight_unit': v.weightUnit ?? 'kg',
-          'length_value': v.lengthValue?.toString() ?? '',
-          'width_value': v.widthValue?.toString() ?? '',
-          'height_value': v.heightValue?.toString() ?? '',
-          'dimension_unit': v.dimensionUnit ?? 'cm',
-          'show_shipping_overrides': false,
-          'is_expanded': false,
-        });
-      }
-    } else {
-      _addVariant(showToast: false);
-    }
-    _lastVariantCount = _variants.length;
-  }
-
-  void _addVariant({bool showToast = true}) {
-    setState(() {
-      final Map<String, String> defaultOptionValues = {};
-      for (var opt in _optionsSchema) {
-        final String name = opt['name'];
-        final List<String> vals = List<String>.from(opt['values']);
-        if (name.isNotEmpty && vals.isNotEmpty) {
-          defaultOptionValues[name] = vals.first;
-        }
-      }
-
-      _variants.add({
-        'variant_id': null,
-        'sku': '',
-        'price': '0.00',
-        'compare_at_price': '',
-        'stock': '0',
-        'is_default': _variants.isEmpty,
-        'option_values': defaultOptionValues,
-        'images': <String>[],
-        'image_url': null,
-        'weight_value': '',
-        'weight_unit': 'kg',
-        'length_value': '',
-        'width_value': '',
-        'height_value': '',
-        'dimension_unit': 'cm',
-        'show_shipping_overrides': false,
-        'is_expanded': true,
-      });
-    });
-    if (showToast) {
-      _showNotification('Variant added');
-    }
-  }
-
-  void _generateVariantsFromOptions() {
-    if (_optionsSchema.isEmpty) return;
-
-    List<Map<String, String>> cartesianProduct(
-      List<Map<String, dynamic>> options,
-      int index,
-    ) {
-      if (index == options.length) {
-        return [{}];
-      }
-
-      final currentOpt = options[index];
-      final currentName = currentOpt['name'] as String;
-      final currentValues = currentOpt['values'] as List<String>;
-
-      final subProducts = cartesianProduct(options, index + 1);
-      final List<Map<String, String>> result = [];
-
-      for (var val in currentValues) {
-        for (var subProduct in subProducts) {
-          result.add({currentName: val, ...subProduct});
-        }
-      }
-      return result;
-    }
-
-    final permutations = cartesianProduct(_optionsSchema, 0);
-
-    setState(() {
-      _variants.clear();
-      for (var i = 0; i < permutations.length; i++) {
-        final perm = permutations[i];
-        final optionStr = perm.values.join('-');
-        final baseSku = _slugController.text.toUpperCase();
-        final suffix = optionStr.toUpperCase().replaceAll(
-          RegExp(r'[^A-Z0-9\-]'),
-          '-',
-        );
-        final sku = baseSku.isNotEmpty ? '$baseSku-$suffix' : '';
-
-        _variants.add({
-          'variant_id': null,
-          'sku': sku,
-          'price': '0.00',
-          'compare_at_price': '',
-          'stock': '0',
-          'is_default': i == 0,
-          'option_values': perm,
-          'images': <String>[],
-          'image_url': null,
-          'weight_value': '',
-          'weight_unit': 'kg',
-          'length_value': '',
-          'width_value': '',
-          'height_value': '',
-          'dimension_unit': 'cm',
-          'show_shipping_overrides': false,
-          'is_expanded': false,
-        });
-      }
-    });
-
-    // Display Success Modal with Lottie animation
-    final List<String> names = permutations
-        .map((perm) => perm.values.join(' / '))
-        .toList();
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Variants Generated',
-      barrierColor: Colors.black.withValues(alpha: 0.55),
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 480),
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: 120,
-                  child: Lottie.network(
-                    'https://lottie.host/c5c8e31a-e8f0-466d-9db8-5d2df1c469f6/mH9y7G1j7C.json',
-                    repeat: false,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        LucideIcons.checkCircle2,
-                        size: 80,
-                        color: AppTheme.brandEmerald500,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Variants Generated Successfully!',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Created ${permutations.length} variants:',
-                  style: TextStyle(
-                    color: isDark ? Colors.grey[300] : Colors.grey[700],
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.3,
-                  ),
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A) : Colors.grey[50],
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF334155)
-                          : Colors.grey[200]!,
-                    ),
-                  ),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(12),
-                    itemCount: names.length,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 8),
-                    itemBuilder: (context, idx) {
-                      return Row(
-                        children: [
-                          const Icon(
-                            LucideIcons.check,
-                            color: AppTheme.brandEmerald500,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              names[idx],
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.brandEmerald500,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, anim1, anim2, child) {
-        return ScaleTransition(
-          scale: CurvedAnimation(parent: anim1, curve: Curves.easeOutBack),
-          child: FadeTransition(opacity: anim1, child: child),
-        );
-      },
-    );
-  }
-
-  void _removeVariant(int index) {
-    if (_variants.length > 1) {
-      final variant = _variants[index];
-      final Map<String, String> optionVals = Map<String, String>.from(
-        variant['option_values'] ?? {},
-      );
-      final variantName = optionVals.isEmpty
-          ? 'Default Variant'
-          : optionVals.values.map((v) => v.trim()).join(' / ');
-
-      setState(() {
-        _variants.removeAt(index);
-        if (!_variants.any((v) => v['is_default'] == true)) {
-          _variants[0]['is_default'] = true;
-        }
-      });
-      _showNotification(
-        'Variant "$variantName" deleted Successfully',
-        isDeletion: true,
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _slugController.dispose();
-    _descriptionController.dispose();
-    _metaTitleController.dispose();
-    _metaDescriptionController.dispose();
-    _productWeightController.dispose();
-    _productLengthController.dispose();
-    _productWidthController.dispose();
-    _productHeightController.dispose();
-    super.dispose();
-  }
-
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      _showNotification(
+        'Validation failed. Please check your inputs across all steps.',
+        isError: true,
+      );
+      return;
+    }
 
-    final skus = _variants.map((v) => v['sku'] as String).toList();
+    final state = ref.read(productEditorProvider(widget.product));
+
+    // Validate variant pricing
+    for (var v in state.variants) {
+      final price = double.tryParse(v['price'].toString()) ?? 0.0;
+      if (price < 0.0) {
+        _showNotification(
+          'Error: Variant price cannot be negative.',
+          isError: true,
+        );
+        return;
+      }
+      final compareAtStr = v['compare_at_price'].toString();
+      if (compareAtStr.isNotEmpty) {
+        final compareAt = double.tryParse(compareAtStr);
+        if (compareAt != null && compareAt < 0.0) {
+          _showNotification(
+            'Error: Variant compare-at price cannot be negative.',
+            isError: true,
+          );
+          return;
+        }
+      }
+    }
+
+    final skus = state.variants.map((v) => v['sku'] as String).toList();
     if (skus.toSet().length != skus.length) {
       _showNotification(
         'Error: Each variant must have a unique SKU',
@@ -498,321 +164,39 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       return;
     }
 
-    final apiService = ref.read(apiServiceProvider);
+    final success = await ref
+        .read(productEditorProvider(widget.product).notifier)
+        .save(ref.read(apiServiceProvider), widget.product?.id);
 
-    final productData = {
-      'title': _titleController.text,
-      'slug': _slugController.text,
-      'description': _descriptionController.text,
-      'meta_title': _metaTitleController.text,
-      'meta_description': _metaDescriptionController.text,
-      'status': _status,
-      'is_digital': _isDigital,
-      'is_perishable': _isPerishable,
-      'images': _images,
-      'options_schema': _optionsSchema,
-      'weight_value': double.tryParse(_productWeightController.text),
-      'weight_unit': _productWeightController.text.isNotEmpty
-          ? _productWeightUnit
-          : null,
-      'length_value': double.tryParse(_productLengthController.text),
-      'width_value': double.tryParse(_productWidthController.text),
-      'height_value': double.tryParse(_productHeightController.text),
-      'dimension_unit':
-          (_productLengthController.text.isNotEmpty ||
-              _productWidthController.text.isNotEmpty ||
-              _productHeightController.text.isNotEmpty)
-          ? _productDimensionUnit
-          : null,
-      'variants': _variants.map((v) {
-        final Map<String, dynamic> vMap = {
-          'sku': v['sku'],
-          'price': double.tryParse(v['price']) ?? 0.0,
-          'is_default': v['is_default'],
-          'option_values': Map<String, String>.from(v['option_values'] ?? {}),
-          'images': List<String>.from(v['images'] ?? []),
-          'image_url': v['image_url'],
-        };
-        if (v['variant_id'] != null) vMap['variant_id'] = v['variant_id'];
-        if (v['compare_at_price'].toString().isNotEmpty) {
-          vMap['compare_at_price'] = double.tryParse(v['compare_at_price']);
-        }
-
-        // Shipping overrides
-        if (v['weight_value'].toString().isNotEmpty) {
-          vMap['weight_value'] = double.tryParse(v['weight_value']);
-          vMap['weight_unit'] = v['weight_unit'];
-        }
-        if (v['length_value'].toString().isNotEmpty) {
-          vMap['length_value'] = double.tryParse(v['length_value']);
-        }
-        if (v['width_value'].toString().isNotEmpty) {
-          vMap['width_value'] = double.tryParse(v['width_value']);
-        }
-        if (v['height_value'].toString().isNotEmpty) {
-          vMap['height_value'] = double.tryParse(v['height_value']);
-        }
-        if (v['length_value'].toString().isNotEmpty ||
-            v['width_value'].toString().isNotEmpty ||
-            v['height_value'].toString().isNotEmpty) {
-          vMap['dimension_unit'] = v['dimension_unit'];
-        }
-
-        return vMap;
-      }).toList(),
-    };
-
-    try {
-      if (widget.product == null) {
-        await apiService.createProduct(productData);
-      } else {
-        await apiService.updateProduct(widget.product!.id, productData);
-      }
-      ref.invalidate(productsProvider);
-      if (mounted) {
-        Navigator.pop(context, true);
-      }
-    } catch (e) {
-      if (mounted) {
-        _showNotification('Error: $e', isError: true);
-      }
+    if (success && mounted) {
+      Navigator.pop(context, true);
+    } else if (!success && mounted) {
+      final errorMsg =
+          ref.read(productEditorProvider(widget.product)).errorMessage ??
+              'Unknown error occurred';
+      _showNotification('Error: $errorMsg', isError: true);
     }
   }
 
-  Widget _buildStepperHeader(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final steps = [
-      'Basic Info & Media',
-      'Logistics & SEO',
-      'Options & Variants',
-    ];
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 32.0),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.grey[50],
-        border: Border(bottom: BorderSide(color: theme.dividerColor)),
-      ),
-      child: Row(
-        children: List.generate(steps.length, (index) {
-          final isActive = _currentStep == index;
-          final isCompleted = _currentStep > index;
-
-          return Expanded(
-            child: InkWell(
-              onTap: () {
-                if (index < _currentStep || _formKey.currentState!.validate()) {
-                  setState(() {
-                    _currentStep = index;
-                  });
-                }
-              },
-              borderRadius: BorderRadius.circular(8),
-              child: Row(
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? AppTheme.brandEmerald500
-                          : (isCompleted
-                                ? AppTheme.brandEmerald500.withValues(
-                                    alpha: 0.15,
-                                  )
-                                : Colors.transparent),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isActive || isCompleted
-                            ? AppTheme.brandEmerald500
-                            : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: isCompleted
-                          ? const Icon(
-                              LucideIcons.check,
-                              size: 16,
-                              color: AppTheme.brandEmerald500,
-                            )
-                          : Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                                color: isActive
-                                    ? Colors.white
-                                    : (isDark
-                                          ? Colors.grey[400]
-                                          : Colors.grey[600]),
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      steps[index],
-                      style: TextStyle(
-                        fontWeight: isActive
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                        color: isActive
-                            ? AppTheme.brandEmerald500
-                            : (isDark ? Colors.grey[400] : Colors.grey[600]),
-                        fontSize: 14,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (index < steps.length - 1)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Icon(
-                        LucideIcons.chevronRight,
-                        size: 18,
-                        color: isDark ? Colors.grey[700] : Colors.grey[300],
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
-    if (_variants.length != _lastVariantCount) {
-      final hasPreviousCount = _lastVariantCount > 0;
-      _lastVariantCount = _variants.length;
-      if (hasPreviousCount) {
-        _showVariantChangeAnimation = true;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            setState(() {});
-          }
-        });
-        Future.delayed(const Duration(milliseconds: 2000), () {
-          if (mounted) {
-            setState(() {
-              _showVariantChangeAnimation = false;
-            });
-          }
-        });
-      }
-    }
+    final state = ref.watch(productEditorProvider(widget.product));
 
     Widget stepContent;
     switch (_currentStep) {
       case 0:
-        stepContent = Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 7,
-              child: ProductGeneralInfoCard(
-                titleController: _titleController,
-                slugController: _slugController,
-                descriptionController: _descriptionController,
-                isNewProduct: widget.product == null,
-              ),
-            ),
-            const SizedBox(width: 32),
-            Expanded(
-              flex: 5,
-              child: GlassCard(
-                title: 'Media Gallery',
-                icon: LucideIcons.image,
-                color: const Color(0xFFEC4899),
-                children: [
-                  MediaGalleryUploader(
-                    images: _images,
-                    uploader: _uploader,
-                    onImagesChanged: (newImages) {
-                      setState(() {
-                        _images = newImages;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
+        stepContent = ProductEditorInfoStep(product: widget.product);
         break;
       case 1:
-        stepContent = Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 6,
-              child: ProductClassificationCard(
-                status: _status,
-                onStatusChanged: (v) => setState(() => _status = v),
-                isDigital: _isDigital,
-                onIsDigitalChanged: (v) => setState(() => _isDigital = v),
-                isPerishable: _isPerishable,
-                onIsPerishableChanged: (v) => setState(() => _isPerishable = v),
-                weightController: _productWeightController,
-                weightUnit: _productWeightUnit,
-                onWeightUnitChanged: (v) =>
-                    setState(() => _productWeightUnit = v),
-                lengthController: _productLengthController,
-                widthController: _productWidthController,
-                heightController: _productHeightController,
-                dimensionUnit: _productDimensionUnit,
-                onDimensionUnitChanged: (v) =>
-                    setState(() => _productDimensionUnit = v),
-              ),
-            ),
-            const SizedBox(width: 32),
-            Expanded(
-              flex: 6,
-              child: Column(
-                children: [
-                  ProductSeoCard(
-                    metaTitleController: _metaTitleController,
-                    metaDescriptionController: _metaDescriptionController,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
+        stepContent = ProductEditorLogisticsStep(product: widget.product);
         break;
       case 2:
       default:
-        stepContent = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ProductOptionsCard(
-              optionsSchema: _optionsSchema,
-              onGenerateVariants: _generateVariantsFromOptions,
-              onChanged: () => setState(() {}),
-            ),
-            const SizedBox(height: 32),
-            ProductVariantsSection(
-              variants: _variants,
-              optionsSchema: _optionsSchema,
-              isNewProduct: widget.product == null,
-              isDigital: _isDigital,
-              uploader: _uploader,
-              showVariantChangeAnimation: _showVariantChangeAnimation,
-              onAddVariant: _addVariant,
-              onRemoveVariant: _removeVariant,
-              onChanged: () => setState(() {}),
-            ),
-          ],
-        );
+        stepContent = ProductEditorVariantsStep(product: widget.product);
         break;
     }
 
@@ -836,7 +220,7 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
               padding: const EdgeInsets.only(right: 16.0),
               child: HoverScale(
                 child: ElevatedButton.icon(
-                  onPressed: _save,
+                  onPressed: state.isSaving ? null : _save,
                   icon: const Icon(
                     LucideIcons.save,
                     size: 16,
@@ -865,100 +249,162 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
             ),
           ],
         ),
-        body: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildStepperHeader(context),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(32.0),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.easeIn,
-                    switchOutCurve: Curves.easeOut,
-                    child: KeyedSubtree(
-                      key: ValueKey<int>(_currentStep),
-                      child: stepContent,
+        body: Stack(
+          children: [
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  ProductEditorStepperHeader(
+                    currentStep: _currentStep,
+                    onStepTapped: (index) {
+                      if (index < _currentStep || _formKey.currentState!.validate()) {
+                        setState(() {
+                          _currentStep = index;
+                        });
+                      }
+                    },
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16.0,
+                      ),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        switchInCurve: Curves.easeIn,
+                        switchOutCurve: Curves.easeOut,
+                        child: KeyedSubtree(
+                          key: ValueKey<int>(_currentStep),
+                          child: stepContent,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 12.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.grey[50],
+                      border: Border(
+                        top: BorderSide(color: theme.dividerColor),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (_currentStep > 0)
+                          ElevatedButton.icon(
+                            onPressed: () => setState(() => _currentStep--),
+                            icon: const Icon(LucideIcons.arrowLeft, size: 16),
+                            label: const Text('Back'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isDark
+                                  ? const Color(0xFF334155)
+                                  : Colors.grey[200],
+                              foregroundColor: isDark
+                                  ? Colors.grey[200]
+                                  : Colors.black87,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide.none,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          )
+                        else
+                          const SizedBox.shrink(),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            if (_currentStep < 2) {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() => _currentStep++);
+                              }
+                            } else {
+                              _save();
+                            }
+                          },
+                          icon: Icon(
+                            _currentStep < 2
+                                ? LucideIcons.arrowRight
+                                : LucideIcons.save,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            _currentStep < 2 ? 'Next' : 'Save Product',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.brandEmerald500,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (state.isSaving)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  child: Center(
+                    child: Card(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 24,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const CircularProgressIndicator(
+                              color: AppTheme.brandEmerald500,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              'Saving Product...',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Syncing product details with database',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32.0,
-                  vertical: 20.0,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.grey[50],
-                  border: Border(top: BorderSide(color: theme.dividerColor)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (_currentStep > 0)
-                      ElevatedButton.icon(
-                        onPressed: () => setState(() => _currentStep--),
-                        icon: const Icon(LucideIcons.arrowLeft, size: 16),
-                        label: const Text('Back'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark
-                              ? const Color(0xFF334155)
-                              : Colors.grey[200],
-                          foregroundColor: isDark
-                              ? Colors.grey[200]
-                              : Colors.black87,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 14,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      )
-                    else
-                      const SizedBox.shrink(),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        if (_currentStep < 2) {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => _currentStep++);
-                          }
-                        } else {
-                          _save();
-                        }
-                      },
-                      icon: Icon(
-                        _currentStep < 2
-                            ? LucideIcons.arrowRight
-                            : LucideIcons.save,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      label: Text(
-                        _currentStep < 2 ? 'Next' : 'Save Product',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.brandEmerald500,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );

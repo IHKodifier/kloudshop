@@ -47,7 +47,7 @@ class ProductGeneralInfoCard extends StatelessWidget {
             }
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
         CustomInputField(
           label: 'URL Slug',
           controller: slugController,
@@ -57,15 +57,15 @@ class ProductGeneralInfoCard extends StatelessWidget {
               'The web-friendly URL path for this product page. E.g., /products/my-cool-product.',
           validator: (v) => v?.isEmpty == true ? 'Slug is required' : null,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
         CustomInputField(
           label: 'Description',
           controller: descriptionController,
           hint: 'Describe your product...',
-          maxLines: 4,
           tooltipMessage:
               'Detailed product description explaining features, materials, and benefits to storefront visitors.',
           hasRichTextToolbar: true,
+          isResizable: true,
         ),
       ],
     );

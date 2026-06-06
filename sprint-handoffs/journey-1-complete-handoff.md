@@ -30,7 +30,7 @@ Refer to the specifications in `07c-phase7-ui-overhaul-tracker.md`:
 #### **A. Catalog Overview**
 - **Dart File:** `frontend/lib/views/catalog_view.dart`
 - **Riverpod Provider:** `catalogProvider`
-- **Mockup PNG:** `mock-screens/catalog_overview.png`
+- **Mockup PNG:** ask the user to give it to you in the chat
 - **Five UI States to Implement:**
   - *Default/Active State:* Frosted cards, emerald filter chips, high-density rows.
   - *Loading/Submitting:* Card-skeleton placeholder grids.

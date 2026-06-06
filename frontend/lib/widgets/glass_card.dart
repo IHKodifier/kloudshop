@@ -14,7 +14,7 @@ class GlassCard extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.children,
-    this.padding = const EdgeInsets.all(28),
+    this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
   });
 
   @override
@@ -64,7 +64,7 @@ class GlassCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               ...children,
             ],
           ),

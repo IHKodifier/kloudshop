@@ -6,12 +6,14 @@ import 'package:kloudshop/widgets/product/option_category_editor.dart';
 
 class ProductOptionsCard extends StatefulWidget {
   final List<Map<String, dynamic>> optionsSchema;
+  final bool isGenerating;
   final VoidCallback onGenerateVariants;
-  final VoidCallback onChanged;
+  final ValueChanged<List<Map<String, dynamic>>> onChanged;
 
   const ProductOptionsCard({
     super.key,
     required this.optionsSchema,
+    this.isGenerating = false,
     required this.onGenerateVariants,
     required this.onChanged,
   });
@@ -21,6 +23,76 @@ class ProductOptionsCard extends StatefulWidget {
 }
 
 class _ProductOptionsCardState extends State<ProductOptionsCard> {
+  void _showAddCategoryDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            'Add Option Category',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Category Name',
+                    hintText: 'e.g. Size, Material',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Category name is required';
+                    }
+                    final normalized = v.trim().toLowerCase();
+                    if (widget.optionsSchema.any((opt) => opt['name'].toString().trim().toLowerCase() == normalized)) {
+                      return 'This category name already exists';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (!formKey.currentState!.validate()) return;
+                final name = nameController.text.trim();
+
+                final newSchema = widget.optionsSchema
+                    .map((m) => Map<String, dynamic>.from(m))
+                    .toList()
+                  ..add({
+                    'name': name,
+                    'values': <String>[],
+                  });
+                widget.onChanged(newSchema);
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.brandEmerald500,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GlassCard(
@@ -36,16 +108,32 @@ class _ProductOptionsCardState extends State<ProductOptionsCard> {
         ...widget.optionsSchema.asMap().entries.map((entry) {
           final idx = entry.key;
           final opt = entry.value;
+          final siblingNames = widget.optionsSchema
+              .asMap()
+              .entries
+              .where((e) => e.key != idx)
+              .map((e) => e.value['name'].toString())
+              .toList();
           return OptionCategoryEditor(
             key: ValueKey('opt-$idx-${opt['name']}'),
             option: opt,
+            siblingNames: siblingNames,
             onDelete: () {
-              setState(() {
-                widget.optionsSchema.removeAt(idx);
-              });
-              widget.onChanged();
+              final newSchema = widget.optionsSchema
+                  .asMap()
+                  .entries
+                  .where((e) => e.key != idx)
+                  .map((e) => Map<String, dynamic>.from(e.value))
+                  .toList();
+              widget.onChanged(newSchema);
             },
-            onChanged: widget.onChanged,
+            onChanged: (updatedOpt) {
+              final newSchema = widget.optionsSchema
+                  .map((m) => Map<String, dynamic>.from(m))
+                  .toList();
+              newSchema[idx] = updatedOpt;
+              widget.onChanged(newSchema);
+            },
           );
         }),
         const SizedBox(height: 12),
@@ -56,12 +144,7 @@ class _ProductOptionsCardState extends State<ProductOptionsCard> {
           runSpacing: 12,
           children: [
             TextButton.icon(
-              onPressed: () {
-                setState(() {
-                  widget.optionsSchema.add({'name': '', 'values': <String>[]});
-                });
-                widget.onChanged();
-              },
+              onPressed: () => _showAddCategoryDialog(context),
               icon: const Icon(LucideIcons.plus, size: 16),
               label: const Text('Add Option Category'),
               style: TextButton.styleFrom(
@@ -70,15 +153,24 @@ class _ProductOptionsCardState extends State<ProductOptionsCard> {
             ),
             if (widget.optionsSchema.isNotEmpty)
               ElevatedButton.icon(
-                onPressed: widget.onGenerateVariants,
-                icon: const Icon(
-                  LucideIcons.refreshCw,
-                  size: 14,
-                  color: Colors.white,
-                ),
-                label: const Text(
-                  'Generate Variants',
-                  style: TextStyle(color: Colors.white),
+                onPressed: widget.isGenerating ? null : widget.onGenerateVariants,
+                icon: widget.isGenerating
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(
+                        LucideIcons.refreshCw,
+                        size: 14,
+                        color: Colors.white,
+                      ),
+                label: Text(
+                  widget.isGenerating ? 'Generating...' : 'Generate Variants',
+                  style: const TextStyle(color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.brandEmerald500,

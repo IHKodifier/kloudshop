@@ -14,6 +14,7 @@ import 'package:kloudshop/models/catalog.dart';
 import 'package:kloudshop/models/order.dart';
 import 'package:kloudshop/models/customer.dart';
 import 'package:kloudshop/models/settings.dart';
+import 'package:kloudshop/models/color_preset.dart';
 
 final apiServiceProvider = Provider<ApiService>((ref) {
   final authService = ref.watch(authServiceProvider);
@@ -554,6 +555,82 @@ class ApiService {
       throw ApiException(
         response.statusCode,
         'Failed to delete product: ${response.body}',
+      );
+    }
+  }
+
+  // --- Color Presets ---
+  Future<ColorPreset> createColorPreset(String name, String hexCode) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/products/color-presets'),
+      headers: headers,
+      body: jsonEncode({
+        'name': name,
+        'hex_code': hexCode,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ColorPreset.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(
+        response.statusCode,
+        'Failed to create color preset: ${response.body}',
+      );
+    }
+  }
+
+  Future<List<ColorPreset>> listColorPresets() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/products/color-presets'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => ColorPreset.fromJson(item)).toList();
+    } else {
+      throw ApiException(
+        response.statusCode,
+        'Failed to list color presets: ${response.body}',
+      );
+    }
+  }
+
+  Future<void> deleteColorPreset(String presetId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/products/color-presets/$presetId'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw ApiException(
+        response.statusCode,
+        'Failed to delete color preset: ${response.body}',
+      );
+    }
+  }
+
+  Future<ColorPreset> updateColorPreset(String presetId, String name, String hexCode) async {
+    final headers = await _getHeaders();
+    final response = await http.put(
+      Uri.parse('$baseUrl/products/color-presets/$presetId'),
+      headers: headers,
+      body: jsonEncode({
+        'name': name,
+        'hex_code': hexCode,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return ColorPreset.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(
+        response.statusCode,
+        'Failed to update color preset: ${response.body}',
       );
     }
   }

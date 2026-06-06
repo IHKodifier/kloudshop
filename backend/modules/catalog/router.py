@@ -7,11 +7,11 @@ from typing import List, Optional
 from shared.db import get_db
 from shared.auth import UserClaims
 from shared.rbac import has_permissions
-from .models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule
+from .models import Product, Variant, Collection, CollectionProduct, ImportJob, RedirectRule, ColorPreset
 from .schemas import (
     ProductCreate, ProductResponse, VariantCreate, ProductUpdate,
     CollectionCreate, CollectionResponse, CollectionUpdate, ProductAssignment,
-    ImportJobResponse, RedirectRuleResponse
+    ImportJobResponse, RedirectRuleResponse, ColorPresetCreate, ColorPresetResponse
 )
 import csv
 import io
@@ -559,3 +559,131 @@ async def get_import_job(
     if not job:
         raise HTTPException(status_code=404, detail="Import job not found")
     return job
+
+# --- Color Presets CRUD ---
+
+@router.post("/color-presets", response_model=ColorPresetResponse, status_code=status.HTTP_201_CREATED)
+async def create_color_preset(
+    preset_data: ColorPresetCreate,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["catalog:write"])
+):
+    """
+    Create a new color preset for the merchant's tenant.
+    """
+    new_preset = ColorPreset(
+        name=preset_data.name,
+        hex_code=preset_data.hex_code,
+        tenant_id=user.tenant_id
+    )
+    try:
+        db.add(new_preset)
+        await db.commit()
+    except IntegrityError as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A color preset with this name already exists."
+        )
+    await db.refresh(new_preset)
+    return new_preset
+
+@router.get("/color-presets", response_model=List[ColorPresetResponse])
+async def list_color_presets(
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["catalog:read"])
+):
+    """
+    List all color presets for the tenant.
+    """
+    import uuid
+    result = await db.execute(
+        select(ColorPreset).where(ColorPreset.tenant_id == user.tenant_id).order_by(ColorPreset.name)
+    )
+    presets = result.scalars().all()
+    if not presets:
+        default_data = [
+            ("Pure white", "#ffffff"),
+            ("Jet black", "#000000"),
+            ("Metallic silver", "#c0c0c0"),
+        ]
+        presets = []
+        for name, hex_code in default_data:
+            new_preset = ColorPreset(
+                preset_id=str(uuid.uuid4()),
+                tenant_id=user.tenant_id,
+                name=name,
+                hex_code=hex_code,
+            )
+            db.add(new_preset)
+            presets.append(new_preset)
+        try:
+            await db.commit()
+            for p in presets:
+                await db.refresh(p)
+        except Exception:
+            await db.rollback()
+            result = await db.execute(
+                select(ColorPreset).where(ColorPreset.tenant_id == user.tenant_id).order_by(ColorPreset.name)
+            )
+            presets = result.scalars().all()
+            
+    return presets
+
+@router.delete("/color-presets/{preset_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_color_preset(
+    preset_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["catalog:write"])
+):
+    """
+    Delete a color preset for the tenant.
+    """
+    result = await db.execute(
+        select(ColorPreset).where(
+            ColorPreset.preset_id == preset_id,
+            ColorPreset.tenant_id == user.tenant_id
+        )
+    )
+    preset = result.scalars().first()
+    if not preset:
+        raise HTTPException(status_code=404, detail="Color preset not found")
+    await db.delete(preset)
+    await db.commit()
+    return None
+
+@router.put("/color-presets/{preset_id}", response_model=ColorPresetResponse)
+async def update_color_preset(
+    preset_id: str,
+    preset_data: ColorPresetCreate,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["catalog:write"])
+):
+    """
+    Update an existing color preset for the tenant.
+    """
+    result = await db.execute(
+        select(ColorPreset).where(
+            ColorPreset.preset_id == preset_id,
+            ColorPreset.tenant_id == user.tenant_id
+        )
+    )
+    preset = result.scalars().first()
+    if not preset:
+        raise HTTPException(status_code=404, detail="Color preset not found")
+    
+    preset.name = preset_data.name
+    preset.hex_code = preset_data.hex_code
+    
+    try:
+        await db.commit()
+        await db.refresh(preset)
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A color preset with this name already exists."
+        )
+    return preset
+
+

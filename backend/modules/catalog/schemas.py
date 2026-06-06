@@ -199,3 +199,19 @@ class RedirectRuleResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ColorPresetBase(BaseModel):
+    name: str
+    hex_code: str = Field(..., pattern=r"^#([A-Fa-f0-9]{6})$")
+
+class ColorPresetCreate(ColorPresetBase):
+    pass
+
+class ColorPresetResponse(ColorPresetBase):
+    preset_id: str
+    tenant_id: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
