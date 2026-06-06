@@ -290,29 +290,6 @@ class _ProductEditorVariantsStepState
     _showNotification(context, 'Variant added');
   }
 
-  void _removeVariant(
-    int index,
-    ProductEditorState state,
-    ProductEditorNotifier notifier,
-  ) {
-    if (state.variants.length > 1) {
-      final variant = state.variants[index];
-      final Map<String, String> optionVals = Map<String, String>.from(
-        variant['option_values'] ?? {},
-      );
-      final variantName = optionVals.isEmpty
-          ? 'Default Variant'
-          : optionVals.values.map((v) => v.trim()).join(' / ');
-
-      notifier.removeVariant(index);
-      _showNotification(
-        context,
-        'Variant "$variantName" deleted Successfully',
-        isDeletion: true,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(productEditorProvider(widget.product));
@@ -358,7 +335,6 @@ class _ProductEditorVariantsStepState
           uploader: _uploader,
           showVariantChangeAnimation: _showVariantChangeAnimation,
           onAddVariant: () => _addVariant(notifier),
-          onRemoveVariant: (idx) => _removeVariant(idx, state, notifier),
           onChanged: () {
             notifier.updateVariants(List.from(state.variants));
           },
