@@ -482,39 +482,37 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                   SizedBox(
                     width: 300,
                     height: 280,
-                    child: SingleChildScrollView(
-                      child: activeStyle == PickerStyle.wheel
-                          ? ColorPicker(
-                              pickerColor: pickedColor,
-                              onColorChanged: (color) {
-                                setDialogState(() {
-                                  pickedColor = color;
-                                });
-                              },
-                              pickerAreaHeightPercent: 0.7,
-                              enableAlpha: false,
-                              portraitOnly: true,
-                              colorPickerWidth: 260.0,
-                              labelTypes: const [],
-                            )
-                          : activeStyle == PickerStyle.swatches
-                              ? _SwatchesPicker(
-                                  pickerColor: pickedColor,
-                                  onColorChanged: (color) {
-                                    setDialogState(() {
-                                      pickedColor = color;
-                                    });
-                                  },
-                                )
-                              : BlockPicker(
-                                  pickerColor: pickedColor,
-                                  onColorChanged: (color) {
-                                    setDialogState(() {
-                                      pickedColor = color;
-                                    });
-                                  },
-                                ),
-                    ),
+                    child: activeStyle == PickerStyle.wheel
+                        ? ColorPicker(
+                            pickerColor: pickedColor,
+                            onColorChanged: (color) {
+                              setDialogState(() {
+                                pickedColor = color;
+                              });
+                            },
+                            pickerAreaHeightPercent: 0.7,
+                            enableAlpha: false,
+                            portraitOnly: true,
+                            colorPickerWidth: 260.0,
+                            labelTypes: const [],
+                          )
+                        : activeStyle == PickerStyle.swatches
+                            ? _SwatchesPicker(
+                                pickerColor: pickedColor,
+                                onColorChanged: (color) {
+                                  setDialogState(() {
+                                    pickedColor = color;
+                                  });
+                                },
+                              )
+                            : BlockPicker(
+                                pickerColor: pickedColor,
+                                onColorChanged: (color) {
+                                  setDialogState(() {
+                                    pickedColor = color;
+                                  });
+                                },
+                              ),
                   ),
                 ],
               ),
