@@ -250,17 +250,20 @@ class _VariantItemCardState extends State<_VariantItemCard>
 
   void _handleToggle(bool val) {
     if (_isCollapsing) return;
-    setState(() {
-      _isCollapsing = true;
-    });
-    _controller.duration = const Duration(milliseconds: 1800);
-    _controller.reverse().then((_) {
-      widget.onToggleActive(val);
-      if (mounted) {
-        setState(() {
-          _isCollapsing = false;
-        });
-      }
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      setState(() {
+        _isCollapsing = true;
+      });
+      _controller.duration = const Duration(milliseconds: 1800);
+      _controller.reverse().then((_) {
+        widget.onToggleActive(val);
+        if (mounted) {
+          setState(() {
+            _isCollapsing = false;
+          });
+        }
+      });
     });
   }
 
