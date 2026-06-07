@@ -27,10 +27,34 @@ class CompactMediaListUploader extends StatefulWidget {
 class _CompactMediaListUploaderState extends State<CompactMediaListUploader> {
   bool _isDragging = false;
   final List<Map<String, dynamic>> _uploadQueue = [];
+  List<String>? _localImages;
+  int _uploadCounter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _localImages = List<String>.from(widget.images);
+  }
+
+  @override
+  void didUpdateWidget(covariant CompactMediaListUploader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.images != oldWidget.images) {
+      final newLocal = List<String>.from(widget.images);
+      if (_uploadQueue.isNotEmpty) {
+        for (final img in _localImages ?? []) {
+          if (!oldWidget.images.contains(img) && !newLocal.contains(img)) {
+            newLocal.add(img);
+          }
+        }
+      }
+      _localImages = newLocal;
+    }
+  }
 
   void _startVariantUpload(String fileName, Future<Uint8List> bytesFuture) {
     final String uploadId =
-        "${DateTime.now().millisecondsSinceEpoch}_$fileName";
+        "${DateTime.now().millisecondsSinceEpoch}_${_uploadCounter++}_$fileName";
 
     final Map<String, dynamic> uploadItem = {
       'id': uploadId,
@@ -67,9 +91,10 @@ class _CompactMediaListUploaderState extends State<CompactMediaListUploader> {
           if (idx != -1) {
             final item = _uploadQueue[idx];
             if (item['status'] != 'cancelled') {
-              final updatedList = List<String>.from(widget.images)
-                ..add(imageUrl);
-              widget.onImagesChanged(updatedList);
+              setState(() {
+                _localImages!.add(imageUrl);
+              });
+              widget.onImagesChanged(List<String>.from(_localImages!));
             }
             setState(() {
               _uploadQueue.removeAt(idx);
@@ -104,6 +129,7 @@ class _CompactMediaListUploaderState extends State<CompactMediaListUploader> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final currentImages = _localImages ?? widget.images;
 
     return DropTarget(
       onDragDone: (detail) {
@@ -151,7 +177,7 @@ class _CompactMediaListUploaderState extends State<CompactMediaListUploader> {
               ),
             ),
             const SizedBox(width: 12),
-            if (widget.images.isEmpty && _uploadQueue.isEmpty)
+            if (currentImages.isEmpty && _uploadQueue.isEmpty)
               Expanded(
                 child: Text(
                   _isDragging
@@ -172,17 +198,17 @@ class _CompactMediaListUploaderState extends State<CompactMediaListUploader> {
                   height: 48,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: widget.images.length + _uploadQueue.length,
+                    itemCount: currentImages.length + _uploadQueue.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(width: 8),
                     itemBuilder: (context, vImgIdx) {
-                      if (vImgIdx < widget.images.length) {
+                      if (vImgIdx < currentImages.length) {
                         return Stack(
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(6),
                               child: Image.network(
-                                widget.images[vImgIdx],
+                                currentImages[vImgIdx],
                                 width: 48,
                                 height: 48,
                                 fit: BoxFit.cover,
@@ -205,8 +231,11 @@ class _CompactMediaListUploaderState extends State<CompactMediaListUploader> {
                                   padding: EdgeInsets.zero,
                                   onPressed: () {
                                     final updatedList = List<String>.from(
-                                      widget.images,
+                                      currentImages,
                                     )..removeAt(vImgIdx);
+                                    setState(() {
+                                      _localImages = updatedList;
+                                    });
                                     widget.onImagesChanged(updatedList);
                                   },
                                 ),
@@ -216,7 +245,7 @@ class _CompactMediaListUploaderState extends State<CompactMediaListUploader> {
                         );
                       }
 
-                      final qIdx = vImgIdx - widget.images.length;
+                      final qIdx = vImgIdx - currentImages.length;
                       final upload = _uploadQueue[qIdx];
                       final progress = upload['progress'] as double;
 

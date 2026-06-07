@@ -146,3 +146,6 @@ This changelog records the architecture, model, provider, and UI changes made du
   - Successfully verified execution with all 6/6 lockout tests and all 11/11 existing auth tests passing cleanly.
 
 - Updated modal display duration for variant toggle from 3000ms to 1500ms in `product_variants_section.dart`.
+- Added ignore entry for `backend/backend/storage/media/` to `.gitignore`.
+- Resolved concurrent image upload race condition in `media_gallery_uploader.dart` and `compact_media_list_uploader.dart` by implementing local state tracking (`_localImages`) and generating unique upload IDs.
+
