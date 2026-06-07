@@ -224,9 +224,230 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
       return;
     }
 
+    final changedSkuVariants = state.variants.where((v) {
+      return v['variant_id'] != null &&
+          v['sku'] != null &&
+          v['original_sku'] != null &&
+          v['sku'] != v['original_sku'];
+    }).toList();
+
+    bool emailSkuReport = true;
+    if (changedSkuVariants.isNotEmpty) {
+      bool? shouldProceed;
+      await showGeneralDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: 'SKU Modifications Warning',
+        barrierColor: Colors.black.withValues(alpha: 0.65),
+        transitionDuration: const Duration(milliseconds: 300),
+        pageBuilder: (context, anim1, anim2) {
+          return StatefulBuilder(
+            builder: (context, setDialogState) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              final Color textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+              final Color subtextColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
+
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                backgroundColor: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.9) : Colors.white,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 550),
+                  padding: const EdgeInsets.all(28.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.red[500]!.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.warning_amber_rounded, color: Colors.red[600], size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Text(
+                              'SKU Modifications Detected',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Outfit',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'You have updated the SKU for one or more existing variants. This will change their deep-link URLs and could temporarily break linked Google Shopping campaigns, social merchandise tags, or bookmarks.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: subtextColor,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Modified SKUs:',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                          fontFamily: 'Outfit',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E293B) : Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF334155) : Colors.grey[200]!,
+                          ),
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.all(12),
+                          itemCount: changedSkuVariants.length,
+                          separatorBuilder: (context, index) => const Divider(height: 12),
+                          itemBuilder: (context, idx) {
+                            final v = changedSkuVariants[idx];
+                            final opts = Map<String, String>.from(v['option_values'] ?? {});
+                            final optionStr = opts.values.join(' / ');
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    optionStr.isNotEmpty ? optionStr : 'Variant #${idx + 1}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                      fontFamily: 'Outfit',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        v['original_sku'] ?? '',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          decoration: TextDecoration.lineThrough,
+                                          color: Colors.red[400],
+                                          fontFamily: 'Inter',
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Icon(Icons.arrow_forward, size: 12, color: Colors.grey),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        v['sku'] ?? '',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.brandEmerald500,
+                                          fontFamily: 'Inter',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Checkbox for report
+                      CheckboxListTile(
+                        value: emailSkuReport,
+                        onChanged: (val) {
+                          setDialogState(() {
+                            emailSkuReport = val ?? false;
+                          });
+                        },
+                        title: const Text(
+                          'I understand, send me a report with the old and new SKUs and URL slugs in my email and I will update my campaigns.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        activeColor: AppTheme.brandEmerald500,
+                      ),
+                      const SizedBox(height: 20),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              shouldProceed = false;
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Cancel & Edit',
+                              style: TextStyle(
+                                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: () {
+                              shouldProceed = true;
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.brandEmerald500,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            ),
+                            child: const Text(
+                              'Proceed and Save',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Outfit',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      if (shouldProceed != true) {
+        return; // User cancelled
+      }
+    }
+
     final success = await ref
         .read(productEditorProvider(widget.product).notifier)
-        .save(ref.read(apiServiceProvider), widget.product?.id);
+        .save(ref.read(apiServiceProvider), widget.product?.id, emailSkuReport: emailSkuReport);
 
     if (success && mounted) {
       Navigator.pop(context, true);

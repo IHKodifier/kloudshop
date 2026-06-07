@@ -166,6 +166,17 @@ This changelog records the architecture, model, provider, and UI changes made du
 - **Design Guidelines Relocation**:
   - Relocated light and dark design documents to `specifications/design/` (creating `light-design.md` and `dark-DESIGN.md` as the gold standards).
   - Updated color YAML tokens to match the actual high-contrast green colors (`#124B47` for Primary brand teal, `#047857` / `#34D399` for Success emerald greens) in `app_theme.dart`.
+- **Intelligent Variant Reconciliation**:
+  - Implemented overlapping option matching, sorting priority, database ID (`variant_id`) preservation, and custom SKU suffix propagation in [product_editor_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart).
+  - Added glassmorphic choice dialog (Intelligent Reconciliation vs. Fresh Generation) when option schemas change in [product_editor_variants_step.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart).
+- **SKU Modification Warnings & Email Reports**:
+  - Added inline warnings below modified SKU input fields in [product_variants_section.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart).
+  - Implemented the glassmorphic "SKU Modifications Detected" warning dialog with an email report checkbox in [product_editor_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) when saving SKU changes.
+  - Added `email_sku_report` query parameter, variant SKU change comparison, and `send_sku_change_report_email` background task in [router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py).
+  - Connected the `emailSkuReport` flag in [api_service.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/api_service.dart) and updated [product_editor_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart) to pass it during save.
+- **Verification & Testing**:
+  - Added `test_update_product_sku_report` unit test to [test_catalog.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py).
+  - Verified that all 8 backend catalog tests pass cleanly, and the frontend compiles without errors under `flutter analyze`.
 
 
 

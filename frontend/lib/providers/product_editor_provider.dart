@@ -163,6 +163,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       vars.add({
         'variant_id': v.id,
         'sku': v.sku,
+        'original_sku': v.sku,
         'price': v.price.toString(),
         'compare_at_price': v.compareAtPrice?.toString() ?? '',
         'stock': v.stock?.toString() ?? '0',
@@ -340,7 +341,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
     }
   }
 
-  void generateVariantsFromOptions() {
+  void generateVariantsFromOptions({bool reconcile = false}) {
     final activeOptions = state.optionsSchema.where((opt) {
       final name = (opt['name'] as String? ?? '').trim();
       final values = List<dynamic>.from(opt['values'] ?? []);
@@ -374,20 +375,113 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
 
     final permutations = cartesianProduct(activeOptions, 0);
     final List<Map<String, dynamic>> newVariants = [];
+    final oldVariants = state.variants;
+    final Set<Map<String, dynamic>> usedOldVariants = {};
 
     for (var i = 0; i < permutations.length; i++) {
       final perm = permutations[i];
+
+      // Default fallback generation for SKU
       final optionStr = perm.values.join('-');
       final baseSku = state.slug.toUpperCase();
-      final suffix = optionStr.toUpperCase().replaceAll(
+      final defaultSuffix = optionStr.toUpperCase().replaceAll(
         RegExp(r'[^A-Z0-9\-]'),
         '-',
       );
-      final sku = baseSku.isNotEmpty ? '$baseSku-$suffix' : '';
+      final defaultSku = baseSku.isNotEmpty ? '$baseSku-$defaultSuffix' : '';
 
+      if (reconcile && oldVariants.isNotEmpty) {
+        // Step 1: Identify Overlap Matches
+        final matches = oldVariants.where((oldVar) {
+          final oldOpts = Map<String, String>.from(oldVar['option_values'] ?? {});
+          final intersectionKeys = perm.keys.where((k) => oldOpts.containsKey(k));
+          if (intersectionKeys.isEmpty) return false;
+          return intersectionKeys.every((k) => perm[k] == oldOpts[k]);
+        }).toList();
+
+        if (matches.isNotEmpty) {
+          // Step 2: Priority Sorting
+          matches.sort((a, b) {
+            final aOpts = Map<String, String>.from(a['option_values'] ?? {});
+            final bOpts = Map<String, String>.from(b['option_values'] ?? {});
+            
+            // 1. Perfect Match
+            final aIsPerfect = aOpts.length == perm.length;
+            final bIsPerfect = bOpts.length == perm.length;
+            if (aIsPerfect && !bIsPerfect) return -1;
+            if (!aIsPerfect && bIsPerfect) return 1;
+
+            // 2. Default Variant
+            final aIsDefault = a['is_default'] == true;
+            final bIsDefault = b['is_default'] == true;
+            if (aIsDefault && !bIsDefault) return -1;
+            if (!aIsDefault && bIsDefault) return 1;
+
+            return 0;
+          });
+
+          final bestMatch = matches.first;
+          final bestMatchOpts = Map<String, String>.from(bestMatch['option_values'] ?? {});
+          final isPerfectMatch = bestMatchOpts.length == perm.length;
+
+          // Step 3: Value Propagation
+          dynamic variantId;
+          String sku;
+
+          if (isPerfectMatch) {
+            variantId = bestMatch['variant_id'];
+            sku = bestMatch['sku'] ?? '';
+            usedOldVariants.add(bestMatch);
+          } else {
+            // Partial Match (split / add / remove options)
+            if (bestMatch['variant_id'] != null && !usedOldVariants.contains(bestMatch)) {
+              variantId = bestMatch['variant_id'];
+              usedOldVariants.add(bestMatch);
+            } else {
+              variantId = null;
+            }
+
+            // Suffix generation
+            final newKeys = perm.keys.where((k) => !bestMatchOpts.containsKey(k)).toList();
+            if (newKeys.isNotEmpty) {
+              final suffixParts = newKeys.map((k) => perm[k]!).join('-');
+              final suffix = suffixParts.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9\-]'), '-');
+              final baseOldSku = bestMatch['sku'] as String? ?? '';
+              sku = baseOldSku.isNotEmpty ? '$baseOldSku-$suffix' : '';
+            } else {
+              sku = bestMatch['sku'] as String? ?? '';
+            }
+          }
+
+          newVariants.add({
+            'variant_id': variantId,
+            'sku': sku,
+            'original_sku': bestMatch['original_sku'] ?? bestMatch['sku'],
+            'price': bestMatch['price'] ?? '0.00',
+            'compare_at_price': bestMatch['compare_at_price'] ?? '',
+            'stock': bestMatch['stock'] ?? '0',
+            'is_default': bestMatch['is_default'] ?? (i == 0),
+            'is_active': bestMatch['is_active'] ?? true,
+            'option_values': perm,
+            'images': List<String>.from(bestMatch['images'] ?? []),
+            'image_url': bestMatch['image_url'],
+            'weight_value': bestMatch['weight_value'] ?? '',
+            'weight_unit': bestMatch['weight_unit'] ?? 'kg',
+            'length_value': bestMatch['length_value'] ?? '',
+            'width_value': bestMatch['width_value'] ?? '',
+            'height_value': bestMatch['height_value'] ?? '',
+            'dimension_unit': bestMatch['dimension_unit'] ?? 'cm',
+            'show_shipping_overrides': bestMatch['show_shipping_overrides'] ?? false,
+            'is_expanded': false,
+          });
+          continue;
+        }
+      }
+
+      // Fresh generation or no match found
       newVariants.add({
         'variant_id': null,
-        'sku': sku,
+        'sku': defaultSku,
         'price': '0.00',
         'compare_at_price': '',
         'stock': '0',
@@ -410,7 +504,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
     state = state.copyWith(variants: newVariants);
   }
 
-  Future<bool> save(ApiService apiService, String? productId) async {
+  Future<bool> save(ApiService apiService, String? productId, {bool emailSkuReport = false}) async {
     state = state.copyWith(isSaving: true, errorMessage: null);
 
     final productData = {
@@ -497,7 +591,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       if (productId == null) {
         await apiService.createProduct(productData);
       } else {
-        await apiService.updateProduct(productId, productData);
+        await apiService.updateProduct(productId, productData, emailSkuReport: emailSkuReport);
       }
       ref.invalidate(productsProvider);
       state = state.copyWith(isSaving: false);

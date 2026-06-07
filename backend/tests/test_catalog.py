@@ -140,3 +140,38 @@ async def test_product_is_perishable(client: AsyncClient, mock_firebase_user, db
     assert response.status_code == 201
     data = response.json()
     assert data["is_perishable"] is True
+
+@pytest.mark.asyncio
+async def test_update_product_sku_report(client: AsyncClient, mock_firebase_user, db_session):
+    """Verify that updating a variant SKU with email_sku_report=true triggers change detection."""
+    headers = {"Authorization": "Bearer valid_token"}
+    # 1. Create a product
+    create_payload = {
+        "title": "Jacket V1",
+        "slug": "jacket-v1",
+        "variants": [{"sku": "JKT-OLD", "price": 100.0}]
+    }
+    create_resp = await client.post("/api/v1/products/", json=create_payload, headers=headers)
+    assert create_resp.status_code == 201
+    product = create_resp.json()
+    product_id = product["product_id"]
+    variant_id = product["variants"][0]["variant_id"]
+
+    # 2. Update with SKU change and email_sku_report=true
+    update_payload = {
+        "title": "Jacket V1",
+        "slug": "jacket-v1",
+        "variants": [{
+            "variant_id": variant_id,
+            "sku": "JKT-NEW",
+            "price": 100.0
+        }]
+    }
+    update_resp = await client.put(
+        f"/api/v1/products/{product_id}?email_sku_report=true",
+        json=update_payload,
+        headers=headers
+    )
+    assert update_resp.status_code == 200
+    data = update_resp.json()
+    assert data["variants"][0]["sku"] == "JKT-NEW"

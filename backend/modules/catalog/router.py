@@ -114,6 +114,7 @@ async def update_product(
     product_id: str,
     product_data: ProductUpdate,
     background_tasks: BackgroundTasks,
+    email_sku_report: bool = False,
     db: AsyncSession = Depends(get_db),
     user: UserClaims = has_permissions(["catalog:write"])
 ):
@@ -140,6 +141,7 @@ async def update_product(
         setattr(product, key, value)
 
     # 3. Handle Variants Reconciliation
+    sku_changes = []
     if product_data.variants is not None:
         existing_variants_map = {v.variant_id: v for v in product.variants}
         incoming_variant_ids = {v.variant_id for v in product_data.variants if v.variant_id}
@@ -154,6 +156,13 @@ async def update_product(
             if v_data.variant_id and v_data.variant_id in existing_variants_map:
                 # Update existing
                 variant = existing_variants_map[v_data.variant_id]
+                # Track SKU change before writing update
+                if v_data.sku and v_data.sku != variant.sku:
+                    sku_changes.append({
+                        "option_values": variant.option_values,
+                        "old_sku": variant.sku,
+                        "new_sku": v_data.sku
+                    })
                 v_update_dict = v_data.model_dump(exclude_unset=True, exclude={"variant_id"})
                 for key, value in v_update_dict.items():
                     setattr(variant, key, value)
@@ -235,6 +244,10 @@ async def update_product(
     # 5. Trigger Google Shopping update
     background_tasks.add_task(trigger_google_shopping_update, user.tenant_id, product.product_id)
 
+    # 6. Send SKU report email if requested and SKUs changed
+    if email_sku_report and sku_changes:
+        background_tasks.add_task(send_sku_change_report_email, user.email, product.title, product.slug, sku_changes)
+
     return product
 
 @router.get("/redirects", response_model=List[RedirectRuleResponse])
@@ -259,6 +272,15 @@ async def trigger_google_shopping_update(tenant_id: str, product_id: str):
     """
     print(f"DEBUG: Triggering Google Shopping update for tenant {tenant_id}, product {product_id}")
     # TODO: Implement XML feed regeneration logic
+
+async def send_sku_change_report_email(email: str, product_title: str, product_slug: str, changes: list):
+    """
+    Simulates sending an email report of variant SKU changes to the merchant.
+    """
+    print(f"DEBUG: Sending SKU change report email to {email} for product '{product_title}' (slug: {product_slug})")
+    for change in changes:
+        opt_str = " / ".join(f"{k}: {v}" for k, v in change["option_values"].items())
+        print(f"  - Variant ({opt_str}): {change['old_sku']} -> {change['new_sku']}")
 
 # --- Collections ---
 

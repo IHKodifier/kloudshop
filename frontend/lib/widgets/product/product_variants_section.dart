@@ -511,23 +511,55 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                   children: [
                                     Expanded(
                                       flex: 3,
-                                      child: TextFormField(
-                                        initialValue: variant['sku'],
-                                        style: customInputStyle,
-                                        enabled: isActive,
-                                        decoration: InputDecoration(
-                                          labelText: 'SKU',
-                                          labelStyle: customLabelStyle,
-                                          border: const OutlineInputBorder(),
-                                          contentPadding: customPadding,
-                                        ),
-                                        onChanged: (v) {
-                                          variant['sku'] = v;
-                                          widget.onChanged();
-                                        },
-                                        validator: (v) => v?.isEmpty == true
-                                            ? 'Required'
-                                            : null,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          TextFormField(
+                                            initialValue: variant['sku'],
+                                            style: customInputStyle,
+                                            enabled: isActive,
+                                            decoration: InputDecoration(
+                                              labelText: 'SKU',
+                                              labelStyle: customLabelStyle,
+                                              border: const OutlineInputBorder(),
+                                              contentPadding: customPadding,
+                                            ),
+                                            onChanged: (v) {
+                                              variant['sku'] = v;
+                                              widget.onChanged();
+                                            },
+                                            validator: (v) => v?.isEmpty == true
+                                                ? 'Required'
+                                                : null,
+                                          ),
+                                          if (variant['variant_id'] != null &&
+                                              variant['sku'] != variant['original_sku'])
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 6.0),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Icon(
+                                                    Icons.warning_amber_rounded,
+                                                    color: Colors.amber[700],
+                                                    size: 14,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Changing this SKU will break external marketing deep links.',
+                                                      style: TextStyle(
+                                                        color: Colors.amber[800],
+                                                        fontSize: 10,
+                                                        fontFamily: 'Inter',
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     ),
                                     const SizedBox(width: 8),

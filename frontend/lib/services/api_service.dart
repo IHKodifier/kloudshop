@@ -525,11 +525,15 @@ class ApiService {
 
   Future<Product> updateProduct(
     String productId,
-    Map<String, dynamic> productData,
-  ) async {
+    Map<String, dynamic> productData, {
+    bool emailSkuReport = false,
+  }) async {
     final headers = await _getHeaders();
+    final url = emailSkuReport
+        ? '$baseUrl/products/$productId?email_sku_report=true'
+        : '$baseUrl/products/$productId';
     final response = await http.put(
-      Uri.parse('$baseUrl/products/$productId'),
+      Uri.parse(url),
       headers: headers,
       body: jsonEncode(productData),
     );

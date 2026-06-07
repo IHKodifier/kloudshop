@@ -104,13 +104,6 @@ class _ProductEditorVariantsStepState
 
     if (activeOptions.isEmpty) return;
 
-    setState(() {
-      _isGenerating = true;
-    });
-
-    // Yield a frame to let the loading spinner render on the button
-    await Future.delayed(const Duration(milliseconds: 100));
-
     List<Map<String, String>> cartesianProduct(
       List<Map<String, dynamic>> options,
       int index,
@@ -135,11 +128,283 @@ class _ProductEditorVariantsStepState
     }
 
     final permutations = cartesianProduct(activeOptions, 0);
+
+    // Detect if permutations have changed
+    bool permutationsChanged = false;
+    if (state.variants.isNotEmpty) {
+      if (permutations.length != state.variants.length) {
+        permutationsChanged = true;
+      } else {
+        for (var perm in permutations) {
+          final hasMatch = state.variants.any((v) {
+            final vOpts = Map<String, String>.from(v['option_values'] ?? {});
+            if (vOpts.length != perm.length) return false;
+            return perm.entries.every((e) => vOpts[e.key] == e.value);
+          });
+          if (!hasMatch) {
+            permutationsChanged = true;
+            break;
+          }
+        }
+      }
+    }
+
+    bool reconcileMode = true;
+    if (permutationsChanged) {
+      bool? shouldProceed;
+      await showGeneralDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: 'Reconciliation Choice',
+        barrierColor: Colors.black.withValues(alpha: 0.65),
+        transitionDuration: const Duration(milliseconds: 300),
+        pageBuilder: (context, anim1, anim2) {
+          return StatefulBuilder(
+            builder: (context, setDialogState) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              final Color activeBorder = AppTheme.brandEmerald500;
+              final Color inactiveBorder = isDark ? const Color(0xFF334155) : Colors.grey[200]!;
+              final Color activeBg = AppTheme.brandEmerald500.withValues(alpha: 0.1);
+              final Color inactiveBg = isDark ? const Color(0xFF1E293B) : Colors.white;
+
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                backgroundColor: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.9) : Colors.white,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  padding: const EdgeInsets.all(28.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.amber[500]!.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.merge_type_rounded, color: Colors.amber[600], size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Text(
+                              'Reconcile Variants?',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Outfit',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'You have modified option categories or values. Choose how you want to update the existing variant configurations:',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Option 1: Intelligent Reconciliation
+                      InkWell(
+                        onTap: () {
+                          setDialogState(() {
+                            reconcileMode = true;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: reconcileMode ? activeBg : inactiveBg,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: reconcileMode ? activeBorder : inactiveBorder,
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Radio<bool>(
+                                value: true,
+                                groupValue: reconcileMode,
+                                activeColor: AppTheme.brandEmerald500,
+                                onChanged: (val) {
+                                  setDialogState(() {
+                                    reconcileMode = true;
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Intelligent Reconciliation (Recommended)',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        fontFamily: 'Outfit',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Preserves configured pricing, stock levels, images, and shipping overrides from matched old variants. Custom SKUs will propagate with option suffixes.',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                        fontFamily: 'Inter',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Option 2: Fresh Generation
+                      InkWell(
+                        onTap: () {
+                          setDialogState(() {
+                            reconcileMode = false;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: !reconcileMode ? activeBg : inactiveBg,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: !reconcileMode ? activeBorder : inactiveBorder,
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Radio<bool>(
+                                value: false,
+                                groupValue: reconcileMode,
+                                activeColor: AppTheme.brandEmerald500,
+                                onChanged: (val) {
+                                  setDialogState(() {
+                                    reconcileMode = false;
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Fresh Generation',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        fontFamily: 'Outfit',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Discards all current variants and generates new ones with default pricing, stock, and slug-based SKUs. Any manual overrides will be lost.',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                        fontFamily: 'Inter',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Action Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              shouldProceed = false;
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: () {
+                              shouldProceed = true;
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.brandEmerald500,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            ),
+                            child: const Text(
+                              'Apply Selection',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Outfit',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      if (shouldProceed != true) {
+        return; // User cancelled
+      }
+    }
+
+    setState(() {
+      _isGenerating = true;
+    });
+
+    // Yield a frame to let the loading spinner render on the button
+    await Future.delayed(const Duration(milliseconds: 100));
+
     final List<String> names = permutations
         .map((perm) => perm.values.join(' / '))
         .toList();
 
-    notifier.generateVariantsFromOptions();
+    notifier.generateVariantsFromOptions(reconcile: reconcileMode);
 
     if (mounted) {
       setState(() {
