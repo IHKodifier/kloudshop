@@ -16,6 +16,10 @@ class Product {
   final double? widthValue;
   final double? heightValue;
   final String? dimensionUnit;
+  final int? minimumAgeYears;
+  final bool ageVerificationRequired;
+  final bool requiresPrescription;
+  final bool prescriptionDocumentRequired;
   final DateTime createdAt;
   final List<ProductVariant> variants;
 
@@ -37,6 +41,10 @@ class Product {
     this.widthValue,
     this.heightValue,
     this.dimensionUnit,
+    this.minimumAgeYears,
+    required this.ageVerificationRequired,
+    required this.requiresPrescription,
+    required this.prescriptionDocumentRequired,
     required this.createdAt,
     required this.variants,
   });
@@ -76,6 +84,12 @@ class Product {
           ? _toDouble(json['height_value'])
           : null,
       dimensionUnit: json['dimension_unit'] as String?,
+      minimumAgeYears: json['minimum_age_years'] as int?,
+      ageVerificationRequired:
+          json['age_verification_required'] as bool? ?? false,
+      requiresPrescription: json['requires_prescription'] as bool? ?? false,
+      prescriptionDocumentRequired:
+          json['prescription_document_required'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
       variants:
           (json['variants'] as List<dynamic>?)

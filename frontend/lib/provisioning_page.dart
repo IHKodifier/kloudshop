@@ -5,6 +5,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/services/auth_service.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/lottie_toggle.dart';
 import 'package:kloudshop/models/gcp_region.dart';
 import 'package:kloudshop/providers/provisioning_provider.dart';
 
@@ -1588,13 +1589,9 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
               ],
             ),
           ),
-          Switch(
+          LottieToggle(
             value: value,
             onChanged: onChanged,
-            activeThumbColor: AppTheme.brandEmerald500,
-            activeTrackColor: AppTheme.brandEmerald500.withValues(alpha: 0.3),
-            inactiveThumbColor: Colors.grey,
-            inactiveTrackColor: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
           ),
         ],
       ),

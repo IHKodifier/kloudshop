@@ -132,6 +132,18 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
 
     final state = ref.read(productEditorProvider(widget.product));
 
+    // Validate age gating compliance fields
+    if (state.ageVerificationRequired) {
+      final age = int.tryParse(state.minimumAgeYears);
+      if (age == null || age <= 0) {
+        _showNotification(
+          'Error: Minimum age must be a positive number greater than zero.',
+          isError: true,
+        );
+        return;
+      }
+    }
+
     // Validate variant pricing
     for (var v in state.variants) {
       final price = double.tryParse(v['price'].toString()) ?? 0.0;
@@ -151,6 +163,54 @@ class _ProductEditorViewState extends ConsumerState<ProductEditorView> {
             isError: true,
           );
           return;
+        }
+      }
+
+      // Validate variant shipping overrides if enabled
+      if (v['show_shipping_overrides'] == true) {
+        final weightStr = v['weight_value']?.toString() ?? '';
+        if (weightStr.isNotEmpty) {
+          final weight = double.tryParse(weightStr);
+          if (weight == null || weight <= 0.0) {
+            _showNotification(
+              'Error: Variant weight override must be a positive number greater than zero.',
+              isError: true,
+            );
+            return;
+          }
+        }
+        final lengthStr = v['length_value']?.toString() ?? '';
+        if (lengthStr.isNotEmpty) {
+          final length = double.tryParse(lengthStr);
+          if (length == null || length <= 0.0) {
+            _showNotification(
+              'Error: Variant length override must be a positive number greater than zero.',
+              isError: true,
+            );
+            return;
+          }
+        }
+        final widthStr = v['width_value']?.toString() ?? '';
+        if (widthStr.isNotEmpty) {
+          final width = double.tryParse(widthStr);
+          if (width == null || width <= 0.0) {
+            _showNotification(
+              'Error: Variant width override must be a positive number greater than zero.',
+              isError: true,
+            );
+            return;
+          }
+        }
+        final heightStr = v['height_value']?.toString() ?? '';
+        if (heightStr.isNotEmpty) {
+          final height = double.tryParse(heightStr);
+          if (height == null || height <= 0.0) {
+            _showNotification(
+              'Error: Variant height override must be a positive number greater than zero.',
+              isError: true,
+            );
+            return;
+          }
         }
       }
     }

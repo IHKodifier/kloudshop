@@ -23,6 +23,7 @@ import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/views/themes_view.dart';
 import 'package:kloudshop/widgets/feature_gate.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/lottie_toggle.dart';
 import 'package:kloudshop/provisioning_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -402,7 +403,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                 isDark ? 'Dark Mode' : 'Light Mode',
                                 style: const TextStyle(fontSize: 14),
                               ),
-                              trailing: Switch(
+                              trailing: LottieToggle(
                                 value: isDark,
                                 onChanged: (val) => ref
                                     .read(themeModeProvider.notifier)

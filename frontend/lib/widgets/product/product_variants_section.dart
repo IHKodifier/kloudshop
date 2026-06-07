@@ -3,6 +3,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/lottie_toggle.dart';
 import 'package:kloudshop/widgets/upload/compact_media_list_uploader.dart';
 import 'package:kloudshop/services/file_uploader.dart';
 
@@ -482,7 +483,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          _LottieToggle(
+                          LottieToggle(
                             value: isActive,
                             onChanged: _handleToggle,
                           ),
@@ -670,31 +671,25 @@ class _VariantItemCardState extends State<_VariantItemCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            TextButton.icon(
-              onPressed: () {
-                setState(() {
-                  variant['show_shipping_overrides'] = !showOverrides;
-                });
-              },
-              icon: Icon(
-                showOverrides ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-                size: 16,
-                color: AppTheme.brandEmerald500,
-              ),
-              label: Text(
-                showOverrides
-                    ? 'Hide Shipping Overrides'
-                    : 'Configure Shipping Overrides',
-                style: const TextStyle(
-                  color: AppTheme.brandEmerald500,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+        LottieSwitchListTile(
+          title: const Text('Override Shipping Specifications'),
+          subtitle: const Text(
+            "If disabled, this variant inherits the parent product's logistics values. Enable to specify custom dimensions for this specific variant.",
+          ),
+          value: showOverrides,
+          onChanged: (v) {
+            setState(() {
+              variant['show_shipping_overrides'] = v;
+              if (!v) {
+                variant['weight_value'] = '';
+                variant['length_value'] = '';
+                variant['width_value'] = '';
+                variant['height_value'] = '';
+              }
+            });
+            widget.onChanged();
+          },
+          contentPadding: EdgeInsets.zero,
         ),
         if (showOverrides) ...[
           const SizedBox(height: 12),
@@ -941,121 +936,6 @@ class _VariantItemCardState extends State<_VariantItemCard> {
           ),
         ],
       ],
-    );
-  }
-}
-
-class _LottieToggle extends StatefulWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  const _LottieToggle({required this.value, required this.onChanged});
-
-  @override
-  State<_LottieToggle> createState() => _LottieToggleState();
-}
-
-class _LottieToggleState extends State<_LottieToggle>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  bool _initialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3600),
-    );
-    _controller.value = widget.value ? 0.5 : 0.0;
-    _initialized = true;
-  }
-
-  @override
-  void didUpdateWidget(_LottieToggle oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.value != oldWidget.value && _initialized) {
-      if (widget.value) {
-        if (_controller.value >= 0.9) {
-          _controller.value = 0.0;
-        }
-        _controller.animateTo(
-          0.5,
-          duration: const Duration(milliseconds: 1800),
-        );
-      } else {
-        if (_controller.value <= 0.1) {
-          _controller.value = 0.5;
-        }
-        _controller.animateTo(
-          1.0,
-          duration: const Duration(milliseconds: 1800),
-        );
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _toggle() {
-    if (_controller.isAnimating) return;
-
-    final bool nextVal = !widget.value;
-    if (nextVal) {
-      if (_controller.value >= 0.9) {
-        _controller.value = 0.0;
-      }
-      _controller.animateTo(
-        0.5,
-        duration: const Duration(milliseconds: 1800),
-      ).then((_) {
-        if (mounted) {
-          widget.onChanged(true);
-        }
-      });
-    } else {
-      if (_controller.value <= 0.1) {
-        _controller.value = 0.5;
-      }
-      _controller.animateTo(
-        1.0,
-        duration: const Duration(milliseconds: 1800),
-      ).then((_) {
-        if (mounted) {
-          widget.onChanged(false);
-        }
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _toggle,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: SizedBox(
-          width: 66,
-          height: 30,
-          child: ClipRect(
-            child: OverflowBox(
-              minWidth: 84,
-              maxWidth: 84,
-              minHeight: 63,
-              maxHeight: 63,
-              child: Lottie.asset(
-                'assets/68be063a-1151-11ee-9102-1b5da2d32f76.json',
-                controller: _controller,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

@@ -22,6 +22,7 @@ class _ProductEditorLogisticsStepState
   late TextEditingController _heightController;
   late TextEditingController _metaTitleController;
   late TextEditingController _metaDescriptionController;
+  late TextEditingController _minimumAgeController;
 
   @override
   void initState() {
@@ -32,8 +33,10 @@ class _ProductEditorLogisticsStepState
     _widthController = TextEditingController(text: state.widthValue);
     _heightController = TextEditingController(text: state.heightValue);
     _metaTitleController = TextEditingController(text: state.metaTitle);
-    _metaDescriptionController =
-        TextEditingController(text: state.metaDescription);
+    _metaDescriptionController = TextEditingController(
+      text: state.metaDescription,
+    );
+    _minimumAgeController = TextEditingController(text: state.minimumAgeYears);
 
     _weightController.addListener(_onWeightChanged);
     _lengthController.addListener(_onLengthChanged);
@@ -41,42 +44,49 @@ class _ProductEditorLogisticsStepState
     _heightController.addListener(_onHeightChanged);
     _metaTitleController.addListener(_onMetaTitleChanged);
     _metaDescriptionController.addListener(_onMetaDescriptionChanged);
+    _minimumAgeController.addListener(_onMinimumAgeChanged);
   }
 
   void _onWeightChanged() {
-    ref.read(productEditorProvider(widget.product).notifier).updateWeightValue(
-      _weightController.text,
-    );
+    ref
+        .read(productEditorProvider(widget.product).notifier)
+        .updateWeightValue(_weightController.text);
   }
 
   void _onLengthChanged() {
-    ref.read(productEditorProvider(widget.product).notifier).updateLengthValue(
-      _lengthController.text,
-    );
+    ref
+        .read(productEditorProvider(widget.product).notifier)
+        .updateLengthValue(_lengthController.text);
   }
 
   void _onWidthChanged() {
-    ref.read(productEditorProvider(widget.product).notifier).updateWidthValue(
-      _widthController.text,
-    );
+    ref
+        .read(productEditorProvider(widget.product).notifier)
+        .updateWidthValue(_widthController.text);
   }
 
   void _onHeightChanged() {
-    ref.read(productEditorProvider(widget.product).notifier).updateHeightValue(
-      _heightController.text,
-    );
+    ref
+        .read(productEditorProvider(widget.product).notifier)
+        .updateHeightValue(_heightController.text);
   }
 
   void _onMetaTitleChanged() {
-    ref.read(productEditorProvider(widget.product).notifier).updateMetaTitle(
-      _metaTitleController.text,
-    );
+    ref
+        .read(productEditorProvider(widget.product).notifier)
+        .updateMetaTitle(_metaTitleController.text);
   }
 
   void _onMetaDescriptionChanged() {
     ref
         .read(productEditorProvider(widget.product).notifier)
         .updateMetaDescription(_metaDescriptionController.text);
+  }
+
+  void _onMinimumAgeChanged() {
+    ref
+        .read(productEditorProvider(widget.product).notifier)
+        .updateMinimumAgeYears(_minimumAgeController.text);
   }
 
   @override
@@ -87,6 +97,7 @@ class _ProductEditorLogisticsStepState
     _heightController.removeListener(_onHeightChanged);
     _metaTitleController.removeListener(_onMetaTitleChanged);
     _metaDescriptionController.removeListener(_onMetaDescriptionChanged);
+    _minimumAgeController.removeListener(_onMinimumAgeChanged);
 
     _weightController.dispose();
     _lengthController.dispose();
@@ -125,6 +136,26 @@ class _ProductEditorLogisticsStepState
                   .read(productEditorProvider(widget.product).notifier)
                   .updateIsPerishable(v);
             },
+            ageVerificationRequired: state.ageVerificationRequired,
+            onAgeVerificationRequiredChanged: (v) {
+              ref
+                  .read(productEditorProvider(widget.product).notifier)
+                  .updateAgeVerificationRequired(v);
+              if (v) {
+                if (_minimumAgeController.text.isEmpty) {
+                  _minimumAgeController.text = '21';
+                }
+              } else {
+                _minimumAgeController.clear();
+              }
+            },
+            requiresPrescription: state.requiresPrescription,
+            onRequiresPrescriptionChanged: (v) {
+              ref
+                  .read(productEditorProvider(widget.product).notifier)
+                  .updateRequiresPrescription(v);
+            },
+            minimumAgeController: _minimumAgeController,
             weightController: _weightController,
             weightUnit: state.weightUnit,
             onWeightUnitChanged: (v) {

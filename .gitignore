@@ -45,6 +45,6 @@ backend/service_account.json
 
 # Scratch / Temporary diagnostics
 scratch/
-backend/backend/storage/media/7a33e2ed-43dc-4bb1-b8d8-698f5fe34c0d.png
-backend/backend/storage/media/7a33e2ed-43dc-4bb1-b8d8-698f5fe34c0d.png
+backend/backend/storage/media/
+backend/backend/storage/media/
 backend/backend/storage/media/

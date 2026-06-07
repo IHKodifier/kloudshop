@@ -20,6 +20,10 @@ class ProductEditorState {
   final String widthValue;
   final String heightValue;
   final String dimensionUnit;
+  final bool ageVerificationRequired;
+  final String minimumAgeYears;
+  final bool requiresPrescription;
+  final bool prescriptionDocumentRequired;
   final List<Map<String, dynamic>> optionsSchema;
   final List<Map<String, dynamic>> variants;
   final bool isSaving;
@@ -41,6 +45,10 @@ class ProductEditorState {
     this.widthValue = '',
     this.heightValue = '',
     this.dimensionUnit = 'cm',
+    this.ageVerificationRequired = false,
+    this.minimumAgeYears = '',
+    this.requiresPrescription = false,
+    this.prescriptionDocumentRequired = false,
     this.optionsSchema = const [],
     this.variants = const [],
     this.isSaving = false,
@@ -63,6 +71,10 @@ class ProductEditorState {
     String? widthValue,
     String? heightValue,
     String? dimensionUnit,
+    bool? ageVerificationRequired,
+    String? minimumAgeYears,
+    bool? requiresPrescription,
+    bool? prescriptionDocumentRequired,
     List<Map<String, dynamic>>? optionsSchema,
     List<Map<String, dynamic>>? variants,
     bool? isSaving,
@@ -84,6 +96,12 @@ class ProductEditorState {
       widthValue: widthValue ?? this.widthValue,
       heightValue: heightValue ?? this.heightValue,
       dimensionUnit: dimensionUnit ?? this.dimensionUnit,
+      ageVerificationRequired:
+          ageVerificationRequired ?? this.ageVerificationRequired,
+      minimumAgeYears: minimumAgeYears ?? this.minimumAgeYears,
+      requiresPrescription: requiresPrescription ?? this.requiresPrescription,
+      prescriptionDocumentRequired:
+          prescriptionDocumentRequired ?? this.prescriptionDocumentRequired,
       optionsSchema: optionsSchema ?? this.optionsSchema,
       variants: variants ?? this.variants,
       isSaving: isSaving ?? this.isSaving,
@@ -159,7 +177,10 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
         'width_value': v.widthValue?.toString() ?? '',
         'height_value': v.heightValue?.toString() ?? '',
         'dimension_unit': v.dimensionUnit ?? 'cm',
-        'show_shipping_overrides': false,
+        'show_shipping_overrides': v.weightValue != null ||
+            v.lengthValue != null ||
+            v.widthValue != null ||
+            v.heightValue != null,
         'is_expanded': false,
       });
     }
@@ -180,6 +201,10 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       widthValue: product.widthValue?.toString() ?? '',
       heightValue: product.heightValue?.toString() ?? '',
       dimensionUnit: product.dimensionUnit ?? 'cm',
+      ageVerificationRequired: product.ageVerificationRequired,
+      minimumAgeYears: product.minimumAgeYears?.toString() ?? '',
+      requiresPrescription: product.requiresPrescription,
+      prescriptionDocumentRequired: product.prescriptionDocumentRequired,
       optionsSchema: opts,
       variants: vars,
     );
@@ -219,6 +244,21 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
 
   void updateIsPerishable(bool val) {
     state = state.copyWith(isPerishable: val);
+  }
+
+  void updateAgeVerificationRequired(bool val) {
+    state = state.copyWith(ageVerificationRequired: val);
+  }
+
+  void updateMinimumAgeYears(String val) {
+    state = state.copyWith(minimumAgeYears: val);
+  }
+
+  void updateRequiresPrescription(bool val) {
+    state = state.copyWith(
+      requiresPrescription: val,
+      prescriptionDocumentRequired: val,
+    );
   }
 
   void updateWeightValue(String val) {
@@ -382,6 +422,12 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       'status': state.status,
       'is_digital': state.isDigital,
       'is_perishable': state.isPerishable,
+      'age_verification_required': state.ageVerificationRequired,
+      'minimum_age_years': state.ageVerificationRequired
+          ? int.tryParse(state.minimumAgeYears)
+          : null,
+      'requires_prescription': state.requiresPrescription,
+      'prescription_document_required': state.requiresPrescription,
       'images': state.images,
       'options_schema': state.optionsSchema,
       'weight_value': double.tryParse(state.weightValue),

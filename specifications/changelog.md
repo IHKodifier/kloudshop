@@ -149,5 +149,23 @@ This changelog records the architecture, model, provider, and UI changes made du
 - Added ignore entry for `backend/backend/storage/media/` to `.gitignore`.
 - Resolved concurrent image upload race condition in `media_gallery_uploader.dart` and `compact_media_list_uploader.dart` by implementing local state tracking (`_localImages`) and generating unique upload IDs.
 - Updated the Variants & Pricing section header to show both active and total variant counts in the format "active of total" (e.g. "2 active of 4").
+- **Global Lottie Switches Integration**:
+  - Replaced standard Flutter `Switch` widgets with `LottieToggle` in `dashboard_page.dart` (Theme Mode switcher) and `provisioning_page.dart` (Multi-region redundancy switch).
+  - Defined `LottieToggle.defaultDuration` (preset to `1800ms`) inside `lib/widgets/lottie_toggle.dart` as the single point of control for toggle animation speed app-wide.
+  - Documented toggle components and global configuration rules in the design guidelines.
+- **Product Compliance Controls (Step 2)**:
+  - Replaced legacy switches for Perishable and Digital products in `product_classification_card.dart` with `LottieSwitchListTile`.
+  - Added new `LottieSwitchListTile` controls for **Age-Gated Product** and **Prescription Required**.
+  - Implemented a responsive `LayoutBuilder` grid inside `product_classification_card.dart` that displays controls in two columns on desktop viewports and stacks them on narrow viewports.
+  - Rendered a conditional **MINIMUM AGE** input field that defaults to `21` when Age-Gating is enabled, and automatically clears and hides when disabled.
+  - Added field-level and save-level validators in `product_editor_view.dart` to block form submission if the minimum age is not a positive integer (> 0).
+- **Variant Shipping Overrides (Step 3)**:
+  - Replaced the text link configuration buttons in `product_variants_section.dart` with `LottieSwitchListTile` for independent variant-level shipping overrides.
+  - Implemented clear-on-disable behavior: toggling the switch OFF immediately clears and hides the custom dimensions/weights, resetting the variant to inherit main product specs.
+  - Fixed provider state mapping in `product_editor_provider.dart` to dynamically initialize `show_shipping_overrides` to `true` if any pre-existing override weight or dimension values are present in the `ProductVariant` model.
+- **Design Guidelines Relocation**:
+  - Relocated light and dark design documents to `specifications/design/` (creating `light-design.md` and `dark-DESIGN.md` as the gold standards).
+  - Updated color YAML tokens to match the actual high-contrast green colors (`#124B47` for Primary brand teal, `#047857` / `#34D399` for Success emerald greens) in `app_theme.dart`.
+
 
 
