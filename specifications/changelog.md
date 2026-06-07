@@ -148,4 +148,6 @@ This changelog records the architecture, model, provider, and UI changes made du
 - Updated modal display duration for variant toggle from 3000ms to 1500ms in `product_variants_section.dart`.
 - Added ignore entry for `backend/backend/storage/media/` to `.gitignore`.
 - Resolved concurrent image upload race condition in `media_gallery_uploader.dart` and `compact_media_list_uploader.dart` by implementing local state tracking (`_localImages`) and generating unique upload IDs.
+- Updated the Variants & Pricing section header to show both active and total variant counts in the format "active of total" (e.g. "2 active of 4").
+
 

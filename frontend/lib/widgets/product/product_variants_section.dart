@@ -37,6 +37,9 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final activeCount =
+        widget.variants.where((v) => v['is_active'] ?? true).length;
+    final totalCount = widget.variants.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +56,7 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Variants & Pricing (${widget.variants.length})',
+                  'Variants & Pricing ($activeCount active of $totalCount)',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
