@@ -167,7 +167,7 @@ This changelog records the architecture, model, provider, and UI changes made du
   - Relocated light and dark design documents to `specifications/design/` (creating `light-design.md` and `dark-DESIGN.md` as the gold standards).
   - Updated color YAML tokens to match the actual high-contrast green colors (`#124B47` for Primary brand teal, `#047857` / `#34D399` for Success emerald greens) in `app_theme.dart`.
 - **Intelligent Variant Reconciliation**:
-  - Implemented overlapping option matching, sorting priority, database ID (`variant_id`) preservation, and custom SKU suffix propagation in [product_editor_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart).
+  - Implemented overlapping option matching, sorting priority, database ID (`variant_id`) preservation, and custom SKU suffix propagation in [product_editor_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart). *(Note: Base variant ID preservation during Simple -> Variable transitions is [DEPRECATED - Superseded by No-Options Base Variant Behavior in product_variations_logic.md]).*
   - Added glassmorphic choice dialog (Intelligent Reconciliation vs. Fresh Generation) when option schemas change in [product_editor_variants_step.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart).
 - **SKU Modification Warnings & Email Reports**:
   - Added inline warnings below modified SKU input fields in [product_variants_section.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart).
@@ -177,6 +177,8 @@ This changelog records the architecture, model, provider, and UI changes made du
 - **Verification & Testing**:
   - Added `test_update_product_sku_report` unit test to [test_catalog.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py).
   - Verified that all 8 backend catalog tests pass cleanly, and the frontend compiles without errors under `flutter analyze`.
+- **No-Options Base Variant & Transition Specifications**:
+  - Documented the architecture, transition logic, auto-generated SKU rules, deactivation details, and the Collapse Variant Report details in the specifications document [product_variations_logic.md](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/specifications/product_variations_logic.md).
 
 
 

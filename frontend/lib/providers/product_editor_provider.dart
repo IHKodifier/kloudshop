@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/models/catalog.dart';
 import 'package:kloudshop/services/api_service.dart';
@@ -122,7 +123,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
         optionsSchema: const [
           {
             'name': 'Color',
-            'values': <String>['Pure white', 'Jet black', 'Metallic silver'],
+            'values': <String>[],
           }
         ],
         variants: [
@@ -134,7 +135,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
             'stock': '0',
             'is_default': true,
             'is_active': true,
-            'option_values': <String, String>{'Color': 'Pure white'},
+            'option_values': <String, String>{},
             'images': <String>[],
             'image_url': null,
             'weight_value': '',
@@ -155,6 +156,13 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       opts.add({
         'name': opt['name'] as String,
         'values': List<String>.from(opt['values'] as List),
+      });
+    }
+    final hasColor = opts.any((opt) => opt['name'].toString().trim().toLowerCase() == 'color');
+    if (!hasColor) {
+      opts.add({
+        'name': 'Color',
+        'values': <String>[],
       });
     }
 
@@ -213,10 +221,53 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
 
   void updateTitle(String val) {
     state = state.copyWith(title: val);
+    if (state.slug.trim().isEmpty) {
+      // Build slug: lowercase, collapse non-alphanum to hyphens, strip leading/trailing hyphens
+      final rawSlug = val
+          .trim()
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-z0-9\-]'), '-')
+          .replaceAll(RegExp(r'-+'), '-');
+      final generatedSlug = rawSlug
+          .replaceAll(RegExp(r'^-+'), '')
+          .replaceAll(RegExp(r'-+$'), '');
+      updateSlug(generatedSlug);
+    }
   }
 
   void updateSlug(String val) {
+    final oldSlug = state.slug;
     state = state.copyWith(slug: val);
+
+    final activeOpts = state.optionsSchema.where((opt) {
+      final name = (opt['name'] as String? ?? '').trim();
+      final values = List<dynamic>.from(opt['values'] ?? []);
+      return name.isNotEmpty && values.isNotEmpty;
+    }).toList();
+
+    if (activeOpts.isEmpty && state.variants.length == 1) {
+      final baseVar = state.variants.first;
+      final currentSku = (baseVar['sku'] as String? ?? '').trim();
+      final expectedOldSku = oldSlug.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9\-]'), '-');
+
+      if (currentSku.isEmpty || currentSku == expectedOldSku) {
+        // Build SKU: uppercase slug, strip leading/trailing hyphens
+        final rawSku = val
+            .toUpperCase()
+            .replaceAll(RegExp(r'[^A-Z0-9\-]'), '-')
+            .replaceAll(RegExp(r'-+'), '-');
+        final newSku = rawSku
+            .replaceAll(RegExp(r'^-+'), '')
+            .replaceAll(RegExp(r'-+$'), '');
+        final updatedVariants = [
+          {
+            ...baseVar,
+            'sku': newSku,
+          }
+        ];
+        state = state.copyWith(variants: updatedVariants);
+      }
+    }
   }
 
   void updateDescription(String val) {
@@ -287,7 +338,15 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
   }
 
   void updateOptionsSchema(List<Map<String, dynamic>> val) {
-    state = state.copyWith(optionsSchema: val);
+    final List<Map<String, dynamic>> updated = val.map((m) => Map<String, dynamic>.from(m)).toList();
+    final hasColor = updated.any((opt) => opt['name'].toString().trim().toLowerCase() == 'color');
+    if (!hasColor) {
+      updated.insert(0, {
+        'name': 'Color',
+        'values': <String>[],
+      });
+    }
+    state = state.copyWith(optionsSchema: updated);
   }
 
   void updateVariants(List<Map<String, dynamic>> val) {
@@ -341,6 +400,68 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
     }
   }
 
+  /// Dry-run: returns the list of currently active variants that WOULD be
+  /// retired (made inactive) if [generateVariantsFromOptions] were called now.
+  ///
+  /// For the full-collapse case (zero active options) every active
+  /// option-based variant is returned.  For a partial reconciliation the
+  /// returned list contains only those old variants that have no matching
+  /// permutation in the new option set.
+  ///
+  /// Does NOT modify state.
+  List<Map<String, dynamic>> computeRetiringVariants() {
+    final activeOptions = state.optionsSchema.where((opt) {
+      final name = (opt['name'] as String? ?? '').trim();
+      final values = List<dynamic>.from(opt['values'] ?? []);
+      return name.isNotEmpty && values.isNotEmpty;
+    }).toList();
+
+    final oldVariants = state.variants;
+
+    // Full-collapse case: every active option-based variant will be retired.
+    if (activeOptions.isEmpty) {
+      return oldVariants.where((v) {
+        final optVals = Map<String, String>.from(v['option_values'] ?? {});
+        return v['is_active'] != false && optVals.isNotEmpty;
+      }).toList();
+    }
+
+    // Build new permutations (same logic as generateVariantsFromOptions).
+    List<Map<String, String>> cartesian(
+        List<Map<String, dynamic>> opts, int idx) {
+      if (idx == opts.length) return [{}];
+      final cur = opts[idx];
+      final name = cur['name'] as String;
+      final vals = List<String>.from(cur['values'] ?? []);
+      final sub = cartesian(opts, idx + 1);
+      return [for (var v in vals) for (var s in sub) {name: v, ...s}];
+    }
+
+    final permutations = cartesian(activeOptions, 0);
+
+    // For each old active option-based variant, check if ANY permutation
+    // partially or fully matches it.  If none match → it will be retired.
+    final Set<Map<String, dynamic>> matched = {};
+    for (var perm in permutations) {
+      for (var oldVar in oldVariants) {
+        final oldOpts = Map<String, String>.from(oldVar['option_values'] ?? {});
+        if (oldOpts.isEmpty) continue;
+        final intersect = perm.keys.where((k) => oldOpts.containsKey(k));
+        if (intersect.isNotEmpty &&
+            intersect.every((k) => perm[k] == oldOpts[k])) {
+          matched.add(oldVar);
+        }
+      }
+    }
+
+    return oldVariants.where((v) {
+      final optVals = Map<String, String>.from(v['option_values'] ?? {});
+      return v['is_active'] != false &&
+          optVals.isNotEmpty &&
+          !matched.contains(v);
+    }).toList();
+  }
+
   void generateVariantsFromOptions({bool reconcile = false}) {
     final activeOptions = state.optionsSchema.where((opt) {
       final name = (opt['name'] as String? ?? '').trim();
@@ -348,7 +469,113 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       return name.isNotEmpty && values.isNotEmpty;
     }).toList();
 
-    if (activeOptions.isEmpty) return;
+    final oldVariants = state.variants;
+
+    if (activeOptions.isEmpty) {
+      // Collapse to No-Options Base Variant Behavior
+      if (oldVariants.isEmpty) return;
+
+      // Find the last active default variant to inherit values
+      final defaultActiveVar = oldVariants.firstWhere(
+        (v) => v['is_default'] == true && v['is_active'] != false,
+        orElse: () => oldVariants.firstWhere(
+          (v) => v['is_active'] != false,
+          orElse: () => oldVariants.first,
+        ),
+      );
+
+      // Sum stock of all currently active option-based variants
+      int totalStock = 0;
+      final List<Map<String, dynamic>> deactivatedList = [];
+      for (var v in oldVariants) {
+        final optVals = Map<String, String>.from(v['option_values'] ?? {});
+        if (v['is_active'] != false && optVals.isNotEmpty) {
+          totalStock += int.tryParse(v['stock']?.toString() ?? '0') ?? 0;
+          deactivatedList.add(v);
+        }
+      }
+
+      // Look for an existing retired/deactivated base variant (where option_values is empty)
+      var baseVarIndex = oldVariants.indexWhere((v) {
+        final optVals = Map<String, String>.from(v['option_values'] ?? {});
+        return optVals.isEmpty;
+      });
+
+      final List<Map<String, dynamic>> updatedVariants = [];
+      Map<String, dynamic> baseVar;
+
+      if (baseVarIndex != -1) {
+        // Recycle the existing base variant
+        baseVar = Map<String, dynamic>.from(oldVariants[baseVarIndex]);
+      } else {
+        // Create a new base variant if none existed historically
+        // Strip any leading/trailing hyphens from the generated SKU
+        final rawBaseSku = state.slug
+            .toUpperCase()
+            .replaceAll(RegExp(r'[^A-Z0-9\-]'), '-')
+            .replaceAll(RegExp(r'-+'), '-');
+        final cleanBaseSku = rawBaseSku
+            .replaceAll(RegExp(r'^-+'), '')
+            .replaceAll(RegExp(r'-+$'), '');
+        baseVar = {
+          'variant_id': null,
+          'sku': cleanBaseSku,
+          'original_sku': '',
+          'option_values': <String, String>{},
+        };
+      }
+
+      // Overwrite base variant properties with default variant values & summed stock
+      baseVar['is_active'] = true;
+      baseVar['is_default'] = true;
+      baseVar['price'] = defaultActiveVar['price'] ?? '0.00';
+      baseVar['compare_at_price'] = defaultActiveVar['compare_at_price'] ?? '';
+      baseVar['stock'] = totalStock.toString();
+      baseVar['images'] = List<String>.from(defaultActiveVar['images'] ?? []);
+      baseVar['image_url'] = defaultActiveVar['image_url'];
+      baseVar['weight_value'] = defaultActiveVar['weight_value'] ?? '';
+      baseVar['weight_unit'] = defaultActiveVar['weight_unit'] ?? 'kg';
+      baseVar['length_value'] = defaultActiveVar['length_value'] ?? '';
+      baseVar['width_value'] = defaultActiveVar['width_value'] ?? '';
+      baseVar['height_value'] = defaultActiveVar['height_value'] ?? '';
+      baseVar['dimension_unit'] = defaultActiveVar['dimension_unit'] ?? 'cm';
+      baseVar['show_shipping_overrides'] = defaultActiveVar['show_shipping_overrides'] ?? false;
+      baseVar['is_expanded'] = false;
+
+      updatedVariants.add(baseVar);
+
+      // Silently retire all other option-based variants (if they have database IDs)
+      for (var i = 0; i < oldVariants.length; i++) {
+        if (i == baseVarIndex) continue;
+        final v = oldVariants[i];
+        final optVals = Map<String, String>.from(v['option_values'] ?? {});
+        if (v['variant_id'] != null && optVals.isNotEmpty) {
+          final retiredVar = Map<String, dynamic>.from(v);
+          retiredVar['is_active'] = false;
+          retiredVar['is_default'] = false;
+          updatedVariants.add(retiredVar);
+        }
+      }
+
+      state = state.copyWith(variants: updatedVariants);
+
+      // Print summary report to debug console if running in debug mode
+      if (kDebugMode) {
+        debugPrint('================================================================');
+        debugPrint('MANDATORY COLLAPSE VARIANT REPORT (DEACTIVATED VARIANTS)');
+        debugPrint('Product: ${state.title} (${state.slug})');
+        debugPrint('Deactivated Option-Based Variants:');
+        for (var v in deactivatedList) {
+          final optVals = Map<String, String>.from(v['option_values'] ?? {});
+          final optStr = optVals.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+          debugPrint('  - SKU: ${v['sku']} ($optStr) | Price: \$${v['price']} | Stock: ${v['stock']}');
+        }
+        debugPrint('Collapsed Base Variant:');
+        debugPrint('  - SKU: ${baseVar['sku']} | Price: \$${baseVar['price']} | Total Summed Stock: $totalStock');
+        debugPrint('================================================================');
+      }
+      return;
+    }
 
     List<Map<String, String>> cartesianProduct(
       List<Map<String, dynamic>> options,
@@ -375,25 +602,48 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
 
     final permutations = cartesianProduct(activeOptions, 0);
     final List<Map<String, dynamic>> newVariants = [];
-    final oldVariants = state.variants;
     final Set<Map<String, dynamic>> usedOldVariants = {};
+
+    final defaultOldVariant = oldVariants.isNotEmpty
+        ? oldVariants.firstWhere(
+            (v) => v['is_default'] == true,
+            orElse: () => oldVariants.first,
+          )
+        : null;
+
+    // Look for a base variant to use as prefix SKU template
+    final baseVar = oldVariants.firstWhere(
+      (v) => Map<String, String>.from(v['option_values'] ?? {}).isEmpty,
+      orElse: () => <String, dynamic>{},
+    );
 
     for (var i = 0; i < permutations.length; i++) {
       final perm = permutations[i];
 
-      // Default fallback generation for SKU
+      // Default fallback generation for SKU using base variant SKU if available
       final optionStr = perm.values.join('-');
-      final baseSku = state.slug.toUpperCase();
+      final baseSku = (baseVar.isNotEmpty && (baseVar['sku'] as String? ?? '').isNotEmpty)
+          ? baseVar['sku'] as String
+          : state.slug.toUpperCase();
       final defaultSuffix = optionStr.toUpperCase().replaceAll(
         RegExp(r'[^A-Z0-9\-]'),
         '-',
-      );
-      final defaultSku = baseSku.isNotEmpty ? '$baseSku-$defaultSuffix' : '';
+      ).replaceAll(RegExp(r'-+'), '-');
+
+      // Trim leading/trailing dashes from suffix
+      String cleanSuffix = defaultSuffix;
+      if (cleanSuffix.startsWith('-')) cleanSuffix = cleanSuffix.substring(1);
+      if (cleanSuffix.endsWith('-')) cleanSuffix = cleanSuffix.substring(0, cleanSuffix.length - 1);
+
+      final defaultSku = baseSku.isNotEmpty
+          ? (cleanSuffix.isNotEmpty ? '$baseSku-$cleanSuffix' : baseSku)
+          : cleanSuffix;
 
       if (reconcile && oldVariants.isNotEmpty) {
-        // Step 1: Identify Overlap Matches
+        // Step 1: Identify Overlap Matches (skip empty option base variants)
         final matches = oldVariants.where((oldVar) {
           final oldOpts = Map<String, String>.from(oldVar['option_values'] ?? {});
+          if (oldOpts.isEmpty) return false;
           final intersectionKeys = perm.keys.where((k) => oldOpts.containsKey(k));
           if (intersectionKeys.isEmpty) return false;
           return intersectionKeys.every((k) => perm[k] == oldOpts[k]);
@@ -478,27 +728,79 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
         }
       }
 
+      final fallbackPrice = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['price'] ?? '0.00') : '0.00';
+      final fallbackCompareAt = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['compare_at_price'] ?? '') : '';
+      final fallbackStock = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['stock'] ?? '0') : '0';
+      final fallbackWeightVal = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['weight_value'] ?? '') : '';
+      final fallbackWeightUnit = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['weight_unit'] ?? 'kg') : 'kg';
+      final fallbackLengthVal = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['length_value'] ?? '') : '';
+      final fallbackWidthVal = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['width_value'] ?? '') : '';
+      final fallbackHeightVal = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['height_value'] ?? '') : '';
+      final fallbackDimUnit = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['dimension_unit'] ?? 'cm') : 'cm';
+      final fallbackShippingOverride = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['show_shipping_overrides'] ?? false) : false;
+
       // Fresh generation or no match found
       newVariants.add({
         'variant_id': null,
         'sku': defaultSku,
-        'price': '0.00',
-        'compare_at_price': '',
-        'stock': '0',
+        'price': fallbackPrice,
+        'compare_at_price': fallbackCompareAt,
+        'stock': fallbackStock,
         'is_default': i == 0,
         'is_active': true,
         'option_values': perm,
         'images': <String>[],
         'image_url': null,
-        'weight_value': '',
-        'weight_unit': 'kg',
-        'length_value': '',
-        'width_value': '',
-        'height_value': '',
-        'dimension_unit': 'cm',
-        'show_shipping_overrides': false,
+        'weight_value': fallbackWeightVal,
+        'weight_unit': fallbackWeightUnit,
+        'length_value': fallbackLengthVal,
+        'width_value': fallbackWidthVal,
+        'height_value': fallbackHeightVal,
+        'dimension_unit': fallbackDimUnit,
+        'show_shipping_overrides': fallbackShippingOverride,
         'is_expanded': false,
       });
+    }
+
+    // Collect retired variants (old variants not used in any new permutation)
+    final List<Map<String, dynamic>> retiredVars = [];
+    for (var oldVar in oldVariants) {
+      if (!usedOldVariants.contains(oldVar)) {
+        retiredVars.add(oldVar);
+      }
+    }
+
+    // Aggregate stock from retired variants into the first surviving active variant.
+    // Only during Intelligent Reconciliation — Fresh Generation is a clean slate.
+    if (reconcile && retiredVars.isNotEmpty) {
+      int retiredStock = 0;
+      for (var rv in retiredVars) {
+        if (rv['is_active'] != false) {
+          retiredStock += int.tryParse(rv['stock']?.toString() ?? '0') ?? 0;
+        }
+      }
+      if (retiredStock > 0 && newVariants.isNotEmpty) {
+        final firstActive = newVariants.indexWhere((v) => v['is_active'] != false);
+        if (firstActive != -1) {
+          final existingStock = int.tryParse(newVariants[firstActive]['stock']?.toString() ?? '0') ?? 0;
+          newVariants[firstActive] = Map<String, dynamic>.from(newVariants[firstActive])
+            ..['stock'] = (existingStock + retiredStock).toString();
+          if (kDebugMode) {
+            debugPrint('Stock from retired variants ($retiredStock units) added to ${newVariants[firstActive]['sku']}');
+          }
+        }
+      }
+    }
+
+    // Append retired variants with database IDs as is_active:false so the
+    // backend can mark them inactive on save.
+    for (var rv in retiredVars) {
+      if (rv['variant_id'] != null) {
+        final retiredVar = Map<String, dynamic>.from(rv)
+          ..['is_active'] = false
+          ..['is_default'] = false;
+        newVariants.add(retiredVar);
+      }
     }
 
     state = state.copyWith(variants: newVariants);
@@ -523,7 +825,9 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       'requires_prescription': state.requiresPrescription,
       'prescription_document_required': state.requiresPrescription,
       'images': state.images,
-      'options_schema': state.optionsSchema,
+      'options_schema': state.optionsSchema
+          .where((opt) => List.from(opt['values'] ?? []).isNotEmpty)
+          .toList(),
       'weight_value': double.tryParse(state.weightValue),
       'weight_unit': state.weightValue.isNotEmpty ? state.weightUnit : null,
       'length_value': double.tryParse(state.lengthValue),

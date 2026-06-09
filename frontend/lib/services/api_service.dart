@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/services/auth_service.dart';
@@ -947,6 +948,85 @@ class ApiService {
         response.statusCode,
         'Upload failed: ${response.body}',
       );
+    }
+  }
+
+  /// Sends a variant retirement report to the merchant admin.
+  ///
+  /// **Debug mode**: pretty-prints the full report to the debug console.
+  /// **Production mode**: POSTs the report payload to the backend which
+  /// emails the merchant admin with SKU, price, compareAtPrice, and stock
+  /// details of every retired variant.
+  ///
+  /// [productId] may be null for unsaved products (report is debug-only then).
+  Future<void> sendVariantRetirementReport({
+    required String productTitle,
+    required String productSlug,
+    required String? productId,
+    required List<Map<String, dynamic>> retiringVariants,
+    required int aggregatedStock,
+    required String survivingVariantSku,
+  }) async {
+    final timestamp = DateTime.now().toIso8601String();
+
+    // ── Debug console report ──────────────────────────────────────────────
+    if (kDebugMode) {
+      debugPrint('════════════════════════════════════════════════════════');
+      debugPrint('VARIANT RETIREMENT REPORT');
+      debugPrint('Generated at : $timestamp');
+      debugPrint('Product      : $productTitle ($productSlug)');
+      debugPrint('Product ID   : ${productId ?? "(unsaved)"}');
+      debugPrint('─────────────────────────────────────────────────────────');
+      debugPrint('Retiring variants:');
+      for (final v in retiringVariants) {
+        final optVals = Map<String, String>.from(v['option_values'] ?? {});
+        final optStr = optVals.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+        debugPrint(
+          '  SKU: ${v['sku']}  |  Options: $optStr'
+          '  |  Price: \$${v['price']}'
+          '  |  CompareAt: \$${v['compare_at_price'].toString().isNotEmpty ? v['compare_at_price'] : 'N/A'}'
+          '  |  Stock: ${v['stock']}'
+          '  |  DB ID: ${v['variant_id'] ?? "(new, never saved)"}',
+        );
+      }
+      debugPrint('─────────────────────────────────────────────────────────');
+      debugPrint('Aggregated stock assigned to: $survivingVariantSku');
+      debugPrint('Total aggregated stock       : $aggregatedStock units');
+      debugPrint('════════════════════════════════════════════════════════');
+    }
+
+    // ── Production email trigger ──────────────────────────────────────────
+    // Only attempt if the product is already saved (has a DB id).
+    if (!kDebugMode && productId != null) {
+      try {
+        final headers = await _getHeaders();
+        final payload = {
+          'timestamp': timestamp,
+          'product_title': productTitle,
+          'product_slug': productSlug,
+          'surviving_variant_sku': survivingVariantSku,
+          'aggregated_stock': aggregatedStock,
+          'retiring_variants': retiringVariants.map((v) => {
+            'variant_id': v['variant_id'],
+            'sku': v['sku'],
+            'price': v['price'],
+            'compare_at_price': v['compare_at_price'],
+            'stock': v['stock'],
+            'option_values': Map<String, String>.from(v['option_values'] ?? {}),
+          }).toList(),
+        };
+        final response = await http.post(
+          Uri.parse('$baseUrl/catalog/products/$productId/variant-retirement-report'),
+          headers: headers,
+          body: jsonEncode(payload),
+        );
+        if (response.statusCode != 200 && response.statusCode != 202) {
+          log('sendVariantRetirementReport: unexpected status ${response.statusCode}');
+        }
+      } catch (e) {
+        // Non-fatal: log but do not surface to user.
+        log('sendVariantRetirementReport error: $e');
+      }
     }
   }
 }

@@ -93,36 +93,32 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
   }
 
   void _showAddColorValuePicker(BuildContext context, String presetName) {
-    _showVisualColorPicker(
-      context,
-      Colors.blue,
-      (pickedColor) async {
-        final hexStr =
-            '#${pickedColor.toARGB32().toRadixString(16).substring(2).padLeft(6, '0')}';
-        try {
-          await ref
-              .read(colorPresetsProvider.notifier)
-              .addPreset(presetName, hexStr);
+    _showVisualColorPicker(context, Colors.blue, (pickedColor) async {
+      final hexStr =
+          '#${pickedColor.toARGB32().toRadixString(16).substring(2).padLeft(6, '0')}';
+      try {
+        await ref
+            .read(colorPresetsProvider.notifier)
+            .addPreset(presetName, hexStr);
 
-          final List<String> vals =
-              List<String>.from(widget.option['values'] ?? []);
-          if (!vals.contains(presetName)) {
-            final updatedOption = Map<String, dynamic>.from(widget.option);
-            updatedOption['values'] = [...vals, presetName];
-            widget.onChanged(updatedOption);
-          }
-          _valueController.clear();
-          setState(() {});
-        } catch (e) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to save color preset: $e')),
-            );
-          }
+        final List<String> vals = List<String>.from(
+          widget.option['values'] ?? [],
+        );
+        if (!vals.contains(presetName)) {
+          final updatedOption = Map<String, dynamic>.from(widget.option);
+          updatedOption['values'] = [...vals, presetName];
+          widget.onChanged(updatedOption);
         }
-      },
-      titleText: 'Set Color for "$presetName"',
-    );
+        _valueController.clear();
+        setState(() {});
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to save color preset: $e')),
+          );
+        }
+      }
+    }, titleText: 'Set Color for "$presetName"');
   }
 
   void _togglePreset(ColorPreset preset) {
@@ -154,7 +150,7 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
 
   Color? _getPresetColorByName(String name, List<ColorPreset> presets) {
     final String normalized = name.trim().toLowerCase();
-    
+
     // 1. Try finding in the DB loaded presets
     final preset = presets.firstWhere(
       (p) => p.name.trim().toLowerCase() == normalized,
@@ -189,7 +185,9 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> values = List<String>.from(widget.option['values'] ?? []);
+    final List<String> values = List<String>.from(
+      widget.option['values'] ?? [],
+    );
     final isColorOption =
         widget.option['name'].toString().trim().toLowerCase() == 'color';
     final theme = Theme.of(context);
@@ -197,7 +195,9 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
     final presets = ref.watch(colorPresetsProvider).value ?? [];
 
     final currentName = _nameController.text.trim().toLowerCase();
-    final isDuplicate = widget.siblingNames.any((name) => name.trim().toLowerCase() == currentName);
+    final isDuplicate = widget.siblingNames.any(
+      (name) => name.trim().toLowerCase() == currentName,
+    );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -229,7 +229,9 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                     errorText: isDuplicate ? 'Duplicate option name' : null,
                   ),
                   onChanged: (v) {
-                    final updatedOption = Map<String, dynamic>.from(widget.option);
+                    final updatedOption = Map<String, dynamic>.from(
+                      widget.option,
+                    );
                     updatedOption['name'] = v.trim();
                     widget.onChanged(updatedOption);
                     setState(() {}); // Rebuild to toggle color preset shelf
@@ -255,10 +257,12 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                   onFieldSubmitted: (_) => _addValue(),
                 ),
               ),
-              IconButton(
-                icon: const Icon(LucideIcons.trash2, color: Colors.redAccent),
-                onPressed: widget.onDelete,
-              ),
+              if (!isColorOption)
+                IconButton(
+                  icon: const Icon(LucideIcons.trash2, color: Colors.redAccent),
+                  tooltip: 'Delete category',
+                  onPressed: widget.onDelete,
+                ),
             ],
           ),
 
@@ -270,103 +274,110 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            ref.watch(colorPresetsProvider).when(
-              data: (loadedPresets) {
-                return Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    ...loadedPresets.map((preset) {
-                      final isSelected = values.contains(preset.name);
-                      final color = _parseColor(preset.hexCode);
-                      final isLight = _isHexColorLight(color);
+            ref
+                .watch(colorPresetsProvider)
+                .when(
+                  data: (loadedPresets) {
+                    return Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        ...loadedPresets.map((preset) {
+                          final isSelected = values.contains(preset.name);
+                          final color = _parseColor(preset.hexCode);
+                          final isLight = _isHexColorLight(color);
 
-                      return ColorPresetShelfItem(
-                        preset: preset,
-                        isSelected: isSelected,
-                        color: color,
-                        isLight: isLight,
-                        onTap: () => _togglePreset(preset),
-                        onEdit: () => _showEditPresetDialog(context, preset),
-                        onDelete: () =>
-                            _showDeletePresetConfirm(context, preset),
-                      );
-                    }),
-                    GestureDetector(
-                      onTap: () => _showAddPresetDialog(context),
-                      child: Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF1E293B)
-                              : Colors.grey[100],
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isDark
-                                ? const Color(0xFF475569)
-                                : Colors.grey[300]!,
-                            width: 1.5,
+                          return ColorPresetShelfItem(
+                            preset: preset,
+                            isSelected: isSelected,
+                            color: color,
+                            isLight: isLight,
+                            onTap: () => _togglePreset(preset),
+                            onEdit: () =>
+                                _showEditPresetDialog(context, preset),
+                            onDelete: () =>
+                                _showDeletePresetConfirm(context, preset),
+                          );
+                        }),
+                        GestureDetector(
+                          onTap: () => _showAddPresetDialog(context),
+                          child: Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? const Color(0xFF1E293B)
+                                  : Colors.grey[100],
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDark
+                                    ? const Color(0xFF475569)
+                                    : Colors.grey[300]!,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                LucideIcons.plus,
+                                size: 18,
+                                color: AppTheme.brandEmerald500,
+                              ),
+                            ),
                           ),
                         ),
-                        child: const Center(
-                          child: Icon(
-                            LucideIcons.plus,
-                            size: 18,
+                      ],
+                    );
+                  },
+                  loading: () {
+                    return const SizedBox(
+                      height: 38,
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
                             color: AppTheme.brandEmerald500,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-              loading: () {
-                return const SizedBox(
-                  height: 38,
-                  child: Center(
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppTheme.brandEmerald500,
+                    );
+                  },
+                  error: (err, _) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                    ),
-                  ),
-                );
-              },
-              error: (err, _) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.red[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.red[200]!),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(LucideIcons.alertCircle, color: Colors.red),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Failed to load presets.',
-                          style: TextStyle(color: Colors.red, fontSize: 12),
-                        ),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red[200]!),
                       ),
-                      IconButton(
-                        icon: const Icon(LucideIcons.refreshCw, size: 14),
-                        onPressed: () => ref.invalidate(colorPresetsProvider),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            LucideIcons.alertCircle,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Text(
+                              'Failed to load presets.',
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(LucideIcons.refreshCw, size: 14),
+                            onPressed: () =>
+                                ref.invalidate(colorPresetsProvider),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
           ],
 
           if (values.isNotEmpty) ...[
@@ -374,41 +385,59 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: values
-                  .map(
-                    (val) {
-                      final Color? chipColor =
-                          isColorOption ? _getPresetColorByName(val, presets) : null;
-                      return Chip(
-                        avatar: chipColor != null
-                            ? Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  color: chipColor,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    width: 0.5,
-                                  ),
-                                ),
-                              )
-                            : null,
-                        label: Text(val),
-                        onDeleted: () {
-                          final updatedOption =
-                              Map<String, dynamic>.from(widget.option);
-                          final newVals = List<String>.from(
-                            widget.option['values'] as List? ?? [],
-                          )..remove(val);
-                          updatedOption['values'] = newVals;
-                          widget.onChanged(updatedOption);
-                          setState(() {});
-                        },
-                      );
-                    },
-                  )
-                  .toList(),
+              children: values.map((val) {
+                final Color? chipColor = isColorOption
+                    ? _getPresetColorByName(val, presets)
+                    : null;
+
+                // For color chips: resolve the current preset name in case
+                // the preset was renamed after it was selected — fixes stale label bug.
+                String displayLabel = val;
+                if (isColorOption) {
+                  final String normalizedVal = val.trim().toLowerCase();
+                  final matchedPreset = presets.firstWhere(
+                    (p) => p.name.trim().toLowerCase() == normalizedVal,
+                    orElse: () => defaultPresets.firstWhere(
+                      (p) => p.name.trim().toLowerCase() == normalizedVal,
+                      orElse: () => presets.isNotEmpty ? presets.first : defaultPresets.first,
+                    ),
+                  );
+                  // Only use matched name if it actually matched (not a fallback mismatch)
+                  if (matchedPreset.name.trim().toLowerCase() == normalizedVal ||
+                      matchedPreset.name.trim().toLowerCase() == normalizedVal) {
+                    displayLabel = matchedPreset.name;
+                  }
+                }
+
+                return Chip(
+                  avatar: chipColor != null
+                      ? Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: chipColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              width: 0.5,
+                            ),
+                          ),
+                        )
+                      : null,
+                  label: Text(displayLabel),
+                  onDeleted: () {
+                    final updatedOption = Map<String, dynamic>.from(
+                      widget.option,
+                    );
+                    final newVals = List<String>.from(
+                      widget.option['values'] as List? ?? [],
+                    )..remove(val);
+                    updatedOption['values'] = newVals;
+                    widget.onChanged(updatedOption);
+                    setState(() {});
+                  },
+                );
+              }).toList(),
             ),
           ],
         ],
@@ -497,22 +526,22 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                             labelTypes: const [],
                           )
                         : activeStyle == PickerStyle.swatches
-                            ? _SwatchesPicker(
-                                pickerColor: pickedColor,
-                                onColorChanged: (color) {
-                                  setDialogState(() {
-                                    pickedColor = color;
-                                  });
-                                },
-                              )
-                            : BlockPicker(
-                                pickerColor: pickedColor,
-                                onColorChanged: (color) {
-                                  setDialogState(() {
-                                    pickedColor = color;
-                                  });
-                                },
-                              ),
+                        ? _SwatchesPicker(
+                            pickerColor: pickedColor,
+                            onColorChanged: (color) {
+                              setDialogState(() {
+                                pickedColor = color;
+                              });
+                            },
+                          )
+                        : BlockPicker(
+                            pickerColor: pickedColor,
+                            onColorChanged: (color) {
+                              setDialogState(() {
+                                pickedColor = color;
+                              });
+                            },
+                          ),
                   ),
                 ],
               ),
@@ -655,22 +684,25 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                             },
                             validator: (v) {
                               if (v == null || v.trim().isEmpty) {
-                                  return 'Hex code is required';
-                                }
-                                if (!RegExp(
-                                  r'^#([A-Fa-f0-9]{6})$',
-                                ).hasMatch(v.trim())) {
-                                  return 'Must be #RRGGBB format';
-                                }
-                                return null;
+                                return 'Hex code is required';
+                              }
+                              if (!RegExp(
+                                r'^#([A-Fa-f0-9]{6})$',
+                              ).hasMatch(v.trim())) {
+                                return 'Must be #RRGGBB format';
+                              }
+                              return null;
                             },
                           ),
                         ),
                         const SizedBox(width: 12),
                         GestureDetector(
                           onTap: () {
-                            _showVisualColorPicker(context, previewColor, (color) {
-                              final hexStr = '#${color.toARGB32().toRadixString(16).substring(2).padLeft(6, '0')}';
+                            _showVisualColorPicker(context, previewColor, (
+                              color,
+                            ) {
+                              final hexStr =
+                                  '#${color.toARGB32().toRadixString(16).substring(2).padLeft(6, '0')}';
                               hexController.text = hexStr;
                               setDialogState(() {});
                             });
@@ -722,9 +754,9 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                             setDialogState(() {
                               isSaving = false;
                               apiError = e.toString().replaceFirst(
-                                    'ApiException: ',
-                                    '',
-                                  );
+                                'ApiException: ',
+                                '',
+                              );
                             });
                           }
                         },
@@ -839,8 +871,11 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                         const SizedBox(width: 12),
                         GestureDetector(
                           onTap: () {
-                            _showVisualColorPicker(context, previewColor, (color) {
-                              final hexStr = '#${color.toARGB32().toRadixString(16).substring(2).padLeft(6, '0')}';
+                            _showVisualColorPicker(context, previewColor, (
+                              color,
+                            ) {
+                              final hexStr =
+                                  '#${color.toARGB32().toRadixString(16).substring(2).padLeft(6, '0')}';
                               hexController.text = hexStr;
                               setDialogState(() {});
                             });
@@ -893,9 +928,9 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                             setDialogState(() {
                               isSaving = false;
                               apiError = e.toString().replaceFirst(
-                                    'ApiException: ',
-                                    '',
-                                  );
+                                'ApiException: ',
+                                '',
+                              );
                             });
                           }
                         },
@@ -975,7 +1010,9 @@ class _ColorPresetShelfItemState extends State<ColorPresetShelfItem> {
                   border: Border.all(
                     color: widget.isSelected
                         ? AppTheme.brandEmerald500
-                        : (isDark ? const Color(0xFF475569) : Colors.grey[300]!),
+                        : (isDark
+                              ? const Color(0xFF475569)
+                              : Colors.grey[300]!),
                     width: widget.isSelected ? 3.0 : 1.5,
                   ),
                   boxShadow: [
@@ -1011,7 +1048,11 @@ class _ColorPresetShelfItemState extends State<ColorPresetShelfItem> {
                     color: Colors.redAccent,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(LucideIcons.x, size: 12, color: Colors.white),
+                  child: const Icon(
+                    LucideIcons.x,
+                    size: 12,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -1026,7 +1067,11 @@ class _ColorPresetShelfItemState extends State<ColorPresetShelfItem> {
                     color: AppTheme.brandEmerald500,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(LucideIcons.pencil, size: 12, color: Colors.white),
+                  child: const Icon(
+                    LucideIcons.pencil,
+                    size: 12,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -1117,4 +1162,3 @@ class _SwatchesPicker extends StatelessWidget {
     );
   }
 }
-

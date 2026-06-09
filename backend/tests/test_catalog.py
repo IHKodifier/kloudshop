@@ -175,3 +175,79 @@ async def test_update_product_sku_report(client: AsyncClient, mock_firebase_user
     assert update_resp.status_code == 200
     data = update_resp.json()
     assert data["variants"][0]["sku"] == "JKT-NEW"
+
+
+@pytest.mark.asyncio
+async def test_update_product_collapse_report(client: AsyncClient, mock_firebase_user, db_session):
+    """Verify that collapsing variants from options to simple product triggers collapse report."""
+    headers = {"Authorization": "Bearer valid_token"}
+    # 1. Create a product with option-based variants
+    create_payload = {
+        "title": "Shoes V1",
+        "slug": "shoes-v1",
+        "options_schema": [{"name": "Size", "values": ["Small", "Large"]}],
+        "variants": [
+            {
+                "sku": "SH-S",
+                "price": 50.0,
+                "option_values": {"Size": "Small"},
+                "is_active": True
+            },
+            {
+                "sku": "SH-L",
+                "price": 60.0,
+                "option_values": {"Size": "Large"},
+                "is_active": True
+            }
+        ]
+    }
+    create_resp = await client.post("/api/v1/products/", json=create_payload, headers=headers)
+    assert create_resp.status_code == 201
+    product = create_resp.json()
+    product_id = product["product_id"]
+    var_s_id = product["variants"][0]["variant_id"]
+    var_l_id = product["variants"][1]["variant_id"]
+
+    # 2. Update to a simple product (empty options schema, single base variant and retired options)
+    update_payload = {
+        "title": "Shoes V1",
+        "slug": "shoes-v1",
+        "options_schema": [],
+        "variants": [
+            {
+                "sku": "SH-BASE",
+                "price": 55.0,
+                "option_values": {},
+                "is_active": True,
+                "is_default": True
+            },
+            {
+                "variant_id": var_s_id,
+                "sku": "SH-S",
+                "price": 50.0,
+                "option_values": {"Size": "Small"},
+                "is_active": False,
+                "is_default": False
+            },
+            {
+                "variant_id": var_l_id,
+                "sku": "SH-L",
+                "price": 60.0,
+                "option_values": {"Size": "Large"},
+                "is_active": False,
+                "is_default": False
+            }
+        ]
+    }
+    update_resp = await client.put(
+        f"/api/v1/products/{product_id}",
+        json=update_payload,
+        headers=headers
+    )
+    assert update_resp.status_code == 200
+    data = update_resp.json()
+    # base variant should be active and returned. Retired variants are active = false.
+    active_variants = [v for v in data["variants"] if v["is_active"]]
+    assert len(active_variants) == 1
+    assert active_variants[0]["sku"] == "SH-BASE"
+

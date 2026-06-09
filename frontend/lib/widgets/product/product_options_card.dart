@@ -9,6 +9,10 @@ class ProductOptionsCard extends StatefulWidget {
   final bool isGenerating;
   final VoidCallback onGenerateVariants;
   final ValueChanged<List<Map<String, dynamic>>> onChanged;
+  /// Called immediately after the user confirms the collapse dialog
+  /// (removing the last option value).  The parent should use this to
+  /// trigger generateVariantsFromOptions + send the retirement report.
+  final VoidCallback? onCollapseConfirmed;
 
   const ProductOptionsCard({
     super.key,
@@ -16,6 +20,7 @@ class ProductOptionsCard extends StatefulWidget {
     this.isGenerating = false,
     required this.onGenerateVariants,
     required this.onChanged,
+    this.onCollapseConfirmed,
   });
 
   @override
@@ -23,6 +28,78 @@ class ProductOptionsCard extends StatefulWidget {
 }
 
 class _ProductOptionsCardState extends State<ProductOptionsCard> {
+  void _confirmCollapse(BuildContext context, VoidCallback onConfirm) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 28),
+              SizedBox(width: 12),
+              Text(
+                'Collapse to Simple Product?',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Outfit',
+                ),
+              ),
+            ],
+          ),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Deleting all options will collapse this product back into a single default variant.',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 14),
+              ),
+              SizedBox(height: 8),
+              Text(
+                '• Custom rates and stock for other variants will be retired.\n'
+                '• Active stock counts will be summed up automatically.\n'
+                '• A mandatory summary report of the deactivated variants will be sent to your email.',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: Colors.grey),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.brandEmerald500,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text(
+                'Confirm Collapse',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                onConfirm();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showAddCategoryDialog(BuildContext context) {
     final nameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
@@ -105,37 +182,158 @@ class _ProductOptionsCardState extends State<ProductOptionsCard> {
           style: TextStyle(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 20),
-        ...widget.optionsSchema.asMap().entries.map((entry) {
-          final idx = entry.key;
-          final opt = entry.value;
-          final siblingNames = widget.optionsSchema
-              .asMap()
-              .entries
-              .where((e) => e.key != idx)
-              .map((e) => e.value['name'].toString())
-              .toList();
-          return OptionCategoryEditor(
-            key: ValueKey('opt-$idx-${opt['name']}'),
-            option: opt,
-            siblingNames: siblingNames,
-            onDelete: () {
-              final newSchema = widget.optionsSchema
-                  .asMap()
-                  .entries
-                  .where((e) => e.key != idx)
-                  .map((e) => Map<String, dynamic>.from(e.value))
-                  .toList();
-              widget.onChanged(newSchema);
-            },
-            onChanged: (updatedOpt) {
-              final newSchema = widget.optionsSchema
-                  .map((m) => Map<String, dynamic>.from(m))
-                  .toList();
-              newSchema[idx] = updatedOpt;
-              widget.onChanged(newSchema);
-            },
-          );
-        }),
+        () {
+          final colorEntryList = widget.optionsSchema.asMap().entries.where(
+            (e) => e.value['name'].toString().trim().toLowerCase() == 'color',
+          ).toList();
+
+          final MapEntry<int, Map<String, dynamic>>? colorEntry =
+              colorEntryList.isNotEmpty ? colorEntryList.first : null;
+
+          final otherEntries = widget.optionsSchema.asMap().entries.where(
+            (e) => colorEntry == null || e.key != colorEntry.key,
+          ).toList();
+
+          Widget buildEditor(int idx, Map<String, dynamic> opt) {
+            final siblingNames = widget.optionsSchema
+                .asMap()
+                .entries
+                .where((e) => e.key != idx)
+                .map((e) => e.value['name'].toString())
+                .toList();
+            final isColor = opt['name'].toString().trim().toLowerCase() == 'color';
+
+            return OptionCategoryEditor(
+              key: ValueKey('opt-$idx-${opt['name']}'),
+              option: opt,
+              siblingNames: siblingNames,
+              onDelete: () {
+                final List<Map<String, dynamic>> newSchema;
+                if (isColor) {
+                  // Clear selected colors instead of removing option category
+                  newSchema = widget.optionsSchema.map((m) {
+                    if (m['name'].toString().trim().toLowerCase() == 'color') {
+                      return {
+                        ...m,
+                        'values': <String>[],
+                      };
+                    }
+                    return Map<String, dynamic>.from(m);
+                  }).toList();
+                } else {
+                  newSchema = widget.optionsSchema
+                      .asMap()
+                      .entries
+                      .where((e) => e.key != idx)
+                      .map((e) => Map<String, dynamic>.from(e.value))
+                      .toList();
+                }
+
+                final activeOpts = newSchema.where((opt) {
+                  final name = (opt['name'] as String? ?? '').trim();
+                  final values = List<dynamic>.from(opt['values'] ?? []);
+                  return name.isNotEmpty && values.isNotEmpty;
+                }).toList();
+
+                final currentActiveOpts = widget.optionsSchema.where((opt) {
+                  final name = (opt['name'] as String? ?? '').trim();
+                  final values = List<dynamic>.from(opt['values'] ?? []);
+                  return name.isNotEmpty && values.isNotEmpty;
+                }).toList();
+
+                if (currentActiveOpts.isNotEmpty && activeOpts.isEmpty) {
+                  _confirmCollapse(context, () {
+                    widget.onChanged(newSchema);
+                    widget.onCollapseConfirmed?.call();
+                  });
+                } else {
+                  widget.onChanged(newSchema);
+                }
+              },
+              onChanged: (updatedOpt) {
+                final newSchema = widget.optionsSchema
+                    .map((m) => Map<String, dynamic>.from(m))
+                    .toList();
+
+                // Guard: Color category name is immutable — forcibly restore it
+                // even if a UI bypass somehow fires an onChanged with a mutated name.
+                final originalName = widget.optionsSchema[idx]['name']
+                    .toString()
+                    .trim()
+                    .toLowerCase();
+                if (originalName == 'color') {
+                  updatedOpt = Map<String, dynamic>.from(updatedOpt)
+                    ..['name'] = 'Color';
+                }
+
+                newSchema[idx] = updatedOpt;
+
+                final activeOpts = newSchema.where((opt) {
+                  final name = (opt['name'] as String? ?? '').trim();
+                  final values = List<dynamic>.from(opt['values'] ?? []);
+                  return name.isNotEmpty && values.isNotEmpty;
+                }).toList();
+
+                final currentActiveOpts = widget.optionsSchema.where((opt) {
+                  final name = (opt['name'] as String? ?? '').trim();
+                  final values = List<dynamic>.from(opt['values'] ?? []);
+                  return name.isNotEmpty && values.isNotEmpty;
+                }).toList();
+
+                if (currentActiveOpts.isNotEmpty && activeOpts.isEmpty) {
+                  _confirmCollapse(context, () {
+                    widget.onChanged(newSchema);
+                    widget.onCollapseConfirmed?.call();
+                  });
+                } else {
+                  widget.onChanged(newSchema);
+                }
+              },
+            );
+          }
+
+          final isDesktop = MediaQuery.of(context).size.width >= 900;
+          if (isDesktop) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (colorEntry != null)
+                        buildEditor(colorEntry.key, colorEntry.value)
+                      else
+                        const SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  flex: 6,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: otherEntries
+                        .map((e) => buildEditor(e.key, e.value))
+                        .toList(),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (colorEntry != null) ...[
+                  buildEditor(colorEntry.key, colorEntry.value),
+                  const SizedBox(height: 16),
+                ],
+                ...otherEntries.map((e) => buildEditor(e.key, e.value)),
+              ],
+            );
+          }
+        }(),
         const SizedBox(height: 12),
         Wrap(
           alignment: WrapAlignment.spaceBetween,

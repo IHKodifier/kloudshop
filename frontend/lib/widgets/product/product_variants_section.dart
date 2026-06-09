@@ -10,6 +10,7 @@ import 'package:kloudshop/services/file_uploader.dart';
 class ProductVariantsSection extends StatefulWidget {
   final List<Map<String, dynamic>> variants;
   final List<Map<String, dynamic>> optionsSchema;
+  final String productSlug;
   final bool isNewProduct;
   final bool isDigital;
   final FileUploader uploader;
@@ -21,6 +22,7 @@ class ProductVariantsSection extends StatefulWidget {
     super.key,
     required this.variants,
     required this.optionsSchema,
+    required this.productSlug,
     required this.isNewProduct,
     required this.isDigital,
     required this.uploader,
@@ -38,9 +40,25 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    final activeOptions = widget.optionsSchema.where((opt) {
+      final name = (opt['name'] as String? ?? '').trim();
+      final values = List<dynamic>.from(opt['values'] ?? []);
+      return name.isNotEmpty && values.isNotEmpty;
+    }).toList();
+
+    final visibleVariants = widget.variants.where((v) {
+      final optVals = Map<String, String>.from(v['option_values'] ?? {});
+      if (activeOptions.isNotEmpty) {
+        return optVals.isNotEmpty;
+      } else {
+        return optVals.isEmpty;
+      }
+    }).toList();
+
     final activeCount =
-        widget.variants.where((v) => v['is_active'] ?? true).length;
-    final totalCount = widget.variants.length;
+        visibleVariants.where((v) => v['is_active'] ?? true).length;
+    final totalCount = visibleVariants.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +91,7 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
                       errorBuilder: (context, error, stackTrace) {
                         return const Icon(
                           LucideIcons.check,
-                          size: 16,
+                           size: 16,
                           color: AppTheme.brandEmerald500,
                         );
                       },
@@ -114,13 +132,59 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
         const SizedBox(height: 16),
         Builder(
           builder: (context) {
-            final activeVariants = widget.variants
+            final activeVariants = visibleVariants
                 .where((v) => v['is_active'] ?? true)
                 .toList();
-            final inactiveVariants = widget.variants
+            final inactiveVariants = visibleVariants
                 .where((v) => !(v['is_active'] ?? true))
                 .toList();
             final sortedVariants = [...activeVariants, ...inactiveVariants];
+
+            if (sortedVariants.isEmpty) {
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF1E293B).withValues(alpha: 0.3)
+                      : Colors.grey[50],
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF334155) : Colors.grey[200]!,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      LucideIcons.sparkles,
+                      size: 32,
+                      color: AppTheme.brandEmerald500.withValues(alpha: 0.7),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      activeOptions.isNotEmpty
+                          ? 'Generate Variant Combinations'
+                          : 'No Options Active',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      activeOptions.isNotEmpty
+                          ? 'You have added option categories (such as ${activeOptions.map((o) => o['name']).join(', ')}). Click the "Generate Variants" button above to build the variants list.'
+                          : 'This product has no options. It will be sold as a single default product with the main SKU.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
+            }
 
             return ListView.separated(
               shrinkWrap: true,
@@ -129,19 +193,19 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
               separatorBuilder: (context, index) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final variant = sortedVariants[index];
-                // Unique key based on ID, SKU, and active state to trigger transition when reordered
-                final keyString =
-                    '${variant['variant_id'] ?? ''}_${variant['sku'] ?? ''}_${variant['is_active'] ?? true}';
 
                 return _VariantItemCard(
-                  key: ValueKey(keyString),
+                  key: ObjectKey(variant),
                   variant: variant,
                   optionsSchema: widget.optionsSchema,
+                  productSlug: widget.productSlug,
                   isNewProduct: widget.isNewProduct,
                   isDigital: widget.isDigital,
                   uploader: widget.uploader,
                   isDark: isDark,
                   theme: theme,
+                  isAlternate: index % 2 == 1,
+                  canDeactivate: totalCount > 1,
                   onChanged: widget.onChanged,
                   onToggleActive: (val) {
                     setState(() {
@@ -155,7 +219,7 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
                       if (!val && wasDefault) {
                         variant['is_default'] = false;
                         // Promote the first other active variant to default
-                        final firstActive = widget.variants
+                        final firstActive = visibleVariants
                             .where(
                               (v) => v != variant && (v['is_active'] ?? true),
                             )
@@ -168,13 +232,13 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
                         }
                       } else if (val) {
                         // If activating and there is no active default variant, make this default
-                        final hasActiveDefault = widget.variants.any(
+                        final hasActiveDefault = visibleVariants.any(
                           (v) =>
                               (v['is_active'] ?? true) &&
                               (v['is_default'] ?? false),
                         );
                         if (!hasActiveDefault) {
-                          for (var v in widget.variants) {
+                          for (var v in visibleVariants) {
                             v['is_default'] = false;
                           }
                           variant['is_default'] = true;
@@ -196,11 +260,14 @@ class _ProductVariantsSectionState extends State<ProductVariantsSection> {
 class _VariantItemCard extends StatefulWidget {
   final Map<String, dynamic> variant;
   final List<Map<String, dynamic>> optionsSchema;
+  final String productSlug;
   final bool isNewProduct;
   final bool isDigital;
   final FileUploader uploader;
   final bool isDark;
   final ThemeData theme;
+  final bool isAlternate;
+  final bool canDeactivate;
   final VoidCallback onChanged;
   final ValueChanged<bool> onToggleActive;
 
@@ -208,11 +275,14 @@ class _VariantItemCard extends StatefulWidget {
     super.key,
     required this.variant,
     required this.optionsSchema,
+    required this.productSlug,
     required this.isNewProduct,
     required this.isDigital,
     required this.uploader,
     required this.isDark,
     required this.theme,
+    required this.isAlternate,
+    required this.canDeactivate,
     required this.onChanged,
     required this.onToggleActive,
   });
@@ -314,47 +384,72 @@ class _VariantItemCardState extends State<_VariantItemCard> {
     final customLabelStyle = theme.textTheme.bodySmall;
     const customPadding = EdgeInsets.symmetric(horizontal: 12, vertical: 10);
 
-    // Build dynamic option dropdowns
-    final List<Widget> optionDropdowns = [];
+    // Build dynamic option value chips
+    final List<Widget> optionChips = [];
     for (var opt in widget.optionsSchema) {
       final String name = opt['name'];
       final List<String> vals = List<String>.from(opt['values']);
       if (name.isNotEmpty && vals.isNotEmpty) {
-        if (!vals.contains(optionVals[name])) {
-          optionVals[name] = vals.first;
-          variant['option_values'] = optionVals;
-        }
-        optionDropdowns.add(
-          Expanded(
-            child: DropdownButtonFormField<String>(
-              initialValue: optionVals[name],
-              style: customInputStyle,
-              decoration: InputDecoration(
-                labelText: name,
-                labelStyle: customLabelStyle,
-                border: const OutlineInputBorder(),
-                contentPadding: customPadding,
+        final val = optionVals[name] ?? vals.first;
+        optionChips.add(
+          Chip(
+            label: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '$name: ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                  TextSpan(
+                    text: val,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.grey[900],
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
-              items: vals
-                  .map((v) => DropdownMenuItem(value: v, child: Text(v)))
-                  .toList(),
-              onChanged: isActive
-                  ? (newVal) {
-                      setState(() {
-                        optionVals[name] = newVal!;
-                        variant['option_values'] = optionVals;
-                      });
-                      widget.onChanged();
-                    }
-                  : null,
             ),
+            backgroundColor: isDark
+                ? const Color(0xFF1E293B)
+                : Colors.grey[100],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                color: isDark ? const Color(0xFF334155) : Colors.grey[300]!,
+                width: 1,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           ),
         );
-        optionDropdowns.add(const SizedBox(width: 12));
       }
     }
 
     final List<String> vImages = List<String>.from(variant['images'] ?? []);
+
+    final Color cardColor = isActive
+        ? (isDark
+            ? (widget.isAlternate ? const Color(0xFF0D251A) : const Color(0xFF1E293B))
+            : (widget.isAlternate ? const Color(0xFFEBFDF2) : Colors.white))
+        : (isDark
+            ? (widget.isAlternate ? const Color(0xFF071711).withValues(alpha: 0.5) : const Color(0xFF0F172A).withValues(alpha: 0.5))
+            : (widget.isAlternate ? const Color(0xFFF2FDF6) : Colors.grey[50]!));
+
+    final Color borderColor = isActive
+        ? (widget.isAlternate
+            ? theme.dividerColor
+            : (isDark ? const Color(0xFF0F3B25) : const Color(0xFFA7F3D0)))
+        : (widget.isAlternate
+            ? theme.dividerColor.withValues(alpha: 0.5)
+            : (isDark
+                ? const Color(0xFF0F3B25).withValues(alpha: 0.5)
+                : const Color(0xFFA7F3D0).withValues(alpha: 0.5)));
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -363,18 +458,23 @@ class _VariantItemCardState extends State<_VariantItemCard> {
           ? const EdgeInsets.all(20)
           : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isActive
-            ? (isDark ? const Color(0xFF1E293B) : Colors.white)
-            : (isDark
-                  ? const Color(0xFF0F172A).withValues(alpha: 0.5)
-                  : Colors.grey[50]),
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isActive
-              ? theme.dividerColor
-              : theme.dividerColor.withValues(alpha: 0.5),
+          color: borderColor,
           width: isActive ? 1.0 : 0.8,
         ),
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withValues(alpha: 0.45)
+                      : Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ]
+            : null,
       ),
       child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,25 +513,64 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                               child: Row(
                                 children: [
                                   Flexible(
-                                    child: Text(
-                                      optionVals.isEmpty
-                                          ? 'Default Variant'
-                                          : optionVals.entries
-                                                .map((e) => e.value)
-                                                .join(' / '),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        decoration: isActive
-                                            ? null
-                                            : TextDecoration.lineThrough,
+                                    child: Text.rich(
+                                      TextSpan(
+                                        style: TextStyle(
+                                          decoration: isActive
+                                              ? null
+                                              : TextDecoration.lineThrough,
+                                        ),
+                                        children: optionVals.isEmpty
+                                            ? [
+                                                TextSpan(
+                                                  text: 'Default Variant',
+                                                  style: TextStyle(
+                                                    color: isDark
+                                                        ? Colors.white
+                                                        : Colors.grey[900],
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ]
+                                            : [
+                                                TextSpan(
+                                                  text: () {
+                                                    final String sku = variant['sku']?.toString() ?? '';
+                                                    if (sku.isNotEmpty) return sku;
+                                                    final optionStr = optionVals.values.join('-');
+                                                    final baseSku = widget.productSlug.isNotEmpty
+                                                        ? widget.productSlug.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9\-]'), '-')
+                                                        : 'PRODUCT';
+                                                    final defaultSuffix = optionStr.toUpperCase().replaceAll(
+                                                      RegExp(r'[^A-Z0-9\-]'),
+                                                      '-',
+                                                    );
+                                                    return baseSku.isNotEmpty ? '$baseSku-$defaultSuffix' : 'PRODUCT-SKU';
+                                                  }(),
+                                                  style: TextStyle(
+                                                    color: isDark
+                                                        ? Colors.white
+                                                        : Colors.grey[900],
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ],
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
                                   ),
-                                  if (variant['sku']?.toString().isNotEmpty ==
-                                      true) ...[
+                                  if (optionChips.isNotEmpty) ...[
+                                    const SizedBox(width: 12),
+                                    Wrap(
+                                      spacing: 6,
+                                      runSpacing: 4,
+                                      children: optionChips,
+                                    ),
+                                  ],
+                                  if (optionVals.isEmpty && variant['sku']?.toString().isNotEmpty == true) ...[
                                     const SizedBox(width: 12),
                                     Flexible(
                                       child: Container(
@@ -485,7 +624,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                           const SizedBox(width: 12),
                           LottieToggle(
                             value: isActive,
-                            onChanged: _handleToggle,
+                            onChanged: widget.canDeactivate ? _handleToggle : null,
                           ),
                         ],
                       ),
@@ -503,183 +642,196 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Divider(height: 24),
-                                if (optionDropdowns.isNotEmpty) ...[
-                                  Row(children: optionDropdowns),
-                                  const SizedBox(height: 12),
-                                ],
                                 Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          TextFormField(
-                                            initialValue: variant['sku'],
-                                            style: customInputStyle,
-                                            enabled: isActive,
-                                            decoration: InputDecoration(
-                                              labelText: 'SKU',
-                                              labelStyle: customLabelStyle,
-                                              border: const OutlineInputBorder(),
-                                              contentPadding: customPadding,
-                                            ),
-                                            onChanged: (v) {
-                                              variant['sku'] = v;
-                                              widget.onChanged();
-                                            },
-                                            validator: (v) => v?.isEmpty == true
-                                                ? 'Required'
-                                                : null,
-                                          ),
-                                          if (variant['variant_id'] != null &&
-                                              variant['sku'] != variant['original_sku'])
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 6.0),
-                                              child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Icon(
-                                                    Icons.warning_amber_rounded,
-                                                    color: Colors.amber[700],
-                                                    size: 14,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Expanded(
-                                                    child: Text(
-                                                      'Changing this SKU will break external marketing deep links.',
-                                                      style: TextStyle(
-                                                        color: Colors.amber[800],
-                                                        fontSize: 10,
-                                                        fontFamily: 'Inter',
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      flex: 2,
-                                      child: TextFormField(
-                                        initialValue: variant['price'],
-                                        style: customInputStyle,
-                                        enabled: isActive,
-                                        decoration: InputDecoration(
-                                          labelText: 'Price',
-                                          labelStyle: customLabelStyle,
-                                          prefixText: '\$',
-                                          prefixStyle: customInputStyle,
-                                          border: const OutlineInputBorder(),
-                                          contentPadding: customPadding,
-                                        ),
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (v) {
-                                          setState(() {
-                                            variant['price'] = v;
-                                          });
-                                          widget.onChanged();
-                                        },
-                                        validator: (v) =>
-                                            double.tryParse(v ?? '') == null
-                                            ? 'Invalid'
-                                            : null,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      flex: 2,
-                                      child: TextFormField(
-                                        initialValue:
-                                            variant['compare_at_price'],
-                                        style: customInputStyle,
-                                        enabled: isActive,
-                                        decoration: InputDecoration(
-                                          labelText: 'Compare At',
-                                          labelStyle: customLabelStyle,
-                                          prefixText: '\$',
-                                          prefixStyle: customInputStyle,
-                                          border: const OutlineInputBorder(),
-                                          contentPadding: customPadding,
-                                        ),
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (v) {
-                                          variant['compare_at_price'] = v;
-                                          widget.onChanged();
-                                        },
-                                      ),
-                                    ),
-                                    if (widget.isNewProduct) ...[
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        flex: 3,
-                                        child: TextFormField(
-                                          initialValue: variant['stock'],
-                                          style: customInputStyle,
-                                          enabled: isActive,
-                                          decoration: InputDecoration(
-                                            labelText:
-                                                'Initial Stock Inventory',
-                                            labelStyle: customLabelStyle,
-                                            border: const OutlineInputBorder(),
-                                            contentPadding: customPadding,
-                                          ),
-                                          keyboardType: TextInputType.number,
-                                          onChanged: (v) {
-                                            variant['stock'] = v;
-                                            widget.onChanged();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-
-                                // Media Section for Variant
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'Variant Images',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                IgnorePointer(
-                                  ignoring: !isActive,
-                                  child: CompactMediaListUploader(
-                                    images: vImages,
-                                    uploader: widget.uploader,
-                                    onImagesChanged: (newImages) {
-                                      setState(() {
-                                        variant['images'] = newImages;
-                                        if (variant['image_url'] == null ||
-                                            !newImages.contains(
-                                              variant['image_url'],
-                                            )) {
-                                          variant['image_url'] =
-                                              newImages.firstOrNull;
-                                        }
-                                      });
-                                      widget.onChanged();
-                                    },
-                                  ),
-                                ),
-
-                                // Shipping Overrides Section
-                                if (!widget.isDigital) ...[
-                                  const Divider(height: 24),
-                                  IgnorePointer(
-                                    ignoring: !isActive,
-                                    child: _buildVariantShippingOverrides(
-                                      variant,
-                                    ),
-                                  ),
-                                ],
+                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                   children: [
+                                     // Left Column (60% width)
+                                     Expanded(
+                                       flex: 3,
+                                       child: Column(
+                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                         children: [
+                                           Row(
+                                             children: [
+                                               Expanded(
+                                                 flex: 3,
+                                                 child: Column(
+                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                   children: [
+                                                     TextFormField(
+                                                       initialValue: variant['sku'],
+                                                       style: customInputStyle,
+                                                       enabled: isActive,
+                                                       textInputAction: TextInputAction.next,
+                                                       decoration: InputDecoration(
+                                                         labelText: 'SKU',
+                                                         labelStyle: customLabelStyle,
+                                                         border: const OutlineInputBorder(),
+                                                         contentPadding: customPadding,
+                                                       ),
+                                                       onChanged: (v) {
+                                                         variant['sku'] = v;
+                                                         widget.onChanged();
+                                                       },
+                                                       validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                                                     ),
+                                                     if (variant['variant_id'] != null &&
+                                                         variant['sku'] != variant['original_sku'])
+                                                       Padding(
+                                                         padding: const EdgeInsets.only(top: 6.0),
+                                                         child: Row(
+                                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                                           children: [
+                                                             Icon(
+                                                               Icons.warning_amber_rounded,
+                                                               color: Colors.amber[700],
+                                                               size: 14,
+                                                             ),
+                                                             const SizedBox(width: 4),
+                                                             Expanded(
+                                                               child: Text(
+                                                                 'Changing this SKU will break external marketing deep links.',
+                                                                 style: TextStyle(
+                                                                   color: Colors.amber[800],
+                                                                   fontSize: 10,
+                                                                   fontFamily: 'Inter',
+                                                                   fontWeight: FontWeight.w500,
+                                                                 ),
+                                                               ),
+                                                             ),
+                                                           ],
+                                                         ),
+                                                       ),
+                                                   ],
+                                                 ),
+                                               ),
+                                               const SizedBox(width: 12),
+                                               Expanded(
+                                                 flex: 2,
+                                                 child: TextFormField(
+                                                   initialValue: variant['price'],
+                                                   style: customInputStyle,
+                                                   enabled: isActive,
+                                                   textInputAction: TextInputAction.next,
+                                                   decoration: InputDecoration(
+                                                     labelText: 'Price',
+                                                     labelStyle: customLabelStyle,
+                                                     prefixText: '\$',
+                                                     prefixStyle: customInputStyle,
+                                                     border: const OutlineInputBorder(),
+                                                     contentPadding: customPadding,
+                                                   ),
+                                                   keyboardType: TextInputType.number,
+                                                   onChanged: (v) {
+                                                     setState(() {
+                                                       variant['price'] = v;
+                                                     });
+                                                     widget.onChanged();
+                                                   },
+                                                   validator: (v) => double.tryParse(v ?? '') == null ? 'Invalid' : null,
+                                                 ),
+                                               ),
+                                             ],
+                                           ),
+                                           const SizedBox(height: 12),
+                                           Row(
+                                             children: [
+                                               Expanded(
+                                                 flex: 2,
+                                                 child: TextFormField(
+                                                   initialValue: variant['compare_at_price'],
+                                                   style: customInputStyle,
+                                                   enabled: isActive,
+                                                   textInputAction: TextInputAction.next,
+                                                   decoration: InputDecoration(
+                                                     labelText: 'Compare At',
+                                                     labelStyle: customLabelStyle,
+                                                     prefixText: '\$',
+                                                     prefixStyle: customInputStyle,
+                                                     border: const OutlineInputBorder(),
+                                                     contentPadding: customPadding,
+                                                   ),
+                                                   keyboardType: TextInputType.number,
+                                                   onChanged: (v) {
+                                                     variant['compare_at_price'] = v;
+                                                     widget.onChanged();
+                                                   },
+                                                 ),
+                                               ),
+                                               const SizedBox(width: 12),
+                                               if (widget.isNewProduct)
+                                                 Expanded(
+                                                   flex: 3,
+                                                   child: TextFormField(
+                                                     initialValue: variant['stock'],
+                                                     style: customInputStyle,
+                                                     enabled: isActive,
+                                                     textInputAction: TextInputAction.next,
+                                                     decoration: InputDecoration(
+                                                       labelText: 'Initial Stock Inventory',
+                                                       labelStyle: customLabelStyle,
+                                                       border: const OutlineInputBorder(),
+                                                       contentPadding: customPadding,
+                                                     ),
+                                                     keyboardType: TextInputType.number,
+                                                     onChanged: (v) {
+                                                       variant['stock'] = v;
+                                                       widget.onChanged();
+                                                     },
+                                                   ),
+                                                 )
+                                               else
+                                                 const Spacer(flex: 3),
+                                             ],
+                                           ),
+                                           if (!widget.isDigital) ...[
+                                             const SizedBox(height: 16),
+                                             const Divider(),
+                                             IgnorePointer(
+                                               ignoring: !isActive,
+                                               child: _buildVariantShippingOverrides(variant),
+                                             ),
+                                           ],
+                                         ],
+                                       ),
+                                     ),
+                                     const SizedBox(width: 24),
+                                     // Right Column (40% width)
+                                     Expanded(
+                                       flex: 2,
+                                       child: Column(
+                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                         children: [
+                                           const Text(
+                                             'Variant Images',
+                                             style: TextStyle(
+                                               fontWeight: FontWeight.bold,
+                                               fontSize: 13,
+                                             ),
+                                           ),
+                                           const SizedBox(height: 8),
+                                           IgnorePointer(
+                                             ignoring: !isActive,
+                                             child: CompactMediaListUploader(
+                                               images: vImages,
+                                               uploader: widget.uploader,
+                                               onImagesChanged: (newImages) {
+                                                 setState(() {
+                                                   variant['images'] = newImages;
+                                                   if (variant['image_url'] == null ||
+                                                       !newImages.contains(variant['image_url'])) {
+                                                     variant['image_url'] = newImages.firstOrNull;
+                                                   }
+                                                 });
+                                                 widget.onChanged();
+                                               },
+                                             ),
+                                           ),
+                                         ],
+                                       ),
+                                     ),
+                                   ],
+                                 ),
                               ],
                             ),
                           )
@@ -732,6 +884,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                 child: TextFormField(
                   initialValue: variant['weight_value']?.toString() ?? '',
                   style: customInputStyle,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Variant Weight',
                     labelStyle: customLabelStyle,
@@ -785,6 +938,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                 initialValue:
                                     variant['length_value']?.toString() ?? '',
                                 style: customInputStyle,
+                                textInputAction: TextInputAction.next,
                                 decoration: InputDecoration(
                                   labelText: 'Variant Length',
                                   labelStyle: customLabelStyle,
@@ -806,6 +960,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                 initialValue:
                                     variant['width_value']?.toString() ?? '',
                                 style: customInputStyle,
+                                textInputAction: TextInputAction.next,
                                 decoration: InputDecoration(
                                   labelText: 'Variant Width',
                                   labelStyle: customLabelStyle,
@@ -831,6 +986,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                 initialValue:
                                     variant['height_value']?.toString() ?? '',
                                 style: customInputStyle,
+                                textInputAction: TextInputAction.next,
                                 decoration: InputDecoration(
                                   labelText: 'Variant Height',
                                   labelStyle: customLabelStyle,
@@ -884,6 +1040,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                             initialValue:
                                 variant['length_value']?.toString() ?? '',
                             style: customInputStyle,
+                            textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: 'Variant Length',
                               labelStyle: customLabelStyle,
@@ -905,6 +1062,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                             initialValue:
                                 variant['width_value']?.toString() ?? '',
                             style: customInputStyle,
+                            textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: 'Variant Width',
                               labelStyle: customLabelStyle,
@@ -926,6 +1084,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                             initialValue:
                                 variant['height_value']?.toString() ?? '',
                             style: customInputStyle,
+                            textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: 'Variant Height',
                               labelStyle: customLabelStyle,

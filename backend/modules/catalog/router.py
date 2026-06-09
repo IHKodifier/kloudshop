@@ -123,7 +123,9 @@ async def update_product(
     """
     # 1. Fetch existing product
     result = await db.execute(
-        select(Product).options(selectinload(Product.variants)).where(
+        select(Product).options(
+            selectinload(Product.variants).selectinload(Variant.inventory_items)
+        ).where(
             Product.product_id == product_id,
             Product.tenant_id == user.tenant_id
         )
@@ -142,7 +144,22 @@ async def update_product(
 
     # 3. Handle Variants Reconciliation
     sku_changes = []
+    collapsed_variants = []
     if product_data.variants is not None:
+        has_old_options = any(len(v.option_values or {}) > 0 for v in product.variants if v.is_active)
+        has_new_options = any(len(v_data.option_values or {}) > 0 for v_data in product_data.variants if getattr(v_data, 'is_active', True))
+        
+        if has_old_options and not has_new_options:
+            for v in product.variants:
+                if len(v.option_values or {}) > 0 and v.is_active:
+                    collapsed_variants.append({
+                        "sku": v.sku,
+                        "option_values": v.option_values,
+                        "price": float(v.price),
+                        "compare_at_price": float(v.compare_at_price) if v.compare_at_price is not None else None,
+                        "stock": sum(item.quantity_on_hand for item in v.inventory_items)
+                    })
+
         existing_variants_map = {v.variant_id: v for v in product.variants}
         incoming_variant_ids = {v.variant_id for v in product_data.variants if v.variant_id}
         
@@ -168,12 +185,15 @@ async def update_product(
                     setattr(variant, key, value)
             else:
                 # Create new
+                # Ensure all default values are populated by converting to VariantCreate
+                v_dict = v_data.model_dump(exclude={"variant_id"}, exclude_none=True)
+                v_create = VariantCreate(**v_dict)
                 new_variant = Variant(
-                    **v_data.model_dump(exclude={"variant_id"}),
+                    **v_create.model_dump(),
                     product_id=product.product_id,
                     tenant_id=user.tenant_id
                 )
-                db.add(new_variant)
+                product.variants.append(new_variant)
 
     # 4. Handle slug change -> 301 Redirect
     if new_slug and new_slug != old_slug:
@@ -248,6 +268,10 @@ async def update_product(
     if email_sku_report and sku_changes:
         background_tasks.add_task(send_sku_change_report_email, user.email, product.title, product.slug, sku_changes)
 
+    # 7. Send Collapse Report email if variants were collapsed to simple product
+    if collapsed_variants:
+        background_tasks.add_task(send_collapse_variant_report_email, user.email, product.title, product.slug, collapsed_variants)
+
     return product
 
 @router.get("/redirects", response_model=List[RedirectRuleResponse])
@@ -281,6 +305,16 @@ async def send_sku_change_report_email(email: str, product_title: str, product_s
     for change in changes:
         opt_str = " / ".join(f"{k}: {v}" for k, v in change["option_values"].items())
         print(f"  - Variant ({opt_str}): {change['old_sku']} -> {change['new_sku']}")
+
+async def send_collapse_variant_report_email(email: str, product_title: str, product_slug: str, variants: list):
+    """
+    Simulates sending an email report of deactivated variants during options collapse to the merchant.
+    """
+    print(f"DEBUG: Sending Collapse Variant Report email to {email} for product '{product_title}' (slug: {product_slug})")
+    print("  Deactivated Variants Archive:")
+    for v in variants:
+        opt_str = " / ".join(f"{k}: {v}" for k, v in v["option_values"].items())
+        print(f"  - SKU: {v['sku']} ({opt_str}) | Price: {v['price']} | Compare-At: {v['compare_at_price']} | Stock: {v['stock']}")
 
 # --- Collections ---
 

@@ -87,6 +87,7 @@ Each view must fully implement the following five states (unless explicitly mark
 | **Catalog Overview** | `mock-screens/catalog_overview.png` | [catalog_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) | `catalogProvider` |
 | **Product & Variant Editor** | `mock-screens/product_editor.png` | [product_editor_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) | `productEditorProvider` |
 | **Color Presets CRUD** | `N/A` | [option_category_editor.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/option_category_editor.dart) | `colorPresetsProvider` |
+| **Bulk CSV Product Import** | `mock-screens/csv_import.png` | `csv_import_view.dart` *(NEW)* | `csvImportProvider` *(NEW)* |
 
 - [x] **Catalog Overview**
   - [x] Default/Active State (Frosted cards, emerald filter chips)
@@ -106,6 +107,12 @@ Each view must fully implement the following five states (unless explicitly mark
   - [x] Error/Failure State (Rollback and error banner on api save failure)
   - [x] Empty State (`N/A`)
   - [x] Input Validation State (Verify hex code format before preset submission)
+- [ ] **Bulk CSV Product Import** ⬅ *PENDING — scoped in J2 description but never implemented*
+  - [ ] Default/Active State (File picker drop-zone, column-mapping UI, data preview grid)
+  - [ ] Loading/Submitting State (Row-by-row ingestion progress bar with live success/fail counters)
+  - [ ] Error/Failure State (Per-row validation error report: downloadable error CSV, retry failed rows)
+  - [ ] Empty State ("No file selected" placeholder with drag-and-drop CTA and CSV template download)
+  - [ ] Input Validation State (Required column checks, data-type validation, duplicate SKU detection before submit)
 
 ---
 
