@@ -304,7 +304,7 @@ List<Map<String, String>> parseFileBytes(Uint8List bytes, String filename) {
     return result;
   } else {
     final text = utf8.decode(bytes, allowMalformed: true);
-    final normalizedText = text.replaceAll('\r\n', '\n');
+    final normalizedText = text.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
     final csvRows = const CsvToListConverter(eol: '\n').convert(normalizedText);
     if (csvRows.length <= 1) return [];
     final headers = csvRows.first.map((e) => e?.toString().trim() ?? '').toList();
@@ -331,27 +331,32 @@ List<Map<String, String>> parseFileBytes(Uint8List bytes, String filename) {
 }
 
 List<CsvProductGroup> groupRowsByHandle(List<Map<String, String>> rows) {
-  final List<CsvProductGroup> groups = [];
+  final Map<String, CsvProductGroup> groupMap = {};
+  final List<CsvProductGroup> orderedGroups = [];
   String? lastHandle;
-  CsvProductGroup? currentGroup;
 
   for (final row in rows) {
-    var handle = row['Handle']?.trim() ?? '';
+    final handle = row['Handle']?.trim() ?? '';
     final title = row['Title']?.trim() ?? '';
 
     if (handle.isNotEmpty) {
       lastHandle = handle;
-      currentGroup = CsvProductGroup(
-        handle: handle,
-        title: title,
-        variantRows: [row],
-      );
-      groups.add(currentGroup);
-    } else if (lastHandle != null && currentGroup != null) {
-      currentGroup.variantRows.add(row);
+      if (groupMap.containsKey(handle)) {
+        groupMap[handle]!.variantRows.add(row);
+      } else {
+        final newGroup = CsvProductGroup(
+          handle: handle,
+          title: title.isNotEmpty ? title : handle,
+          variantRows: [row],
+        );
+        groupMap[handle] = newGroup;
+        orderedGroups.add(newGroup);
+      }
+    } else if (lastHandle != null && groupMap.containsKey(lastHandle)) {
+      groupMap[lastHandle]!.variantRows.add(row);
     }
   }
-  return groups;
+  return orderedGroups;
 }
 
 class _ParseParams {

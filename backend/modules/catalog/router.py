@@ -1231,7 +1231,7 @@ async def download_import_template(
         "", "", "", "", "",
         "", "", "", "", "", "",
         "", "", "",
-        "EXAMPLE-SKU-002", "19.99", "50", "", "",
+        "EXAMPLE-SKU-002", "19.99", "50", "", "10.00",
         "", "TRUE", "TRUE",
         "Color", "Blue", "Size", "L", "", "",
     ])
