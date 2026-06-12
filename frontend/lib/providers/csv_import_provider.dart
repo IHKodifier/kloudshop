@@ -330,13 +330,21 @@ List<Map<String, String>> parseFileBytes(Uint8List bytes, String filename) {
   }
 }
 
+String _slugify(String text) {
+  return text
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9\-]+'), '-');
+}
+
 List<CsvProductGroup> groupRowsByHandle(List<Map<String, String>> rows) {
   final Map<String, CsvProductGroup> groupMap = {};
   final List<CsvProductGroup> orderedGroups = [];
   String? lastHandle;
 
   for (final row in rows) {
-    final handle = row['Handle']?.trim() ?? '';
+    final rawHandle = row['Handle']?.trim() ?? '';
+    final handle = rawHandle.isNotEmpty ? _slugify(rawHandle) : '';
     final title = row['Title']?.trim() ?? '';
 
     if (handle.isNotEmpty) {
@@ -346,7 +354,7 @@ List<CsvProductGroup> groupRowsByHandle(List<Map<String, String>> rows) {
       } else {
         final newGroup = CsvProductGroup(
           handle: handle,
-          title: title.isNotEmpty ? title : handle,
+          title: title.isNotEmpty ? title : rawHandle,
           variantRows: [row],
         );
         groupMap[handle] = newGroup;
@@ -358,6 +366,7 @@ List<CsvProductGroup> groupRowsByHandle(List<Map<String, String>> rows) {
   }
   return orderedGroups;
 }
+
 
 class _ParseParams {
   final Uint8List bytes;

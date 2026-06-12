@@ -1,10 +1,20 @@
 # [MODIFY] backend/modules/catalog/schemas.py
 # Added VariantUpdate and integrated it into ProductUpdate for full product reconciliation.
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from decimal import Decimal
+import re
+
+def slugify(v: Any) -> Any:
+    if isinstance(v, str):
+        s = v.strip().lower()
+        s = re.sub(r'[^a-z0-9\-]+', '-', s)
+        s = s.strip('-')
+        return s
+    return v
+
 
 class VariantBase(BaseModel):
     sku: str
@@ -73,6 +83,12 @@ class ProductBase(BaseModel):
     description: Optional[str] = None
     status: str = Field("draft", pattern="^(draft|active|archived)$")
     slug: str = Field(..., pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     images: List[str] = []
     options_schema: List[Dict[str, Any]] = []
@@ -112,6 +128,12 @@ class CollectionBase(BaseModel):
     title: str
     description: Optional[str] = None
     slug: str = Field(..., pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
@@ -127,6 +149,12 @@ class CollectionUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     slug: Optional[str] = Field(None, pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
@@ -184,6 +212,12 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = Field(None, pattern="^(draft|active|archived)$")
     slug: Optional[str] = Field(None, pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     images: Optional[List[str]] = None
     options_schema: Optional[List[Dict[str, Any]]] = None

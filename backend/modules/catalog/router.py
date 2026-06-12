@@ -867,6 +867,14 @@ def _parse_decimal(val: str) -> Optional[Decimal]:
         return None
 
 
+def _slugify(val: str) -> str:
+    s = val.strip().lower()
+    s = re.sub(r'[^a-z0-9\-]+', '-', s)
+    s = s.strip('-')
+    return s
+
+
+
 def _parse_csv_bytes(file_bytes: bytes, filename: str) -> List[Dict]:
     """Parse CSV or XLSX bytes into a list of row dicts."""
     if filename.lower().endswith(".xlsx"):
@@ -951,7 +959,8 @@ async def _process_import_job(
         # Group rows by Handle
         product_groups: Dict[str, List] = {}
         for row in rows:
-            handle = row.get("Handle", "").strip()
+            raw_handle = row.get("Handle", "").strip()
+            handle = _slugify(raw_handle) if raw_handle else ""
             if handle:
                 product_groups.setdefault(handle, [])
                 product_groups[handle].append(row)
@@ -959,6 +968,7 @@ async def _process_import_job(
             elif product_groups:
                 last_handle = list(product_groups.keys())[-1]
                 product_groups[last_handle].append(row)
+
 
         error_log = []
         no_stock_log = []
