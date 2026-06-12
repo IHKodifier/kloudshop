@@ -151,15 +151,33 @@ class ImportJobResponse(BaseModel):
     job_id: str
     tenant_id: str
     status: str
+    initiated_by: Optional[str] = None
+    processing_started_at: Optional[datetime] = None
+    processing_completed_at: Optional[datetime] = None
+    source_filename: Optional[str] = None
+    source_filesize_bytes: int = 0
+    conflict_strategy: Optional[str] = None
     rows_total: int
     rows_processed: int
+    rows_skipped: int = 0
+    rows_overwritten: int = 0
+    rows_custom_sku: int = 0
     rows_failed: int
     error_log: List[Dict[str, Any]]
+    no_stock_log: List[Dict[str, Any]] = []
     created_at: datetime
     updated_at: datetime
 
     class Config:
         from_attributes = True
+
+
+class SkuExistsRequest(BaseModel):
+    skus: List[str]
+
+
+class SkuExistsResponse(BaseModel):
+    duplicates: List[str]
 
 class ProductUpdate(BaseModel):
     title: Optional[str] = None

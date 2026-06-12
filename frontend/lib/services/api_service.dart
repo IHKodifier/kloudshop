@@ -1029,6 +1029,119 @@ class ApiService {
       }
     }
   }
+
+  // --- Bulk CSV/XLSX Product Import ---
+  Future<Uint8List> downloadCsvTemplate() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/products/import/template'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else {
+        throw ApiException(response.statusCode, 'Failed to download CSV template: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.downloadCsvTemplate error: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<String>> checkSkuExists(List<String> skus) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/products/sku-exists'),
+        headers: headers,
+        body: jsonEncode({'skus': skus}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<String>.from(data['duplicates'] ?? []);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to check SKUs: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.checkSkuExists error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> uploadCsvImport({
+    required Uint8List bytes,
+    required String filename,
+    required String conflictStrategy,
+    required Map<String, String> customSkuMap,
+  }) async {
+    try {
+      final token = await _authService.getIdToken();
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/products/import'),
+      );
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+      request.fields['conflict_strategy'] = conflictStrategy;
+      request.fields['custom_sku_map_json'] = jsonEncode(customSkuMap);
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          bytes,
+          filename: filename,
+        ),
+      );
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to upload CSV: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.uploadCsvImport error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> getImportJobStatus(String jobId) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/products/import/$jobId'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to get import job status: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.getImportJobStatus error: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getImportHistory() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/products/import/history'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        return data.map((item) => Map<String, dynamic>.from(item)).toList();
+      } else {
+        throw ApiException(response.statusCode, 'Failed to get import history: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.getImportHistory error: $e');
+      rethrow;
+    }
+  }
 }
 
 class ApiException implements Exception {

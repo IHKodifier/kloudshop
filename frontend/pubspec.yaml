@@ -50,6 +50,13 @@ dependencies:
   lottie: ^3.3.3
   desktop_drop: ^0.7.1
   rich_field_controller: ^0.2.1
+  csv: ^6.0.0
+  file_picker: ^8.1.7
+  excel: ^4.0.6
+
+dependency_overrides:
+  archive: ^4.0.0
+  win32: ^6.0.0
 
 dev_dependencies:
   flutter_test:

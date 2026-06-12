@@ -7,6 +7,9 @@ import 'package:kloudshop/providers/catalog_providers.dart';
 import 'package:kloudshop/views/product_editor_view.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/views/csv_import_dialog.dart';
+import 'package:kloudshop/widgets/import_history_panel.dart';
+import 'package:kloudshop/providers/import_history_provider.dart';
 
 class CatalogView extends ConsumerStatefulWidget {
   const CatalogView({super.key});
@@ -17,6 +20,14 @@ class CatalogView extends ConsumerStatefulWidget {
 
 class _CatalogViewState extends ConsumerState<CatalogView> {
   final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(importHistoryProvider.notifier).fetchHistory();
+    });
+  }
 
   @override
   void dispose() {
@@ -64,6 +75,46 @@ class _CatalogViewState extends ConsumerState<CatalogView> {
                   ],
                 ),
                 const Spacer(),
+                // Import CSV Button
+                OutlinedButton.icon(
+                  onPressed: () => showCsvImportDialog(context, ref),
+                  icon: const Icon(LucideIcons.fileSpreadsheet, size: 16),
+                  label: const Text('Import CSV'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+
+                // Import History notification badge button
+                Consumer(
+                  builder: (context, ref, child) {
+                    final historyState = ref.watch(importHistoryProvider);
+                    final unreadCount = historyState.unreadCount;
+                    
+                    return Badge(
+                      label: unreadCount > 0 ? Text('$unreadCount') : null,
+                      isLabelVisible: unreadCount > 0,
+                      child: Builder(
+                        builder: (context) {
+                          return IconButton(
+                            icon: const Icon(LucideIcons.history),
+                            onPressed: () {
+                              final box = context.findRenderObject() as RenderBox;
+                              final offset = box.localToGlobal(Offset.zero);
+                              showImportHistoryPanel(context, ref, offset);
+                            },
+                            tooltip: 'Import History',
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 12),
                 HoverScale(
                   child: DecoratedBox(
                     decoration: BoxDecoration(

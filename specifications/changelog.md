@@ -180,5 +180,81 @@ This changelog records the architecture, model, provider, and UI changes made du
 - **No-Options Base Variant & Transition Specifications**:
   - Documented the architecture, transition logic, auto-generated SKU rules, deactivation details, and the Collapse Variant Report details in the specifications document [product_variations_logic.md](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/specifications/product_variations_logic.md).
 
+---
+
+### Journey 2: Catalog Enhancements & Bulk CSV Import (Branch: phase7/j2-catalog)
+
+#### 1. New Models & Database Schema
+- **ImportJob Audit Fields** ([models.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py) & [a3f1e8b2c904_import_job_audit_fields.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py)):
+  - Added audit and progress-tracking columns to `ImportJob`:
+    - `initiated_by` (`String`): Email of the merchant initiating the import.
+    - `processing_started_at` (`DateTime`): Timestamp when parsing/import processing started.
+    - `processing_completed_at` (`DateTime`): Timestamp when the job finished or failed.
+    - `source_filename` (`String`): The name of the uploaded CSV/XLSX file.
+    - `source_filesize_bytes` (`Integer`): Size of the uploaded file.
+    - `conflict_strategy` (`String`): Selected duplication resolution (e.g. `skip`, `overwrite`, `custom_sku`).
+    - `rows_skipped` (`Integer`): Count of skipped rows.
+    - `rows_overwritten` (`Integer`): Count of overwritten rows.
+    - `rows_custom_sku` (`Integer`): Count of rows matching custom SKUs.
+    - `no_stock_log` (`JSON`): List of variants that had no stock defined during import (notifying merchant that stock value was not available and they need to update the inventory manually).
+
+---
+
+#### 2. Backend API Endpoints & Async Background Task
+- **New Endpoints** ([router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)):
+  - `GET /api/v1/catalog/import/template`: Streams a standard CSV import template with basic headers and examples.
+  - `POST /api/v1/catalog/import/check-sku-exists` (Payload: `SkuExistsRequest`): Verifies if a list of SKUs already exists in the tenant catalog for client-side pre-flight duplicate checking.
+  - `POST /api/v1/catalog/import/upload`: Multipart file upload parsing both CSV and XLSX formats. Creates an `ImportJob` record in `pending` status, and triggers the asynchronous background processing task.
+  - `GET /api/v1/catalog/import/jobs/{job_id}`: Retrieves real-time progress of a specific import job.
+  - `GET /api/v1/catalog/import/jobs`: Lists all historical import jobs for the current tenant.
+- **Asynchronous Processing Task (`_process_import_job`)**:
+  - Operates sequentially on rows, extracting product handles, categories, tags, SKU, prices, compare-at prices, stock, and dynamic variant options (supporting up to 9 dynamic levels of product options).
+  - Implements three conflict resolution strategies:
+    - **Skip**: Skips row ingestion if the SKU exists.
+    - **Overwrite**: Updates existing product, variant, pricing, options, and stock values.
+    - **Custom SKU**: Renames duplicate SKUs on-the-fly based on client-provided mappings.
+  - Sends a completion summary email report at the end of the run containing metrics and details of variants created/modified, and a list of variants imported with missing stock values.
+
+---
+
+#### 3. Frontend Providers, Services & State Management
+- **API Client Extensions** ([api_service.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/api_service.dart)):
+  - Implemented client methods for downloading templates, checking SKU availability, posting multipart form data, polling job progress, and fetching import job lists.
+- **CSV/XLSX Import State Manager** ([csv_import_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart)):
+  - Parses uploaded text bytes (CSV) or parses spreadsheet structures using the `excel` package (XLSX).
+  - Groups variant rows by product handles to present a unified previews layout.
+  - Resolves duplicate SKU check queries, tracks chosen strategies, and manages inline text field overrides for custom SKU mapping.
+  - Runs periodic timers to poll `/jobs/{id}` progress endpoints.
+- **Import History Manager** ([import_history_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/import_history_provider.dart)):
+  - Caches historically executed jobs, manages unviewed alert notifications with status badges, and automatically initiates background polling when active import tasks are running.
+
+---
+
+#### 4. Cross-Platform Save File Download Helper
+- **Cross-Platform Conditional Compilation** ([download_helper.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper.dart), `download_helper_none.dart`, `download_helper_web.dart`):
+  - Integrates conditional compilation using `dart.library.html` to separate web actions from mobile/desktop platforms.
+  - **Web**: Creates a download link blob directly and clicks it programmatically.
+  - **Desktop/Mobile**: Leverages `FilePicker.platform.saveFile()` to let users select output targets and writes raw template bytes.
+
+---
+
+#### 5. UI Views & Visual Enhancements
+- **Import Dialog Wizard** ([csv_import_dialog.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart)):
+  - Implements a responsive 3-step import wizard overlay card with frosted glassmorphic styles.
+  - **Step 1 (Idle)**: Interactive Drag-and-Drop / Browse zone using `desktop_drop`, including template download indicators.
+  - **Step 2 (Preview & Strategies)**: Displays expandable list cards grouping variants. Renders radio selection strategies (Skip, Overwrite, Custom SKU) and dynamic lists of text fields for custom SKU renaming when the strategy is active.
+  - **Step 3 (Progress / Result)**: Live progress bar tracking processed, skipped, and failed count states. Shows summary cards upon completion, showing success colors and detailed logs / warning notifications.
+- **Import History Card** ([import_history_panel.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart)):
+  - Notification-center style overlay panel popping from the toolbar.
+  - Shows historic listings of jobs, processing items with live pulsing dots, and triggers detailed modal reports displaying validation warnings or skipped reasons.
+- **Toolbar Integration** ([catalog_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart)):
+  - Added a frosted "Import CSV" button and a History icon button with unviewed badge counters to the catalog overview header.
+
+---
+
+#### 6. Verification & Automated Tests
+- **Backend Tests**: Verified using `pytest` on [test_csv_import.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_csv_import.py) covering 11 critical integration scenarios. **11/11 tests pass successfully**.
+- **Frontend Analysis**: Validated with `flutter analyze` ensuring zero compiler errors or warnings.
+
 
 

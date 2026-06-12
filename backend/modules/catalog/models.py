@@ -200,14 +200,33 @@ class ImportJob(Base):
 
     job_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     tenant_id = Column(String, nullable=False, index=True)
-    
-    status = Column(String(16), nullable=False, default='pending') # pending | processing | completed | failed
+
+    # Status: pending | processing | successful | partial_success | failed
+    status = Column(String(16), nullable=False, default='pending')
+
+    # Audit trail
+    initiated_by = Column(String, nullable=True)          # staff_user_id
+    processing_started_at = Column(DateTime, nullable=True)
+    processing_completed_at = Column(DateTime, nullable=True)
+
+    # File metadata
+    source_filename = Column(String(512), nullable=True)
+    source_filesize_bytes = Column(Integer, default=0)
+
+    # Conflict strategy used
+    conflict_strategy = Column(String(16), nullable=True)  # skip | overwrite | custom_sku | mixed
+
+    # Row counters
     rows_total = Column(Integer, default=0)
-    rows_processed = Column(Integer, default=0)
+    rows_processed = Column(Integer, default=0)           # all successful rows
+    rows_skipped = Column(Integer, default=0)             # duplicate-skip
+    rows_overwritten = Column(Integer, default=0)         # duplicate-overwrite
+    rows_custom_sku = Column(Integer, default=0)          # duplicate-custom-sku rename
     rows_failed = Column(Integer, default=0)
-    
-    error_log = Column(JSON, default=[]) # List of {row: N, error: "msg"}
-    
+
+    error_log = Column(JSON, default=[])  # [{row: N, sku: "X", error: "msg"}]
+    no_stock_log = Column(JSON, default=[])  # [{handle, sku, title}] products with no stock
+
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
