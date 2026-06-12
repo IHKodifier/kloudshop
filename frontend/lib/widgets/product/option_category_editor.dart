@@ -5,6 +5,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/models/color_preset.dart';
 import 'package:kloudshop/providers/color_presets_provider.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class OptionCategoryEditor extends ConsumerStatefulWidget {
   final Map<String, dynamic> option;
@@ -672,13 +673,11 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
+                          child: SemanticTextFormField(
                             controller: hexController,
-                            decoration: const InputDecoration(
-                              labelText: 'Hex Code',
-                              hintText: '#ffffff',
-                              border: OutlineInputBorder(),
-                            ),
+                            labelText: 'Hex Code',
+                            hintText: '#ffffff',
+                            prefixIcon: LucideIcons.palette,
                             onChanged: (_) {
                               setDialogState(() {});
                             },
@@ -845,13 +844,11 @@ class _OptionCategoryEditorState extends ConsumerState<OptionCategoryEditor> {
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
+                          child: SemanticTextFormField(
                             controller: hexController,
-                            decoration: const InputDecoration(
-                              labelText: 'Hex Code',
-                              hintText: '#ffffff',
-                              border: OutlineInputBorder(),
-                            ),
+                            labelText: 'Hex Code',
+                            hintText: '#ffffff',
+                            prefixIcon: LucideIcons.palette,
                             onChanged: (_) {
                               setDialogState(() {});
                             },

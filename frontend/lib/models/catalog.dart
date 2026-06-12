@@ -110,6 +110,7 @@ class Product {
 class ProductVariant {
   final String id;
   final String sku;
+  final String? barcode;
   final double price;
   final double? compareAtPrice;
   final Map<String, String> optionValues;
@@ -128,6 +129,7 @@ class ProductVariant {
   ProductVariant({
     required this.id,
     required this.sku,
+    this.barcode,
     required this.price,
     this.compareAtPrice,
     this.optionValues = const {},
@@ -148,6 +150,7 @@ class ProductVariant {
     return ProductVariant(
       id: json['variant_id'] as String,
       sku: json['sku'] as String,
+      barcode: json['barcode'] as String?,
       price: _toDouble(json['price']),
       compareAtPrice: json['compare_at_price'] != null
           ? _toDouble(json['compare_at_price'])

@@ -6,6 +6,7 @@ import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:kloudshop/widgets/lottie_toggle.dart';
 import 'package:kloudshop/widgets/upload/compact_media_list_uploader.dart';
 import 'package:kloudshop/services/file_uploader.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class ProductVariantsSection extends StatefulWidget {
   final List<Map<String, dynamic>> variants;
@@ -651,139 +652,151 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                        child: Column(
                                          crossAxisAlignment: CrossAxisAlignment.start,
                                          children: [
-                                           Row(
-                                             children: [
-                                               Expanded(
-                                                 flex: 3,
-                                                 child: Column(
-                                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                                   children: [
-                                                     TextFormField(
-                                                       initialValue: variant['sku'],
-                                                       style: customInputStyle,
-                                                       enabled: isActive,
-                                                       textInputAction: TextInputAction.next,
-                                                       decoration: InputDecoration(
-                                                         labelText: 'SKU',
-                                                         labelStyle: customLabelStyle,
-                                                         border: const OutlineInputBorder(),
-                                                         contentPadding: customPadding,
-                                                       ),
-                                                       onChanged: (v) {
-                                                         variant['sku'] = v;
-                                                         widget.onChanged();
-                                                       },
-                                                       validator: (v) => v?.isEmpty == true ? 'Required' : null,
-                                                     ),
-                                                     if (variant['variant_id'] != null &&
-                                                         variant['sku'] != variant['original_sku'])
-                                                       Padding(
-                                                         padding: const EdgeInsets.only(top: 6.0),
-                                                         child: Row(
-                                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                                           children: [
-                                                             Icon(
-                                                               Icons.warning_amber_rounded,
-                                                               color: Colors.amber[700],
-                                                               size: 14,
-                                                             ),
-                                                             const SizedBox(width: 4),
-                                                             Expanded(
-                                                               child: Text(
-                                                                 'Changing this SKU will break external marketing deep links.',
-                                                                 style: TextStyle(
-                                                                   color: Colors.amber[800],
-                                                                   fontSize: 10,
-                                                                   fontFamily: 'Inter',
-                                                                   fontWeight: FontWeight.w500,
-                                                                 ),
-                                                               ),
-                                                             ),
-                                                           ],
-                                                         ),
-                                                       ),
-                                                   ],
-                                                 ),
-                                               ),
-                                               const SizedBox(width: 12),
-                                               Expanded(
-                                                 flex: 2,
-                                                 child: TextFormField(
-                                                   initialValue: variant['price'],
-                                                   style: customInputStyle,
-                                                   enabled: isActive,
-                                                   textInputAction: TextInputAction.next,
-                                                   decoration: InputDecoration(
-                                                     labelText: 'Price',
-                                                     labelStyle: customLabelStyle,
-                                                     prefixText: '\$',
-                                                     prefixStyle: customInputStyle,
-                                                     border: const OutlineInputBorder(),
-                                                     contentPadding: customPadding,
-                                                   ),
-                                                   keyboardType: TextInputType.number,
-                                                   onChanged: (v) {
-                                                     setState(() {
-                                                       variant['price'] = v;
-                                                     });
-                                                     widget.onChanged();
-                                                   },
-                                                   validator: (v) => double.tryParse(v ?? '') == null ? 'Invalid' : null,
-                                                 ),
-                                               ),
-                                             ],
-                                           ),
-                                           const SizedBox(height: 12),
-                                           Row(
-                                             children: [
-                                               Expanded(
-                                                 flex: 2,
-                                                 child: TextFormField(
-                                                   initialValue: variant['compare_at_price'],
-                                                   style: customInputStyle,
-                                                   enabled: isActive,
-                                                   textInputAction: TextInputAction.next,
-                                                   decoration: InputDecoration(
-                                                     labelText: 'Compare At',
-                                                     labelStyle: customLabelStyle,
-                                                     prefixText: '\$',
-                                                     prefixStyle: customInputStyle,
-                                                     border: const OutlineInputBorder(),
-                                                     contentPadding: customPadding,
-                                                   ),
-                                                   keyboardType: TextInputType.number,
-                                                   onChanged: (v) {
-                                                     variant['compare_at_price'] = v;
-                                                     widget.onChanged();
-                                                   },
-                                                 ),
-                                               ),
-                                               const SizedBox(width: 12),
-                                               if (widget.isNewProduct)
-                                                 Expanded(
-                                                   flex: 3,
-                                                   child: TextFormField(
-                                                     initialValue: variant['stock'],
-                                                     style: customInputStyle,
-                                                     enabled: isActive,
-                                                     textInputAction: TextInputAction.next,
-                                                     decoration: InputDecoration(
-                                                       labelText: 'Initial Stock Inventory',
-                                                       labelStyle: customLabelStyle,
-                                                       border: const OutlineInputBorder(),
-                                                       contentPadding: customPadding,
-                                                     ),
-                                                     keyboardType: TextInputType.number,
-                                                     onChanged: (v) {
-                                                       variant['stock'] = v;
-                                                       widget.onChanged();
-                                                     },
-                                                   ),
-                                                 )
-                                               else
-                                                 const Spacer(flex: 3),
-                                             ],
-                                           ),
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      SemanticTextFormField(
+                                                        initialValue: variant['sku'],
+                                                        enabled: isActive,
+                                                        textInputAction: TextInputAction.next,
+                                                        labelText: 'SKU',
+                                                        helperText: 'e.g., TS123',
+                                                        prefixIcon: LucideIcons.tag,
+                                                        onChanged: (v) {
+                                                          variant['sku'] = v;
+                                                          widget.onChanged();
+                                                        },
+                                                        validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                                                      ),
+                                                      if (variant['variant_id'] != null &&
+                                                          variant['sku'] != variant['original_sku'])
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 6.0),
+                                                          child: Row(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Icon(
+                                                                Icons.warning_amber_rounded,
+                                                                color: Colors.amber[700],
+                                                                size: 14,
+                                                              ),
+                                                              const SizedBox(width: 4),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  'Changing this SKU will break external marketing deep links.',
+                                                                  style: TextStyle(
+                                                                    color: Colors.amber[800],
+                                                                    fontSize: 10,
+                                                                    fontFamily: 'Inter',
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: SemanticTextFormField(
+                                                    initialValue: variant['price'],
+                                                    enabled: isActive,
+                                                    textInputAction: TextInputAction.next,
+                                                    labelText: 'Price',
+                                                    helperText: '0.00',
+                                                    prefixWidget: const Text(
+                                                      '\$',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: AppTheme.brandEmerald500,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    keyboardType: TextInputType.number,
+                                                    onChanged: (v) {
+                                                      setState(() {
+                                                        variant['price'] = v;
+                                                      });
+                                                      widget.onChanged();
+                                                    },
+                                                    validator: (v) => double.tryParse(v ?? '') == null ? 'Invalid' : null,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: SemanticTextFormField(
+                                                    initialValue: variant['compare_at_price'],
+                                                    enabled: isActive,
+                                                    textInputAction: TextInputAction.next,
+                                                    labelText: 'Compare At Price',
+                                                    helperText: '0.00',
+                                                    prefixWidget: const Text(
+                                                      '\$',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: AppTheme.brandEmerald500,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    keyboardType: TextInputType.number,
+                                                    onChanged: (v) {
+                                                      variant['compare_at_price'] = v;
+                                                      widget.onChanged();
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: SemanticTextFormField(
+                                                    initialValue: variant['barcode'] ?? '',
+                                                    enabled: isActive,
+                                                    textInputAction: TextInputAction.next,
+                                                    labelText: 'Barcode (UPC, EAN, ISBN)',
+                                                    helperText: 'Enter product barcode',
+                                                    prefixIcon: LucideIcons.barcode,
+                                                    onChanged: (v) {
+                                                      variant['barcode'] = v;
+                                                      widget.onChanged();
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                if (widget.isNewProduct)
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: SemanticTextFormField(
+                                                      initialValue: variant['stock'],
+                                                      enabled: isActive,
+                                                      textInputAction: TextInputAction.next,
+                                                      labelText: 'Initial Stock Inventory',
+                                                      helperText: 'e.g., 100',
+                                                      prefixIcon: LucideIcons.boxes,
+                                                      keyboardType: TextInputType.number,
+                                                      onChanged: (v) {
+                                                        variant['stock'] = v;
+                                                        widget.onChanged();
+                                                      },
+                                                    ),
+                                                  )
+                                                else
+                                                  const Spacer(flex: 3),
+                                              ],
+                                            ),
                                            if (!widget.isDigital) ...[
                                              const SizedBox(height: 16),
                                              const Divider(),
@@ -881,18 +894,12 @@ class _VariantItemCardState extends State<_VariantItemCard> {
             children: [
               Expanded(
                 flex: 3,
-                child: TextFormField(
+                child: SemanticTextFormField(
                   initialValue: variant['weight_value']?.toString() ?? '',
-                  style: customInputStyle,
                   textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    labelText: 'Variant Weight',
-                    labelStyle: customLabelStyle,
-                    hintText: 'variant weight',
-                    hintStyle: customHintStyle,
-                    border: const OutlineInputBorder(),
-                    contentPadding: customPadding,
-                  ),
+                  labelText: 'Variant Weight',
+                  hintText: 'variant weight',
+                  prefixIcon: LucideIcons.scale,
                   keyboardType: TextInputType.number,
                   onChanged: (v) {
                     variant['weight_value'] = v;
@@ -934,19 +941,13 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                         Row(
                           children: [
                             Expanded(
-                              child: TextFormField(
+                              child: SemanticTextFormField(
                                 initialValue:
                                     variant['length_value']?.toString() ?? '',
-                                style: customInputStyle,
                                 textInputAction: TextInputAction.next,
-                                decoration: InputDecoration(
-                                  labelText: 'Variant Length',
-                                  labelStyle: customLabelStyle,
-                                  hintText: 'variant length',
-                                  hintStyle: customHintStyle,
-                                  border: const OutlineInputBorder(),
-                                  contentPadding: customPadding,
-                                ),
+                                labelText: 'Variant Length',
+                                hintText: 'variant length',
+                                prefixIcon: LucideIcons.ruler,
                                 keyboardType: TextInputType.number,
                                 onChanged: (v) {
                                   variant['length_value'] = v;
@@ -956,19 +957,13 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: TextFormField(
+                              child: SemanticTextFormField(
                                 initialValue:
                                     variant['width_value']?.toString() ?? '',
-                                style: customInputStyle,
                                 textInputAction: TextInputAction.next,
-                                decoration: InputDecoration(
-                                  labelText: 'Variant Width',
-                                  labelStyle: customLabelStyle,
-                                  hintText: 'variant width',
-                                  hintStyle: customHintStyle,
-                                  border: const OutlineInputBorder(),
-                                  contentPadding: customPadding,
-                                ),
+                                labelText: 'Variant Width',
+                                hintText: 'variant width',
+                                prefixIcon: LucideIcons.ruler,
                                 keyboardType: TextInputType.number,
                                 onChanged: (v) {
                                   variant['width_value'] = v;
@@ -982,19 +977,13 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                         Row(
                           children: [
                             Expanded(
-                              child: TextFormField(
+                              child: SemanticTextFormField(
                                 initialValue:
                                     variant['height_value']?.toString() ?? '',
-                                style: customInputStyle,
                                 textInputAction: TextInputAction.next,
-                                decoration: InputDecoration(
-                                  labelText: 'Variant Height',
-                                  labelStyle: customLabelStyle,
-                                  hintText: 'variant height',
-                                  hintStyle: customHintStyle,
-                                  border: const OutlineInputBorder(),
-                                  contentPadding: customPadding,
-                                ),
+                                labelText: 'Variant Height',
+                                hintText: 'variant height',
+                                prefixIcon: LucideIcons.ruler,
                                 keyboardType: TextInputType.number,
                                 onChanged: (v) {
                                   variant['height_value'] = v;
@@ -1036,19 +1025,13 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                   : Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
+                          child: SemanticTextFormField(
                             initialValue:
                                 variant['length_value']?.toString() ?? '',
-                            style: customInputStyle,
                             textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'Variant Length',
-                              labelStyle: customLabelStyle,
-                              hintText: 'variant length',
-                              hintStyle: customHintStyle,
-                              border: const OutlineInputBorder(),
-                              contentPadding: customPadding,
-                            ),
+                            labelText: 'Variant Length',
+                            hintText: 'variant length',
+                            prefixIcon: LucideIcons.ruler,
                             keyboardType: TextInputType.number,
                             onChanged: (v) {
                               variant['length_value'] = v;
@@ -1058,19 +1041,13 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: TextFormField(
+                          child: SemanticTextFormField(
                             initialValue:
                                 variant['width_value']?.toString() ?? '',
-                            style: customInputStyle,
                             textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'Variant Width',
-                              labelStyle: customLabelStyle,
-                              hintText: 'variant width',
-                              hintStyle: customHintStyle,
-                              border: const OutlineInputBorder(),
-                              contentPadding: customPadding,
-                            ),
+                            labelText: 'Variant Width',
+                            hintText: 'variant width',
+                            prefixIcon: LucideIcons.ruler,
                             keyboardType: TextInputType.number,
                             onChanged: (v) {
                               variant['width_value'] = v;
@@ -1080,19 +1057,13 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: TextFormField(
+                          child: SemanticTextFormField(
                             initialValue:
                                 variant['height_value']?.toString() ?? '',
-                            style: customInputStyle,
                             textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'Variant Height',
-                              labelStyle: customLabelStyle,
-                              hintText: 'variant height',
-                              hintStyle: customHintStyle,
-                              border: const OutlineInputBorder(),
-                              contentPadding: customPadding,
-                            ),
+                            labelText: 'Variant Height',
+                            hintText: 'variant height',
+                            prefixIcon: LucideIcons.ruler,
                             keyboardType: TextInputType.number,
                             onChanged: (v) {
                               variant['height_value'] = v;

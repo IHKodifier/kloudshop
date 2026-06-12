@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/glass_card.dart';
 import 'package:kloudshop/widgets/lottie_toggle.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class ProductClassificationCard extends StatefulWidget {
   final String status;
@@ -129,30 +130,10 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                           child: SizedBox(
                             width: 180,
-                            child: TextFormField(
+                            child: SemanticTextFormField(
                               controller: widget.minimumAgeController,
-                              decoration: InputDecoration(
-                                labelText: 'MINIMUM AGE',
-                                labelStyle: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                    color: AppTheme.brandEmerald500,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 12,
-                                ),
-                              ),
+                              labelText: 'MINIMUM AGE',
+                              prefixIcon: LucideIcons.userCheck,
                               keyboardType: TextInputType.number,
                               validator: (value) {
                                 if (widget.ageVerificationRequired) {
@@ -262,12 +243,10 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                       children: [
                         Expanded(
                           flex: 3,
-                          child: TextFormField(
+                          child: SemanticTextFormField(
                             controller: widget.weightController,
-                            decoration: const InputDecoration(
-                              labelText: 'Default Weight',
-                              border: OutlineInputBorder(),
-                            ),
+                            labelText: 'Default Weight',
+                            prefixIcon: LucideIcons.scale,
                             keyboardType: TextInputType.number,
                             onChanged: (v) => setState(() {}),
                           ),
@@ -302,24 +281,20 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: TextFormField(
+                                        child: SemanticTextFormField(
                                           controller: widget.lengthController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Length',
-                                            border: OutlineInputBorder(),
-                                          ),
+                                          labelText: 'Length',
+                                          prefixIcon: LucideIcons.ruler,
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => setState(() {}),
                                         ),
                                       ),
                                       const SizedBox(width: 8),
                                       Expanded(
-                                        child: TextFormField(
+                                        child: SemanticTextFormField(
                                           controller: widget.widthController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Width',
-                                            border: OutlineInputBorder(),
-                                          ),
+                                          labelText: 'Width',
+                                          prefixIcon: LucideIcons.ruler,
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => setState(() {}),
                                         ),
@@ -330,12 +305,10 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: TextFormField(
+                                        child: SemanticTextFormField(
                                           controller: widget.heightController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Height',
-                                            border: OutlineInputBorder(),
-                                          ),
+                                          labelText: 'Height',
+                                          prefixIcon: LucideIcons.ruler,
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => setState(() {}),
                                         ),
@@ -372,36 +345,30 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                             : Row(
                                 children: [
                                   Expanded(
-                                    child: TextFormField(
+                                    child: SemanticTextFormField(
                                       controller: widget.lengthController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Length',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                      labelText: 'Length',
+                                      prefixIcon: LucideIcons.ruler,
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() {}),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: TextFormField(
+                                    child: SemanticTextFormField(
                                       controller: widget.widthController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Width',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                      labelText: 'Width',
+                                      prefixIcon: LucideIcons.ruler,
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() {}),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: TextFormField(
+                                    child: SemanticTextFormField(
                                       controller: widget.heightController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Height',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                      labelText: 'Height',
+                                      prefixIcon: LucideIcons.ruler,
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() {}),
                                     ),

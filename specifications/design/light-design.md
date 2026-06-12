@@ -154,6 +154,22 @@ Small UI elements like checkboxes and tags use a reduced 4px radius to maintain 
 
 ### Input Fields
 - Fields use a Pure White background with a subtle Grey-Slate border. On focus, the border shifts to Deep Forest Green with a 2px outer ring of soft Mist Green.
+- **Semantic Prefix Patterns**: Form inputs that represent specific system semantics (e.g., prices, weights, dimensions, codes, credentials) must leverage `SemanticTextFormField` to display a left-aligned, shaded prefix container containing an icon or text matching that semantic.
+  - Custom brand colors: Shaded prefix container uses `Color(0xFFECFDF5)` background, a `Color(0xFFA7F3D0)` right border, and `AppTheme.brandEmerald500` icon/text color in light mode.
+  - Icon mapping rules:
+    - Emails / Accounts: `LucideIcons.mail`
+    - Passwords / Keys: `LucideIcons.lock`
+    - Street / Addresses: `LucideIcons.mapPin`
+    - Weight / Scales: `LucideIcons.scale`
+    - Dimensions (L / W / H): `LucideIcons.ruler`
+    - SKU / Product Tags: `LucideIcons.tag`
+    - Colors / Hex: `LucideIcons.palette`
+    - Domains / URLs: `LucideIcons.globe`
+    - Carrier / Shipping: `LucideIcons.truck`
+    - Barcode / Tracking: `LucideIcons.barcode`
+    - Search Query: `LucideIcons.search`
+    - Pricing / Currency: Text prefix overlay (e.g. `$`)
+  - Standard/Narrative text fields (like titles, descriptions, slugs) must use `SemanticTextFormField` with `prefixIcon: null` to keep the layout clean and uncluttered.
 
 ### Cards
 - Standard cards feature a 12px radius, a Pure White background, and a subtle 1px border. They do not use shadows unless they are "interactive" or "hoverable," at which point they transition to Level 2 elevation.

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/providers/customer_providers.dart';
 import 'package:kloudshop/theme/app_theme.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:intl/intl.dart';
 
@@ -113,50 +114,21 @@ class _CustomersViewState extends ConsumerState<CustomersView> {
               borderRadius: BorderRadius.circular(14),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-                child: TextField(
+                child: SemanticTextFormField(
                   controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search customers by email...',
-                    prefixIcon: Icon(
-                      LucideIcons.search,
-                      size: 18,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: theme.colorScheme.outline),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: theme.colorScheme.outline),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(
-                        color: AppTheme.brandEmerald500,
-                        width: 1.5,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: isDark
-                        ? Colors.white.withValues(alpha: 0.04)
-                        : AppTheme.neutral50,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(LucideIcons.x, size: 16),
-                            onPressed: () {
-                              _searchController.clear();
-                              ref
-                                  .read(customerSearchQueryProvider.notifier)
-                                  .setQuery('');
-                            },
-                          )
-                        : null,
-                  ),
+                  hintText: 'Search customers by email...',
+                  prefixIcon: LucideIcons.search,
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(LucideIcons.x, size: 16),
+                          onPressed: () {
+                            _searchController.clear();
+                            ref
+                                .read(customerSearchQueryProvider.notifier)
+                                .setQuery('');
+                          },
+                        )
+                      : null,
                   onChanged: (value) => ref
                       .read(customerSearchQueryProvider.notifier)
                       .setQuery(value),

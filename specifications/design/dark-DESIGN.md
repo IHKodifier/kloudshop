@@ -166,6 +166,22 @@ The design system employs a consistent **12px border radius** (Level 2: Rounded)
 
 - **Buttons:** Primary buttons use the Brand Teal (#124B47) with White text. Secondary buttons use an outline of the primary color with no fill. Critical buttons use the Amber accent (#F59E0B).
 - **Inputs:** Input fields use the Surface Container Low color (#1E293B) with a 1px border of Slate 600 (#475569). Upon focus, the border glows with Brand Teal.
+  - **Semantic Prefix Patterns**: Form inputs that represent specific system semantics (e.g., prices, weights, dimensions, codes, credentials) must leverage `SemanticTextFormField` to display a left-aligned, shaded prefix container containing an icon or text matching that semantic.
+    - Custom brand colors: Shaded prefix container uses `Color(0xFF334155)` background, a `Color(0xFF475569)` right border, and `Color(0xFF34D399)` (Vibrant Success Emerald) icon/text color in dark mode.
+    - Icon mapping rules:
+      - Emails / Accounts: `LucideIcons.mail`
+      - Passwords / Keys: `LucideIcons.lock`
+      - Street / Addresses: `LucideIcons.mapPin`
+      - Weight / Scales: `LucideIcons.scale`
+      - Dimensions (L / W / H): `LucideIcons.ruler`
+      - SKU / Product Tags: `LucideIcons.tag`
+      - Colors / Hex: `LucideIcons.palette`
+      - Domains / URLs: `LucideIcons.globe`
+      - Carrier / Shipping: `LucideIcons.truck`
+      - Barcode / Tracking: `LucideIcons.barcode`
+      - Search Query: `LucideIcons.search`
+      - Pricing / Currency: Text prefix overlay (e.g. `$`)
+    - Standard/Narrative text fields (like titles, descriptions, slugs) must use `SemanticTextFormField` with `prefixIcon: null` to keep the layout clean and uncluttered.
 - **Chips/Tags:** Small, 4px rounded containers with a background of #124B47 at 10% opacity and text in the primary color.
 - **Cards:** Defined by the 12px radius, Surface color (#0F172A), and the Slate 700 divider. No heavy borders; let the tonal layering define the edge.
 - **Checkboxes & Radios:** When active, these are solid Brand Teal (#124B47) or Success Emerald (#34D399) with high-contrast indicator marks.

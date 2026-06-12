@@ -311,6 +311,32 @@ The label is replaced by a 16px spinner (same colour as the text). Never shows
 - **Character count:** Shown bottom-right of input when `max_chars` is defined,
   format: `{current}/{max}`. Turns `color-error` when within 10 characters of limit.
 
+### Semantic Input Fields (Prefix Overlays)
+
+To enhance visual scanning and context recognition, input fields that collect key **semantic variables** (e.g. prices, inventory counts, codes, measurements, credentials, and search keys) utilize the `SemanticTextFormField` pattern with a left-aligned, shaded prefix container.
+
+* **Prefix Container Aesthetics:**
+  - **Sizing:** `44px` width, fitting flush within the input field's rounded outline border (clipped to match the border radius).
+  - **Separator:** A `1.5px` vertical divider on the right side of the prefix block.
+  - **Background Color:**
+    - **Light Mode:** Brand emerald-tint `brand-emerald-50` (`#ECFDF5`) or light teal tint (`#F0FDFA`).
+    - **Dark Mode:** Slate-gray `neutral-600` (`#334155`).
+  - **Divider/Border Color:**
+    - **Light Mode:** Light green `#A7F3D0`.
+    - **Dark Mode:** Border slate `#475569`.
+* **Prefix Icon & Symbol Colors:**
+  - Icons and currency symbols inside the block use the brand accent color: `brand-emerald-500` (`#10B981`) in light mode and `color-success` (`#34D399`) in dark mode.
+* **Semantic Icons Library:**
+  - **Price / Compare At Price**: Shaded prefix containing green text `$` symbol.
+  - **Barcodes (UPC, EAN, ISBN)**: Shaded prefix containing green barcode icon (`LucideIcons.barcode`).
+  - **Inventory Stocks**: Shaded prefix containing green boxes icon (`LucideIcons.boxes`).
+  - **Dimensions / Weight**: Shaded prefix containing green ruler / scale icons (`LucideIcons.ruler` or `LucideIcons.scale`).
+  - **Credentials (Email / Password)**: Shaded prefix containing lock or mail icons (`LucideIcons.lock` or `LucideIcons.mail`).
+  - **Search bars**: Shaded prefix containing search icon (`LucideIcons.search`).
+
+*Note: Standard text fields like Product Title, Slug, Description, and other general narrative text fields should remain clean and "old-fashioned" without prefix icons to maintain the brand voice's **Uncluttered** principle.*
+
+
 ### Data Tables
 
 Tables are the most-used component in the merchant admin — orders, products,

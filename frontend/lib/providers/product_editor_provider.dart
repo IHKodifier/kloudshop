@@ -130,6 +130,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
           {
             'variant_id': null,
             'sku': '',
+            'barcode': '',
             'price': '0.00',
             'compare_at_price': '',
             'stock': '0',
@@ -172,6 +173,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
         'variant_id': v.id,
         'sku': v.sku,
         'original_sku': v.sku,
+        'barcode': v.barcode ?? '',
         'price': v.price.toString(),
         'compare_at_price': v.compareAtPrice?.toString() ?? '',
         'stock': v.stock?.toString() ?? '0',
@@ -368,6 +370,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       {
         'variant_id': null,
         'sku': '',
+        'barcode': '',
         'price': '0.00',
         'compare_at_price': '',
         'stock': '0',
@@ -707,6 +710,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
             'variant_id': variantId,
             'sku': sku,
             'original_sku': bestMatch['original_sku'] ?? bestMatch['sku'],
+            'barcode': bestMatch['barcode'] ?? '',
             'price': bestMatch['price'] ?? '0.00',
             'compare_at_price': bestMatch['compare_at_price'] ?? '',
             'stock': bestMatch['stock'] ?? '0',
@@ -743,6 +747,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       newVariants.add({
         'variant_id': null,
         'sku': defaultSku,
+        'barcode': '',
         'price': fallbackPrice,
         'compare_at_price': fallbackCompareAt,
         'stock': fallbackStock,
@@ -843,6 +848,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
           state.variants.map((v) {
             final Map<String, dynamic> vMap = {
               'sku': v['sku'],
+              'barcode': v['barcode']?.toString().trim().isEmpty == true ? null : v['barcode'].toString().trim(),
               'price': double.tryParse(v['price'].toString()) ?? 0.0,
               'is_default': v['is_default'],
               'is_active': v['is_active'] ?? true,

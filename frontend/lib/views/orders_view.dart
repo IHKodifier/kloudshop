@@ -9,6 +9,7 @@ import 'package:kloudshop/views/order_detail_view.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:intl/intl.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class OrdersView extends ConsumerWidget {
   const OrdersView({super.key});
@@ -437,46 +438,16 @@ class _OrderCard extends ConsumerWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              SemanticTextFormField(
                 controller: carrierController,
-                decoration: InputDecoration(
-                  labelText: 'Carrier (e.g. DHL, FedEx)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppTheme.brandEmerald500,
-                    ),
-                  ),
-                  prefixIcon: const Icon(
-                    LucideIcons.truck,
-                    size: 18,
-                    color: AppTheme.brandEmerald500,
-                  ),
-                ),
+                labelText: 'Carrier (e.g. DHL, FedEx)',
+                prefixIcon: LucideIcons.truck,
               ),
               const SizedBox(height: 12),
-              TextField(
+              SemanticTextFormField(
                 controller: trackingController,
-                decoration: InputDecoration(
-                  labelText: 'Tracking Number',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppTheme.brandEmerald500,
-                    ),
-                  ),
-                  prefixIcon: const Icon(
-                    LucideIcons.hash,
-                    size: 18,
-                    color: AppTheme.brandEmerald500,
-                  ),
-                ),
+                labelText: 'Tracking Number',
+                prefixIcon: LucideIcons.barcode,
               ),
             ],
           ),
