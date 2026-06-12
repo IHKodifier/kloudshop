@@ -776,14 +776,38 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                                   ),
                                                 ),
                                                 const SizedBox(width: 12),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: SemanticTextFormField(
+                                                    initialValue: variant['cost_per_item'] ?? '',
+                                                    enabled: isActive,
+                                                    textInputAction: TextInputAction.next,
+                                                    labelText: 'Cost Per Item',
+                                                    helperText: '0.00',
+                                                    prefixWidget: const Text(
+                                                      '\$',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: AppTheme.brandEmerald500,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    keyboardType: TextInputType.number,
+                                                    onChanged: (v) {
+                                                      variant['cost_per_item'] = v;
+                                                      widget.onChanged();
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
                                                 if (widget.isNewProduct)
                                                   Expanded(
-                                                    flex: 3,
+                                                    flex: 2,
                                                     child: SemanticTextFormField(
                                                       initialValue: variant['stock'],
                                                       enabled: isActive,
                                                       textInputAction: TextInputAction.next,
-                                                      labelText: 'Initial Stock Inventory',
+                                                      labelText: 'Initial Stock',
                                                       helperText: 'e.g., 100',
                                                       prefixIcon: LucideIcons.boxes,
                                                       keyboardType: TextInputType.number,
@@ -794,7 +818,7 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                                     ),
                                                   )
                                                 else
-                                                  const Spacer(flex: 3),
+                                                  const Spacer(flex: 2),
                                               ],
                                             ),
                                            if (!widget.isDigital) ...[

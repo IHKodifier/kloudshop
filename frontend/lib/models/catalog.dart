@@ -113,6 +113,7 @@ class ProductVariant {
   final String? barcode;
   final double price;
   final double? compareAtPrice;
+  final double? costPerItem;
   final Map<String, String> optionValues;
   final int? stock;
   final bool isDefault;
@@ -132,6 +133,7 @@ class ProductVariant {
     this.barcode,
     required this.price,
     this.compareAtPrice,
+    this.costPerItem,
     this.optionValues = const {},
     this.stock,
     required this.isDefault,
@@ -154,6 +156,9 @@ class ProductVariant {
       price: _toDouble(json['price']),
       compareAtPrice: json['compare_at_price'] != null
           ? _toDouble(json['compare_at_price'])
+          : null,
+      costPerItem: json['cost_per_item'] != null
+          ? _toDouble(json['cost_per_item'])
           : null,
       optionValues: json['option_values'] != null
           ? Map<String, String>.from(json['option_values'] as Map)

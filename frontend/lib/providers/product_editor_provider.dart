@@ -133,6 +133,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
             'barcode': '',
             'price': '0.00',
             'compare_at_price': '',
+            'cost_per_item': '',
             'stock': '0',
             'is_default': true,
             'is_active': true,
@@ -176,6 +177,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
         'barcode': v.barcode ?? '',
         'price': v.price.toString(),
         'compare_at_price': v.compareAtPrice?.toString() ?? '',
+        'cost_per_item': v.costPerItem?.toString() ?? '',
         'stock': v.stock?.toString() ?? '0',
         'is_default': v.isDefault,
         'is_active': v.isActive,
@@ -373,6 +375,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
         'barcode': '',
         'price': '0.00',
         'compare_at_price': '',
+        'cost_per_item': '',
         'stock': '0',
         'is_default': state.variants.isEmpty,
         'is_active': true,
@@ -533,6 +536,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
       baseVar['is_default'] = true;
       baseVar['price'] = defaultActiveVar['price'] ?? '0.00';
       baseVar['compare_at_price'] = defaultActiveVar['compare_at_price'] ?? '';
+      baseVar['cost_per_item'] = defaultActiveVar['cost_per_item'] ?? '';
       baseVar['stock'] = totalStock.toString();
       baseVar['images'] = List<String>.from(defaultActiveVar['images'] ?? []);
       baseVar['image_url'] = defaultActiveVar['image_url'];
@@ -713,6 +717,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
             'barcode': bestMatch['barcode'] ?? '',
             'price': bestMatch['price'] ?? '0.00',
             'compare_at_price': bestMatch['compare_at_price'] ?? '',
+            'cost_per_item': bestMatch['cost_per_item'] ?? '',
             'stock': bestMatch['stock'] ?? '0',
             'is_default': bestMatch['is_default'] ?? (i == 0),
             'is_active': bestMatch['is_active'] ?? true,
@@ -734,6 +739,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
 
       final fallbackPrice = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['price'] ?? '0.00') : '0.00';
       final fallbackCompareAt = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['compare_at_price'] ?? '') : '';
+      final fallbackCostPerItem = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['cost_per_item'] ?? '') : '';
       final fallbackStock = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['stock'] ?? '0') : '0';
       final fallbackWeightVal = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['weight_value'] ?? '') : '';
       final fallbackWeightUnit = (reconcile && defaultOldVariant != null) ? (defaultOldVariant['weight_unit'] ?? 'kg') : 'kg';
@@ -750,6 +756,7 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
         'barcode': '',
         'price': fallbackPrice,
         'compare_at_price': fallbackCompareAt,
+        'cost_per_item': fallbackCostPerItem,
         'stock': fallbackStock,
         'is_default': i == 0,
         'is_active': true,
@@ -862,6 +869,11 @@ class ProductEditorNotifier extends Notifier<ProductEditorState> {
             if (v['compare_at_price'].toString().isNotEmpty) {
               vMap['compare_at_price'] = double.tryParse(
                 v['compare_at_price'].toString(),
+              );
+            }
+            if (v['cost_per_item'].toString().isNotEmpty) {
+              vMap['cost_per_item'] = double.tryParse(
+                v['cost_per_item'].toString(),
               );
             }
 
