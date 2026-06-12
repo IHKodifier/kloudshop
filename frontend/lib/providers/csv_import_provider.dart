@@ -304,7 +304,8 @@ List<Map<String, String>> parseFileBytes(Uint8List bytes, String filename) {
     return result;
   } else {
     final text = utf8.decode(bytes, allowMalformed: true);
-    final csvRows = const CsvToListConverter().convert(text);
+    final normalizedText = text.replaceAll('\r\n', '\n');
+    final csvRows = const CsvToListConverter(eol: '\n').convert(normalizedText);
     if (csvRows.length <= 1) return [];
     final headers = csvRows.first.map((e) => e?.toString().trim() ?? '').toList();
     final List<Map<String, String>> result = [];
