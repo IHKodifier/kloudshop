@@ -9,6 +9,7 @@ import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:intl/intl.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
@@ -721,11 +722,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 _EditableRow(
                   label: 'Sender Email',
                   controller: _senderEmailController,
+                  prefixIcon: LucideIcons.mail,
                 ),
                 const SizedBox(height: 16),
                 _EditableRow(
                   label: 'Account Email',
                   controller: _accountEmailController,
+                  prefixIcon: LucideIcons.mail,
                 ),
               ],
             ),
@@ -856,6 +859,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   _EditableRow(
                     label: 'Street Address',
                     controller: _streetController,
+                    prefixIcon: LucideIcons.mapPin,
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -864,6 +868,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         child: _EditableRow(
                           label: 'City',
                           controller: _cityController,
+                          prefixIcon: LucideIcons.mapPin,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -871,6 +876,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         child: _EditableRow(
                           label: 'ZIP',
                           controller: _postalController,
+                          prefixIcon: LucideIcons.mapPin,
                         ),
                       ),
                     ],
@@ -1074,13 +1080,22 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 ),
                 childrenPadding: const EdgeInsets.all(16),
                 children: [
-                  _EditableRow(label: 'Street', controller: _streetController),
+                  _EditableRow(
+                    label: 'Street',
+                    controller: _streetController,
+                    prefixIcon: LucideIcons.mapPin,
+                  ),
                   const SizedBox(height: 12),
-                  _EditableRow(label: 'City', controller: _cityController),
+                  _EditableRow(
+                    label: 'City',
+                    controller: _cityController,
+                    prefixIcon: LucideIcons.mapPin,
+                  ),
                   const SizedBox(height: 12),
                   _EditableRow(
                     label: 'ZIP Code',
                     controller: _postalController,
+                    prefixIcon: LucideIcons.mapPin,
                   ),
                 ],
               ),
@@ -1242,7 +1257,12 @@ class _ReadOnlyRow extends StatelessWidget {
 class _EditableRow extends StatelessWidget {
   final String label;
   final TextEditingController controller;
-  const _EditableRow({required this.label, required this.controller});
+  final IconData? prefixIcon;
+  const _EditableRow({
+    required this.label,
+    required this.controller,
+    this.prefixIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1259,32 +1279,10 @@ class _EditableRow extends StatelessWidget {
         const SizedBox(width: 24),
         SizedBox(
           width: 300,
-          child: TextFormField(
+          child: SemanticTextFormField(
             controller: controller,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-            decoration: InputDecoration(
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: theme.colorScheme.outline),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: AppTheme.brandEmerald500,
-                  width: 1.5,
-                ),
-              ),
-            ),
+            labelText: label,
+            prefixIcon: prefixIcon,
           ),
         ),
       ],

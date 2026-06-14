@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class UnblockVerificationPage extends ConsumerStatefulWidget {
   const UnblockVerificationPage({super.key});
@@ -327,17 +328,12 @@ class _UnblockVerificationPageState extends ConsumerState<UnblockVerificationPag
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
+              SemanticTextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'Email Address',
-                  hintText: 'name@company.com',
-                  prefixIcon: const Icon(LucideIcons.mail, size: 16),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                labelText: 'Email Address',
+                hintText: 'name@company.com',
+                prefixIcon: LucideIcons.mail,
                 validator: (v) => v == null || !v.contains('@')
                     ? 'Enter a valid email address'
                     : null,

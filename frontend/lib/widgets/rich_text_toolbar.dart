@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:rich_field_controller/rich_field_controller.dart';
 
 class RichTextToolbar extends StatelessWidget {
   final TextEditingController controller;
   const RichTextToolbar({super.key, required this.controller});
+
+  void _toggleStyle(TextStyle style, String prefix, String suffix) {
+    if (controller is RichFieldController) {
+      (controller as RichFieldController).updateStyle(style);
+    } else {
+      _formatText(prefix, suffix);
+    }
+  }
 
   void _formatText(String prefix, String suffix) {
     final text = controller.text;
@@ -94,22 +103,38 @@ class RichTextToolbar extends StatelessWidget {
           _buildToolbarButton(
             icon: LucideIcons.bold,
             tooltip: 'Bold',
-            onPressed: () => _formatText('**', '**'),
+            onPressed: () => _toggleStyle(
+              const TextStyle(fontWeight: FontWeight.bold),
+              '**',
+              '**',
+            ),
           ),
           _buildToolbarButton(
             icon: LucideIcons.italic,
             tooltip: 'Italic',
-            onPressed: () => _formatText('*', '*'),
+            onPressed: () => _toggleStyle(
+              const TextStyle(fontStyle: FontStyle.italic),
+              '*',
+              '*',
+            ),
           ),
           _buildToolbarButton(
             icon: LucideIcons.underline,
             tooltip: 'Underline',
-            onPressed: () => _formatText('<u>', '</u>'),
+            onPressed: () => _toggleStyle(
+              const TextStyle(decoration: TextDecoration.underline),
+              '<u>',
+              '</u>',
+            ),
           ),
           _buildToolbarButton(
             icon: LucideIcons.strikethrough,
             tooltip: 'Strikethrough',
-            onPressed: () => _formatText('~~', '~~'),
+            onPressed: () => _toggleStyle(
+              const TextStyle(decoration: TextDecoration.lineThrough),
+              '~~',
+              '~~',
+            ),
           ),
           const SizedBox(
             height: 20,

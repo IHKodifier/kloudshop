@@ -5,6 +5,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class ConsumerRegistrationView extends ConsumerStatefulWidget {
   final String? orderId;
@@ -172,33 +173,21 @@ class _ConsumerRegistrationViewState
                       const SizedBox(height: 20),
 
                       // Password input
-                      TextFormField(
+                      SemanticTextFormField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          hintText: '••••••••',
-                          prefixIcon: const Icon(LucideIcons.lock, size: 16),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword
-                                  ? LucideIcons.eyeOff
-                                  : LucideIcons.eye,
-                              size: 16,
-                            ),
-                            onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword,
-                            ),
+                        labelText: 'Password',
+                        hintText: '••••••••',
+                        prefixIcon: LucideIcons.lock,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? LucideIcons.eyeOff
+                                : LucideIcons.eye,
+                            size: 16,
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: AppTheme.brandEmerald500,
-                              width: 1.5,
-                            ),
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
                           ),
                         ),
                         validator: (v) => v == null || v.length < 6
@@ -325,25 +314,14 @@ class _ConsumerRegistrationViewState
     TextInputType? keyboardType,
     FormFieldValidator<String>? validator,
   }) {
-    return TextFormField(
+    return SemanticTextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(icon, size: 16),
-        alignLabelWithHint: maxLines > 1,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: AppTheme.brandEmerald500,
-            width: 1.5,
-          ),
-        ),
-      ),
+      labelText: label,
+      hintText: hint,
+      prefixIcon: icon,
     );
   }
 }

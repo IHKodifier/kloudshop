@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/glass_card.dart';
+import 'package:kloudshop/widgets/lottie_toggle.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class ProductClassificationCard extends StatefulWidget {
   final String status;
@@ -10,6 +13,11 @@ class ProductClassificationCard extends StatefulWidget {
   final ValueChanged<bool> onIsDigitalChanged;
   final bool isPerishable;
   final ValueChanged<bool> onIsPerishableChanged;
+  final bool ageVerificationRequired;
+  final ValueChanged<bool> onAgeVerificationRequiredChanged;
+  final bool requiresPrescription;
+  final ValueChanged<bool> onRequiresPrescriptionChanged;
+  final TextEditingController minimumAgeController;
   final TextEditingController weightController;
   final String weightUnit;
   final ValueChanged<String> onWeightUnitChanged;
@@ -27,6 +35,11 @@ class ProductClassificationCard extends StatefulWidget {
     required this.onIsDigitalChanged,
     required this.isPerishable,
     required this.onIsPerishableChanged,
+    required this.ageVerificationRequired,
+    required this.onAgeVerificationRequiredChanged,
+    required this.requiresPrescription,
+    required this.onRequiresPrescriptionChanged,
+    required this.minimumAgeController,
     required this.weightController,
     required this.weightUnit,
     required this.onWeightUnitChanged,
@@ -72,52 +85,168 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
             if (v != null) widget.onStatusChanged(v);
           },
         ),
-        const SizedBox(height: 20),
-        SwitchListTile(
-          title: const Text('Digital Product'),
-          subtitle: const Text(
-            'This product is a file or service and does not require shipping',
-          ),
-          value: widget.isDigital,
-          activeThumbColor: AppTheme.brandEmerald500,
-          onChanged: widget.onIsDigitalChanged,
+        const SizedBox(height: 16),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final isNarrow = constraints.maxWidth < 500;
+
+            final digitalSwitch = LottieSwitchListTile(
+              title: const Text('Digital Product'),
+              subtitle: const Text(
+                'This product is a file or service and does not require shipping',
+              ),
+              value: widget.isDigital,
+              onChanged: widget.onIsDigitalChanged,
+              contentPadding: EdgeInsets.zero,
+            );
+
+            final perishableSwitch = LottieSwitchListTile(
+              title: const Text('Perishable Product'),
+              subtitle: const Text(
+                'Requires special shipping or temperature control; mandates batch tracking',
+              ),
+              value: widget.isPerishable,
+              onChanged: widget.onIsPerishableChanged,
+              contentPadding: EdgeInsets.zero,
+            );
+
+            final ageGatedColumn = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LottieSwitchListTile(
+                  title: const Text('Age-Gated Product'),
+                  subtitle: const Text(
+                    'Enforce age validation at checkout for restricted items',
+                  ),
+                  value: widget.ageVerificationRequired,
+                  onChanged: widget.onAgeVerificationRequiredChanged,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  child: widget.ageVerificationRequired
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          child: SizedBox(
+                            width: 180,
+                            child: SemanticTextFormField(
+                              controller: widget.minimumAgeController,
+                              labelText: 'MINIMUM AGE',
+                              prefixIcon: LucideIcons.userCheck,
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (widget.ageVerificationRequired) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Required';
+                                  }
+                                  final age = int.tryParse(value);
+                                  if (age == null || age <= 0) {
+                                    return 'Must be > 0';
+                                  }
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            );
+
+            final prescriptionSwitch = LottieSwitchListTile(
+              title: const Text('Prescription Required'),
+              subtitle: const Text(
+                'Require prescription validation and document upload',
+              ),
+              value: widget.requiresPrescription,
+              onChanged: widget.onRequiresPrescriptionChanged,
+              contentPadding: EdgeInsets.zero,
+            );
+
+            if (isNarrow) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  digitalSwitch,
+                  const SizedBox(height: 12),
+                  perishableSwitch,
+                  const SizedBox(height: 12),
+                  ageGatedColumn,
+                  const SizedBox(height: 12),
+                  prescriptionSwitch,
+                ],
+              );
+            } else {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: digitalSwitch),
+                      const SizedBox(width: 24),
+                      Expanded(child: perishableSwitch),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: ageGatedColumn),
+                      const SizedBox(width: 24),
+                      Expanded(child: prescriptionSwitch),
+                    ],
+                  ),
+                ],
+              );
+            }
+          },
         ),
-        const SizedBox(height: 12),
-        SwitchListTile(
-          title: const Text('Perishable Product'),
-          subtitle: const Text(
-            'Requires special shipping or temperature control',
-          ),
-          value: widget.isPerishable,
-          activeThumbColor: AppTheme.brandEmerald500,
-          onChanged: widget.onIsPerishableChanged,
-        ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         AnimatedSize(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOutBack,
           child: !widget.isDigital
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Divider(height: 24),
-                    const Text(
-                      'Default Physical Shipping Specs',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
+                    const Divider(height: 16),
+                    Row(
+                      children: [
+                        const Text(
+                          'Default Physical Shipping Specs',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Lottie.network(
+                          'https://lottie.host/d19b48b5-55ff-4c28-bb73-90d569653a99/cSwQ8f00Tq.json',
+                          width: 28,
+                          height: 28,
+                          repeat: false,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              LucideIcons.package,
+                              size: 20,
+                              color: AppTheme.brandEmerald500,
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
                           flex: 3,
-                          child: TextFormField(
+                          child: SemanticTextFormField(
                             controller: widget.weightController,
-                            decoration: const InputDecoration(
-                              labelText: 'Default Weight',
-                              border: OutlineInputBorder(),
-                            ),
+                            labelText: 'Default Weight',
+                            prefixIcon: LucideIcons.scale,
                             keyboardType: TextInputType.number,
                             onChanged: (v) => setState(() {}),
                           ),
@@ -142,7 +271,7 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         final isNarrow = constraints.maxWidth < 450;
@@ -152,24 +281,20 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: TextFormField(
+                                        child: SemanticTextFormField(
                                           controller: widget.lengthController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Length',
-                                            border: OutlineInputBorder(),
-                                          ),
+                                          labelText: 'Length',
+                                          prefixIcon: LucideIcons.ruler,
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => setState(() {}),
                                         ),
                                       ),
                                       const SizedBox(width: 8),
                                       Expanded(
-                                        child: TextFormField(
+                                        child: SemanticTextFormField(
                                           controller: widget.widthController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Width',
-                                            border: OutlineInputBorder(),
-                                          ),
+                                          labelText: 'Width',
+                                          prefixIcon: LucideIcons.ruler,
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => setState(() {}),
                                         ),
@@ -180,12 +305,10 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: TextFormField(
+                                        child: SemanticTextFormField(
                                           controller: widget.heightController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Height',
-                                            border: OutlineInputBorder(),
-                                          ),
+                                          labelText: 'Height',
+                                          prefixIcon: LucideIcons.ruler,
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => setState(() {}),
                                         ),
@@ -222,36 +345,30 @@ class _ProductClassificationCardState extends State<ProductClassificationCard> {
                             : Row(
                                 children: [
                                   Expanded(
-                                    child: TextFormField(
+                                    child: SemanticTextFormField(
                                       controller: widget.lengthController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Length',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                      labelText: 'Length',
+                                      prefixIcon: LucideIcons.ruler,
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() {}),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: TextFormField(
+                                    child: SemanticTextFormField(
                                       controller: widget.widthController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Width',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                      labelText: 'Width',
+                                      prefixIcon: LucideIcons.ruler,
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() {}),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: TextFormField(
+                                    child: SemanticTextFormField(
                                       controller: widget.heightController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Height',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                      labelText: 'Height',
+                                      prefixIcon: LucideIcons.ruler,
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() {}),
                                     ),

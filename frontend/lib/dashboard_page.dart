@@ -23,6 +23,7 @@ import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/views/themes_view.dart';
 import 'package:kloudshop/widgets/feature_gate.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/theme_toggle_switch.dart';
 import 'package:kloudshop/provisioning_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -390,23 +391,26 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           final isDark = themeMode == ThemeMode.dark;
 
                           if (_isRailExtended) {
-                            return ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              leading: Icon(
-                                isDark ? LucideIcons.moon : LucideIcons.sun,
-                                size: 20,
-                              ),
-                              title: Text(
-                                isDark ? 'Dark Mode' : 'Light Mode',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              trailing: Switch(
-                                value: isDark,
-                                onChanged: (val) => ref
-                                    .read(themeModeProvider.notifier)
-                                    .toggleTheme(val),
+                            return Material(
+                              color: Colors.transparent,
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                leading: Icon(
+                                  isDark ? LucideIcons.moon : LucideIcons.sun,
+                                  size: 20,
+                                ),
+                                title: const Text(
+                                  'Theme Mode',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                trailing: ThemeToggleSwitch(
+                                  value: isDark,
+                                  onChanged: (val) {
+                                    _triggerThemeSwitchWithOverlay(context, ref, val);
+                                  },
+                                ),
                               ),
                             );
                           } else {
@@ -415,9 +419,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                 isDark ? LucideIcons.moon : LucideIcons.sun,
                                 size: 20,
                               ),
-                              onPressed: () => ref
-                                  .read(themeModeProvider.notifier)
-                                  .toggleTheme(!isDark),
+                              onPressed: () {
+                                _triggerThemeSwitchWithOverlay(context, ref, !isDark);
+                              },
                               tooltip: isDark
                                   ? 'Switch to Light Mode'
                                   : 'Switch to Dark Mode',
@@ -428,24 +432,27 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       Consumer(
                         builder: (context, ref, child) {
                           if (_isRailExtended) {
-                            return ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              leading: const Icon(
-                                LucideIcons.logOut,
-                                size: 20,
-                                color: Colors.redAccent,
-                              ),
-                              title: const Text(
-                                'Sign Out',
-                                style: TextStyle(
-                                  fontSize: 14,
+                            return Material(
+                              color: Colors.transparent,
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                leading: const Icon(
+                                  LucideIcons.logOut,
+                                  size: 20,
                                   color: Colors.redAccent,
                                 ),
+                                title: const Text(
+                                  'Sign Out',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                                onTap: () =>
+                                    ref.read(authServiceProvider).signOut(),
                               ),
-                              onTap: () =>
-                                  ref.read(authServiceProvider).signOut(),
                             );
                           } else {
                             return IconButton(
@@ -500,6 +507,27 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       default:
         return Center(child: Text('Module Coming Soon: $_selectedIndex'));
     }
+  }
+
+  void _triggerThemeSwitchWithOverlay(BuildContext context, WidgetRef ref, bool targetIsDark) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry entry;
+
+    entry = OverlayEntry(
+      builder: (context) {
+        return _ThemeSwitchOverlayWidget(
+          targetIsDark: targetIsDark,
+          onSwitchTheme: () {
+            ref.read(themeModeProvider.notifier).toggleTheme(targetIsDark);
+          },
+          onComplete: () {
+            entry.remove();
+          },
+        );
+      },
+    );
+
+    overlay.insert(entry);
   }
 }
 
@@ -1558,6 +1586,139 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: content,
+        ),
+      ),
+    );
+  }
+}
+
+class _ThemeSwitchOverlayWidget extends StatefulWidget {
+  final bool targetIsDark;
+  final VoidCallback onSwitchTheme;
+  final VoidCallback onComplete;
+
+  const _ThemeSwitchOverlayWidget({
+    super.key,
+    required this.targetIsDark,
+    required this.onSwitchTheme,
+    required this.onComplete,
+  });
+
+  @override
+  State<_ThemeSwitchOverlayWidget> createState() => _ThemeSwitchOverlayWidgetState();
+}
+
+class _ThemeSwitchOverlayWidgetState extends State<_ThemeSwitchOverlayWidget> {
+  double _opacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Trigger fade-in on the next frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() => _opacity = 1.0);
+      }
+    });
+
+    // Step 1: Switch theme after fade-in completes (e.g. 350ms)
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        widget.onSwitchTheme();
+      }
+      
+      // Step 2: Keep overlay visible for 500ms to let theme settle, then fade out
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          setState(() => _opacity = 0.0);
+        }
+        
+        // Step 3: Complete after fade-out finishes (e.g. 350ms)
+        Future.delayed(const Duration(milliseconds: 350), () {
+          if (mounted) {
+            widget.onComplete();
+          }
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkTheme = theme.brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: AnimatedOpacity(
+        opacity: _opacity,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        child: Stack(
+          children: [
+            // Semi-transparent dark background tint
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.65),
+              ),
+            ),
+            // Center Dialog Card
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  child: Container(
+                    width: 290,
+                    padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
+                    decoration: BoxDecoration(
+                      color: isDarkTheme
+                          ? const Color(0xFF1E293B).withOpacity(0.9)
+                          : Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDarkTheme
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.black.withOpacity(0.1),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.35),
+                          blurRadius: 24,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Switching to ${widget.targetIsDark ? "Dark" : "Light"} Mode...',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDarkTheme ? Colors.white : Colors.black87,
+                            decoration: TextDecoration.none, // Disable yellow underline in dialogs
+                            fontFamily: theme.textTheme.bodyMedium?.fontFamily,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -8,6 +8,7 @@ import 'package:kloudshop/services/api_service.dart';
 import 'package:intl/intl.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class OrderDetailView extends ConsumerWidget {
   final String orderId;
@@ -667,20 +668,18 @@ class OrderDetailView extends ConsumerWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
+            SemanticTextFormField(
               controller: carrierController,
-              decoration: const InputDecoration(
-                labelText: 'Carrier (e.g. FedEx, UPS)',
-                hintText: 'FedEx',
-              ),
+              labelText: 'Carrier (e.g. FedEx, UPS)',
+              hintText: 'FedEx',
+              prefixIcon: LucideIcons.truck,
             ),
             const SizedBox(height: 16),
-            TextField(
+            SemanticTextFormField(
               controller: trackingController,
-              decoration: const InputDecoration(
-                labelText: 'Tracking Number',
-                hintText: 'TRK123456789',
-              ),
+              labelText: 'Tracking Number',
+              hintText: 'TRK123456789',
+              prefixIcon: LucideIcons.barcode,
             ),
           ],
         ),
@@ -728,23 +727,26 @@ class OrderDetailView extends ConsumerWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
+            SemanticTextFormField(
               controller: amountController,
-              decoration: const InputDecoration(
-                labelText: 'Refund Amount',
-                prefixText: '\$',
+              labelText: 'Refund Amount',
+              prefixWidget: const Text(
+                '\$',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.brandEmerald500,
+                  fontSize: 16,
+                ),
               ),
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
+            SemanticTextFormField(
               controller: reasonController,
-              decoration: const InputDecoration(
-                labelText: 'Reason for Refund',
-                hintText: 'Customer requested cancellation',
-              ),
+              labelText: 'Reason for Refund',
+              hintText: 'Customer requested cancellation',
             ),
           ],
         ),

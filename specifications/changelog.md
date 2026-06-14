@@ -122,7 +122,7 @@ This changelog records the architecture, model, provider, and UI changes made du
     - Schema **`UnblockRequest`** ([schemas.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)): `email: EmailStr`.
   - `POST /api/v1/auth/unblock/verify` (Payload: `UnblockVerify`): Validates recovery token expiration and resets security states on success.
     - Schema **`UnblockVerify`** ([schemas.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)): `token: str`.
-  - `POST /api/v1/auth/staff/{uid}/unblock`: Restricts unblocking of locked staff to authenticated admins/owners.
+  - `POST /api/v1/auth/staff/{uid}/unblock`: Restricts unblocking of locked staff to authenticated admins/owners. Re-secured by verifying the target user belongs to the caller's tenant boundary, returning 403 Forbidden on mismatch.
 
 - **New Client-Side API & UI Integration**:
   - `ApiService` methods ([api_service.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/api_service.dart)):
@@ -135,11 +135,140 @@ This changelog records the architecture, model, provider, and UI changes made du
   - `App` routing ([app.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart)): Registered the `/unblock` route pattern.
 
 - **Verification & Lockout Unit Tests**:
-  - Created [test_auth_lockout.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_lockout.py) implementing 5 comprehensive unit tests:
+  - Created [test_auth_lockout.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_lockout.py) implementing 6 comprehensive unit tests:
     - `test_failed_login_alert_cool_off`: Prevents login re-attempts during active 180s cool-offs.
     - `test_failed_login_alert_lockout_3_strikes`: Locks out account on 3 strikes.
     - `test_failed_login_alert_lockout_3_distinct_days`: Locks out account on failures across 3+ calendar days.
     - `test_unblock_email_rate_limit_and_verify`: Limits unblock requests to 3 per 24 hours.
     - `test_unblock_token_ttl`: Verifies that unblock tokens expire after 180 seconds.
-  - Successfully verified execution with all 5/5 lockout tests and all 11/11 existing auth tests passing cleanly.
+    - `test_admin_unblock_staff_tenant_boundary` [NEW]: Verifies cross-tenant admin unblock attempts fail with 403 Forbidden.
+  - Restrained AnyIO testing loop context ([conftest.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py)) to run exclusively on `asyncio` backend to resolve dependencies errors (missing `trio` module).
+  - Successfully verified execution with all 6/6 lockout tests and all 11/11 existing auth tests passing cleanly.
+
+- Updated modal display duration for variant toggle from 3000ms to 1500ms in `product_variants_section.dart`.
+- Added ignore entry for `backend/backend/storage/media/` to `.gitignore`.
+- Resolved concurrent image upload race condition in `media_gallery_uploader.dart` and `compact_media_list_uploader.dart` by implementing local state tracking (`_localImages`) and generating unique upload IDs.
+- Updated the Variants & Pricing section header to show both active and total variant counts in the format "active of total" (e.g. "2 active of 4").
+- **Global Lottie Switches Integration**:
+  - Replaced standard Flutter `Switch` widgets with `LottieToggle` in `dashboard_page.dart` (Theme Mode switcher) and `provisioning_page.dart` (Multi-region redundancy switch).
+  - Defined `LottieToggle.defaultDuration` (preset to `1800ms`) inside `lib/widgets/lottie_toggle.dart` as the single point of control for toggle animation speed app-wide.
+  - Documented toggle components and global configuration rules in the design guidelines.
+- **Product Compliance Controls (Step 2)**:
+  - Replaced legacy switches for Perishable and Digital products in `product_classification_card.dart` with `LottieSwitchListTile`.
+  - Added new `LottieSwitchListTile` controls for **Age-Gated Product** and **Prescription Required**.
+  - Implemented a responsive `LayoutBuilder` grid inside `product_classification_card.dart` that displays controls in two columns on desktop viewports and stacks them on narrow viewports.
+  - Rendered a conditional **MINIMUM AGE** input field that defaults to `21` when Age-Gating is enabled, and automatically clears and hides when disabled.
+  - Added field-level and save-level validators in `product_editor_view.dart` to block form submission if the minimum age is not a positive integer (> 0).
+- **Variant Shipping Overrides (Step 3)**:
+  - Replaced the text link configuration buttons in `product_variants_section.dart` with `LottieSwitchListTile` for independent variant-level shipping overrides.
+  - Implemented clear-on-disable behavior: toggling the switch OFF immediately clears and hides the custom dimensions/weights, resetting the variant to inherit main product specs.
+  - Fixed provider state mapping in `product_editor_provider.dart` to dynamically initialize `show_shipping_overrides` to `true` if any pre-existing override weight or dimension values are present in the `ProductVariant` model.
+- **Design Guidelines Relocation**:
+  - Relocated light and dark design documents to `specifications/design/` (creating `light-design.md` and `dark-DESIGN.md` as the gold standards).
+  - Updated color YAML tokens to match the actual high-contrast green colors (`#124B47` for Primary brand teal, `#047857` / `#34D399` for Success emerald greens) in `app_theme.dart`.
+- **Intelligent Variant Reconciliation**:
+  - Implemented overlapping option matching, sorting priority, database ID (`variant_id`) preservation, and custom SKU suffix propagation in [product_editor_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart). *(Note: Base variant ID preservation during Simple -> Variable transitions is [DEPRECATED - Superseded by No-Options Base Variant Behavior in product_variations_logic.md]).*
+  - Added glassmorphic choice dialog (Intelligent Reconciliation vs. Fresh Generation) when option schemas change in [product_editor_variants_step.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart).
+- **SKU Modification Warnings & Email Reports**:
+  - Added inline warnings below modified SKU input fields in [product_variants_section.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart).
+  - Implemented the glassmorphic "SKU Modifications Detected" warning dialog with an email report checkbox in [product_editor_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) when saving SKU changes.
+  - Added `email_sku_report` query parameter, variant SKU change comparison, and `send_sku_change_report_email` background task in [router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py).
+  - Connected the `emailSkuReport` flag in [api_service.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/api_service.dart) and updated [product_editor_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart) to pass it during save.
+- **Verification & Testing**:
+  - Added `test_update_product_sku_report` unit test to [test_catalog.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py).
+  - Verified that all 8 backend catalog tests pass cleanly, and the frontend compiles without errors under `flutter analyze`.
+- **No-Options Base Variant & Transition Specifications**:
+  - Documented the architecture, transition logic, auto-generated SKU rules, deactivation details, and the Collapse Variant Report details in the specifications document [product_variations_logic.md](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/specifications/product_variations_logic.md).
+
+---
+
+### Journey 2: Catalog Enhancements & Bulk CSV Import (Branch: phase7/j2-catalog)
+
+#### 1. New Models & Database Schema
+- **ImportJob Audit Fields** ([models.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py) & [a3f1e8b2c904_import_job_audit_fields.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py)):
+  - Added audit and progress-tracking columns to `ImportJob`:
+    - `initiated_by` (`String`): Email of the merchant initiating the import.
+    - `processing_started_at` (`DateTime`): Timestamp when parsing/import processing started.
+    - `processing_completed_at` (`DateTime`): Timestamp when the job finished or failed.
+    - `source_filename` (`String`): The name of the uploaded CSV/XLSX file.
+    - `source_filesize_bytes` (`Integer`): Size of the uploaded file.
+    - `conflict_strategy` (`String`): Selected duplication resolution (e.g. `skip`, `overwrite`, `custom_sku`).
+    - `rows_skipped` (`Integer`): Count of skipped rows.
+    - `rows_overwritten` (`Integer`): Count of overwritten rows.
+    - `rows_custom_sku` (`Integer`): Count of rows matching custom SKUs.
+    - `no_stock_log` (`JSON`): List of variants that had no stock defined during import (notifying merchant that stock value was not available and they need to update the inventory manually).
+
+---
+
+#### 2. Backend API Endpoints & Async Background Task
+- **New Endpoints** ([router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)):
+  - `GET /api/v1/catalog/import/template`: Streams a standard CSV import template with basic headers and examples.
+  - `POST /api/v1/catalog/import/check-sku-exists` (Payload: `SkuExistsRequest`): Verifies if a list of SKUs already exists in the tenant catalog for client-side pre-flight duplicate checking.
+  - `POST /api/v1/catalog/import/upload`: Multipart file upload parsing both CSV and XLSX formats. Creates an `ImportJob` record in `pending` status, and triggers the asynchronous background processing task.
+  - `GET /api/v1/catalog/import/jobs/{job_id}`: Retrieves real-time progress of a specific import job.
+  - `GET /api/v1/catalog/import/jobs`: Lists all historical import jobs for the current tenant.
+- **Asynchronous Processing Task (`_process_import_job`)**:
+  - Operates sequentially on rows, extracting product handles, categories, tags, SKU, prices, compare-at prices, stock, and dynamic variant options (supporting up to 9 dynamic levels of product options).
+  - Implements three conflict resolution strategies:
+    - **Skip**: Skips row ingestion if the SKU exists.
+    - **Overwrite**: Updates existing product, variant, pricing, options, and stock values.
+    - **Custom SKU**: Renames duplicate SKUs on-the-fly based on client-provided mappings.
+  - Sends a completion summary email report at the end of the run containing metrics and details of variants created/modified, and a list of variants imported with missing stock values.
+
+---
+
+#### 3. Frontend Providers, Services & State Management
+- **API Client Extensions** ([api_service.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/api_service.dart)):
+  - Implemented client methods for downloading templates, checking SKU availability, posting multipart form data, polling job progress, and fetching import job lists.
+- **CSV/XLSX Import State Manager** ([csv_import_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart)):
+  - Parses uploaded text bytes (CSV) or parses spreadsheet structures using the `excel` package (XLSX).
+  - Groups variant rows by product handles to present a unified previews layout.
+  - Resolves duplicate SKU check queries, tracks chosen strategies, and manages inline text field overrides for custom SKU mapping.
+  - Runs periodic timers to poll `/jobs/{id}` progress endpoints.
+- **Import History Manager** ([import_history_provider.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/import_history_provider.dart)):
+  - Caches historically executed jobs, manages unviewed alert notifications with status badges, and automatically initiates background polling when active import tasks are running.
+
+---
+
+#### 4. Cross-Platform Save File Download Helper
+- **Cross-Platform Conditional Compilation** ([download_helper.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper.dart), `download_helper_none.dart`, `download_helper_web.dart`):
+  - Integrates conditional compilation using `dart.library.html` to separate web actions from mobile/desktop platforms.
+  - **Web**: Creates a download link blob directly and clicks it programmatically.
+  - **Desktop/Mobile**: Leverages `FilePicker.platform.saveFile()` to let users select output targets and writes raw template bytes.
+
+---
+
+#### 5. UI Views & Visual Enhancements
+- **Import Dialog Wizard** ([csv_import_dialog.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart)):
+  - Implements a responsive 3-step import wizard overlay card with frosted glassmorphic styles.
+  - **Step 1 (Idle)**: Interactive Drag-and-Drop / Browse zone using `desktop_drop`, including template download indicators.
+  - **Step 2 (Preview & Strategies)**: Displays expandable list cards grouping variants. Renders radio selection strategies (Skip, Overwrite, Custom SKU) and dynamic lists of text fields for custom SKU renaming when the strategy is active.
+  - **Step 3 (Progress / Result)**: Live progress bar tracking processed, skipped, and failed count states. Shows summary cards upon completion, showing success colors and detailed logs / warning notifications.
+  - **Missing Title Validation**: Updated row errors parsing to explicitly list and highlight in bold red any missing product title rows if handles are present.
+  - **Missing Stock Warning Logs**: Rendered warning listings for products imported with missing stock values using the aggregated `noStockLog` in the finished screen.
+- **Import History Card** ([import_history_panel.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart)):
+  - Notification-center style overlay panel popping from the toolbar.
+  - Shows historic listings of jobs, processing items with live pulsing dots, and triggers detailed modal reports displaying validation warnings or skipped reasons.
+  - **Missing Stock History Reports**: Decodes and displays the "Products Without Stock" log section inside the detailed history report modal.
+- **Toolbar Integration** ([catalog_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart)):
+  - Added a frosted "Import CSV" button and a History icon button with unviewed badge counters to the catalog overview header.
+- **Always-On Variant Stock Editor** ([product_variants_section.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart)):
+  - Removed the `widget.isNewProduct` check on the variants list items card. Stock values are now visible and editable for existing catalog variants as well. Labeled dynamically as "Initial Stock" for new variants or "Stock" for existing variants.
+
+---
+
+#### 6. Root-Level Static Asset Routing & Logging Fixes
+- **Static Asset Fallthrough Router** ([ssr_router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py)):
+  - Resolved root-level single-path parameter routing conflicts where paths matching `/{tenant}` intercepted Flutter web bootstrapping requests (e.g. `/flutter_bootstrap.js`, `/manifest.json`, `/flutter.js`, `/version.json`).
+  - Added a check verifying if the requested name matches an existing file in `frontend/build/web` and returning it using `FileResponse`. Added explicit exclusions for `/docs`, `/redoc`, `/openapi.json`, and `/api` endpoints.
+- **Windows CLI Unicode Logging Fix** ([router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)):
+  - Replaced the `📧` envelope emoji in the terminal logging output of `_send_import_report` to avoid throwing `UnicodeEncodeError` exceptions on Windows consoles utilizing CP1252 character maps.
+
+---
+
+#### 7. Verification & Automated Tests
+- **Backend Tests**: Verified using `pytest` on [test_csv_import.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_csv_import.py) and [test_bulk_import.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py) covering 13 critical integration scenarios (including strategy logic, stock defaults, and option schema construction). **13/13 tests pass successfully**.
+- **Frontend Analysis**: Validated with `flutter analyze` ensuring zero compiler errors or warnings.
+
+
 

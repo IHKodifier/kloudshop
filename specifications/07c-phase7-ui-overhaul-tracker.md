@@ -86,19 +86,49 @@ Each view must fully implement the following five states (unless explicitly mark
 | :--- | :--- | :--- | :--- |
 | **Catalog Overview** | `mock-screens/catalog_overview.png` | [catalog_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) | `catalogProvider` |
 | **Product & Variant Editor** | `mock-screens/product_editor.png` | [product_editor_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) | `productEditorProvider` |
+| **Color Presets CRUD** | `N/A` | [option_category_editor.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/option_category_editor.dart) | `colorPresetsProvider` |
+| **Bulk CSV Product Import** | `mock-screens/csv_import.png` | [csv_import_dialog.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart) | `csvImportProvider`, `importHistoryProvider` |
 
-- [ ] **Catalog Overview**
-  - [ ] Default/Active State (Frosted cards, emerald filter chips)
-  - [ ] Loading/Submitting State (Card-skeleton placeholder grids)
-  - [ ] Error/Failure State (Fetch error toast with reload prompt)
-  - [ ] Empty State (Illustration indicating "No Products Found" + "Add Product" CTA)
-  - [ ] Input Validation State (`N/A`)
-- [ ] **Product & Variant Editor**
-  - [ ] Default/Active State (Slug, status, Compare-At price, digital toggles)
-  - [ ] Loading/Submitting State (Save progress loader, image uploading placeholders)
-  - [ ] Error/Failure State (Error modal on save failure)
-  - [ ] Empty State (`N/A`)
-  - [ ] Input Validation State (Highlight empty title, price ≤ 0 validation)
+- [x] **Catalog Overview**
+  - [x] Default/Active State (Frosted cards, emerald filter chips)
+  - [x] Loading/Submitting State (Card-skeleton placeholder grids)
+  - [x] Error/Failure State (Fetch error toast with reload prompt)
+  - [x] Empty State (Illustration indicating "No Products Found" + "Add Product" CTA)
+  - [x] Input Validation State (`N/A`)
+- [x] **Product & Variant Editor**
+  - [x] Default/Active State (Slug, status, Compare-At price, digital toggles)
+  - [x] Loading/Submitting State (Save progress loader, image uploading placeholders)
+  - [x] Error/Failure State (Error modal on save failure)
+  - [x] Empty State (`N/A`)
+  - [x] Input Validation State (Highlight empty title, price ≤ 0 validation)
+- [x] **Color Presets CRUD**
+  - [x] Default/Active State (Visual preset chips shelf in option editor, visual picker dialog)
+  - [x] Loading/Submitting State (Colors.json cache-first display, background DB sync)
+  - [x] Error/Failure State (Rollback and error banner on api save failure)
+  - [x] Empty State (`N/A`)
+  - [x] Input Validation State (Verify hex code format before preset submission)
+- [x] **Bulk CSV Product Import**
+  - [x] Default/Active State (File picker drop-zone with file preview, grouped products expansion list showing variant rows)
+  - [x] Loading/Submitting State (Multipart file upload indicators, async task polling progress bar with live processed/skipped/failed counters)
+  - [x] Error/Failure State (Inline validation log warnings, error-log summary popup for partial success or failed import jobs)
+  - [x] Empty State ("Drag & Drop or Browse" file zone with dynamic cross-platform template downloading support)
+  - [x] Input Validation State (Duplicate SKU pre-checking, custom SKU input validation, option-column parsing and strategies: skip / overwrite / custom SKU rename on-the-fly)
+
+### Journey 1 & 2 Scope Extensions & Platform Enhancements
+
+These features and fixes were implemented during the development of Journey 1 and Journey 2 to resolve critical security, performance, and cross-platform compatibility issues, going beyond the original scope:
+
+#### Journey 1 (Merchant Auth & Onboarding)
+*   **Security Lockout System**: Built a 180s login cooldown, 3-strike/24-hour lockout rules, multi-day lockout thresholds, client IP/agent geolocation auditing, and self-service unblock tokens with 180s TTL (preventing automated brute-force attacks).
+*   **Lottie Animation Toggles**: Created standard `LottieToggle` components and globally configured toggle animation speeds (`1800ms` default).
+*   **Variant Shipping Overrides & Clear-on-Disable**: Built interactive variant-level overrides that clear data dynamically when disabled to save DB storage.
+*   **Theme Switch Overlay**: Built a premium, dimmed background overlay transition that renders a blurred card explaining that the system is switching theme modes, preventing jarring visual jumps.
+
+#### Journey 2 (Product Catalog & Inventory)
+*   **Root-Level Wildcard Asset Resolver**: Solved blank page / bootstrap loading failures by adding static file fallthrough handling for root-level Flutter web files (e.g. `/flutter_bootstrap.js`, `/manifest.json`, etc.) using `FileResponse` in `ssr_router.py`.
+*   **Pydantic Computed Stock & Eager Loading**: Integrated aggregated stock quantities using SQLAlchemy computed properties, eager relationship loading (`selectinload`), and DB `Inventory` inserts on creation/update.
+*   **Always-On Stock Editor**: Enabled visual stock levels viewing and updating on variant cards directly inside the product editor for existing products.
+*   **Windows CLI Unicode Logging Fix**: Replaced emoji logs with text symbols in `_send_import_report` to resolve `UnicodeEncodeError` exceptions in CP1252-configured Windows command lines.
 
 ---
 

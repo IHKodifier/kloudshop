@@ -29,6 +29,17 @@ async def serve_storefront_home(
     tenant: str,
     db: AsyncSession = Depends(get_db)
 ):
+    # Check if this is an API, system route or internal path
+    if tenant in {"docs", "redoc", "openapi.json", "api", "health", "media"}:
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    # Serve root-level static files from Flutter web build if they exist
+    backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    static_file_path = os.path.join(backend_dir, "frontend", "build", "web", tenant)
+    if os.path.exists(static_file_path) and os.path.isfile(static_file_path):
+        from fastapi.responses import FileResponse
+        return FileResponse(static_file_path)
+
     profile_result = await db.execute(select(BrandProfile).where(BrandProfile.slug == tenant))
     profile = profile_result.scalar_one_or_none()
     if not profile:

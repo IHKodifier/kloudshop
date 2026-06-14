@@ -5,8 +5,11 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:kloudshop/services/auth_service.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/lottie_toggle.dart';
 import 'package:kloudshop/models/gcp_region.dart';
 import 'package:kloudshop/providers/provisioning_provider.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
+
 
 class ProvisioningPage extends ConsumerStatefulWidget {
   final String? email;
@@ -493,68 +496,28 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
           ),
         ),
         const SizedBox(height: 8),
-        TextField(
+        SemanticTextFormField(
           controller: _tenantIdController,
           focusNode: _focusNode,
           onChanged: _onIdChanged,
-          cursorColor: AppTheme.brandEmerald500,
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            color: isDark ? Colors.white : AppTheme.neutral900,
-          ),
-          decoration: InputDecoration(
-            hintText: 'e.g. quantum-boutique',
-            hintStyle: GoogleFonts.inter(
-              color: isDark ? const Color(0xFF475569) : AppTheme.neutral400,
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            filled: true,
-            fillColor: isDark ? const Color(0xFF1E293B) : const Color(0xFFF9FAFB),
-            prefixIcon: Icon(
-              LucideIcons.globe,
-              size: 18,
-              color: _isFocused ? AppTheme.brandEmerald500 : Colors.grey,
-            ),
-            suffixIcon: isChecking
-                ? Container(
-                    width: 20,
-                    height: 20,
-                    padding: const EdgeInsets.all(14),
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppTheme.brandEmerald500,
-                    ),
-                  )
-                : isAvailable
-                    ? const Icon(LucideIcons.checkCircle2, color: AppTheme.brandEmerald500, size: 20)
-                    : isTaken
-                        ? const Icon(LucideIcons.xCircle, color: Colors.redAccent, size: 20)
-                        : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(
-                color: isDark ? const Color(0xFF475569) : const Color(0xFFE2E8F0),
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: AppTheme.brandEmerald500,
-                width: 1.5,
-              ),
-            ),
-            errorText: (hasValidationError || isTaken) ? state.errorMessage : null,
-            errorStyle: GoogleFonts.inter(
-              color: Colors.redAccent,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          prefixIcon: LucideIcons.globe,
+          hintText: 'e.g. quantum-boutique',
+          suffixIcon: isChecking
+              ? Container(
+                  width: 20,
+                  height: 20,
+                  padding: const EdgeInsets.all(14),
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppTheme.brandEmerald500,
+                  ),
+                )
+              : isAvailable
+                  ? const Icon(LucideIcons.checkCircle2, color: AppTheme.brandEmerald500, size: 20)
+                  : isTaken
+                      ? const Icon(LucideIcons.xCircle, color: Colors.redAccent, size: 20)
+                      : null,
+          errorText: (hasValidationError || isTaken) ? state.errorMessage : null,
         ),
         const SizedBox(height: 16),
 
@@ -1588,13 +1551,9 @@ class _ProvisioningPageState extends ConsumerState<ProvisioningPage>
               ],
             ),
           ),
-          Switch(
+          LottieToggle(
             value: value,
             onChanged: onChanged,
-            activeThumbColor: AppTheme.brandEmerald500,
-            activeTrackColor: AppTheme.brandEmerald500.withValues(alpha: 0.3),
-            inactiveThumbColor: Colors.grey,
-            inactiveTrackColor: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
           ),
         ],
       ),

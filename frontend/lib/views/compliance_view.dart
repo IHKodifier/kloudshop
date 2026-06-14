@@ -6,6 +6,7 @@ import 'package:kloudshop/providers/hygiene_providers.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
 
 class ComplianceView extends ConsumerStatefulWidget {
   const ComplianceView({super.key});
@@ -169,23 +170,11 @@ class _ComplianceViewState extends ConsumerState<ComplianceView> {
               isDark: isDark,
               theme: theme,
               children: [
-                TextFormField(
+                SemanticTextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Customer Email Address',
-                    hintText: 'e.g. customer@example.com',
-                    prefixIcon: const Icon(LucideIcons.mail, size: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Colors.redAccent,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
+                  labelText: 'Customer Email Address',
+                  hintText: 'e.g. customer@example.com',
+                  prefixIcon: LucideIcons.mail,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(

@@ -1,10 +1,20 @@
 # [MODIFY] backend/modules/catalog/schemas.py
 # Added VariantUpdate and integrated it into ProductUpdate for full product reconciliation.
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from decimal import Decimal
+import re
+
+def slugify(v: Any) -> Any:
+    if isinstance(v, str):
+        s = v.strip().lower()
+        s = re.sub(r'[^a-z0-9\-]+', '-', s)
+        s = s.strip('-')
+        return s
+    return v
+
 
 class VariantBase(BaseModel):
     sku: str
@@ -35,7 +45,7 @@ class VariantBase(BaseModel):
     position: int = 0
 
 class VariantCreate(VariantBase):
-    pass
+    stock: Optional[int] = None
 
 class VariantUpdate(BaseModel):
     variant_id: Optional[str] = None # If provided, update; else create
@@ -58,10 +68,12 @@ class VariantUpdate(BaseModel):
     requires_shipping: Optional[bool] = None
     taxable: Optional[bool] = None
     position: Optional[int] = None
+    stock: Optional[int] = None
 
 class VariantResponse(VariantBase):
     variant_id: str
     product_id: str
+    stock: Optional[int] = 0
     created_at: datetime
     updated_at: datetime
 
@@ -73,6 +85,12 @@ class ProductBase(BaseModel):
     description: Optional[str] = None
     status: str = Field("draft", pattern="^(draft|active|archived)$")
     slug: str = Field(..., pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     images: List[str] = []
     options_schema: List[Dict[str, Any]] = []
@@ -112,6 +130,12 @@ class CollectionBase(BaseModel):
     title: str
     description: Optional[str] = None
     slug: str = Field(..., pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
@@ -127,6 +151,12 @@ class CollectionUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     slug: Optional[str] = Field(None, pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
@@ -151,21 +181,45 @@ class ImportJobResponse(BaseModel):
     job_id: str
     tenant_id: str
     status: str
+    initiated_by: Optional[str] = None
+    processing_started_at: Optional[datetime] = None
+    processing_completed_at: Optional[datetime] = None
+    source_filename: Optional[str] = None
+    source_filesize_bytes: int = 0
+    conflict_strategy: Optional[str] = None
     rows_total: int
     rows_processed: int
+    rows_skipped: int = 0
+    rows_overwritten: int = 0
+    rows_custom_sku: int = 0
     rows_failed: int
     error_log: List[Dict[str, Any]]
+    no_stock_log: List[Dict[str, Any]] = []
     created_at: datetime
     updated_at: datetime
 
     class Config:
         from_attributes = True
 
+
+class SkuExistsRequest(BaseModel):
+    skus: List[str]
+
+
+class SkuExistsResponse(BaseModel):
+    duplicates: List[str]
+
 class ProductUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = Field(None, pattern="^(draft|active|archived)$")
     slug: Optional[str] = Field(None, pattern=r"^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$")
+
+    @field_validator("slug", mode="before")
+    @classmethod
+    def clean_slug(cls, v: Any) -> Any:
+        return slugify(v)
+
     image_url: Optional[str] = None
     images: Optional[List[str]] = None
     options_schema: Optional[List[Dict[str, Any]]] = None
@@ -199,3 +253,19 @@ class RedirectRuleResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ColorPresetBase(BaseModel):
+    name: str
+    hex_code: str = Field(..., pattern=r"^#([A-Fa-f0-9]{6})$")
+
+class ColorPresetCreate(ColorPresetBase):
+    pass
+
+class ColorPresetResponse(ColorPresetBase):
+    preset_id: str
+    tenant_id: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+

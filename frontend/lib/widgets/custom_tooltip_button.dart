@@ -39,25 +39,11 @@ class CustomTooltipButton extends StatelessWidget {
       preferBelow: false,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.brandEmerald500.withValues(alpha: 0.15),
-                blurRadius: 6,
-                spreadRadius: 1,
-                offset: const Offset(0, 3),
-              ),
-            ],
-            border: Border.all(color: AppTheme.brandEmerald500, width: 1.5),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
           child: const Icon(
             LucideIcons.info,
-            size: 13,
+            size: 18,
             color: AppTheme.brandEmerald500,
           ),
         ),

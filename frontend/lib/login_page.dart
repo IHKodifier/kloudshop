@@ -9,6 +9,8 @@ import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:kloudshop/widgets/google_logo.dart';
+import 'package:kloudshop/widgets/semantic_text_form_field.dart';
+import 'package:kloudshop/widgets/network_cached_image.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -455,26 +457,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  TextFormField(
+                                  SemanticTextFormField(
                                     controller: _emailController,
                                     focusNode: _emailFocusNode,
                                     enabled: !_isLoading && _coolOffSeconds == 0 && !_isBlocked,
                                     keyboardType: TextInputType.emailAddress,
-                                    decoration: InputDecoration(
-                                      hintText: 'name@company.com',
-                                      prefixIcon: const Icon(
-                                        LucideIcons.mail,
-                                        size: 16,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 16,
-                                          ),
-                                    ),
+                                    hintText: 'name@company.com',
+                                    prefixIcon: LucideIcons.mail,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Email is required';
@@ -525,36 +514,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       ),
                                     ],
                                   ),
-                                  TextFormField(
+                                  SemanticTextFormField(
                                     controller: _passwordController,
                                     obscureText: _obscurePassword,
                                     enabled: !_isLoading && _coolOffSeconds == 0 && !_isBlocked,
-                                    decoration: InputDecoration(
-                                      hintText: '••••••••',
-                                      prefixIcon: const Icon(
-                                        LucideIcons.lock,
+                                    hintText: '••••••••',
+                                    prefixIcon: LucideIcons.lock,
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? LucideIcons.eyeOff
+                                            : LucideIcons.eye,
                                         size: 16,
                                       ),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _obscurePassword
-                                              ? LucideIcons.eyeOff
-                                              : LucideIcons.eye,
-                                          size: 16,
-                                        ),
-                                        onPressed: () => setState(
-                                          () => _obscurePassword =
-                                              !_obscurePassword,
-                                        ),
+                                      onPressed: () => setState(
+                                        () => _obscurePassword =
+                                            !_obscurePassword,
                                       ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 16,
-                                          ),
                                     ),
                                     validator: (value) =>
                                         (value == null || value.isEmpty)
@@ -721,23 +697,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     if (isDesktop)
                       Expanded(
                         flex: 6,
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(60, 60, 60, 16),
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: const AssetImage(
-                                'assets/login_datacenter.png',
-                              ),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            const NetworkCachedImage(
+                              imageUrl: 'assets/login_datacenter.png',
                               fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(
-                                AppTheme.brandTeal900.withOpacity(0.32),
-                                BlendMode.srcOver,
-                              ),
                             ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            Container(
+                              color: AppTheme.brandTeal900.withOpacity(0.32),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(60, 60, 60, 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               const Icon(
                                 LucideIcons.quote,
@@ -820,7 +794,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ],
                           ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
                   ],
                 ),
                 // Dialog Close Button

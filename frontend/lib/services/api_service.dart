@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kloudshop/services/auth_service.dart';
@@ -14,6 +15,7 @@ import 'package:kloudshop/models/catalog.dart';
 import 'package:kloudshop/models/order.dart';
 import 'package:kloudshop/models/customer.dart';
 import 'package:kloudshop/models/settings.dart';
+import 'package:kloudshop/models/color_preset.dart';
 
 final apiServiceProvider = Provider<ApiService>((ref) {
   final authService = ref.watch(authServiceProvider);
@@ -524,11 +526,15 @@ class ApiService {
 
   Future<Product> updateProduct(
     String productId,
-    Map<String, dynamic> productData,
-  ) async {
+    Map<String, dynamic> productData, {
+    bool emailSkuReport = false,
+  }) async {
     final headers = await _getHeaders();
+    final url = emailSkuReport
+        ? '$baseUrl/products/$productId?email_sku_report=true'
+        : '$baseUrl/products/$productId';
     final response = await http.put(
-      Uri.parse('$baseUrl/products/$productId'),
+      Uri.parse(url),
       headers: headers,
       body: jsonEncode(productData),
     );
@@ -554,6 +560,82 @@ class ApiService {
       throw ApiException(
         response.statusCode,
         'Failed to delete product: ${response.body}',
+      );
+    }
+  }
+
+  // --- Color Presets ---
+  Future<ColorPreset> createColorPreset(String name, String hexCode) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/products/color-presets'),
+      headers: headers,
+      body: jsonEncode({
+        'name': name,
+        'hex_code': hexCode,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ColorPreset.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(
+        response.statusCode,
+        'Failed to create color preset: ${response.body}',
+      );
+    }
+  }
+
+  Future<List<ColorPreset>> listColorPresets() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/products/color-presets'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => ColorPreset.fromJson(item)).toList();
+    } else {
+      throw ApiException(
+        response.statusCode,
+        'Failed to list color presets: ${response.body}',
+      );
+    }
+  }
+
+  Future<void> deleteColorPreset(String presetId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/products/color-presets/$presetId'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw ApiException(
+        response.statusCode,
+        'Failed to delete color preset: ${response.body}',
+      );
+    }
+  }
+
+  Future<ColorPreset> updateColorPreset(String presetId, String name, String hexCode) async {
+    final headers = await _getHeaders();
+    final response = await http.put(
+      Uri.parse('$baseUrl/products/color-presets/$presetId'),
+      headers: headers,
+      body: jsonEncode({
+        'name': name,
+        'hex_code': hexCode,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return ColorPreset.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(
+        response.statusCode,
+        'Failed to update color preset: ${response.body}',
       );
     }
   }
@@ -866,6 +948,198 @@ class ApiService {
         response.statusCode,
         'Upload failed: ${response.body}',
       );
+    }
+  }
+
+  /// Sends a variant retirement report to the merchant admin.
+  ///
+  /// **Debug mode**: pretty-prints the full report to the debug console.
+  /// **Production mode**: POSTs the report payload to the backend which
+  /// emails the merchant admin with SKU, price, compareAtPrice, and stock
+  /// details of every retired variant.
+  ///
+  /// [productId] may be null for unsaved products (report is debug-only then).
+  Future<void> sendVariantRetirementReport({
+    required String productTitle,
+    required String productSlug,
+    required String? productId,
+    required List<Map<String, dynamic>> retiringVariants,
+    required int aggregatedStock,
+    required String survivingVariantSku,
+  }) async {
+    final timestamp = DateTime.now().toIso8601String();
+
+    // ── Debug console report ──────────────────────────────────────────────
+    if (kDebugMode) {
+      debugPrint('════════════════════════════════════════════════════════');
+      debugPrint('VARIANT RETIREMENT REPORT');
+      debugPrint('Generated at : $timestamp');
+      debugPrint('Product      : $productTitle ($productSlug)');
+      debugPrint('Product ID   : ${productId ?? "(unsaved)"}');
+      debugPrint('─────────────────────────────────────────────────────────');
+      debugPrint('Retiring variants:');
+      for (final v in retiringVariants) {
+        final optVals = Map<String, String>.from(v['option_values'] ?? {});
+        final optStr = optVals.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+        debugPrint(
+          '  SKU: ${v['sku']}  |  Options: $optStr'
+          '  |  Price: \$${v['price']}'
+          '  |  CompareAt: \$${v['compare_at_price'].toString().isNotEmpty ? v['compare_at_price'] : 'N/A'}'
+          '  |  Stock: ${v['stock']}'
+          '  |  DB ID: ${v['variant_id'] ?? "(new, never saved)"}',
+        );
+      }
+      debugPrint('─────────────────────────────────────────────────────────');
+      debugPrint('Aggregated stock assigned to: $survivingVariantSku');
+      debugPrint('Total aggregated stock       : $aggregatedStock units');
+      debugPrint('════════════════════════════════════════════════════════');
+    }
+
+    // ── Production email trigger ──────────────────────────────────────────
+    // Only attempt if the product is already saved (has a DB id).
+    if (!kDebugMode && productId != null) {
+      try {
+        final headers = await _getHeaders();
+        final payload = {
+          'timestamp': timestamp,
+          'product_title': productTitle,
+          'product_slug': productSlug,
+          'surviving_variant_sku': survivingVariantSku,
+          'aggregated_stock': aggregatedStock,
+          'retiring_variants': retiringVariants.map((v) => {
+            'variant_id': v['variant_id'],
+            'sku': v['sku'],
+            'price': v['price'],
+            'compare_at_price': v['compare_at_price'],
+            'stock': v['stock'],
+            'option_values': Map<String, String>.from(v['option_values'] ?? {}),
+          }).toList(),
+        };
+        final response = await http.post(
+          Uri.parse('$baseUrl/catalog/products/$productId/variant-retirement-report'),
+          headers: headers,
+          body: jsonEncode(payload),
+        );
+        if (response.statusCode != 200 && response.statusCode != 202) {
+          log('sendVariantRetirementReport: unexpected status ${response.statusCode}');
+        }
+      } catch (e) {
+        // Non-fatal: log but do not surface to user.
+        log('sendVariantRetirementReport error: $e');
+      }
+    }
+  }
+
+  // --- Bulk CSV/XLSX Product Import ---
+  Future<Uint8List> downloadCsvTemplate() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/products/import/template'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else {
+        throw ApiException(response.statusCode, 'Failed to download CSV template: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.downloadCsvTemplate error: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<String>> checkSkuExists(List<String> skus) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/products/sku-exists'),
+        headers: headers,
+        body: jsonEncode({'skus': skus}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<String>.from(data['duplicates'] ?? []);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to check SKUs: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.checkSkuExists error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> uploadCsvImport({
+    required Uint8List bytes,
+    required String filename,
+    required String conflictStrategy,
+    required Map<String, String> customSkuMap,
+  }) async {
+    try {
+      final token = await _authService.getIdToken();
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/products/import'),
+      );
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+      request.fields['conflict_strategy'] = conflictStrategy;
+      request.fields['custom_sku_map_json'] = jsonEncode(customSkuMap);
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          bytes,
+          filename: filename,
+        ),
+      );
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to upload CSV: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.uploadCsvImport error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> getImportJobStatus(String jobId) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/products/import/$jobId'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw ApiException(response.statusCode, 'Failed to get import job status: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.getImportJobStatus error: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getImportHistory() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/products/import/history'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        return data.map((item) => Map<String, dynamic>.from(item)).toList();
+      } else {
+        throw ApiException(response.statusCode, 'Failed to get import history: ${response.body}');
+      }
+    } catch (e) {
+      log('ApiService.getImportHistory error: $e');
+      rethrow;
     }
   }
 }

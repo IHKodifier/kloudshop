@@ -25,12 +25,12 @@ class ProductSeoCard extends StatelessWidget {
           controller: metaTitleController,
           hint: 'Keep it under 60 characters',
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
         CustomInputField(
           label: 'Meta Description',
           controller: metaDescriptionController,
           hint: 'Brief summary for search results',
-          maxLines: 2,
+          isResizable: true,
         ),
       ],
     );

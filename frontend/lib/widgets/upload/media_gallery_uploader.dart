@@ -25,10 +25,34 @@ class MediaGalleryUploader extends StatefulWidget {
 class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
   bool _isDragging = false;
   final List<Map<String, dynamic>> _uploadQueue = [];
+  List<String>? _localImages;
+  int _uploadCounter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _localImages = List<String>.from(widget.images);
+  }
+
+  @override
+  void didUpdateWidget(covariant MediaGalleryUploader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.images != oldWidget.images) {
+      final newLocal = List<String>.from(widget.images);
+      if (_uploadQueue.isNotEmpty) {
+        for (final img in _localImages ?? []) {
+          if (!oldWidget.images.contains(img) && !newLocal.contains(img)) {
+            newLocal.add(img);
+          }
+        }
+      }
+      _localImages = newLocal;
+    }
+  }
 
   void _startMockUpload(String fileName, Future<Uint8List> bytesFuture) {
     final String uploadId =
-        "${DateTime.now().millisecondsSinceEpoch}_$fileName";
+        "${DateTime.now().millisecondsSinceEpoch}_${_uploadCounter++}_$fileName";
 
     final Map<String, dynamic> uploadItem = {
       'id': uploadId,
@@ -65,8 +89,10 @@ class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
           if (idx != -1) {
             final item = _uploadQueue[idx];
             if (item['status'] != 'cancelled') {
-              final updatedList = List<String>.from(widget.images)..add(url);
-              widget.onImagesChanged(updatedList);
+              setState(() {
+                _localImages!.add(url);
+              });
+              widget.onImagesChanged(List<String>.from(_localImages!));
             }
             setState(() {
               _uploadQueue.removeAt(idx);
@@ -101,7 +127,8 @@ class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final showDropzone = widget.images.isEmpty && _uploadQueue.isEmpty;
+    final currentImages = _localImages ?? widget.images;
+    final showDropzone = currentImages.isEmpty && _uploadQueue.isEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,9 +260,9 @@ class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
                   mainAxisSpacing: 16,
                   childAspectRatio: 1,
                 ),
-                itemCount: widget.images.length + _uploadQueue.length + 1,
+                itemCount: currentImages.length + _uploadQueue.length + 1,
                 itemBuilder: (context, index) {
-                  if (index < widget.images.length) {
+                  if (index < currentImages.length) {
                     return Stack(
                       fit: StackFit.expand,
                       children: [
@@ -244,7 +271,7 @@ class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
                           child: Container(
                             color: theme.colorScheme.surfaceContainerLow,
                             child: Image.network(
-                              widget.images[index],
+                              currentImages[index],
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   const Icon(
@@ -269,8 +296,11 @@ class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
                               padding: EdgeInsets.zero,
                               onPressed: () {
                                 final updatedList = List<String>.from(
-                                  widget.images,
+                                  currentImages,
                                 )..removeAt(index);
+                                setState(() {
+                                  _localImages = updatedList;
+                                });
                                 widget.onImagesChanged(updatedList);
                               },
                             ),
@@ -280,7 +310,7 @@ class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
                     );
                   }
 
-                  final queueIndex = index - widget.images.length;
+                  final queueIndex = index - currentImages.length;
                   if (queueIndex < _uploadQueue.length) {
                     final upload = _uploadQueue[queueIndex];
                     final progress = upload['progress'] as double;
