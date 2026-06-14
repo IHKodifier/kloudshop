@@ -114,6 +114,22 @@ Each view must fully implement the following five states (unless explicitly mark
   - [x] Empty State ("Drag & Drop or Browse" file zone with dynamic cross-platform template downloading support)
   - [x] Input Validation State (Duplicate SKU pre-checking, custom SKU input validation, option-column parsing and strategies: skip / overwrite / custom SKU rename on-the-fly)
 
+### Journey 1 & 2 Scope Extensions & Platform Enhancements
+
+These features and fixes were implemented during the development of Journey 1 and Journey 2 to resolve critical security, performance, and cross-platform compatibility issues, going beyond the original scope:
+
+#### Journey 1 (Merchant Auth & Onboarding)
+*   **Security Lockout System**: Built a 180s login cooldown, 3-strike/24-hour lockout rules, multi-day lockout thresholds, client IP/agent geolocation auditing, and self-service unblock tokens with 180s TTL (preventing automated brute-force attacks).
+*   **Lottie Animation Toggles**: Created standard `LottieToggle` components and globally configured toggle animation speeds (`1800ms` default).
+*   **Variant Shipping Overrides & Clear-on-Disable**: Built interactive variant-level overrides that clear data dynamically when disabled to save DB storage.
+*   **Theme Switch Overlay**: Built a premium, dimmed background overlay transition that renders a blurred card explaining that the system is switching theme modes, preventing jarring visual jumps.
+
+#### Journey 2 (Product Catalog & Inventory)
+*   **Root-Level Wildcard Asset Resolver**: Solved blank page / bootstrap loading failures by adding static file fallthrough handling for root-level Flutter web files (e.g. `/flutter_bootstrap.js`, `/manifest.json`, etc.) using `FileResponse` in `ssr_router.py`.
+*   **Pydantic Computed Stock & Eager Loading**: Integrated aggregated stock quantities using SQLAlchemy computed properties, eager relationship loading (`selectinload`), and DB `Inventory` inserts on creation/update.
+*   **Always-On Stock Editor**: Enabled visual stock levels viewing and updating on variant cards directly inside the product editor for existing products.
+*   **Windows CLI Unicode Logging Fix**: Replaced emoji logs with text symbols in `_send_import_report` to resolve `UnicodeEncodeError` exceptions in CP1252-configured Windows command lines.
+
 ---
 
 #### Journey 3: DTC Consumer Storefront

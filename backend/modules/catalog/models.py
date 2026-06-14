@@ -138,6 +138,10 @@ class Variant(Base):
     # Relationships
     product = relationship("Product", back_populates="variants")
     inventory_items = relationship("Inventory", back_populates="variant", cascade="all, delete-orphan")
+
+    @property
+    def stock(self) -> int:
+        return sum(item.quantity_on_hand for item in self.inventory_items) if self.inventory_items else 0
  
     __table_args__ = (
         UniqueConstraint('tenant_id', 'sku', name='uix_variant_tenant_sku'),

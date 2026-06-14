@@ -1,3 +1,3 @@
 Handle,Title,Description,Status,Meta Title,Meta Description,Is Digital,Is Perishable,In Store Eligible,Weight Value,Weight Unit,Length,Width,Height,Dimension Unit,Age Verification Required,Minimum Age Years,Requires Prescription,SKU,Price,Stock,Compare At Price,Cost Per Item,Barcode,Taxable,Requires Shipping,Option1 Name,Option1 Value,Option2 Name,Option2 Value,Option3 Name,Option3 Value
-water-bottle,Reusable Water Bottle,Double-walled stainless steel water bottle.,active,Reusable Water Bottle,Stainless steel bottle.,FALSE,FALSE,TRUE,0.3,kg,,,,,FALSE,,FALSE,DEMO-SKU-01,99.99,10,24.99,8.00,,TRUE,TRUE,,,,,,
+water-bottle,Reusable Water Bottle,Double-walled stainless steel water bottle.,active,Reusable Water Bottle,Stainless steel bottle.,FALSE,FALSE,TRUE,0.3,kg,,,,,FALSE,,FALSE,DEMO-SKU-01,99.99,10,120.00,8.00,,TRUE,TRUE,,,,,,
 water-bottle,,,,,,,,,,,,,,,,,,DEMO-SKU-02,29.99,15,34.99,12.00,,TRUE,TRUE,,,,,,

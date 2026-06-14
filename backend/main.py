@@ -147,13 +147,14 @@ app.include_router(media_router, prefix="/api/v1/internal/media", tags=["Media"]
 app.include_router(ssr_storefront_router, tags=["Storefront SSR"])
 
 # Local Media Storage (Simulates GCS in Dev)
-media_path = os.path.join(os.getcwd(), "backend", "storage", "media")
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+media_path = os.path.join(backend_dir, "storage", "media")
 if not os.path.exists(media_path):
     os.makedirs(media_path, exist_ok=True)
 app.mount("/media", StaticFiles(directory=media_path), name="media")
 
 # Static Files (Flutter Web Build)
-static_path = os.path.join(os.getcwd(), "frontend", "build", "web")
+static_path = os.path.join(os.path.dirname(backend_dir), "frontend", "build", "web")
 if os.path.exists(static_path):
     app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
 else:

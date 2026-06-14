@@ -1,17 +1,16 @@
-import asyncio
+import sqlite3
 import os
-import sys
-sys.path.append(os.getcwd())
-from shared.db import engine
 
-async def test_conn():
-    try:
-        from sqlalchemy import text
-        async with engine.begin() as conn:
-            await conn.execute(text("CREATE SCHEMA IF NOT EXISTS tenant_template"))
-            print("Successfully created/verified schema tenant_template")
-    except Exception as e:
-        print(f"Failed: {e}")
+def main():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    backend_dir = os.path.dirname(script_dir)
+    db_path = os.path.join(backend_dir, "test_persistent.db")
+    print(f"Connecting to database at: {db_path}")
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    print([r[0] for r in c.fetchall()])
+    conn.close()
 
 if __name__ == "__main__":
-    asyncio.run(test_conn())
+    main()

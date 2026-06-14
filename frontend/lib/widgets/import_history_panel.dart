@@ -304,6 +304,7 @@ void _showReportDetailsDialog(BuildContext context, Map<String, dynamic> job) {
   final theme = Theme.of(context);
   final isDark = theme.brightness == Brightness.dark;
   final errors = List<Map<String, dynamic>>.from(job['error_log'] ?? []);
+  final noStock = List<Map<String, dynamic>>.from(job['no_stock_log'] ?? []);
   
   showDialog(
     context: context,
@@ -357,47 +358,98 @@ void _showReportDetailsDialog(BuildContext context, Map<String, dynamic> job) {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: theme.dividerColor),
                   ),
-                  child: errors.isEmpty
+                  child: (errors.isEmpty && noStock.isEmpty)
                       ? const Center(
                           child: Text('No validation warnings or errors.', style: TextStyle(color: Colors.grey, fontSize: 12)),
                         )
-                      : ListView.builder(
+                      : ListView(
                           padding: const EdgeInsets.all(12),
-                          itemCount: errors.length,
-                          itemBuilder: (context, idx) {
-                            final err = errors[idx];
-                            final row = err['row'] ?? 0;
-                            final sku = err['sku'] ?? '';
-                            final msg = err['error'] ?? '';
-                            final isSkip = err['reason'] == 'skipped_duplicate';
+                          children: [
+                            if (errors.isNotEmpty) ...[
+                              const Text(
+                                'Errors & Skipped Rows:',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.red),
+                              ),
+                              const SizedBox(height: 6),
+                              ...errors.map((err) {
+                                final row = err['row'] ?? 0;
+                                final sku = err['sku'] ?? '';
+                                final msg = err['error'] ?? '';
+                                final isSkip = err['reason'] == 'skipped_duplicate';
 
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 6),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Row $row: ',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                                  ),
-                                  if (sku.isNotEmpty)
-                                    Text(
-                                      '[$sku] ',
-                                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-                                    ),
-                                  Expanded(
-                                    child: Text(
-                                      msg,
-                                      style: TextStyle(
-                                        color: isSkip ? Colors.amber.shade700 : Colors.red,
-                                        fontSize: 12,
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 6),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Row $row: ',
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                                       ),
-                                    ),
+                                      if (sku.isNotEmpty)
+                                        Text(
+                                          '[$sku] ',
+                                          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                                        ),
+                                      Expanded(
+                                        child: Text(
+                                          msg,
+                                          style: TextStyle(
+                                            color: isSkip ? Colors.amber.shade700 : Colors.red,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                              if (noStock.isNotEmpty) const SizedBox(height: 16),
+                            ],
+                            if (noStock.isNotEmpty) ...[
+                              Row(
+                                children: [
+                                  Icon(LucideIcons.alertTriangle, size: 14, color: Colors.orange.shade800),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Products Without Stock:',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.orange.shade800),
                                   ),
                                 ],
                               ),
-                            );
-                          },
+                              const SizedBox(height: 6),
+                              ...noStock.map((warnEntry) {
+                                final handle = warnEntry['handle'] ?? '';
+                                final sku = warnEntry['sku'] ?? '';
+                                final title = warnEntry['title'] ?? '';
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 6),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(LucideIcons.info, size: 12, color: Colors.orange.shade600),
+                                      const SizedBox(width: 6),
+                                      if (sku.isNotEmpty)
+                                        Text(
+                                          '[$sku] ',
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                        ),
+                                      Expanded(
+                                        child: Text(
+                                          '$title ($handle) — no stock specified. Initial inventory set to 0.',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+                          ],
                         ),
                 ),
               ),

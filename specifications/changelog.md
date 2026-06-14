@@ -244,16 +244,30 @@ This changelog records the architecture, model, provider, and UI changes made du
   - **Step 1 (Idle)**: Interactive Drag-and-Drop / Browse zone using `desktop_drop`, including template download indicators.
   - **Step 2 (Preview & Strategies)**: Displays expandable list cards grouping variants. Renders radio selection strategies (Skip, Overwrite, Custom SKU) and dynamic lists of text fields for custom SKU renaming when the strategy is active.
   - **Step 3 (Progress / Result)**: Live progress bar tracking processed, skipped, and failed count states. Shows summary cards upon completion, showing success colors and detailed logs / warning notifications.
+  - **Missing Title Validation**: Updated row errors parsing to explicitly list and highlight in bold red any missing product title rows if handles are present.
+  - **Missing Stock Warning Logs**: Rendered warning listings for products imported with missing stock values using the aggregated `noStockLog` in the finished screen.
 - **Import History Card** ([import_history_panel.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart)):
   - Notification-center style overlay panel popping from the toolbar.
   - Shows historic listings of jobs, processing items with live pulsing dots, and triggers detailed modal reports displaying validation warnings or skipped reasons.
+  - **Missing Stock History Reports**: Decodes and displays the "Products Without Stock" log section inside the detailed history report modal.
 - **Toolbar Integration** ([catalog_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart)):
   - Added a frosted "Import CSV" button and a History icon button with unviewed badge counters to the catalog overview header.
+- **Always-On Variant Stock Editor** ([product_variants_section.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart)):
+  - Removed the `widget.isNewProduct` check on the variants list items card. Stock values are now visible and editable for existing catalog variants as well. Labeled dynamically as "Initial Stock" for new variants or "Stock" for existing variants.
 
 ---
 
-#### 6. Verification & Automated Tests
-- **Backend Tests**: Verified using `pytest` on [test_csv_import.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_csv_import.py) covering 11 critical integration scenarios. **11/11 tests pass successfully**.
+#### 6. Root-Level Static Asset Routing & Logging Fixes
+- **Static Asset Fallthrough Router** ([ssr_router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py)):
+  - Resolved root-level single-path parameter routing conflicts where paths matching `/{tenant}` intercepted Flutter web bootstrapping requests (e.g. `/flutter_bootstrap.js`, `/manifest.json`, `/flutter.js`, `/version.json`).
+  - Added a check verifying if the requested name matches an existing file in `frontend/build/web` and returning it using `FileResponse`. Added explicit exclusions for `/docs`, `/redoc`, `/openapi.json`, and `/api` endpoints.
+- **Windows CLI Unicode Logging Fix** ([router.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)):
+  - Replaced the `📧` envelope emoji in the terminal logging output of `_send_import_report` to avoid throwing `UnicodeEncodeError` exceptions on Windows consoles utilizing CP1252 character maps.
+
+---
+
+#### 7. Verification & Automated Tests
+- **Backend Tests**: Verified using `pytest` on [test_csv_import.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_csv_import.py) and [test_bulk_import.py](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py) covering 13 critical integration scenarios (including strategy logic, stock defaults, and option schema construction). **13/13 tests pass successfully**.
 - **Frontend Analysis**: Validated with `flutter analyze` ensuring zero compiler errors or warnings.
 
 

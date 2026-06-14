@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/utils/download_helper/download_helper.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/widgets/hover_scale.dart';
+
 
 void showCsvImportDialog(BuildContext context, WidgetRef ref) {
   ref.read(csvImportProvider.notifier).reset();
@@ -30,7 +32,7 @@ void showCsvImportDialog(BuildContext context, WidgetRef ref) {
                   ? const Color(0xFF0F172A).withOpacity(0.85)
                   : Colors.white.withOpacity(0.9),
               child: Container(
-                width: 700,
+                width: 950,
                 height: 620,
                 padding: const EdgeInsets.all(24),
                 child: const CsvImportWizard(),
@@ -62,6 +64,57 @@ class CsvImportWizard extends ConsumerStatefulWidget {
 class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
   bool _isDragging = false;
   bool _isDownloadingTemplate = false;
+  final Set<String> _collapsedHandles = {};
+
+  List<String> _getRowErrors(Map<String, dynamic> variant, {required bool isFirstRow}) {
+    final errors = <String>[];
+    final handle = variant['Handle']?.trim() ?? '';
+    final title = variant['Title']?.trim() ?? '';
+    final sku = variant['SKU']?.trim() ?? '';
+    final priceStr = variant['Price']?.trim() ?? '';
+    final comparePriceStr = variant['Compare At Price']?.trim() ?? '';
+
+    // 1. Handle and Title required for the first row of a product group
+    if (isFirstRow) {
+      if (handle.isEmpty && title.isEmpty) {
+        errors.add('Missing Handle and Title');
+      } else if (handle.isEmpty) {
+        errors.add('Missing Handle');
+      } else if (title.isEmpty) {
+        errors.add('Missing Title');
+      }
+    }
+
+    // 2. SKU required
+    if (sku.isEmpty) {
+      errors.add('Missing SKU');
+    }
+
+    // 3. Price required and must be valid non-negative number
+    if (priceStr.isEmpty) {
+      errors.add('Missing Price');
+    } else {
+      final priceVal = double.tryParse(priceStr);
+      if (priceVal == null) {
+        errors.add('error: invalid price');
+      } else if (priceVal < 0) {
+        errors.add('error: price cannot be negative');
+      }
+    }
+
+    // 4. Compare At Price validation
+    if (comparePriceStr.isNotEmpty) {
+      final compareVal = double.tryParse(comparePriceStr);
+      final priceVal = double.tryParse(priceStr);
+      if (compareVal == null) {
+        errors.add('error: invalid price');
+      } else if (priceVal != null && compareVal <= priceVal) {
+        errors.add('error: price cannot be less than compare at price');
+      }
+    }
+
+    return errors;
+  }
 
   Future<void> _handleFileSelection(List<int> bytes, String filename) async {
     final notifier = ref.read(csvImportProvider.notifier);
@@ -109,6 +162,10 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
   Widget build(BuildContext context) {
     final state = ref.watch(csvImportProvider);
     final theme = Theme.of(context);
+
+    if (state.step == CsvImportStep.idle) {
+      _collapsedHandles.clear();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -375,6 +432,7 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
   Widget _buildPreviewStep(CsvImportState state) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final warningColor = isDark ? Colors.amber.shade300 : Colors.amber.shade900;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -393,11 +451,11 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
               children: [
                 Row(
                   children: [
-                    const Icon(LucideIcons.alertTriangle, color: Colors.amber, size: 18),
+                    Icon(LucideIcons.alertTriangle, color: warningColor, size: 18),
                     const SizedBox(width: 8),
                     Text(
                       '${state.duplicateSKUs.length} Duplicate SKUs detected',
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.amber),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: warningColor),
                     ),
                   ],
                 ),
@@ -551,17 +609,43 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
                     itemCount: state.productGroups.length,
                     itemBuilder: (context, pIdx) {
                       final group = state.productGroups[pIdx];
+                      final hasGroupError = group.variantRows.asMap().entries.any((entry) {
+                        return _getRowErrors(entry.value, isFirstRow: entry.key == 0).isNotEmpty;
+                      });
+
                       return Card(
+                        key: ValueKey('card_${group.handle}'),
                         elevation: 0,
                         margin: const EdgeInsets.only(bottom: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(color: theme.dividerColor),
+                          side: BorderSide(
+                            color: hasGroupError ? theme.colorScheme.error : theme.dividerColor,
+                            width: hasGroupError ? 1.5 : 1.0,
+                          ),
                         ),
-                        color: isDark ? const Color(0xFF1E293B).withOpacity(0.5) : Colors.grey.shade50,
+                        color: hasGroupError
+                            ? (isDark
+                                ? theme.colorScheme.error.withOpacity(0.06)
+                                : theme.colorScheme.error.withOpacity(0.03))
+                            : (isDark ? const Color(0xFF1E293B).withOpacity(0.5) : Colors.grey.shade50),
                         child: ExpansionTile(
+                          key: ValueKey('tile_${group.handle}'),
                           shape: const Border(),
-                          initiallyExpanded: true,
+                          initiallyExpanded: !_collapsedHandles.contains(group.handle),
+                          onExpansionChanged: (isExpanded) {
+                            setState(() {
+                              if (isExpanded) {
+                                _collapsedHandles.remove(group.handle);
+                              } else {
+                                _collapsedHandles.add(group.handle);
+                              }
+                            });
+                          },
+                          trailing: CardDrawerExpansionIcon(
+                            key: ValueKey('icon_${group.handle}'),
+                            isExpanded: !_collapsedHandles.contains(group.handle),
+                          ),
                           title: Row(
                             children: [
                               Expanded(
@@ -582,6 +666,35 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
                                   ],
                                 ),
                               ),
+                              if (hasGroupError) ...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.errorContainer,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        LucideIcons.alertCircle,
+                                        size: 11,
+                                        color: theme.colorScheme.onErrorContainer,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Error',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: theme.colorScheme.onErrorContainer,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
@@ -621,59 +734,117 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
                                 }
 
                                 final isDuplicate = state.duplicateSKUs.contains(sku);
+                                final compareAt = variant['Compare At Price']?.trim() ?? '';
+
+                                final rowErrors = _getRowErrors(variant, isFirstRow: vIdx == 0);
+                                final hasRowError = rowErrors.isNotEmpty;
 
                                 return Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   decoration: BoxDecoration(
+                                    color: hasRowError
+                                        ? (isDark
+                                            ? Colors.red.withOpacity(0.12)
+                                            : Colors.red.withOpacity(0.06))
+                                        : null,
                                     border: Border(top: BorderSide(color: theme.dividerColor)),
                                   ),
-                                  child: Row(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
                                     children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: Row(
-                                          children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  sku.isNotEmpty ? sku : '[No SKU]',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13,
+                                                    color: sku.isEmpty
+                                                        ? theme.colorScheme.error
+                                                        : (isDuplicate ? warningColor : null),
+                                                  ),
+                                                ),
+                                                if (isDuplicate) ...[
+                                                  const SizedBox(width: 4),
+                                                  Icon(LucideIcons.alertTriangle, size: 12, color: warningColor),
+                                                ],
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Wrap(
+                                              spacing: 4,
+                                              runSpacing: 2,
+                                              children: options.map((opt) {
+                                                return Chip(
+                                                  label: Text(opt, style: const TextStyle(fontSize: 10)),
+                                                  padding: EdgeInsets.zero,
+                                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                          if (compareAt.isNotEmpty) ...[
                                             Text(
-                                              sku.isNotEmpty ? sku : '[No SKU]',
+                                              '\$$compareAt',
                                               style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 13,
-                                                color: isDuplicate ? Colors.amber.shade700 : null,
+                                                fontSize: 11,
+                                                color: rowErrors.any((e) => e.toLowerCase().contains('compare'))
+                                                    ? theme.colorScheme.error
+                                                    : theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                                                decoration: TextDecoration.lineThrough,
                                               ),
                                             ),
-                                            if (isDuplicate) ...[
-                                              const SizedBox(width: 4),
-                                              const Icon(LucideIcons.alertTriangle, size: 12, color: Colors.amber),
-                                            ],
+                                            const SizedBox(width: 6),
+                                          ],
+                                          Text(
+                                            '\$$price',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: rowErrors.any((e) => e.toLowerCase().contains('price'))
+                                                  ? theme.colorScheme.error
+                                                  : null,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 16),
+                                          Text(
+                                            'Stock: $stock',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: stock.startsWith('No') ? Colors.orange : Colors.green,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      if (hasRowError) ...[
+                                        const SizedBox(height: 6),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              LucideIcons.alertCircle,
+                                              size: 12,
+                                              color: theme.colorScheme.error,
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Expanded(
+                                              child: Text(
+                                                rowErrors.join(', '),
+                                                style: TextStyle(
+                                                  color: theme.colorScheme.error,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
-                                      ),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Wrap(
-                                          spacing: 4,
-                                          runSpacing: 2,
-                                          children: options.map((opt) {
-                                            return Chip(
-                                              label: Text(opt, style: const TextStyle(fontSize: 10)),
-                                              padding: EdgeInsets.zero,
-                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                      Text(
-                                        '\$$price',
-                                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Text(
-                                        'Stock: $stock',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: stock.startsWith('No') ? Colors.orange : Colors.green,
-                                        ),
-                                      ),
+                                      ],
                                     ],
                                   ),
                                 );
@@ -779,7 +950,7 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
       bannerColor = Colors.amber.withOpacity(isDark ? 0.15 : 0.08);
       borderColor = Colors.amber.shade700.withOpacity(0.3);
       icon = LucideIcons.alertTriangle;
-      iconColor = Colors.amber;
+      iconColor = isDark ? Colors.amber.shade300 : Colors.amber.shade900;
       title = 'Import Partially Successful';
       message = 'Some rows imported successfully, while others failed or were skipped.';
     }
@@ -839,47 +1010,98 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: theme.dividerColor),
             ),
-            child: state.errorLog.isEmpty
+            child: (state.errorLog.isEmpty && state.noStockLog.isEmpty)
                 ? const Center(
                     child: Text('No validation warnings or errors.', style: TextStyle(color: Colors.grey)),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: state.errorLog.length,
-                    itemBuilder: (context, idx) {
-                      final logEntry = state.errorLog[idx];
-                      final row = logEntry['row'] ?? 0;
-                      final sku = logEntry['sku'] ?? '';
-                      final err = logEntry['error'] ?? '';
-                      final isSkip = logEntry['reason'] == 'skipped_duplicate';
+                : ListView(
+                    padding: const EdgeInsets.all(12),
+                    children: [
+                      if (state.errorLog.isNotEmpty) ...[
+                        const Text(
+                          'Errors & Skipped Rows:',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.red),
+                        ),
+                        const SizedBox(height: 6),
+                        ...state.errorLog.map((logEntry) {
+                          final row = logEntry['row'] ?? 0;
+                          final sku = logEntry['sku'] ?? '';
+                          final err = logEntry['error'] ?? '';
+                          final isSkip = logEntry['reason'] == 'skipped_duplicate';
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Row $row: ',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                            ),
-                            if (sku.isNotEmpty)
-                              Text(
-                                '[$sku] ',
-                                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-                              ),
-                            Expanded(
-                              child: Text(
-                                err,
-                                style: TextStyle(
-                                  color: isSkip ? Colors.amber.shade700 : Colors.red,
-                                  fontSize: 12,
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Row $row: ',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                                 ),
-                              ),
+                                if (sku.isNotEmpty)
+                                  Text(
+                                    '[$sku] ',
+                                    style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                                  ),
+                                Expanded(
+                                  child: Text(
+                                    err,
+                                    style: TextStyle(
+                                      color: isSkip ? Colors.amber.shade700 : Colors.red,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                        if (state.noStockLog.isNotEmpty) const SizedBox(height: 16),
+                      ],
+                      if (state.noStockLog.isNotEmpty) ...[
+                        Row(
+                          children: [
+                            Icon(LucideIcons.alertTriangle, size: 14, color: Colors.orange.shade800),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Products Without Stock (Seeded with 0 stock):',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.orange.shade800),
                             ),
                           ],
                         ),
-                      );
-                    },
+                        const SizedBox(height: 6),
+                        ...state.noStockLog.map((warnEntry) {
+                          final handle = warnEntry['handle'] ?? '';
+                          final sku = warnEntry['sku'] ?? '';
+                          final title = warnEntry['title'] ?? '';
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(LucideIcons.info, size: 12, color: Colors.orange.shade600),
+                                const SizedBox(width: 6),
+                                if (sku.isNotEmpty)
+                                  Text(
+                                    '[$sku] ',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                  ),
+                                Expanded(
+                                  child: Text(
+                                    '$title ($handle) — no stock specified. Initial inventory set to 0.',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    ],
                   ),
           ),
         ),
@@ -897,5 +1119,92 @@ class _CsvImportWizardState extends ConsumerState<CsvImportWizard> {
         Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
       ],
     );
+  }
+}
+
+class CardDrawerExpansionIcon extends StatelessWidget {
+  final bool isExpanded;
+
+  const CardDrawerExpansionIcon({super.key, required this.isExpanded});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final neutralColor = theme.colorScheme.onSurfaceVariant.withOpacity(0.7);
+
+    if (isExpanded) {
+      // Expanded state (nothing to expand, only to collapse) -> Grey minus.
+      return SizedBox(
+        width: 30,
+        height: 30,
+        child: Center(
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: neutralColor,
+                width: 1.5,
+              ),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Horizontal bar
+                Container(
+                  width: 12,
+                  height: 1.5,
+                  decoration: BoxDecoration(
+                    color: neutralColor,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      // Collapsed state (something to expand) -> Solid green circle with white '+'
+      return SizedBox(
+        width: 30,
+        height: 30,
+        child: Center(
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: primaryColor,
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Horizontal bar
+                Container(
+                  width: 12,
+                  height: 1.5,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+                // Vertical bar
+                Container(
+                  width: 1.5,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

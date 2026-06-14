@@ -800,25 +800,22 @@ class _VariantItemCardState extends State<_VariantItemCard> {
                                                   ),
                                                 ),
                                                 const SizedBox(width: 12),
-                                                if (widget.isNewProduct)
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: SemanticTextFormField(
-                                                      initialValue: variant['stock'],
-                                                      enabled: isActive,
-                                                      textInputAction: TextInputAction.next,
-                                                      labelText: 'Initial Stock',
-                                                      helperText: 'e.g., 100',
-                                                      prefixIcon: LucideIcons.boxes,
-                                                      keyboardType: TextInputType.number,
-                                                      onChanged: (v) {
-                                                        variant['stock'] = v;
-                                                        widget.onChanged();
-                                                      },
-                                                    ),
-                                                  )
-                                                else
-                                                  const Spacer(flex: 2),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: SemanticTextFormField(
+                                                    initialValue: variant['stock']?.toString() ?? '',
+                                                    enabled: isActive,
+                                                    textInputAction: TextInputAction.next,
+                                                    labelText: widget.isNewProduct ? 'Initial Stock' : 'Stock',
+                                                    helperText: 'e.g., 100',
+                                                    prefixIcon: LucideIcons.boxes,
+                                                    keyboardType: TextInputType.number,
+                                                    onChanged: (v) {
+                                                      variant['stock'] = v;
+                                                      widget.onChanged();
+                                                    },
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                            if (!widget.isDigital) ...[

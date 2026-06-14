@@ -51,11 +51,44 @@ async def create_product(
         # 2. Create Variants
         for v_data in product_data.variants:
             new_variant = Variant(
-                **v_data.model_dump(),
+                **v_data.model_dump(exclude={"stock"}),
                 product_id=new_product.product_id,
                 tenant_id=user.tenant_id
             )
             db.add(new_variant)
+            if v_data.stock is not None:
+                await db.flush()
+                from modules.inventory.models import Inventory, StockLocation
+                loc_result = await db.execute(
+                    select(StockLocation).where(
+                        StockLocation.tenant_id == user.tenant_id,
+                        StockLocation.is_default == True
+                    )
+                )
+                loc = loc_result.scalar_one_or_none()
+                if not loc:
+                    loc_result = await db.execute(
+                        select(StockLocation).where(StockLocation.tenant_id == user.tenant_id)
+                    )
+                    loc = loc_result.scalars().first()
+                if not loc:
+                    loc = StockLocation(
+                        tenant_id=user.tenant_id,
+                        name="Default Warehouse",
+                        location_type="warehouse",
+                        fulfils_online=True,
+                        is_default=True,
+                        is_active=True
+                    )
+                    db.add(loc)
+                    await db.flush()
+                inv = Inventory(
+                    tenant_id=user.tenant_id,
+                    variant_id=new_variant.variant_id,
+                    stock_location_id=loc.stock_location_id,
+                    quantity_on_hand=v_data.stock,
+                )
+                db.add(inv)
         
         await db.commit()
     except IntegrityError as e:
@@ -80,7 +113,9 @@ async def create_product(
     
     # Re-fetch with variants to ensure they are loaded
     result = await db.execute(
-        select(Product).options(selectinload(Product.variants)).where(Product.product_id == new_product.product_id)
+        select(Product).options(
+            selectinload(Product.variants).selectinload(Variant.inventory_items)
+        ).where(Product.product_id == new_product.product_id)
     )
     # 3. Trigger Google Shopping update
     background_tasks.add_task(trigger_google_shopping_update, user.tenant_id, new_product.product_id)
@@ -100,7 +135,9 @@ async def list_products(
     List products for the authenticated tenant.
     Supports pagination and filtering by status.
     """
-    query = select(Product).options(selectinload(Product.variants)).where(Product.tenant_id == user.tenant_id)
+    query = select(Product).options(
+        selectinload(Product.variants).selectinload(Variant.inventory_items)
+    ).where(Product.tenant_id == user.tenant_id)
     
     if status:
         query = query.where(Product.status == status)
@@ -187,20 +224,99 @@ async def update_product(
                         "old_sku": variant.sku,
                         "new_sku": v_data.sku
                     })
-                v_update_dict = v_data.model_dump(exclude_unset=True, exclude={"variant_id"})
+                v_update_dict = v_data.model_dump(exclude_unset=True, exclude={"variant_id", "stock"})
                 for key, value in v_update_dict.items():
                     setattr(variant, key, value)
+                
+                # Update stock if provided
+                if getattr(v_data, "stock", None) is not None:
+                    from modules.inventory.models import Inventory, StockLocation
+                    loc_result = await db.execute(
+                        select(StockLocation).where(
+                            StockLocation.tenant_id == user.tenant_id,
+                            StockLocation.is_default == True
+                        )
+                    )
+                    loc = loc_result.scalar_one_or_none()
+                    if not loc:
+                        loc_result = await db.execute(
+                            select(StockLocation).where(StockLocation.tenant_id == user.tenant_id)
+                        )
+                        loc = loc_result.scalars().first()
+                    if not loc:
+                        loc = StockLocation(
+                            tenant_id=user.tenant_id,
+                            name="Default Warehouse",
+                            location_type="warehouse",
+                            fulfils_online=True,
+                            is_default=True,
+                            is_active=True
+                        )
+                        db.add(loc)
+                        await db.flush()
+                    
+                    inv_result = await db.execute(
+                        select(Inventory).where(
+                            Inventory.variant_id == variant.variant_id,
+                            Inventory.stock_location_id == loc.stock_location_id,
+                            Inventory.tenant_id == user.tenant_id
+                        )
+                    )
+                    inv = inv_result.scalar_one_or_none()
+                    if inv:
+                        inv.quantity_on_hand = v_data.stock
+                    else:
+                        inv = Inventory(
+                            tenant_id=user.tenant_id,
+                            variant_id=variant.variant_id,
+                            stock_location_id=loc.stock_location_id,
+                            quantity_on_hand=v_data.stock,
+                        )
+                        db.add(inv)
             else:
                 # Create new
                 # Ensure all default values are populated by converting to VariantCreate
                 v_dict = v_data.model_dump(exclude={"variant_id"}, exclude_none=True)
                 v_create = VariantCreate(**v_dict)
                 new_variant = Variant(
-                    **v_create.model_dump(),
+                    **v_create.model_dump(exclude={"stock"}),
                     product_id=product.product_id,
                     tenant_id=user.tenant_id
                 )
                 product.variants.append(new_variant)
+                if v_create.stock is not None:
+                    await db.flush()
+                    from modules.inventory.models import Inventory, StockLocation
+                    loc_result = await db.execute(
+                        select(StockLocation).where(
+                            StockLocation.tenant_id == user.tenant_id,
+                            StockLocation.is_default == True
+                        )
+                    )
+                    loc = loc_result.scalar_one_or_none()
+                    if not loc:
+                        loc_result = await db.execute(
+                            select(StockLocation).where(StockLocation.tenant_id == user.tenant_id)
+                        )
+                        loc = loc_result.scalars().first()
+                    if not loc:
+                        loc = StockLocation(
+                            tenant_id=user.tenant_id,
+                            name="Default Warehouse",
+                            location_type="warehouse",
+                            fulfils_online=True,
+                            is_default=True,
+                            is_active=True
+                        )
+                        db.add(loc)
+                        await db.flush()
+                    inv = Inventory(
+                        tenant_id=user.tenant_id,
+                        variant_id=new_variant.variant_id,
+                        stock_location_id=loc.stock_location_id,
+                        quantity_on_hand=v_create.stock,
+                    )
+                    db.add(inv)
 
     # 4. Handle slug change -> 301 Redirect
     if new_slug and new_slug != old_slug:
@@ -261,7 +377,9 @@ async def update_product(
     
     # Re-fetch to return full object with updated variants
     result = await db.execute(
-        select(Product).options(selectinload(Product.variants)).where(
+        select(Product).options(
+            selectinload(Product.variants).selectinload(Variant.inventory_items)
+        ).where(
             Product.product_id == product_id,
             Product.tenant_id == user.tenant_id
         )
@@ -834,7 +952,7 @@ Attachment: {filename} (original source file)
 """
 
     # DEV: print to console + save report to disk
-    print(f"\n📧 [IMPORT REPORT] To: {initiated_by_email}")
+    print(f"\n[IMPORT REPORT] To: {initiated_by_email}")
     print(f"Subject: {subject}")
     print(body)
 
@@ -991,14 +1109,21 @@ async def _process_import_job(
                     global_row_idx += 1
                 continue
 
-            # Build options_schema from option columns dynamically
-            option_names_seen = []
-            for n in option_ns:
-                opt_name = first_row.get(f"Option{n} Name", "").strip()
-                if opt_name and opt_name not in option_names_seen:
-                    option_names_seen.append(opt_name)
+            # Build options_schema by compiling unique option values from all group rows
+            option_values_map = {} # opt_name -> set of opt_values
+            for row in group_rows:
+                for n in option_ns:
+                    opt_name = (first_row if row.get(f"Option{n} Name", "").strip() == "" else row).get(f"Option{n} Name", "").strip()
+                    if not opt_name:
+                        opt_name = first_row.get(f"Option{n} Name", "").strip()
+                    opt_val = row.get(f"Option{n} Value", "").strip()
+                    if opt_name and opt_val:
+                        option_values_map.setdefault(opt_name, set()).add(opt_val)
 
-            options_schema = [{"name": name, "values": []} for name in option_names_seen]
+            options_schema = [
+                {"name": name, "values": sorted(list(vals))}
+                for name, vals in option_values_map.items()
+            ]
 
             # Upsert Product
             prod_result = await db.execute(
@@ -1030,14 +1155,19 @@ async def _process_import_job(
                     options_schema=options_schema,
                     created_by=initiated_by_uid,
                 )
-                db.add(product)
                 try:
-                    await db.flush()
-                except IntegrityError:
-                    await db.rollback()
+                    async with db.begin_nested():
+                        db.add(product)
+                        await db.flush()
+                except IntegrityError as e:
+                    error_msg = str(e.orig).lower()
+                    if "products.slug" in error_msg or "uix_product_tenant_slug" in error_msg or "unique constraint" in error_msg:
+                        err_text = f"Slug '{handle}' already exists and could not be upserted"
+                    else:
+                        err_text = f"Database integrity error: {str(e.orig)}"
                     for gr in group_rows:
                         rows_failed += 1
-                        error_log.append({"row": global_row_idx, "sku": gr.get("SKU", ""), "error": f"Slug '{handle}' already exists and could not be upserted"})
+                        error_log.append({"row": global_row_idx, "sku": gr.get("SKU", ""), "error": err_text})
                         global_row_idx += 1
                     continue
             else:
@@ -1154,26 +1284,55 @@ async def _process_import_job(
                 if stock_str and stock_str.isdigit():
                     # Import inventory module lazily to avoid circular imports
                     try:
-                        from modules.inventory.models import Inventory
+                        from modules.inventory.models import Inventory, StockLocation
                         await db.flush()  # ensure variant_id exists
+                        
+                        # Find or create a default stock location for the tenant
+                        loc_result = await db.execute(
+                            select(StockLocation).where(
+                                StockLocation.tenant_id == tenant_id,
+                                StockLocation.is_default == True
+                            )
+                        )
+                        loc = loc_result.scalar_one_or_none()
+                        if not loc:
+                            loc_result = await db.execute(
+                                select(StockLocation).where(StockLocation.tenant_id == tenant_id)
+                            )
+                            loc = loc_result.scalars().first()
+                        if not loc:
+                            # Create a default warehouse location if none exists
+                            loc = StockLocation(
+                                tenant_id=tenant_id,
+                                name="Default Warehouse",
+                                location_type="warehouse",
+                                fulfils_online=True,
+                                is_default=True,
+                                is_active=True
+                            )
+                            db.add(loc)
+                            await db.flush()
+
                         inv_result = await db.execute(
                             select(Inventory).where(
                                 Inventory.variant_id == variant_to_stock.variant_id,
+                                Inventory.stock_location_id == loc.stock_location_id,
                                 Inventory.tenant_id == tenant_id
                             )
                         )
                         inv = inv_result.scalar_one_or_none()
                         if inv:
-                            inv.quantity = int(stock_str)
+                            inv.quantity_on_hand = int(stock_str)
                         else:
                             inv = Inventory(
                                 tenant_id=tenant_id,
                                 variant_id=variant_to_stock.variant_id,
-                                quantity=int(stock_str),
+                                stock_location_id=loc.stock_location_id,
+                                quantity_on_hand=int(stock_str),
                             )
                             db.add(inv)
-                    except Exception:
-                        pass  # Inventory module may not exist yet; skip silently
+                    except Exception as e:
+                        print(f"DEBUG: failed to seed inventory: {e}")
                 else:
                     no_stock_log.append({"handle": handle, "sku": sku, "title": title})
 

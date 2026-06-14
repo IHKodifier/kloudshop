@@ -45,7 +45,7 @@ class VariantBase(BaseModel):
     position: int = 0
 
 class VariantCreate(VariantBase):
-    pass
+    stock: Optional[int] = None
 
 class VariantUpdate(BaseModel):
     variant_id: Optional[str] = None # If provided, update; else create
@@ -68,10 +68,12 @@ class VariantUpdate(BaseModel):
     requires_shipping: Optional[bool] = None
     taxable: Optional[bool] = None
     position: Optional[int] = None
+    stock: Optional[int] = None
 
 class VariantResponse(VariantBase):
     variant_id: str
     product_id: str
+    stock: Optional[int] = 0
     created_at: datetime
     updated_at: datetime
 
