@@ -3825,6 +3825,7 @@ class CompactSpinInput extends StatefulWidget {
 
 class _CompactSpinInputState extends State<CompactSpinInput> {
   late TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -3835,7 +3836,7 @@ class _CompactSpinInputState extends State<CompactSpinInput> {
   @override
   void didUpdateWidget(covariant CompactSpinInput oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.value != widget.value && !_controller.hasFocus) {
+    if (oldWidget.value != widget.value && !_focusNode.hasFocus) {
       _controller.text = widget.value.toStringAsFixed(0);
     }
   }
@@ -3843,6 +3844,7 @@ class _CompactSpinInputState extends State<CompactSpinInput> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -3902,6 +3904,7 @@ class _CompactSpinInputState extends State<CompactSpinInput> {
               Expanded(
                 child: TextField(
                   controller: _controller,
+                  focusNode: _focusNode,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.-]')),
