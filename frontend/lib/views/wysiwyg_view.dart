@@ -2189,55 +2189,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     );
   }
 
-  Widget _buildNodeSliderTile({
-    required String label,
-    required Map<String, dynamic> node,
-    required String propKey,
-    required double value,
-    required double min,
-    required double max,
-    required int divisions,
-    bool isStyle = false,
-  }) {
-    final nodeId = node['id'] ?? '';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              value.toStringAsFixed(1),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.brandEmerald500),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: divisions,
-          activeColor: AppTheme.brandEmerald500,
-          onChanged: (val) {
-            final themeConfig = ref.read(activeThemeConfigProvider).value;
-            if (themeConfig == null) return;
-            final layout = _getLayoutTree(themeConfig);
-            final copiedTree = _deepCopyMap(layout);
-            _updateNodeProperty(copiedTree, nodeId, propKey, val, isStyle: isStyle);
-            ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copiedTree}, editKey: nodeId);
-          },
-        ),
-      ],
-    );
-  }
 
   Widget _buildNodeDropdown({
     required String label,
@@ -2401,46 +2353,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     );
   }
 
-  Widget _buildSliderTileToken({
-    required String label,
-    required String key,
-    required double value,
-    required double min,
-    required double max,
-    required int divisions,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              value.toStringAsFixed(1),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.brandEmerald500),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: divisions,
-          activeColor: AppTheme.brandEmerald500,
-          onChanged: (val) {
-            ref.read(activeThemeConfigProvider.notifier).updateLocalToken(key, val.toString());
-          },
-        ),
-      ],
-    );
-  }
+
 
   Widget _colorPickerTile(
     String label,
@@ -3921,7 +3834,9 @@ class _CompactSpinInputState extends State<CompactSpinInput> {
               ),
               Container(
                 width: 16,
-                border: Border(left: BorderSide(color: theme.dividerColor)),
+                decoration: BoxDecoration(
+                  border: Border(left: BorderSide(color: theme.dividerColor)),
+                ),
                 child: Column(
                   children: [
                     Expanded(
