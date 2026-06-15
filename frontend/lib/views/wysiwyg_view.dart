@@ -2529,7 +2529,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                 selectedNodeId: _selectedNodeId,
                 page: _selectedPage,
                 isDragging: _isDraggingComponent,
-                onNodeSelected: (id) => setState(() => _selectedNodeId = id),
+                onNodeSelected: _selectAndExpandNode,
                 onNodeDropped: _handleNodeDropped,
                 onNodeMoved: (id, left, top) {
                   final tree = _getLayoutTree(config);
@@ -3486,6 +3486,45 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copiedTree}, editKey: nodeId);
       },
     );
+  }
+
+  void _selectAndExpandNode(String nodeId) {
+    final themeConfig = ref.read(activeThemeConfigProvider).value;
+    if (themeConfig == null) return;
+    final layout = _getLayoutTree(themeConfig);
+    
+    final List<String> path = [];
+    if (_findPathToNode(layout, nodeId, path)) {
+      setState(() {
+        _selectedNodeId = nodeId;
+        for (final parentId in path) {
+          _expandedGroupIds.add(parentId);
+        }
+      });
+    } else {
+      setState(() {
+        _selectedNodeId = nodeId;
+      });
+    }
+  }
+
+  bool _findPathToNode(Map<String, dynamic> root, String targetId, List<String> path) {
+    final id = root['id'] ?? '';
+    if (id == targetId) {
+      return true;
+    }
+    
+    final children = root['children'] as List<dynamic>? ?? [];
+    for (final child in children) {
+      if (child is Map<String, dynamic>) {
+        path.add(id);
+        if (_findPathToNode(child, targetId, path)) {
+          return true;
+        }
+        path.removeLast();
+      }
+    }
+    return false;
   }
 }
 
