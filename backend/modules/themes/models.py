@@ -22,6 +22,9 @@ class ThemeConfiguration(Base):
     tenant_id = Column(String, nullable=False, index=True)
     theme_id = Column(String, ForeignKey("themes.theme_id"), nullable=False)
     
+    # Name of layout (e.g. "Active Layout", "Draft Layout A")
+    name = Column(Text, nullable=False, default="Active Layout")
+    
     # Draft vs Live
     draft_tokens = Column(JSON, nullable=False, default={})
     live_tokens = Column(JSON, nullable=False, default={})

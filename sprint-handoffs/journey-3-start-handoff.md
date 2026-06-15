@@ -21,8 +21,8 @@ Ensure you check [changelog.md](file:///e:/Non_Office/Dev_Space/vibe_skool/kloud
 ## 1. Git Branching Protocol
 1.  Verify the current status: `git status`. (The previous agent left the repository on `phase7/j2-catalog`).
 2.  Commit any remaining changes on `phase7/j2-catalog`.
-3.  Checkout the `dev` branch and pull updates: `git checkout dev` followed by `git pull origin dev`.
-4.  Checkout a new branch for this journey: `git checkout -b phase7/j3-storefront`.
+3.  if `phase7/j2-catalog` is merged with dev, then 
+4.  Checkout a new branch for this journey from 'dev' branch: `git checkout -b phase7/j3-storefront`.
 
 ---
 

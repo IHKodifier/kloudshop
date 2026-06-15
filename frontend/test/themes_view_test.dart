@@ -30,6 +30,7 @@ void main() {
       configId: 'c1',
       tenantId: 'tenant1',
       themeId: 't1',
+      name: 'Active Layout One',
       draftTokens: {},
       liveTokens: {},
       draftSlots: {},
@@ -42,6 +43,7 @@ void main() {
       ProviderScope(
         overrides: [
           themesProvider.overrideWith((ref) => mockThemes),
+          themeConfigurationsProvider.overrideWith((ref) => [mockActiveConfig]),
           activeThemeConfigProvider.overrideWith(() => ActiveThemeConfigNotifierStub(mockActiveConfig)),
         ],
         child: const MaterialApp(
@@ -50,18 +52,16 @@ void main() {
       ),
     );
 
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    // Verify themes are listed
-    expect(find.text('Theme One'), findsOneWidget);
-    expect(find.text('Theme Two'), findsOneWidget);
+    // Verify layout name is listed
+    expect(find.text('Active Layout One'), findsOneWidget);
 
-    // Verify active status
-    expect(find.text('ACTIVE'), findsOneWidget);
+    // Verify active status badge is shown
+    expect(find.text('LIVE ACTIVE'), findsOneWidget);
     
-    // Verify "Select Theme" button only on non-active theme
-    expect(find.text('Select Theme'), findsOneWidget); // For Theme Two
-    expect(find.text('Customize'), findsOneWidget); // For Theme One (active)
+    // Verify actions exist
+    expect(find.text('Customize Live Layout'), findsOneWidget);
   });
 }
 

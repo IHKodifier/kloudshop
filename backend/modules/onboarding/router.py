@@ -105,6 +105,14 @@ async def update_tenant_details(
         
     if "name" in update_data:
         tenant.name = update_data["name"]
+        # Sync to BrandProfile brand_name if it exists
+        from modules.storefront.models import BrandProfile
+        brand_res = await db.execute(
+            select(BrandProfile).where(BrandProfile.tenant_id == user.tenant_id)
+        )
+        brand_profile = brand_res.scalar_one_or_none()
+        if brand_profile:
+            brand_profile.brand_name = update_data["name"]
     if "config" in update_data:
         # Merge config
         current_config = tenant.config or {}

@@ -10,6 +10,24 @@ final themesProvider = FutureProvider<List<ThemeModel>>((ref) async {
   return apiService.listThemes();
 });
 
+final editingThemeConfigIdProvider = NotifierProvider<EditingThemeConfigIdNotifier, String?>(
+  EditingThemeConfigIdNotifier.new,
+);
+
+class EditingThemeConfigIdNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setConfigId(String? val) {
+    state = val;
+  }
+}
+
+final themeConfigurationsProvider = FutureProvider<List<ThemeConfigModel>>((ref) async {
+  final apiService = ref.watch(apiServiceProvider);
+  return apiService.listThemeConfigurations();
+});
+
 final activeThemeConfigProvider =
     AsyncNotifierProvider<ActiveThemeConfigNotifier, ThemeConfigModel?>(
       ActiveThemeConfigNotifier.new,
@@ -21,18 +39,42 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
   int _historyIndex = -1;
   static const int _maxHistory = 50;
 
+  String? _lastEditKey;
+  DateTime? _lastEditTime;
+
   @override
   FutureOr<ThemeConfigModel?> build() async {
     ref.onDispose(() => _saveTimer?.cancel());
 
-    final config = await ref.watch(apiServiceProvider).getActiveTheme();
+    final editingId = ref.watch(editingThemeConfigIdProvider);
+    ThemeConfigModel? config;
+    if (editingId == null) {
+      config = await ref.watch(apiServiceProvider).getActiveTheme();
+    } else {
+      config = await ref.watch(apiServiceProvider).getThemeConfig(editingId);
+    }
+
     if (config != null && _history.isEmpty) {
       _addToHistory(config);
     }
     return config;
   }
 
-  void _addToHistory(ThemeConfigModel config) {
+  void _addToHistory(ThemeConfigModel config, {String? editKey}) {
+    final now = DateTime.now();
+    final isDebounced = editKey != null &&
+        _lastEditKey == editKey &&
+        _lastEditTime != null &&
+        now.difference(_lastEditTime!) < const Duration(milliseconds: 500);
+
+    _lastEditKey = editKey;
+    _lastEditTime = now;
+
+    if (isDebounced && _historyIndex >= 0 && _historyIndex < _history.length) {
+      _history[_historyIndex] = config;
+      return;
+    }
+
     if (_historyIndex < _history.length - 1) {
       _history.removeRange(_historyIndex + 1, _history.length);
     }
@@ -64,9 +106,16 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
 
   Future<void> fetch() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
-      () => ref.read(apiServiceProvider).getActiveTheme(),
-    );
+    final editingId = ref.read(editingThemeConfigIdProvider);
+    if (editingId == null) {
+      state = await AsyncValue.guard(
+        () => ref.read(apiServiceProvider).getActiveTheme(),
+      );
+    } else {
+      state = await AsyncValue.guard(
+        () => ref.read(apiServiceProvider).getThemeConfig(editingId),
+      );
+    }
   }
 
   Future<void> selectTheme(String themeId) async {
@@ -82,52 +131,52 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
   }
 
   void updateLocalToken(String key, String value) {
-    updateTokens({key: value});
+    updateTokens({key: value}, editKey: key);
   }
 
-  void updateTokens(Map<String, dynamic> newTokens) {
+  void updateTokens(Map<String, dynamic> newTokens, {String? editKey}) {
     final current = state.value;
     if (current == null) return;
 
-    final updated = ThemeConfigModel(
-      configId: current.configId,
-      tenantId: current.tenantId,
-      themeId: current.themeId,
+    final updated = current.copyWith(
       draftTokens: {...current.draftTokens, ...newTokens},
-      liveTokens: current.liveTokens,
-      draftSlots: current.draftSlots,
-      liveSlots: current.liveSlots,
-      isActive: current.isActive,
       updatedAt: DateTime.now(),
     );
 
     state = AsyncValue.data(updated);
-    _addToHistory(updated);
+    _addToHistory(updated, editKey: editKey);
     _debouncedSave();
   }
 
   void updateLocalSlot(String key, String value) {
-    updateSlots({key: value});
+    updateSlots({key: value}, editKey: key);
   }
 
-  void updateSlots(Map<String, dynamic> newSlots) {
+  void updateSlots(Map<String, dynamic> newSlots, {String? editKey}) {
     final current = state.value;
     if (current == null) return;
 
-    final updated = ThemeConfigModel(
-      configId: current.configId,
-      tenantId: current.tenantId,
-      themeId: current.themeId,
-      draftTokens: current.draftTokens,
-      liveTokens: current.liveTokens,
+    final updated = current.copyWith(
       draftSlots: {...current.draftSlots, ...newSlots},
-      liveSlots: current.liveSlots,
-      isActive: current.isActive,
       updatedAt: DateTime.now(),
     );
 
     state = AsyncValue.data(updated);
-    _addToHistory(updated);
+    _addToHistory(updated, editKey: editKey);
+    _debouncedSave();
+  }
+
+  void updateName(String newName) {
+    final current = state.value;
+    if (current == null) return;
+
+    final updated = current.copyWith(
+      name: newName,
+      updatedAt: DateTime.now(),
+    );
+
+    state = AsyncValue.data(updated);
+    _addToHistory(updated, editKey: 'name');
     _debouncedSave();
   }
 
@@ -143,7 +192,9 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
     try {
       await ref
           .read(apiServiceProvider)
-          .updateThemeConfig(
+          .updateThemeConfigById(
+            current.configId,
+            name: current.name,
             tokens: current.draftTokens,
             slots: current.draftSlots,
           );
@@ -154,9 +205,12 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
   }
 
   Future<void> publish() async {
+    final current = state.value;
+    if (current == null) return;
+
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(
-      () => ref.read(apiServiceProvider).publishTheme(),
+      () => ref.read(apiServiceProvider).publishThemeById(current.configId),
     );
   }
 }

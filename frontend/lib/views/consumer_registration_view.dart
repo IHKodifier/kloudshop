@@ -24,10 +24,14 @@ class _ConsumerRegistrationViewState
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _addressController = TextEditingController();
+  
   bool _isNewsletterOptIn = true;
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -40,12 +44,19 @@ class _ConsumerRegistrationViewState
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _addressController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    setState(() => _errorMessage = null);
     if (!_formKey.currentState!.validate()) return;
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() => _errorMessage = "Passwords do not match");
+      return;
+    }
 
     setState(() => _isLoading = true);
     try {
@@ -74,12 +85,7 @@ class _ConsumerRegistrationViewState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Registration failed: $e'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
+        setState(() => _errorMessage = 'Registration failed: $e');
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -138,7 +144,41 @@ class _ConsumerRegistrationViewState
                   style: TextStyle(color: theme.hintColor, fontSize: 13),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
+
+                // Inline Coral/Red Error Banner
+                if (_errorMessage != null) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEE2E2),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(LucideIcons.alertCircle, color: Colors.redAccent, size: 18),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _errorMessage!,
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => setState(() => _errorMessage = null),
+                          child: const Icon(LucideIcons.x, color: Colors.redAccent, size: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
 
                 // Registration Form
                 Form(
@@ -152,6 +192,7 @@ class _ConsumerRegistrationViewState
                         hint: 'e.g. Jane Doe',
                         icon: LucideIcons.user,
                         theme: theme,
+                        enabled: !_isLoading,
                         validator: (v) => v == null || v.isEmpty
                             ? 'Full name is required'
                             : null,
@@ -165,9 +206,10 @@ class _ConsumerRegistrationViewState
                         hint: 'name@company.com',
                         icon: LucideIcons.mail,
                         theme: theme,
+                        enabled: !_isLoading,
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) => v == null || !v.contains('@')
-                            ? 'Enter a valid email'
+                            ? 'Enter a valid email address'
                             : null,
                       ),
                       const SizedBox(height: 20),
@@ -179,6 +221,7 @@ class _ConsumerRegistrationViewState
                         labelText: 'Password',
                         hintText: '••••••••',
                         prefixIcon: LucideIcons.lock,
+                        enabled: !_isLoading,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -196,6 +239,37 @@ class _ConsumerRegistrationViewState
                       ),
                       const SizedBox(height: 20),
 
+                      // Confirm Password input with real-time match validation
+                      SemanticTextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscureConfirmPassword,
+                        labelText: 'Confirm Password',
+                        hintText: '••••••••',
+                        prefixIcon: LucideIcons.lock,
+                        enabled: !_isLoading,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? LucideIcons.eyeOff
+                                : LucideIcons.eye,
+                            size: 16,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                          ),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return 'Confirm password is required';
+                          }
+                          if (v != _passwordController.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
                       // Address input
                       _buildInputField(
                         label: 'Shipping Address',
@@ -203,6 +277,7 @@ class _ConsumerRegistrationViewState
                         hint: 'e.g. 123 Main St, London, UK',
                         icon: LucideIcons.mapPin,
                         theme: theme,
+                        enabled: !_isLoading,
                         maxLines: 2,
                       ),
                       const SizedBox(height: 16),
@@ -210,8 +285,9 @@ class _ConsumerRegistrationViewState
                       // Newsletter opt-in
                       CheckboxListTile(
                         value: _isNewsletterOptIn,
-                        onChanged: (v) =>
-                            setState(() => _isNewsletterOptIn = v ?? false),
+                        onChanged: _isLoading
+                            ? null
+                            : (v) => setState(() => _isNewsletterOptIn = v ?? false),
                         title: const Text(
                           'Subscribe to newsletter for exclusive offers',
                           style: TextStyle(fontSize: 12),
@@ -222,7 +298,7 @@ class _ConsumerRegistrationViewState
                       ),
                       const SizedBox(height: 32),
 
-                      // Submit button
+                      // Submit button with animated progress loader
                       SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -243,7 +319,7 @@ class _ConsumerRegistrationViewState
                                     height: 20,
                                     child: CircularProgressIndicator(
                                       color: Colors.white,
-                                      strokeWidth: 2,
+                                      strokeWidth: 2.5,
                                     ),
                                   )
                                 : const Text(
@@ -310,6 +386,7 @@ class _ConsumerRegistrationViewState
     required String hint,
     required IconData icon,
     required ThemeData theme,
+    bool enabled = true,
     int maxLines = 1,
     TextInputType? keyboardType,
     FormFieldValidator<String>? validator,
@@ -322,6 +399,7 @@ class _ConsumerRegistrationViewState
       labelText: label,
       hintText: hint,
       prefixIcon: icon,
+      enabled: enabled,
     );
   }
 }

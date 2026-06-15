@@ -16,6 +16,12 @@ void main() {
     mockApi = MockApiService();
   });
 
+  Future<void> pumpMultiple(WidgetTester tester) async {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+
   testWidgets('WysiwygView undo/redo functionality', (tester) async {
     // Set a larger surface size to avoid overflow issues in test
     tester.view.physicalSize = const Size(1920, 1080);
@@ -25,6 +31,7 @@ void main() {
       configId: '1',
       tenantId: 'test-tenant',
       themeId: 'modern-dark',
+      name: 'Active Modern Dark',
       draftTokens: {'primary': '#6366f1', 'background': '#0f172a'},
       liveTokens: {'primary': '#6366f1', 'background': '#0f172a'},
       draftSlots: {'hero_heading': 'Original Heading'},
@@ -50,26 +57,30 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await pumpMultiple(tester);
 
     // 1. Initial State: Heading is "Original Heading" in PREVIEW
     // Using find.descendant to target the preview specifically
     expect(find.descendant(of: find.byType(StorefrontPreview), matching: find.text('Original Heading')), findsOneWidget);
     
-    // 2. Simulate change (Hero Heading)
+    // Tap to select the node
+    await tester.tap(find.text('Original Heading'));
+    await pumpMultiple(tester);
+
     // Find the TextField in the sidebar
-    final textField = find.byType(TextField).first;
+    final textField = find.byWidgetPredicate((widget) => widget is TextField && widget.controller?.text == 'Original Heading');
     await tester.enterText(textField, 'New Heading');
     await tester.testTextInput.receiveAction(TextInputAction.done);
-    await tester.pumpAndSettle();
+    await pumpMultiple(tester);
 
     // Verify change in preview
     expect(find.descendant(of: find.byType(StorefrontPreview), matching: find.text('New Heading')), findsOneWidget);
 
     // 3. Undo change
     final undoButton = find.byTooltip('Undo');
+    await tester.ensureVisible(undoButton);
     await tester.tap(undoButton);
-    await tester.pumpAndSettle();
+    await pumpMultiple(tester);
 
     // Verify reverted in preview
     expect(find.descendant(of: find.byType(StorefrontPreview), matching: find.text('Original Heading')), findsOneWidget);
@@ -77,8 +88,9 @@ void main() {
 
     // 4. Redo change
     final redoButton = find.byTooltip('Redo');
+    await tester.ensureVisible(redoButton);
     await tester.tap(redoButton);
-    await tester.pumpAndSettle();
+    await pumpMultiple(tester);
 
     // Verify restored in preview
     expect(find.descendant(of: find.byType(StorefrontPreview), matching: find.text('New Heading')), findsOneWidget);

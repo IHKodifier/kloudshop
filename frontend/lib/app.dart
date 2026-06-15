@@ -13,6 +13,7 @@ import 'package:kloudshop/views/consumer_dashboard_view.dart';
 import 'package:kloudshop/views/consumer_order_details_view.dart';
 import 'package:kloudshop/views/splash_page.dart';
 import 'package:kloudshop/views/unblock_verification_page.dart';
+import 'package:kloudshop/views/theme_preview_page.dart';
 
 class KloudShopApp extends ConsumerWidget {
   const KloudShopApp({super.key});
@@ -29,6 +30,19 @@ class KloudShopApp extends ConsumerWidget {
       themeMode: themeMode,
       home: const SplashPage(),
       onGenerateRoute: (settings) {
+        final uri = Uri.tryParse(settings.name ?? '');
+        if (uri != null && (uri.path == '/preview' || uri.path == '/#/preview' || (settings.name ?? '').contains('/preview'))) {
+          final queryParams = uri.queryParameters.isNotEmpty 
+              ? uri.queryParameters 
+              : Uri.parse(settings.name!.replaceFirst('/#', '')).queryParameters;
+          final configId = queryParams['configId'];
+          if (configId != null) {
+            return MaterialPageRoute(
+              builder: (context) => ThemePreviewPage(configId: configId),
+            );
+          }
+        }
+
         if (settings.name == '/storefront/register') {
           final args = settings.arguments as Map<String, String?>?;
           return MaterialPageRoute(

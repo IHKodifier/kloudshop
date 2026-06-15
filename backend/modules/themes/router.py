@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload
 from typing import List, Dict
 from datetime import datetime
@@ -11,7 +11,8 @@ from shared.rbac import has_permissions
 from .models import Theme, ThemeConfiguration
 from .schemas import (
     ThemeResponse, ThemeConfigResponse, 
-    ThemeConfigRequest, ThemeSelectionRequest
+    ThemeConfigRequest, ThemeSelectionRequest,
+    ThemeCloneRequest
 )
 
 router = APIRouter(tags=["Themes"])
@@ -113,6 +114,7 @@ async def select_theme(
         config = ThemeConfiguration(
             tenant_id=user.tenant_id,
             theme_id=req.theme_id,
+            name=f"Active {theme.name}",
             draft_tokens=theme.base_config["tokens"],
             live_tokens=theme.base_config["tokens"],
             draft_slots=slots,
@@ -143,6 +145,9 @@ async def update_theme_config_draft(
     config = result.scalar_one_or_none()
     if not config:
         raise HTTPException(status_code=404, detail="Active theme config not found")
+        
+    if req.name is not None:
+        config.name = req.name
         
     if req.tokens is not None:
         new_tokens = config.draft_tokens.copy()
@@ -180,3 +185,153 @@ async def publish_theme_config(
     await db.commit()
     await db.refresh(config)
     return config
+
+@router.post("/clone", response_model=ThemeConfigResponse)
+async def clone_active_theme(
+    req: ThemeCloneRequest,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
+    result = await db.execute(
+        select(ThemeConfiguration)
+        .where(ThemeConfiguration.tenant_id == user.tenant_id, ThemeConfiguration.is_active == True)
+    )
+    active_config = result.scalar_one_or_none()
+    if not active_config:
+        raise HTTPException(status_code=404, detail="No active theme config found to clone")
+        
+    cloned_config = ThemeConfiguration(
+        tenant_id=user.tenant_id,
+        theme_id=active_config.theme_id,
+        name=req.name,
+        draft_tokens=active_config.draft_tokens,
+        live_tokens=active_config.live_tokens,
+        draft_slots=active_config.draft_slots,
+        live_slots=active_config.live_slots,
+        is_active=False
+    )
+    db.add(cloned_config)
+    await db.commit()
+    await db.refresh(cloned_config)
+    return cloned_config
+
+@router.get("/configurations", response_model=List[ThemeConfigResponse])
+async def list_theme_configurations(
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
+    result = await db.execute(
+        select(ThemeConfiguration)
+        .where(ThemeConfiguration.tenant_id == user.tenant_id)
+        .order_by(ThemeConfiguration.is_active.desc(), ThemeConfiguration.updated_at.desc())
+    )
+    return result.scalars().all()
+
+@router.get("/config/{config_id}", response_model=ThemeConfigResponse)
+async def get_theme_config_by_id(
+    config_id: str,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(ThemeConfiguration).where(ThemeConfiguration.config_id == config_id)
+    )
+    config = result.scalar_one_or_none()
+    if not config:
+        raise HTTPException(status_code=404, detail="Theme configuration not found")
+    return config
+
+@router.patch("/config/{config_id}", response_model=ThemeConfigResponse)
+async def update_theme_config_by_id(
+    config_id: str,
+    req: ThemeConfigRequest,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
+    result = await db.execute(
+        select(ThemeConfiguration)
+        .where(ThemeConfiguration.config_id == config_id, ThemeConfiguration.tenant_id == user.tenant_id)
+    )
+    config = result.scalar_one_or_none()
+    if not config:
+        raise HTTPException(status_code=404, detail="Theme configuration not found")
+        
+    if req.name is not None:
+        config.name = req.name
+    if req.tokens is not None:
+        new_tokens = config.draft_tokens.copy()
+        new_tokens.update(req.tokens)
+        config.draft_tokens = new_tokens
+    if req.slots is not None:
+        new_slots = config.draft_slots.copy()
+        new_slots.update(req.slots)
+        config.draft_slots = new_slots
+        
+    await db.commit()
+    await db.refresh(config)
+    return config
+
+@router.post("/publish/{config_id}", response_model=ThemeConfigResponse)
+async def publish_theme_config_by_id(
+    config_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
+    result = await db.execute(
+        select(ThemeConfiguration)
+        .where(ThemeConfiguration.config_id == config_id, ThemeConfiguration.tenant_id == user.tenant_id)
+    )
+    config = result.scalar_one_or_none()
+    if not config:
+        raise HTTPException(status_code=404, detail="Theme configuration not found")
+        
+    # Deactivate all configurations for this tenant
+    await db.execute(
+        update(ThemeConfiguration)
+        .where(ThemeConfiguration.tenant_id == user.tenant_id)
+        .values(is_active=False)
+    )
+    
+    # Publish and make active
+    config.live_tokens = config.draft_tokens
+    config.live_slots = config.draft_slots
+    config.is_active = True
+    
+    await db.commit()
+    await db.refresh(config)
+    return config
+
+@router.delete("/config/{config_id}")
+async def delete_theme_config_by_id(
+    config_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="User has no tenant_id assigned")
+        
+    result = await db.execute(
+        select(ThemeConfiguration)
+        .where(ThemeConfiguration.config_id == config_id, ThemeConfiguration.tenant_id == user.tenant_id)
+    )
+    config = result.scalar_one_or_none()
+    if not config:
+        raise HTTPException(status_code=404, detail="Theme configuration not found")
+        
+    if config.is_active:
+        raise HTTPException(status_code=400, detail="Cannot delete active theme configuration")
+        
+    await db.delete(config)
+    await db.commit()
+    return {"message": "Theme configuration deleted successfully"}

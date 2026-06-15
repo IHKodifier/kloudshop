@@ -40,9 +40,12 @@ class _BillingViewState extends ConsumerState<BillingView> {
         const SnackBar(content: Text('Preparing upgrade...')),
       );
 
+      final String origin = (Uri.base.scheme == 'http' || Uri.base.scheme == 'https')
+          ? Uri.base.origin
+          : 'http://localhost:3000';
       final successUrl =
-          '${Uri.base.origin}/#/dashboard?session_id={CHECKOUT_SESSION_ID}';
-      final cancelUrl = '${Uri.base.origin}/#/dashboard';
+          '$origin/#/dashboard?session_id={CHECKOUT_SESSION_ID}';
+      final cancelUrl = '$origin/#/dashboard';
 
       final url = await ref
           .read(apiServiceProvider)

@@ -63,18 +63,24 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
     // then transition using pushReplacement to completely remove SplashPage and trigger dispose.
     _transitionTimer = Timer(const Duration(milliseconds: 3000), () {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const AuthGate(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 600),
-          ),
-        );
+        final isPreview = Uri.base.toString().contains('/preview') ||
+            (ModalRoute.of(context)?.settings.name?.contains('/preview') ?? false);
+        final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+
+        if (!isPreview && isCurrent) {
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => const AuthGate(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              transitionDuration: const Duration(milliseconds: 600),
+            ),
+          );
+        }
       }
     });
   }

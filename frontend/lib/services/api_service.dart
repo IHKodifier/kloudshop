@@ -895,6 +895,7 @@ class ApiService {
   }
 
   Future<ThemeConfigModel> updateThemeConfig({
+    String? name,
     Map<String, dynamic>? tokens,
     Map<String, dynamic>? slots,
   }) async {
@@ -902,7 +903,11 @@ class ApiService {
     final response = await http.patch(
       Uri.parse('$baseUrl/themes/config'),
       headers: headers,
-      body: jsonEncode({'tokens': ?tokens, 'slots': ?slots}),
+      body: jsonEncode({
+        if (name != null) 'name': name,
+        'tokens': tokens,
+        'slots': slots,
+      }),
     );
 
     if (response.statusCode == 200) {
@@ -923,6 +928,100 @@ class ApiService {
       return ThemeConfigModel.fromJson(jsonDecode(response.body));
     } else {
       throw ApiException(response.statusCode, 'Failed to publish theme');
+    }
+  }
+
+  Future<ThemeConfigModel> cloneTheme(String name) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/themes/clone'),
+      headers: headers,
+      body: jsonEncode({'name': name}),
+    );
+
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to clone theme');
+    }
+  }
+
+  Future<List<ThemeConfigModel>> listThemeConfigurations() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/themes/configurations'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => ThemeConfigModel.fromJson(item)).toList();
+    } else {
+      throw ApiException(response.statusCode, 'Failed to list theme configurations');
+    }
+  }
+
+  Future<ThemeConfigModel> getThemeConfig(String configId) async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/themes/config/$configId'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to fetch theme config');
+    }
+  }
+
+  Future<ThemeConfigModel> updateThemeConfigById(
+    String configId, {
+    String? name,
+    Map<String, dynamic>? tokens,
+    Map<String, dynamic>? slots,
+  }) async {
+    final headers = await _getHeaders();
+    final response = await http.patch(
+      Uri.parse('$baseUrl/themes/config/$configId'),
+      headers: headers,
+      body: jsonEncode({
+        if (name != null) 'name': name,
+        'tokens': tokens,
+        'slots': slots,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to update theme config by ID');
+    }
+  }
+
+  Future<ThemeConfigModel> publishThemeById(String configId) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/themes/publish/$configId'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return ThemeConfigModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw ApiException(response.statusCode, 'Failed to publish theme by ID');
+    }
+  }
+
+  Future<void> deleteThemeConfig(String configId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/themes/config/$configId'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete theme config');
     }
   }
 
