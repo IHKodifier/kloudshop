@@ -14,6 +14,7 @@ class StorefrontPreview extends StatefulWidget {
   final Function(String parentId, int index, Map<String, dynamic> child)? onNodeDropped;
   final Function(String nodeId, double newLeft, double newTop)? onNodeMoved;
   final String page;
+  final bool isDragging;
 
   const StorefrontPreview({
     super.key,
@@ -26,6 +27,7 @@ class StorefrontPreview extends StatefulWidget {
     this.onNodeDropped,
     this.onNodeMoved,
     this.page = 'home',
+    this.isDragging = false,
   });
 
   @override
@@ -49,16 +51,37 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
       },
       builder: (context, candidateData, rejectedData) {
         final isHovered = candidateData.isNotEmpty;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: isHorizontal ? (isHovered ? 24.0 : 8.0) : double.infinity,
-          height: isHorizontal ? double.infinity : (isHovered ? 24.0 : 8.0),
-          alignment: Alignment.center,
+        final isActiveDrag = widget.isDragging;
+
+        double size = 8.0;
+        if (isHovered) {
+          size = 24.0;
+        } else if (isActiveDrag) {
+          size = 16.0;
+        }
+
+        return MouseRegion(
+          cursor: isHovered ? SystemMouseCursors.copy : (isActiveDrag ? SystemMouseCursors.copy : SystemMouseCursors.basic),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: isHorizontal ? (isHovered ? 4.0 : 0.0) : double.infinity,
-            height: isHorizontal ? double.infinity : (isHovered ? 4.0 : 0.0),
-            color: isHovered ? AppTheme.brandEmerald500 : Colors.transparent,
+            duration: const Duration(milliseconds: 150),
+            width: isHorizontal ? size : double.infinity,
+            height: isHorizontal ? double.infinity : size,
+            alignment: Alignment.center,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: isHorizontal 
+                  ? (isHovered ? 6.0 : (isActiveDrag ? 2.0 : 0.0)) 
+                  : double.infinity,
+              height: isHorizontal 
+                  ? double.infinity 
+                  : (isHovered ? 6.0 : (isActiveDrag ? 2.0 : 0.0)),
+              decoration: BoxDecoration(
+                color: isHovered 
+                    ? AppTheme.brandEmerald500 
+                    : (isActiveDrag ? AppTheme.brandEmerald500.withOpacity(0.3) : Colors.transparent),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
           ),
         );
       },
@@ -75,25 +98,38 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
       },
       builder: (context, candidateData, rejectedData) {
         final isHovered = candidateData.isNotEmpty;
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: isHovered ? AppTheme.brandEmerald500.withOpacity(0.1) : Colors.transparent,
-            border: Border.all(
-              color: isHovered ? AppTheme.brandEmerald500 : text.withOpacity(0.15),
-              style: BorderStyle.solid,
-              width: 1,
+        final isActiveDrag = widget.isDragging;
+
+        final borderColor = isHovered 
+            ? AppTheme.brandEmerald500 
+            : (isActiveDrag ? AppTheme.brandEmerald500.withOpacity(0.4) : text.withOpacity(0.15));
+
+        return MouseRegion(
+          cursor: isHovered ? SystemMouseCursors.copy : (isActiveDrag ? SystemMouseCursors.copy : SystemMouseCursors.basic),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isHovered 
+                  ? AppTheme.brandEmerald500.withOpacity(0.1) 
+                  : (isActiveDrag ? AppTheme.brandEmerald500.withOpacity(0.04) : Colors.transparent),
+              border: Border.all(
+                color: borderColor,
+                style: BorderStyle.solid,
+                width: isHovered ? 2.0 : 1.0,
+              ),
+              borderRadius: BorderRadius.circular(radius),
             ),
-            borderRadius: BorderRadius.circular(radius),
-          ),
-          child: Center(
-            child: Text(
-              'Drag & Drop components here',
-              style: TextStyle(
-                color: isHovered ? AppTheme.brandEmerald500 : text.withOpacity(0.4),
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+            child: Center(
+              child: Text(
+                'Drag & Drop components here',
+                style: TextStyle(
+                  color: isHovered 
+                      ? AppTheme.brandEmerald500 
+                      : (isActiveDrag ? AppTheme.brandEmerald500 : text.withOpacity(0.4)),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -256,40 +292,43 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
       );
     }
 
-    return Stack(
-      children: [
-        // Main Storefront View
-        Container(
-          width: widget.isMobile ? 375 : double.infinity,
-          decoration: canvasBoxDecoration.copyWith(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 32,
-                offset: const Offset(0, 16),
-              ),
-            ],
+    return MouseRegion(
+      cursor: widget.isDragging ? SystemMouseCursors.forbidden : SystemMouseCursors.basic,
+      child: Stack(
+        children: [
+          // Main Storefront View
+          Container(
+            width: widget.isMobile ? 375 : double.infinity,
+            decoration: canvasBoxDecoration.copyWith(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 32,
+                  offset: const Offset(0, 16),
+                ),
+              ],
+            ),
+            child: bodyContent,
           ),
-          child: bodyContent,
-        ),
-
-        // 5 Required States Overlays
-        if (widget.previewState == 'loading')
-          _buildLoadingOverlay(surfaceColor, textColor, primaryColor),
-
-        if (widget.previewState == 'error')
-          _buildErrorModal(surfaceColor, textColor, borderRad),
-
-        if (widget.previewState == 'empty')
-          _buildEmptyCartOverlay(backgroundColor, textColor, primaryColor, borderRad),
-
-        if (widget.previewState == 'validation')
-          _buildValidationOverlay(surfaceColor, textColor, primaryColor, borderRad),
-
-        // Sliding Cart Drawer
-        if (_isCartOpen && widget.previewState == 'default')
-          _buildCartDrawer(surfaceColor, textColor, primaryColor, borderRad),
-      ],
+  
+          // 5 Required States Overlays
+          if (widget.previewState == 'loading')
+            _buildLoadingOverlay(surfaceColor, textColor, primaryColor),
+  
+          if (widget.previewState == 'error')
+            _buildErrorModal(surfaceColor, textColor, borderRad),
+  
+          if (widget.previewState == 'empty')
+            _buildEmptyCartOverlay(backgroundColor, textColor, primaryColor, borderRad),
+  
+          if (widget.previewState == 'validation')
+            _buildValidationOverlay(surfaceColor, textColor, primaryColor, borderRad),
+  
+          // Sliding Cart Drawer
+          if (_isCartOpen && widget.previewState == 'default')
+            _buildCartDrawer(surfaceColor, textColor, primaryColor, borderRad),
+        ],
+      ),
     );
   }
 
@@ -415,35 +454,51 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
               if (childData['properties'] == null) {
                 childData['properties'] = <String, dynamic>{};
               }
+              final double itemWidth = 150.0;
+              final double itemHeight = 50.0;
               childData['properties']['position'] = 'absolute';
-              childData['properties']['left'] = localOffset.dx;
-              childData['properties']['top'] = localOffset.dy;
-              childData['properties']['width'] = 150.0;
-              childData['properties']['height'] = 50.0;
+              childData['properties']['left'] = localOffset.dx - (itemWidth / 2);
+              childData['properties']['top'] = localOffset.dy - (itemHeight / 2);
+              childData['properties']['width'] = itemWidth;
+              childData['properties']['height'] = itemHeight;
               
               widget.onNodeDropped!(id, -1, childData);
             }
           },
           builder: (context, candidateData, rejectedData) {
             final isHovered = candidateData.isNotEmpty;
-            return Container(
-              height: 350,
-              decoration: BoxDecoration(
-                color: isHovered ? primary.withOpacity(0.06) : Colors.transparent,
-                border: isHovered ? Border.all(color: AppTheme.brandEmerald500, width: 2) : null,
-                borderRadius: BorderRadius.circular(radius),
-              ),
-              child: children.isEmpty
-                  ? Center(
-                      child: Text(
-                        'Absolute Placement Board (Drop templates here)',
-                        style: TextStyle(color: text.withOpacity(0.3), fontSize: 11, fontWeight: FontWeight.bold),
+            final isActiveDrag = widget.isDragging;
+            return MouseRegion(
+              cursor: isHovered ? SystemMouseCursors.copy : (isActiveDrag ? SystemMouseCursors.copy : SystemMouseCursors.basic),
+              child: Container(
+                height: 350,
+                decoration: BoxDecoration(
+                  color: isHovered 
+                      ? primary.withOpacity(0.06) 
+                      : (isActiveDrag ? AppTheme.brandEmerald500.withOpacity(0.03) : Colors.transparent),
+                  border: isHovered 
+                      ? Border.all(color: AppTheme.brandEmerald500, width: 2) 
+                      : (isActiveDrag ? Border.all(color: AppTheme.brandEmerald500.withOpacity(0.3), width: 1.5) : null),
+                  borderRadius: BorderRadius.circular(radius),
+                ),
+                child: children.isEmpty
+                    ? Center(
+                        child: Text(
+                          'Absolute Placement Board (Drop templates here)',
+                          style: TextStyle(
+                            color: isHovered 
+                                ? AppTheme.brandEmerald500 
+                                : (isActiveDrag ? AppTheme.brandEmerald500 : text.withOpacity(0.3)),
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : Stack(
+                        clipBehavior: Clip.none,
+                        children: absoluteChildren,
                       ),
-                    )
-                  : Stack(
-                      clipBehavior: Clip.none,
-                      children: absoluteChildren,
-                    ),
+              ),
             );
           },
         ),
@@ -810,18 +865,48 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
     final isSelected = widget.selectedNodeId != null && widget.selectedNodeId == id;
 
     if (widget.onNodeSelected != null && id.isNotEmpty && !isLocked) {
+      final isDark = _parseColor(widget.tokens['bg_color'] ?? widget.tokens['background'], Colors.white).computeLuminance() < 0.5;
+      final highlightColor = _parseColor(widget.tokens['highlight_color'], const Color(0xFF18A0FB));
+
       rendered = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
           widget.onNodeSelected!(id);
         },
         child: isSelected
-            ? Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppTheme.brandEmerald500, width: 2),
-                  borderRadius: BorderRadius.circular(radius),
-                ),
-                child: rendered,
+            ? Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  rendered,
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(radius),
+                          color: highlightColor.withOpacity(0.08),
+                          border: Border.all(
+                            color: isDark ? Colors.black : Colors.white,
+                            width: 3.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        margin: const EdgeInsets.all(1.75),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(radius > 1.75 ? radius - 1.75 : 0),
+                          border: Border.all(
+                            color: highlightColor,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               )
             : rendered,
       );

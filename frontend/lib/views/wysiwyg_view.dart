@@ -27,17 +27,42 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
   String? _selectedNodeId;
   final Set<String> _expandedGroupIds = {'root', 'hero_section', 'featured_section', 'spec_tabs_section', 'footer_section'};
 
+  // Left Pane Accordions & Category States
+  bool _isLayersTreeExpanded = true;
+  bool _isComponentLibraryExpanded = true;
+  final Set<String> _expandedLibraryGroups = {'ESSENTIALS'};
+
+  // Dynamic Viewport Size Caching (for zoom presets)
+  double _lastViewportWidth = 1000;
+  double _lastViewportHeight = 600;
+  final GlobalKey _previewContentKey = GlobalKey();
+
   // Figma Parity States
   String _selectedPage = 'home'; // 'home', 'pdp', 'checkout', 'cart', or custom
   double _zoomScale = 1.0;
   final List<String> _colorPresets = ['#0D9488', '#0F172A', '#6366F1', '#F43F5E', '#F59E0B'];
   final FocusNode _keyboardFocusNode = FocusNode();
 
+  // Zoom Textfield Editing
+  late TextEditingController _zoomTextController;
+  late FocusNode _zoomFocusNode;
+  bool _isEditingZoom = false;
+  bool _isDraggingComponent = false;
+  bool _isLeftRibbonHovered = false;
+  bool _isRightRibbonHovered = false;
+
   String get _selectedPageSlotKey => _selectedPage == 'home' ? 'layout' : 'layout_$_selectedPage';
 
   @override
   void initState() {
     super.initState();
+    _zoomTextController = TextEditingController();
+    _zoomFocusNode = FocusNode();
+    _zoomFocusNode.addListener(() {
+      if (!_zoomFocusNode.hasFocus && _isEditingZoom) {
+        _submitZoomValue(_zoomTextController.text);
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _keyboardFocusNode.requestFocus();
     });
@@ -45,8 +70,61 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
 
   @override
   void dispose() {
+    _zoomTextController.dispose();
+    _zoomFocusNode.dispose();
     _keyboardFocusNode.dispose();
     super.dispose();
+  }
+
+  void _submitZoomValue(String text) {
+    final clean = text.replaceAll('%', '').trim();
+    final parsed = double.tryParse(clean);
+    if (parsed != null && parsed > 0) {
+      setState(() {
+        _zoomScale = (parsed / 100.0).clamp(0.1, 3.0);
+        _isEditingZoom = false;
+      });
+    } else {
+      setState(() {
+        _isEditingZoom = false;
+      });
+    }
+  }
+
+  void _addComponentToSelectedOrRoot(Map<String, dynamic> childTemplate) {
+    final themeConfig = ref.read(activeThemeConfigProvider).value;
+    if (themeConfig == null) return;
+
+    final layout = _getLayoutTree(themeConfig);
+    final copiedTree = _deepCopyMap(layout);
+
+    String targetParentId = 'root';
+    if (_selectedNodeId != null) {
+      final selectedNode = _findNodeInTree(copiedTree, _selectedNodeId!);
+      if (selectedNode != null) {
+        final type = selectedNode['type'] ?? '';
+        final isContainer = ['flexRow', 'flexCol', 'grid', 'stack'].contains(type);
+        if (isContainer) {
+          targetParentId = _selectedNodeId!;
+        }
+      }
+    }
+
+    final newId = '${childTemplate['type']}_${DateTime.now().microsecondsSinceEpoch}';
+    final nodeToInsert = _deepCopyMap(childTemplate);
+    nodeToInsert['id'] = newId;
+
+    _insertNodeIntoTree(copiedTree, targetParentId, 9999, nodeToInsert);
+
+    setState(() {
+      _selectedNodeId = newId;
+      _expandedGroupIds.add(targetParentId);
+    });
+
+    ref.read(activeThemeConfigProvider.notifier).updateSlots(
+      {_selectedPageSlotKey: copiedTree},
+      editKey: 'layout_add_click',
+    );
   }
 
   @override
@@ -157,26 +235,47 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
   }
 
   Widget _buildLeftCollapseRibbon(ThemeData theme, bool isDark) {
-    return GestureDetector(
-      onTap: () => setState(() => _isLeftCollapsed = !_isLeftCollapsed),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Container(
+    final hoverColor = AppTheme.brandEmerald500.withOpacity(isDark ? 0.3 : 0.15);
+    final normalColor = isDark ? const Color(0xFF0F172A) : Colors.white;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isLeftRibbonHovered = true),
+      onExit: (_) => setState(() => _isLeftRibbonHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => setState(() => _isLeftCollapsed = !_isLeftCollapsed),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
           width: 16,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            color: _isLeftRibbonHovered ? hoverColor : normalColor,
             border: Border(
               right: BorderSide(color: theme.dividerColor),
               left: BorderSide(color: theme.dividerColor),
             ),
           ),
-          child: Center(
-            child: Icon(
-              _isLeftCollapsed ? LucideIcons.chevronRight : LucideIcons.chevronLeft,
-              size: 10,
-              color: AppTheme.brandEmerald500,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 4,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: _isLeftRibbonHovered 
+                      ? AppTheme.brandEmerald500 
+                      : theme.hintColor.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Icon(
+                _isLeftCollapsed ? LucideIcons.chevronRight : LucideIcons.chevronLeft,
+                size: 10,
+                color: _isLeftRibbonHovered ? AppTheme.brandEmerald500 : theme.hintColor.withOpacity(0.6),
+              ),
+            ],
           ),
         ),
       ),
@@ -184,26 +283,47 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
   }
 
   Widget _buildRightCollapseRibbon(ThemeData theme, bool isDark) {
-    return GestureDetector(
-      onTap: () => setState(() => _isRightCollapsed = !_isRightCollapsed),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Container(
+    final hoverColor = AppTheme.brandEmerald500.withOpacity(isDark ? 0.3 : 0.15);
+    final normalColor = isDark ? const Color(0xFF0F172A) : Colors.white;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isRightRibbonHovered = true),
+      onExit: (_) => setState(() => _isRightRibbonHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => setState(() => _isRightCollapsed = !_isRightCollapsed),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
           width: 16,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            color: _isRightRibbonHovered ? hoverColor : normalColor,
             border: Border(
               left: BorderSide(color: theme.dividerColor),
               right: BorderSide(color: theme.dividerColor),
             ),
           ),
-          child: Center(
-            child: Icon(
-              _isRightCollapsed ? LucideIcons.chevronLeft : LucideIcons.chevronRight,
-              size: 10,
-              color: AppTheme.brandEmerald500,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 4,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: _isRightRibbonHovered 
+                      ? AppTheme.brandEmerald500 
+                      : theme.hintColor.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Icon(
+                _isRightCollapsed ? LucideIcons.chevronLeft : LucideIcons.chevronRight,
+                size: 10,
+                color: _isRightRibbonHovered ? AppTheme.brandEmerald500 : theme.hintColor.withOpacity(0.6),
+              ),
+            ],
           ),
         ),
       ),
@@ -234,24 +354,36 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Static macOS window controls
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(width: 12, height: 12, decoration: const BoxDecoration(color: Color(0xFFEF4444), shape: BoxShape.circle)),
-                      const SizedBox(width: 6),
-                      Container(width: 12, height: 12, decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle)),
-                      const SizedBox(width: 6),
-                      Container(width: 12, height: 12, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                  
                   HoverScale(
                     child: IconButton(
                       icon: const Icon(LucideIcons.x, size: 20),
                       onPressed: () => Navigator.of(context).pop(),
                       tooltip: 'Exit Editor',
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  HoverScale(
+                    child: IconButton(
+                      icon: const Icon(LucideIcons.save, size: 20),
+                      onPressed: () => _handlePublish(),
+                      tooltip: 'Save & Publish',
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  HoverScale(
+                    child: IconButton(
+                      icon: const Icon(LucideIcons.undo, size: 18),
+                      onPressed: notifier.canUndo ? () => notifier.undo() : null,
+                      tooltip: 'Undo',
+                      color: notifier.canUndo ? theme.colorScheme.onSurface : theme.hintColor.withOpacity(0.3),
+                    ),
+                  ),
+                  HoverScale(
+                    child: IconButton(
+                      icon: const Icon(LucideIcons.redo, size: 18),
+                      onPressed: notifier.canRedo ? () => notifier.redo() : null,
+                      tooltip: 'Redo',
+                      color: notifier.canRedo ? theme.colorScheme.onSurface : theme.hintColor.withOpacity(0.3),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -335,40 +467,119 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: const Icon(LucideIcons.minus, size: 14),
-                            onPressed: _zoomScale > 0.5 ? () => setState(() => _zoomScale -= 0.1) : null,
+                          HoverScale(
+                            child: IconButton(
+                              icon: const Icon(LucideIcons.minus, size: 14),
+                              tooltip: 'Zoom Out',
+                              onPressed: _zoomScale > 0.5 ? () => setState(() => _zoomScale -= 0.1) : null,
+                            ),
                           ),
-                          Text(
-                            '${(_zoomScale * 100).toStringAsFixed(0)}%',
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                          IconButton(
-                            icon: const Icon(LucideIcons.plus, size: 14),
-                            onPressed: _zoomScale < 1.5 ? () => setState(() => _zoomScale += 0.1) : null,
+                          const SizedBox(width: 4),
+                          _isEditingZoom
+                              ? SizedBox(
+                                  width: 60,
+                                  child: TextField(
+                                    controller: _zoomTextController,
+                                    focusNode: _zoomFocusNode,
+                                    keyboardType: TextInputType.text,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.onSurface,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                                      filled: true,
+                                      fillColor: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: const BorderSide(color: AppTheme.brandEmerald500, width: 1),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: const BorderSide(color: AppTheme.brandEmerald500, width: 1.5),
+                                      ),
+                                    ),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9%]')),
+                                    ],
+                                    onSubmitted: _submitZoomValue,
+                                  ),
+                                )
+                              : MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _isEditingZoom = true;
+                                        _zoomTextController.text = '${(_zoomScale * 100).toStringAsFixed(0)}%';
+                                      });
+                                      _zoomFocusNode.requestFocus();
+                                      _zoomTextController.selection = TextSelection(
+                                        baseOffset: 0,
+                                        extentOffset: _zoomTextController.text.length,
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(4),
+                                        color: Colors.transparent,
+                                      ),
+                                      child: Text(
+                                        '${(_zoomScale * 100).toStringAsFixed(0)}%',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.brandEmerald500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                          const SizedBox(width: 4),
+                          HoverScale(
+                            child: IconButton(
+                              icon: const Icon(LucideIcons.plus, size: 14),
+                              tooltip: 'Zoom In',
+                              onPressed: _zoomScale < 1.5 ? () => setState(() => _zoomScale += 0.1) : null,
+                            ),
                           ),
                         ],
                       ),
+                      const SizedBox(width: 12),
+                      HoverScale(
+                        child: IconButton(
+                          icon: const Icon(LucideIcons.expand, size: 16),
+                          tooltip: 'Fit Width',
+                          onPressed: () {
+                            final contentWidth = _isMobile ? 380.0 : 1200.0;
+                            _zoomFitWidth(_lastViewportWidth, contentWidth);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      HoverScale(
+                        child: IconButton(
+                          icon: const Icon(LucideIcons.maximize, size: 16),
+                          tooltip: 'Fit Height',
+                          onPressed: () => _zoomFitHeight(_lastViewportHeight),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      HoverScale(
+                        child: IconButton(
+                          icon: const Icon(LucideIcons.monitor, size: 16),
+                          tooltip: 'Full Page',
+                          onPressed: () {
+                            final contentWidth = _isMobile ? 380.0 : 1200.0;
+                            _zoomFullPage(_lastViewportWidth, _lastViewportHeight, contentWidth);
+                          },
+                        ),
+                      ),
                       const SizedBox(width: 24),
-
-                      // Undo/Redo Buttons
-                      HoverScale(
-                        child: IconButton(
-                          icon: const Icon(LucideIcons.undo, size: 18),
-                          onPressed: notifier.canUndo ? () => notifier.undo() : null,
-                          tooltip: 'Undo',
-                          color: notifier.canUndo ? theme.colorScheme.onSurface : theme.hintColor.withOpacity(0.3),
-                        ),
-                      ),
-                      HoverScale(
-                        child: IconButton(
-                          icon: const Icon(LucideIcons.redo, size: 18),
-                          onPressed: notifier.canRedo ? () => notifier.redo() : null,
-                          tooltip: 'Redo',
-                          color: notifier.canRedo ? theme.colorScheme.onSurface : theme.hintColor.withOpacity(0.3),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
 
                       // Fullscreen Preview Tab
                       HoverScale(
@@ -522,6 +733,46 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     );
   }
 
+  void _zoomFitWidth(double viewportWidth, double contentWidth) {
+    setState(() {
+      _zoomScale = (viewportWidth / contentWidth).clamp(0.1, 3.0);
+    });
+  }
+
+  void _zoomFitHeight(double viewportHeight) {
+    final renderBox = _previewContentKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final contentHeight = renderBox.size.height;
+      if (contentHeight > 0) {
+        setState(() {
+          _zoomScale = (viewportHeight / contentHeight).clamp(0.1, 3.0);
+        });
+        return;
+      }
+    }
+    setState(() {
+      _zoomScale = (viewportHeight / 1000.0).clamp(0.1, 3.0);
+    });
+  }
+
+  void _zoomFullPage(double viewportWidth, double viewportHeight, double contentWidth) {
+    final renderBox = _previewContentKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final contentHeight = renderBox.size.height;
+      if (contentHeight > 0) {
+        final fitWidthScale = viewportWidth / contentWidth;
+        final fitHeightScale = viewportHeight / contentHeight;
+        setState(() {
+          _zoomScale = (fitWidthScale < fitHeightScale ? fitWidthScale : fitHeightScale).clamp(0.1, 3.0);
+        });
+        return;
+      }
+    }
+    setState(() {
+      _zoomScale = (viewportWidth / contentWidth).clamp(0.1, 3.0);
+    });
+  }
+
   Widget _buildDeviceToggle(ThemeData theme, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(4),
@@ -564,36 +815,57 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         border: Border(right: BorderSide(color: theme.dividerColor)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                const Icon(LucideIcons.layers, size: 16, color: AppTheme.brandEmerald500),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Layers Tree',
-                    style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 1. Layers Tree Accordion Header
+            _AccordionHeaderTile(
+              title: 'Layers Tree',
+              icon: LucideIcons.layers,
+              isExpanded: _isLayersTreeExpanded,
+              onTap: () => setState(() => _isLayersTreeExpanded = !_isLayersTreeExpanded),
+              theme: theme,
+              isDark: isDark,
+            ),
+            
+            // 2. Layers Tree Content
+            if (_isLayersTreeExpanded)
+              Container(
+                constraints: const BoxConstraints(maxHeight: 400),
+                margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B).withOpacity(0.2) : const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(4.0),
+                    children: [
+                      _buildComponentTree(layout, theme, isDark),
+                    ],
                   ),
                 ),
-              ],
+              ),
+
+            // 3. Component Library Accordion Header
+            _AccordionHeaderTile(
+              title: 'Component Library',
+              icon: LucideIcons.plusCircle,
+              isExpanded: _isComponentLibraryExpanded,
+              onTap: () => setState(() => _isComponentLibraryExpanded = !_isComponentLibraryExpanded),
+              theme: theme,
+              isDark: isDark,
             ),
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              children: [
-                _buildComponentTree(layout, theme, isDark),
-              ],
-            ),
-          ),
-          _buildComponentLibrary(theme, isDark),
-        ],
+
+            // 4. Component Library Content
+            if (_isComponentLibraryExpanded)
+              _buildComponentLibraryInline(theme, isDark),
+          ],
+        ),
       ),
     );
   }
@@ -614,7 +886,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     Widget itemContent = Material(
       color: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected
               ? AppTheme.brandEmerald500.withOpacity(isDark ? 0.2 : 0.1)
@@ -695,7 +967,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     if (isContainer && children.isNotEmpty) {
       final isExpanded = _expandedGroupIds.contains(id);
       return Container(
-        margin: const EdgeInsets.only(bottom: 6),
+        margin: const EdgeInsets.only(bottom: 4),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B).withOpacity(0.1) : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(8),
@@ -732,7 +1004,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             ),
             if (isExpanded)
               Padding(
-                padding: const EdgeInsets.only(left: 14, right: 6, bottom: 6),
+                padding: const EdgeInsets.only(left: 8, right: 4, bottom: 4),
                 child: Column(
                   children: children
                       .map((child) => child is Map<String, dynamic>
@@ -747,12 +1019,12 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.only(bottom: 2),
       child: itemContent,
     );
   }
 
-  Widget _buildComponentLibrary(ThemeData theme, bool isDark) {
+  Widget _buildComponentLibraryInline(ThemeData theme, bool isDark) {
     final Map<String, List<Map<String, dynamic>>> groups = {
       'ESSENTIALS': [
         {
@@ -1072,112 +1344,104 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
       ]
     };
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
-        border: Border(top: BorderSide(color: theme.dividerColor)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                const Icon(LucideIcons.plusCircle, size: 14, color: AppTheme.brandEmerald500),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Component Library',
-                    style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 180,
-            child: ListView(
-              children: groups.entries.map((entry) {
-                final groupName = entry.key;
-                final primitivesList = entry.value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: groups.entries.map((entry) {
+        final groupName = entry.key;
+        final primitivesList = entry.value;
+        final isExpanded = _expandedLibraryGroups.contains(groupName);
 
-                 return Material(
-                  color: Colors.transparent,
-                  child: ExpansionTile(
-                    dense: true,
-                    title: Text(
-                      groupName,
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: theme.hintColor),
-                    ),
-                    children: [
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 6,
-                          mainAxisSpacing: 6,
-                          childAspectRatio: 1.1,
-                        ),
-                        itemCount: primitivesList.length,
-                        itemBuilder: (context, idx) {
-                          final prim = primitivesList[idx];
-                          final data = prim['data'] as Map<String, dynamic>;
-                          return Draggable<Map<String, dynamic>>(
-                            data: data,
-                            feedback: Material(
-                              color: Colors.transparent,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.brandEmerald500.withOpacity(0.9),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  prim['label'],
-                                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.grab,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: theme.dividerColor),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(prim['icon'], size: 14, color: theme.hintColor),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      prim['label'],
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _LibraryGroupHeaderTile(
+              title: groupName,
+              isExpanded: isExpanded,
+              onTap: () {
+                setState(() {
+                  if (isExpanded) {
+                    _expandedLibraryGroups.remove(groupName);
+                  } else {
+                    _expandedLibraryGroups.add(groupName);
+                  }
+                });
+              },
+              theme: theme,
+              isDark: isDark,
             ),
-          ),
-        ],
-      ),
+            AnimatedCrossFade(
+              firstChild: const SizedBox(width: double.infinity),
+              secondChild: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                    childAspectRatio: 1.1,
+                  ),
+                  itemCount: primitivesList.length,
+                  itemBuilder: (context, idx) {
+                    final prim = primitivesList[idx];
+                    final data = prim['data'] as Map<String, dynamic>;
+                    return GestureDetector(
+                      onDoubleTap: () => _addComponentToSelectedOrRoot(data),
+                      child: Draggable<Map<String, dynamic>>(
+                        data: data,
+                        onDragStarted: () => setState(() => _isDraggingComponent = true),
+                        onDragEnd: (_) => setState(() => _isDraggingComponent = false),
+                        onDraggableCanceled: (_, __) => setState(() => _isDraggingComponent = false),
+                        feedback: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppTheme.brandEmerald500.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              prim['label'],
+                              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.grab,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: theme.dividerColor),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(prim['icon'], size: 14, color: theme.hintColor),
+                                const SizedBox(height: 2),
+                                Text(
+                                  prim['label'],
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              crossFadeState: isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 200),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 
@@ -1225,10 +1489,10 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
       final bgShader = config.draftTokens['bg_shader'] ?? 'wave';
 
       return ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.only(bottom: 16),
             child: Text(
               'Canvas Settings',
               style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -1290,13 +1554,13 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                   isToken: true,
                 ),
                 const SizedBox(height: 12),
-                _buildSliderTileToken(
+                _buildTokenSpinInput(
                   label: 'Image Opacity',
                   key: 'bg_image_opacity',
                   value: bgImgOpacity,
                   min: 0.0,
                   max: 1.0,
-                  divisions: 10,
+                  step: 0.1,
                 ),
               ] else if (bgType == 'shader') ...[
                 _buildSlotDropdown(
@@ -1310,7 +1574,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
               ],
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           
           _buildConfigGroup(
             title: 'Global Design Tokens',
@@ -1323,14 +1587,16 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
               const SizedBox(height: 12),
               _colorPickerTile('Brand Secondary Color', 'secondary', config.draftTokens['secondary'], theme),
               _buildColorSwatchesRow('secondary', config.draftTokens['secondary'], '', isToken: true, tokenKey: 'secondary'),
+              const SizedBox(height: 12),
+              _colorPickerTile('Selection Highlight', 'highlight_color', config.draftTokens['highlight_color'] ?? '#18A0FB', theme),
+              _buildColorSwatchesRow('highlight_color', config.draftTokens['highlight_color'] ?? '#18A0FB', '', isToken: true, tokenKey: 'highlight_color'),
               const Divider(),
-              _buildSliderTileToken(
+              _buildTokenSpinInput(
                 label: 'Global Border Radius',
                 key: 'border_radius',
                 value: _parseDouble(config.draftTokens['border_radius'], 12.0),
                 min: 0.0,
                 max: 32.0,
-                divisions: 8,
               ),
             ],
           ),
@@ -1341,7 +1607,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     final selectedNode = _findNodeInTree(layout, _selectedNodeId!);
     if (selectedNode == null) {
       return ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
         children: [
           Text('Node $_selectedNodeId not found', style: const TextStyle(color: Colors.redAccent)),
         ],
@@ -1351,15 +1617,16 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     final type = selectedNode['type'] ?? '';
     final props = selectedNode['properties'] ?? {};
     final style = selectedNode['style'] ?? {};
+    final nodeId = selectedNode['id'] ?? '';
 
     final isAbsolute = props['position'] == 'absolute';
 
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(12),
       children: [
         // Node Header
         Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             children: [
               Icon(_getNodeIcon(type), size: 16, color: AppTheme.brandEmerald500),
@@ -1367,7 +1634,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
               Expanded(
                 child: Text(
                   _getFriendlyNodeName(selectedNode),
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1384,23 +1651,22 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         // Absolute geometry section
         if (isAbsolute) ...[
           _buildAbsolutePositionFields(selectedNode, theme),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
         ],
 
         if (type == 'text') ...[
           _buildNodeTextEditor('Text Content', selectedNode, 'value', theme),
-          const SizedBox(height: 16),
-          _buildNodeSliderTile(
+          const SizedBox(height: 12),
+          _buildNodeSpinInput(
             label: 'Font Size',
             node: selectedNode,
             propKey: 'font_size',
             value: _parseDouble(style['font_size'], 14.0),
             min: 8.0,
             max: 72.0,
-            divisions: 32,
             isStyle: true,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeDropdown(
             label: 'Font Weight',
             node: selectedNode,
@@ -1410,7 +1676,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             theme: theme,
             isStyle: true,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeDropdown(
             label: 'Alignment',
             node: selectedNode,
@@ -1420,7 +1686,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             theme: theme,
             isStyle: true,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeColorPickerTile(
             label: 'Text Color',
             node: selectedNode,
@@ -1431,7 +1697,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
           ),
         ] else if (type == 'button') ...[
           _buildNodeTextEditor('Button Label', selectedNode, 'value', theme),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeColorPickerTile(
             label: 'Background Color',
             node: selectedNode,
@@ -1440,20 +1706,19 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             theme: theme,
             isStyle: true,
           ),
-          const SizedBox(height: 16),
-          _buildNodeSliderTile(
+          const SizedBox(height: 12),
+          _buildNodeSpinInput(
             label: 'Corner Radius',
             node: selectedNode,
             propKey: 'border_radius',
             value: _parseDouble(style['border_radius'], 8.0),
             min: 0.0,
             max: 24.0,
-            divisions: 12,
             isStyle: true,
           ),
         ] else if (type == 'product_card') ...[
           _buildNodeTextEditor('Product Name', selectedNode, 'product_name', theme),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeTextEditor('Price Tag', selectedNode, 'price', theme),
         ] else if (type == 'icon') ...[
           _buildNodeDropdown(
@@ -1464,7 +1729,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             options: ['store', 'shoppingBag', 'package'],
             theme: theme,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeColorPickerTile(
             label: 'Icon Color',
             node: selectedNode,
@@ -1473,24 +1738,22 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             theme: theme,
           ),
         ] else if (type == 'grid') ...[
-          _buildNodeSliderTile(
+          _buildNodeSpinInput(
             label: 'Columns Count',
             node: selectedNode,
             propKey: 'columns',
             value: _parseDouble(props['columns'], 3.0),
             min: 1.0,
             max: 6.0,
-            divisions: 5,
           ),
-          const SizedBox(height: 16),
-          _buildNodeSliderTile(
+          const SizedBox(height: 12),
+          _buildNodeSpinInput(
             label: 'Grid Spacing',
             node: selectedNode,
             propKey: 'spacing',
             value: _parseDouble(props['spacing'], 16.0),
             min: 0.0,
             max: 48.0,
-            divisions: 12,
           ),
         ] else if (['flexRow', 'flexCol'].contains(type)) ...[
           _buildNodeDropdown(
@@ -1501,64 +1764,95 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             options: ['flex', 'absolute'],
             theme: theme,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           if (props['layout_mode'] != 'absolute') ...[
             _buildFigmaAlignmentSelector(selectedNode, theme),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
           ],
           // Individual Margins/Paddings
-          const Text('Margins & Padding', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text('Padding', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          _buildNodeSliderTile(
-            label: 'Padding Left',
-            node: selectedNode,
-            propKey: 'padding_left',
-            value: _parseDouble(props['padding_left'], 0.0),
-            min: 0.0,
-            max: 64.0,
-            divisions: 16,
+          Row(
+            children: [
+              Expanded(
+                child: CompactSpinInput(
+                  label: 'L',
+                  value: _parseDouble(props['padding_left'], 0.0),
+                  min: 0.0,
+                  max: 128.0,
+                  onChanged: (val) {
+                    final themeConfig = ref.read(activeThemeConfigProvider).value;
+                    if (themeConfig == null) return;
+                    final layout = _getLayoutTree(themeConfig);
+                    final copiedTree = _deepCopyMap(layout);
+                    _updateNodeProperty(copiedTree, nodeId, 'padding_left', val);
+                    ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copiedTree}, editKey: nodeId);
+                  },
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: CompactSpinInput(
+                  label: 'R',
+                  value: _parseDouble(props['padding_right'], 0.0),
+                  min: 0.0,
+                  max: 128.0,
+                  onChanged: (val) {
+                    final themeConfig = ref.read(activeThemeConfigProvider).value;
+                    if (themeConfig == null) return;
+                    final layout = _getLayoutTree(themeConfig);
+                    final copiedTree = _deepCopyMap(layout);
+                    _updateNodeProperty(copiedTree, nodeId, 'padding_right', val);
+                    ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copiedTree}, editKey: nodeId);
+                  },
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: CompactSpinInput(
+                  label: 'T',
+                  value: _parseDouble(props['padding_top'], 0.0),
+                  min: 0.0,
+                  max: 128.0,
+                  onChanged: (val) {
+                    final themeConfig = ref.read(activeThemeConfigProvider).value;
+                    if (themeConfig == null) return;
+                    final layout = _getLayoutTree(themeConfig);
+                    final copiedTree = _deepCopyMap(layout);
+                    _updateNodeProperty(copiedTree, nodeId, 'padding_top', val);
+                    ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copiedTree}, editKey: nodeId);
+                  },
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: CompactSpinInput(
+                  label: 'B',
+                  value: _parseDouble(props['padding_bottom'], 0.0),
+                  min: 0.0,
+                  max: 128.0,
+                  onChanged: (val) {
+                    final themeConfig = ref.read(activeThemeConfigProvider).value;
+                    if (themeConfig == null) return;
+                    final layout = _getLayoutTree(themeConfig);
+                    final copiedTree = _deepCopyMap(layout);
+                    _updateNodeProperty(copiedTree, nodeId, 'padding_bottom', val);
+                    ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copiedTree}, editKey: nodeId);
+                  },
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          _buildNodeSliderTile(
-            label: 'Padding Right',
-            node: selectedNode,
-            propKey: 'padding_right',
-            value: _parseDouble(props['padding_right'], 0.0),
-            min: 0.0,
-            max: 64.0,
-            divisions: 16,
-          ),
-          const SizedBox(height: 8),
-          _buildNodeSliderTile(
-            label: 'Padding Top',
-            node: selectedNode,
-            propKey: 'padding_top',
-            value: _parseDouble(props['padding_top'], 0.0),
-            min: 0.0,
-            max: 64.0,
-            divisions: 16,
-          ),
-          const SizedBox(height: 8),
-          _buildNodeSliderTile(
-            label: 'Padding Bottom',
-            node: selectedNode,
-            propKey: 'padding_bottom',
-            value: _parseDouble(props['padding_bottom'], 0.0),
-            min: 0.0,
-            max: 64.0,
-            divisions: 16,
-          ),
-          const SizedBox(height: 16),
-          _buildNodeSliderTile(
+          const SizedBox(height: 12),
+          _buildNodeSpinInput(
             label: 'Child Spacing',
             node: selectedNode,
             propKey: 'spacing',
             value: _parseDouble(props['spacing'], 0.0),
             min: 0.0,
             max: 48.0,
-            divisions: 12,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeDropdown(
             label: 'Border Outline Style',
             node: selectedNode,
@@ -1567,7 +1861,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             options: ['none', 'solid'],
             theme: theme,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeColorPickerTile(
             label: 'Border Color',
             node: selectedNode,
@@ -1575,27 +1869,26 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             hex: props['border_color'],
             theme: theme,
           ),
-          const SizedBox(height: 16),
-          _buildNodeSliderTile(
+          const SizedBox(height: 12),
+          _buildNodeSpinInput(
             label: 'Outline Stroke Width',
             node: selectedNode,
             propKey: 'stroke_width',
             value: _parseDouble(props['stroke_width'], 1.0),
             min: 0.5,
             max: 5.0,
-            divisions: 9,
+            step: 0.5,
           ),
-          const SizedBox(height: 16),
-          _buildNodeSliderTile(
+          const SizedBox(height: 12),
+          _buildNodeSpinInput(
             label: 'Shadow Elevation Depth',
             node: selectedNode,
             propKey: 'elevation',
             value: _parseDouble(props['elevation'], 0.0),
             min: 0.0,
             max: 8.0,
-            divisions: 8,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeColorPickerTile(
             label: 'Background Color',
             node: selectedNode,
@@ -1603,7 +1896,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             hex: props['background_color'],
             theme: theme,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNodeDropdown(
             label: 'Dynamic Fragment Shader',
             node: selectedNode,
@@ -1613,17 +1906,16 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
             theme: theme,
           ),
         ] else if (type == 'spacer') ...[
-          _buildNodeSliderTile(
+          _buildNodeSpinInput(
             label: 'Spacer Height',
             node: selectedNode,
             propKey: 'height',
             value: _parseDouble(props['height'], 24.0),
             min: 4.0,
             max: 200.0,
-            divisions: 49,
           ),
         ] else ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             'This component (${type.toUpperCase()}) does not expose custom visual properties.',
             style: TextStyle(color: theme.hintColor, fontStyle: FontStyle.italic),
@@ -1785,8 +2077,8 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     String? tokenKey,
   }) {
     return Container(
-      height: 36,
-      margin: const EdgeInsets.only(top: 8),
+      height: 24,
+      margin: const EdgeInsets.only(top: 4),
       child: Row(
         children: [
           Expanded(
@@ -1812,15 +2104,15 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                     }
                   },
                   child: Container(
-                    width: 24,
-                    height: 24,
+                    width: 16,
+                    height: 16,
                     margin: const EdgeInsets.only(right: 6),
                     decoration: BoxDecoration(
                       color: presetColor,
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isSelected ? AppTheme.brandEmerald500 : Colors.grey.withOpacity(0.3),
-                        width: isSelected ? 2.5 : 1,
+                        width: isSelected ? 2.0 : 1,
                       ),
                     ),
                   ),
@@ -1830,7 +2122,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
           ),
           if (currentHex != null && !_colorPresets.contains(currentHex))
             IconButton(
-              icon: const Icon(LucideIcons.plusCircle, size: 18, color: AppTheme.brandEmerald500),
+              icon: const Icon(LucideIcons.plusCircle, size: 14, color: AppTheme.brandEmerald500),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               onPressed: () {
@@ -1860,26 +2152,27 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 11,
             color: theme.hintColor,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         TextField(
           controller: TextEditingController(text: currentValue)
             ..selection = TextSelection.collapsed(offset: currentValue.length),
-          style: const TextStyle(fontSize: 13),
+          style: const TextStyle(fontSize: 12),
           decoration: InputDecoration(
             isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             filled: true,
             fillColor: theme.scaffoldBackgroundColor,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: theme.dividerColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               borderSide: const BorderSide(color: AppTheme.brandEmerald500),
             ),
           ),
@@ -1963,19 +2256,19 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 11,
             color: theme.hintColor,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         DropdownButtonFormField<String>(
           value: options.contains(value) ? value : options.first,
           items: options
               .map(
                 (opt) => DropdownMenuItem(
                   value: opt,
-                  child: Text(opt, style: const TextStyle(fontSize: 13)),
+                  child: Text(opt, style: const TextStyle(fontSize: 12)),
                 ),
               )
               .toList(),
@@ -1991,10 +2284,11 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
           },
           decoration: InputDecoration(
             isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             filled: true,
             fillColor: theme.scaffoldBackgroundColor,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: theme.dividerColor),
             ),
           ),
@@ -2195,26 +2489,27 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 11,
             color: theme.hintColor,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         TextField(
           controller: TextEditingController(text: value)
             ..selection = TextSelection.collapsed(offset: value?.length ?? 0),
-          style: const TextStyle(fontSize: 13),
+          style: const TextStyle(fontSize: 12),
           decoration: InputDecoration(
             isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             filled: true,
             fillColor: theme.scaffoldBackgroundColor,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: theme.dividerColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               borderSide: const BorderSide(color: AppTheme.brandEmerald500),
             ),
           ),
@@ -2244,19 +2539,19 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 11,
             color: theme.hintColor,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         DropdownButtonFormField<String>(
           value: options.contains(value) ? value : options.first,
           items: options
               .map(
                 (opt) => DropdownMenuItem(
                   value: opt,
-                  child: Text(opt, style: const TextStyle(fontSize: 13)),
+                  child: Text(opt, style: const TextStyle(fontSize: 12)),
                 ),
               )
               .toList(),
@@ -2271,10 +2566,11 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
           },
           decoration: InputDecoration(
             isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             filled: true,
             fillColor: theme.scaffoldBackgroundColor,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: theme.dividerColor),
             ),
           ),
@@ -2288,60 +2584,91 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     ThemeData theme,
     bool isDark,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      alignment: Alignment.center,
-      child: configAsync.when(
-        data: (config) {
-          final previewWidget = StorefrontPreview(
-            tokens: config?.draftTokens ?? {},
-            slots: config?.draftSlots ?? {},
-            isMobile: _isMobile,
-            previewState: _previewState,
-            selectedNodeId: _selectedNodeId,
-            page: _selectedPage,
-            onNodeSelected: (id) => setState(() => _selectedNodeId = id),
-            onNodeDropped: _handleNodeDropped,
-            onNodeMoved: (id, left, top) {
-              final tree = _getLayoutTree(config);
-              final copied = _deepCopyMap(tree);
-              _updateNodeProperty(copied, id, 'left', left);
-              _updateNodeProperty(copied, id, 'top', top);
-              ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copied}, editKey: id);
-            },
-          );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double availableWidth = constraints.maxWidth;
+        final double availableHeight = constraints.maxHeight;
 
-          Widget wrappedCanvas;
-          if (_isMobile) {
-            wrappedCanvas = _buildMobilePhoneWrapper(
-              child: previewWidget,
-              isDark: isDark,
-              theme: theme,
-            );
-          } else {
-            wrappedCanvas = _buildBrowserWrapper(
-              child: previewWidget,
-              isDark: isDark,
-              theme: theme,
-            );
-          }
+        // Horizontal margin: 4px on each side -> subtract 8px
+        // Vertical margin: 16px on each side -> subtract 32px
+        final double safariWidth = (availableWidth - 8).clamp(300.0, double.infinity);
+        final double safariHeight = (availableHeight - 32).clamp(300.0, double.infinity);
 
-          // Apply Figma-Style Zoom transforms
-          return Center(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SingleChildScrollView(
-                child: Transform.scale(
-                  scale: _zoomScale,
-                  child: wrappedCanvas,
+        // Cache viewport sizes (excluding macOS window bar height of 53px)
+        _lastViewportWidth = safariWidth;
+        _lastViewportHeight = safariHeight - 53;
+
+        final double contentWidth = _isMobile ? 380.0 : 1200.0;
+
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          alignment: Alignment.center,
+          color: isDark ? const Color(0xFF090D16) : const Color(0xFFE2E8F0),
+          child: configAsync.when(
+            data: (config) {
+              final previewWidget = StorefrontPreview(
+                key: _previewContentKey,
+                tokens: config?.draftTokens ?? {},
+                slots: config?.draftSlots ?? {},
+                isMobile: _isMobile,
+                previewState: _previewState,
+                selectedNodeId: _selectedNodeId,
+                page: _selectedPage,
+                isDragging: _isDraggingComponent,
+                onNodeSelected: (id) => setState(() => _selectedNodeId = id),
+                onNodeDropped: _handleNodeDropped,
+                onNodeMoved: (id, left, top) {
+                  final tree = _getLayoutTree(config);
+                  final copied = _deepCopyMap(tree);
+                  _updateNodeProperty(copied, id, 'left', left);
+                  _updateNodeProperty(copied, id, 'top', top);
+                  ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copied}, editKey: id);
+                },
+              );
+
+              // Scrollable container wrapping the FittedBox which scales the preview
+              final Widget scaledContent = SingleChildScrollView(
+                child: Center(
+                  child: Container(
+                    width: contentWidth * _zoomScale,
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.topCenter,
+                      child: SizedBox(
+                        width: contentWidth,
+                        child: previewWidget,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500)),
-        error: (e, _) => Center(child: Text('Error: $e')),
-      ),
+              );
+
+              if (_isMobile) {
+                return Center(
+                  child: _buildMobilePhoneWrapper(
+                    child: scaledContent,
+                    isDark: isDark,
+                    theme: theme,
+                  ),
+                );
+              } else {
+                return Center(
+                  child: _buildBrowserWrapper(
+                    child: scaledContent,
+                    isDark: isDark,
+                    theme: theme,
+                    width: safariWidth,
+                    height: safariHeight,
+                  ),
+                );
+              }
+            },
+            loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500)),
+            error: (e, _) => Center(child: Text('Error: $e')),
+          ),
+        );
+      },
     );
   }
 
@@ -2349,10 +2676,12 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     required Widget child,
     required bool isDark,
     required ThemeData theme,
+    required double width,
+    required double height,
   }) {
     return Container(
-      width: 1000,
-      height: 700,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -2413,7 +2742,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
           Expanded(
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(bottom: Radius.circular(14)),
-              child: SingleChildScrollView(child: child),
+              child: child,
             ),
           ),
         ],
@@ -2458,7 +2787,7 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(28),
-              child: SingleChildScrollView(child: child),
+              child: child,
             ),
           ),
         ],
@@ -3197,6 +3526,54 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
     if (val is String) return double.tryParse(val) ?? fallback;
     return fallback;
   }
+
+  Widget _buildTokenSpinInput({
+    required String label,
+    required String key,
+    required double value,
+    required double min,
+    required double max,
+    double step = 1.0,
+  }) {
+    return CompactSpinInput(
+      label: label,
+      value: value,
+      min: min,
+      max: max,
+      step: step,
+      onChanged: (val) {
+        ref.read(activeThemeConfigProvider.notifier).updateLocalToken(key, val.toString());
+      },
+    );
+  }
+
+  Widget _buildNodeSpinInput({
+    required String label,
+    required Map<String, dynamic> node,
+    required String propKey,
+    required double value,
+    required double min,
+    required double max,
+    double step = 1.0,
+    bool isStyle = false,
+  }) {
+    final nodeId = node['id'] ?? '';
+    return CompactSpinInput(
+      label: label,
+      value: value,
+      min: min,
+      max: max,
+      step: step,
+      onChanged: (val) {
+        final themeConfig = ref.read(activeThemeConfigProvider).value;
+        if (themeConfig == null) return;
+        final layout = _getLayoutTree(themeConfig);
+        final copiedTree = _deepCopyMap(layout);
+        _updateNodeProperty(copiedTree, nodeId, propKey, val, isStyle: isStyle);
+        ref.read(activeThemeConfigProvider.notifier).updateSlots({_selectedPageSlotKey: copiedTree}, editKey: nodeId);
+      },
+    );
+  }
 }
 
 class WysiwygFullscreenPreview extends StatelessWidget {
@@ -3243,6 +3620,331 @@ class WysiwygFullscreenPreview extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AccordionHeaderTile extends StatefulWidget {
+  final String title;
+  final IconData icon;
+  final bool isExpanded;
+  final VoidCallback onTap;
+  final ThemeData theme;
+  final bool isDark;
+
+  const _AccordionHeaderTile({
+    required this.title,
+    required this.icon,
+    required this.isExpanded,
+    required this.onTap,
+    required this.theme,
+    required this.isDark,
+  });
+
+  @override
+  State<_AccordionHeaderTile> createState() => _AccordionHeaderTileState();
+}
+
+class _AccordionHeaderTileState extends State<_AccordionHeaderTile> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final activeBgColor = widget.theme.primaryColor.withOpacity(widget.isDark ? 0.15 : 0.08);
+    final hoverBgColor = widget.theme.primaryColor.withOpacity(widget.isDark ? 0.08 : 0.03);
+    final activeTextColor = widget.theme.primaryColor;
+    final inactiveTextColor = widget.isDark ? Colors.grey[300]! : Colors.grey[800]!;
+
+    final currentBgColor = widget.isExpanded
+        ? activeBgColor
+        : (_isHovered ? hoverBgColor : Colors.transparent);
+    final currentTextColor = widget.isExpanded
+        ? activeTextColor
+        : inactiveTextColor;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+          decoration: BoxDecoration(
+            color: currentBgColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: widget.isExpanded
+                  ? widget.theme.primaryColor.withOpacity(0.3)
+                  : widget.theme.dividerColor.withOpacity(0.1),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 4,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: widget.isExpanded ? widget.theme.primaryColor : Colors.transparent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(widget.icon, size: 16, color: currentTextColor),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: currentTextColor,
+                    fontWeight: widget.isExpanded ? FontWeight.bold : FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              Icon(
+                widget.isExpanded ? LucideIcons.chevronDown : LucideIcons.chevronRight,
+                size: 14,
+                color: currentTextColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LibraryGroupHeaderTile extends StatefulWidget {
+  final String title;
+  final bool isExpanded;
+  final VoidCallback onTap;
+  final ThemeData theme;
+  final bool isDark;
+
+  const _LibraryGroupHeaderTile({
+    required this.title,
+    required this.isExpanded,
+    required this.onTap,
+    required this.theme,
+    required this.isDark,
+  });
+
+  @override
+  State<_LibraryGroupHeaderTile> createState() => _LibraryGroupHeaderTileState();
+}
+
+class _LibraryGroupHeaderTileState extends State<_LibraryGroupHeaderTile> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final activeBgColor = widget.theme.primaryColor.withOpacity(widget.isDark ? 0.1 : 0.05);
+    final hoverBgColor = widget.theme.primaryColor.withOpacity(widget.isDark ? 0.05 : 0.02);
+    final activeTextColor = widget.theme.primaryColor;
+    final inactiveTextColor = widget.isDark ? Colors.grey[400]! : Colors.grey[700]!;
+
+    final currentBgColor = widget.isExpanded
+        ? activeBgColor
+        : (_isHovered ? hoverBgColor : Colors.transparent);
+    final currentTextColor = widget.isExpanded
+        ? activeTextColor
+        : inactiveTextColor;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+          decoration: BoxDecoration(
+            color: currentBgColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: widget.isExpanded
+                  ? widget.theme.primaryColor.withOpacity(0.2)
+                  : widget.theme.dividerColor.withOpacity(0.05),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: currentTextColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              Icon(
+                widget.isExpanded ? LucideIcons.chevronDown : LucideIcons.chevronRight,
+                size: 12,
+                color: currentTextColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CompactSpinInput extends StatefulWidget {
+  final String label;
+  final double value;
+  final double min;
+  final double max;
+  final ValueChanged<double> onChanged;
+  final double step;
+
+  const CompactSpinInput({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+    this.step = 1.0,
+  });
+
+  @override
+  State<CompactSpinInput> createState() => _CompactSpinInputState();
+}
+
+class _CompactSpinInputState extends State<CompactSpinInput> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value.toStringAsFixed(0));
+  }
+
+  @override
+  void didUpdateWidget(covariant CompactSpinInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value && !_controller.hasFocus) {
+      _controller.text = widget.value.toStringAsFixed(0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onSubmitted(String text) {
+    final clean = text.replaceAll(RegExp(r'[^0-9.-]'), '');
+    final parsed = double.tryParse(clean);
+    if (parsed != null) {
+      final clamped = parsed.clamp(widget.min, widget.max);
+      widget.onChanged(clamped);
+      _controller.text = clamped.toStringAsFixed(0);
+    } else {
+      _controller.text = widget.value.toStringAsFixed(0);
+    }
+  }
+
+  void _increment() {
+    final newValue = (widget.value + widget.step).clamp(widget.min, widget.max);
+    widget.onChanged(newValue);
+    _controller.text = newValue.toStringAsFixed(0);
+  }
+
+  void _decrement() {
+    final newValue = (widget.value - widget.step).clamp(widget.min, widget.max);
+    widget.onChanged(newValue);
+    _controller.text = newValue.toStringAsFixed(0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          widget.label,
+          style: TextStyle(
+            fontSize: 9, 
+            fontWeight: FontWeight.bold, 
+            color: theme.hintColor,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 2),
+        Container(
+          height: 28,
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: theme.dividerColor),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.-]')),
+                  ],
+                  style: const TextStyle(fontSize: 11),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                    border: InputBorder.none,
+                  ),
+                  onSubmitted: _onSubmitted,
+                  onTapOutside: (_) => _onSubmitted(_controller.text),
+                ),
+              ),
+              Container(
+                width: 16,
+                border: Border(left: BorderSide(color: theme.dividerColor)),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: _increment,
+                        child: Center(
+                          child: Icon(Icons.keyboard_arrow_up, size: 10, color: theme.hintColor),
+                        ),
+                      ),
+                    ),
+                    Divider(height: 1, color: theme.dividerColor),
+                    Expanded(
+                      child: InkWell(
+                        onTap: _decrement,
+                        child: Center(
+                          child: Icon(Icons.keyboard_arrow_down, size: 10, color: theme.hintColor),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
