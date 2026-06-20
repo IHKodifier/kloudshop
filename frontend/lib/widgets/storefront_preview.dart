@@ -522,10 +522,12 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
 
           contentWidget = Padding(
             padding: paddingEdgeInsets,
-            child: Row(
-              mainAxisAlignment: mainAlign,
-              crossAxisAlignment: crossAlign,
-              children: rowChildren,
+            child: IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: mainAlign,
+                crossAxisAlignment: crossAlign,
+                children: rowChildren,
+              ),
             ),
           );
           break;

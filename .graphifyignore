@@ -1,0 +1,13 @@
+
+*
+
+# Step 2: Un-ignore ONLY your important target directories
+!backend/
+!backend/**
+!frontend/
+!frontend/**
+!specifications/
+!specifications/**
+
+# Keep the core output configurations open
+!graphify-out/**
