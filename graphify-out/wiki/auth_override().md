@@ -106,8 +106,8 @@ sequenceDiagram
     participant P97 as test_import_conflict_custom_sku()
     participant P98 as Generates a live Google Shopping XML feed for the tenant.
     participant P99 as test_google_shopping_feed()
-    participant P100 as str
-    participant P101 as UserClaims
+    participant P100 as UserClaims
+    participant P101 as str
     participant P102 as B2BAccount
     participant P103 as Product
     participant P104 as PriceList
@@ -346,10 +346,10 @@ sequenceDiagram
     P98-->>- P2: return
     P2->>+ P99: calls
     P99-->>- P2: return
-    P1->>+ P100: calls
-    P100-->>- P1: return
     P1->>+ P0: calls
     P0-->>- P1: return
+    P1->>+ P100: calls
+    P100-->>- P1: return
     P1->>+ P101: calls
     P101-->>- P1: return
     P1->>+ P102: calls

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- [flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L1) (2 connections)
-- [handle_new_rx_page()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L7) (2 connections)
-- [__lldb_init_module()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L24) (1 connections)
-- [Intercept NOTIFY_DEBUGGER_ABOUT_RX_PAGES and touch the pages.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L8) (1 connections)
+- [test_ai.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L1) (3 connections)
+- [test_accept_variant()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L47) (1 connections)
+- [test_brand_voice_crud()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L8) (1 connections)
+- [test_generate_product_title()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L30) (1 connections)
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Flutter\ephemeral\flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_ai.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py)
 
 ## Audit Trail
 

@@ -4,11 +4,22 @@
 
 ## Key Concepts
 
-- [analytics.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (4 connections)
-- [AnalyticsOverview](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
-- [DataPoint](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
-- [NeedsAttention](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
-- [_toDouble](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
+- [RunnerTests](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L5) (4 connections)
+- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift#L1) (1 connections)
+- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L1) (1 connections)
+- [.testExample()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L7) (1 connections)
+- **XCTestCase** (1 connections)
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class RunnerTests {
+        +RunnerTests.swift()
+        +.testExample()
+        +RunnerTests.swift()
+    }
+```
 
 ## Relationships
 
@@ -16,7 +27,8 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\analytics.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift)
 
 ## Audit Trail
 

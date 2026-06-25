@@ -1,12 +1,12 @@
 # Community 33
 
-> 3 nodes · cohesion 0.67
+> 3 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- [track_event()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L8) (2 connections)
-- [Track an event for BigQuery sync.     In production, this would publish to Pub/](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L15) (1 connections)
-- [analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L1) (1 connections)
+- [fix_slugs.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L1) (2 connections)
+- [main()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L11) (2 connections)
+- [slugify()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L5) (2 connections)
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\scripts\fix_slugs.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py)
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

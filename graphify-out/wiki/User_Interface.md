@@ -4,17 +4,8 @@
 
 ## Key Concepts
 
-- [MainActivity.kt](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/kotlin/biz/kloudshop/kloudshop/MainActivity.kt#L1) (1 connections)
-- [MainActivity](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/kotlin/biz/kloudshop/kloudshop/MainActivity.kt#L5) (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class MainActivity {
-        +MainActivity.kt()
-    }
-```
+- [GpuPreference()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/dart_project.h#L14) (1 connections)
+- [dart_project.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/dart_project.h#L1) (1 connections)
 
 ## Relationships
 
@@ -22,7 +13,7 @@ classDiagram
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\android\app\src\main\kotlin\biz\kloudshop\kloudshop\MainActivity.kt](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/kotlin/biz/kloudshop/kloudshop/MainActivity.kt)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\dart_project.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/dart_project.h)
 
 ## Audit Trail
 

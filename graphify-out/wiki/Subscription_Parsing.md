@@ -4,18 +4,18 @@
 
 ## Key Concepts
 
-- [subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (3 connections)
-- [_parseStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
-- [_parseTier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
-- [SubscriptionModel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
+- [flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L1) (2 connections)
+- [handle_new_rx_page()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L7) (2 connections)
+- [__lldb_init_module()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L24) (1 connections)
+- [Intercept NOTIFY_DEBUGGER_ABOUT_RX_PAGES and touch the pages.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L8) (1 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 30]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Flutter\ephemeral\flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py)
 
 ## Audit Trail
 

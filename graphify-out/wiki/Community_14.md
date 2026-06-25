@@ -1,163 +1,57 @@
 # Community 14
 
-> 72 nodes · cohesion 0.07
+> 56 nodes · cohesion 0.05
 
 ## Key Concepts
 
-- [B2B Buyer places an order.     1. Validate Buyer Account     2. Calculate Tota](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L347) (29 connections)
-- [Returns the product catalog scoped for the B2B buyer,     including custom pric](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L518) (29 connections)
-- [B2BAccount](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L10) (27 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/schemas.py#L1) (25 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L1) (21 connections)
-- [ApprovalWorkflow](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L116) (17 connections)
-- [ApprovalRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L135) (16 connections)
-- [B2BInvoice](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L163) (16 connections)
-- [PriceList](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L66) (16 connections)
-- [PriceListItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L92) (16 connections)
-- [Verify that approval workflow can be retrieved and updated (upsert).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L102) (11 connections)
-- [Verify B2B portal order placement and threshold-based approval.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L125) (11 connections)
-- [Verify that an admin can invite a B2B buyer.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L15) (11 connections)
-- [Verify B2B portal catalog returns custom pricing.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L194) (11 connections)
-- [Verify that an invoice is generated upon B2B order approval.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L255) (11 connections)
-- [Verify that inviting a duplicate email fails with 409.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L37) (11 connections)
-- [Verify tenant isolation for B2B buyers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L55) (11 connections)
-- [Verify price list creation.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L85) (11 connections)
-- [Verify that accessing B2B endpoints without a token returns 403.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L9) (11 connections)
-- [test_get_b2b_catalog_overrides()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L193) (10 connections)
-- [test_b2b.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L1) (9 connections)
-- [place_b2b_order()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L341) (9 connections)
-- [test_place_b2b_order_threshold()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L124) (8 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L1) (7 connections)
-- [test_b2b_invoice_generation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L254) (7 connections)
-- *... and 47 more nodes in this community*
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class ApprovalRequest {
-        +models.py()
-    }
-    class ApprovalWorkflow {
-        +models.py()
-    }
-    class B2BAccount {
-        +models.py()
-    }
-    class B2BInvoice {
-        +models.py()
-    }
-    class PriceList {
-        +models.py()
-    }
-    class PriceListItem {
-        +models.py()
-    }
-    class AccountStatus {
-        +schemas.py()
-    }
-    class ApprovalRequestResponse {
-        +schemas.py()
-    }
-    class ApprovalStatus {
-        +schemas.py()
-    }
-    class ApprovalWorkflowBase {
-        +schemas.py()
-    }
-    class ApprovalWorkflowResponse {
-        +schemas.py()
-    }
-    class ApprovalWorkflowUpdate {
-        +schemas.py()
-    }
-    class B2BAccountBase {
-        +schemas.py()
-    }
-    class B2BAccountCreate {
-        +schemas.py()
-    }
-    class B2BAccountResponse {
-        +schemas.py()
-    }
-    class B2BAccountUpdate {
-        +schemas.py()
-    }
-    class B2BInvoiceResponse {
-        +schemas.py()
-    }
-    class B2BPortalOrderRequest {
-        +schemas.py()
-    }
-    class InvoicePaymentStatus {
-        +schemas.py()
-    }
-    class OverrideType {
-        +schemas.py()
-    }
-    class PriceListBase {
-        +schemas.py()
-    }
-    class PriceListCreate {
-        +schemas.py()
-    }
-    class PriceListItemBase {
-        +schemas.py()
-    }
-    class PriceListItemCreate {
-        +schemas.py()
-    }
-    class PriceListItemResponse {
-        +schemas.py()
-    }
-    class PriceListResponse {
-        +schemas.py()
-    }
-    class PriceListUpdate {
-        +schemas.py()
-    }
-    class StripeMock {
-        +stripe_mock.py()
-        +.create_payment_intent()
-        +.create_invoice()
-        +.retrieve_payment_intent()
-    }
-    ApprovalWorkflowUpdate <|-- ApprovalWorkflowBase
-    ApprovalWorkflowResponse <|-- ApprovalWorkflowBase
-    ApprovalWorkflowBase <|-- ApprovalWorkflowResponse
-    ApprovalWorkflowBase <|-- ApprovalWorkflowUpdate
-    B2BAccountCreate <|-- B2BAccountBase
-    B2BAccountResponse <|-- B2BAccountBase
-    B2BAccountBase <|-- B2BAccountCreate
-    B2BAccountBase <|-- B2BAccountResponse
-    PriceListCreate <|-- PriceListBase
-    PriceListResponse <|-- PriceListBase
-    PriceListBase <|-- PriceListCreate
-    PriceListItemCreate <|-- PriceListItemBase
-    PriceListItemResponse <|-- PriceListItemBase
-    PriceListItemBase <|-- PriceListItemCreate
-    PriceListItemBase <|-- PriceListItemResponse
-    PriceListBase <|-- PriceListResponse
-```
+- [standard_codec.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L1) (18 connections)
+- [core_implementations.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L1) (12 connections)
+- [WriteValue()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L98) (8 connections)
+- [plugin_registrar.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc#L1) (6 connections)
+- [GetInstance()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc#L49) (6 connections)
+- [Resize()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L130) (5 connections)
+- [ReadValue()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L92) (5 connections)
+- [SetMessageHandler()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L116) (4 connections)
+- [method_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L1) (4 connections)
+- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h#L15) (4 connections)
+- [ReadValueOfType()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L168) (4 connections)
+- [ResizeChannel()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L181) (3 connections)
+- [Send()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L87) (3 connections)
+- [SetChannelWarnsOnOverflow()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L194) (3 connections)
+- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_channel.h#L17) (3 connections)
+- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/message_codec.h#L12) (3 connections)
+- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L18) (3 connections)
+- [DecodeAndProcessResponseEnvelope()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h#L75) (3 connections)
+- [PluginRegistrar()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc#L19) (3 connections)
+- [DecodeAndProcessResponseEnvelopeInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L434) (3 connections)
+- [DecodeMessageInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L319) (3 connections)
+- [DecodeMethodCallInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L367) (3 connections)
+- [EncodeMessageInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L329) (3 connections)
+- [EncodeMethodCallInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L384) (3 connections)
+- [EncodeSuccessEnvelopeInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L398) (3 connections)
+- *... and 31 more nodes in this community*
 
 ## Relationships
 
-- [[Content & Features]] (6 shared connections)
-- [[Community 3]] (4 shared connections)
-- [[Community 4]] (3 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\stripe_mock.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_b2b.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\provisioning_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/provisioning_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\basic_message_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/basic_message_channel.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\engine_method_result.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/engine_method_result.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\event_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_channel.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\message_codec.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/message_codec.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\method_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\method_codec.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc)
 
 ## Audit Trail
 
-- EXTRACTED: 189 (38%)
-- INFERRED: 306 (62%)
+- EXTRACTED: 125 (74%)
+- INFERRED: 43 (26%)
 - AMBIGUOUS: 0 (0%)
 
 ---

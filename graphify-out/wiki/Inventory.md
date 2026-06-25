@@ -167,9 +167,9 @@ sequenceDiagram
     participant P158 as BuyerUser
     participant P159 as ConsumerUser
     participant P160 as OrderItem
-    participant P161 as BrandProfile
-    participant P162 as StaffLoginHistory
-    participant P163 as OrderEvent
+    participant P161 as StaffLoginHistory
+    participant P162 as OrderEvent
+    participant P163 as BrandProfile
     participant P164 as ApprovalWorkflow
     participant P165 as PriceList
     participant P166 as PriceListItem

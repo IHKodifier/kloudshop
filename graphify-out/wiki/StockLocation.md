@@ -1,6 +1,6 @@
 # StockLocation
 
-> God node · 63 connections · [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L7)
+> God node · 62 connections · [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L7)
 
 ## Call Trace Diagram
 
@@ -167,9 +167,9 @@ sequenceDiagram
     participant P158 as BuyerUser
     participant P159 as ConsumerUser
     participant P160 as OrderItem
-    participant P161 as BrandProfile
-    participant P162 as StaffLoginHistory
-    participant P163 as OrderEvent
+    participant P161 as StaffLoginHistory
+    participant P162 as OrderEvent
+    participant P163 as BrandProfile
     participant P164 as ApprovalWorkflow
     participant P165 as PriceList
     participant P166 as PriceListItem
@@ -215,9 +215,8 @@ sequenceDiagram
     participant P206 as test_purchase_order_lifecycle()
     participant P207 as test_stock_transfer()
     participant P208 as test_insufficient_stock()
-    participant P209 as main()
-    participant P210 as test_assign_staff_location()
-    participant P211 as create_location()
+    participant P209 as test_assign_staff_location()
+    participant P210 as create_location()
     P0->>+ P1: uses
     P1-->>- P0: return
     P1->>+ P2: uses
@@ -734,8 +733,6 @@ sequenceDiagram
     P209-->>- P0: return
     P0->>+ P210: calls
     P210-->>- P0: return
-    P0->>+ P211: calls
-    P211-->>- P0: return
 ```
 
 ## Connections by Relation
@@ -752,7 +749,6 @@ sequenceDiagram
 - [[test_purchase_order_lifecycle()]] `INFERRED`
 - [[test_stock_transfer()]] `INFERRED`
 - [[test_insufficient_stock()]] `INFERRED`
-- [[main()]] `INFERRED`
 - [[test_assign_staff_location()]] `INFERRED`
 - [[create_location()]] `INFERRED`
 

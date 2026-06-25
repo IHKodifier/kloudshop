@@ -1,16 +1,32 @@
 # Community 24
 
-> 7 nodes · cohesion 0.38
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
-- [test_storefront.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L1) (6 connections)
-- [setup_test_store()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L5) (3 connections)
-- [test_static_page_crud()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L53) (2 connections)
-- [test_storefront_search()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L97) (2 connections)
-- [test_create_and_get_brand_profile()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L25) (1 connections)
-- [test_shipping_rates()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L77) (1 connections)
-- [test_storefront_profile_not_found()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L20) (1 connections)
+- [AppDelegate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L4) (8 connections)
+- [.application()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L6) (1 connections)
+- [.applicationShouldTerminateAfterLastWindowClosed()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L6) (1 connections)
+- [.applicationSupportsSecureRestorableState()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L10) (1 connections)
+- [.didInitializeImplicitFlutterEngine()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L13) (1 connections)
+- [AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L1) (1 connections)
+- [AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L1) (1 connections)
+- **FlutterAppDelegate** (1 connections)
+- **FlutterImplicitEngineDelegate** (1 connections)
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class AppDelegate {
+        +AppDelegate.swift()
+        +.application()
+        +.didInitializeImplicitFlutterEngine()
+        +AppDelegate.swift()
+        +.applicationShouldTerminateAfterLastWindowClosed()
+        +.applicationSupportsSecureRestorableState()
+    }
+```
 
 ## Relationships
 
@@ -18,7 +34,8 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_storefront.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\Runner\AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift)
 
 ## Audit Trail
 

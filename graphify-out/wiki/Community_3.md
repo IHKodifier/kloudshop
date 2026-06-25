@@ -1,178 +1,193 @@
 # Community 3
 
-> 154 nodes · cohesion 0.07
+> 162 nodes · cohesion 0.02
 
 ## Key Concepts
 
-- [Variant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L81) (100 connections)
-- [Product](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L10) (73 connections)
-- [StockLocation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L7) (63 connections)
-- [Inventory](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L39) (61 connections)
-- [ImportJob](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L202) (40 connections)
-- [Mark an order as fulfilled and log tracking information.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L418) (40 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1) (35 connections)
-- [Collection](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L159) (28 connections)
-- [CollectionProduct](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L194) (27 connections)
-- [RedirectRule](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L237) (27 connections)
-- [ProductResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L118) (27 connections)
-- [Product](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/catalog.dart) (26 connections)
-- [ColorPreset](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L257) (26 connections)
-- [SkuExistsResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L209) (26 connections)
-- [VariantCreate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L47) (26 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L1) (25 connections)
-- [Return sorted list of N for all Option{N} Name/Value pairs found in headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1021) (25 connections)
-- [Background task: parse file, upsert products+variants+inventory, update job, sen](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1042) (25 connections)
-- [List products for the authenticated tenant.     Supports pagination and filteri](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L134) (25 connections)
-- [Download a pre-filled CSV template with all supported import column headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1383) (25 connections)
-- [Check which SKUs from the provided list already exist in this tenant's catalog.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1421) (25 connections)
-- [Upload a .csv or .xlsx file to bulk-import products and variants.     Returns a](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1443) (25 connections)
-- [Returns all import jobs for this tenant, newest first.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1495) (25 connections)
-- [Poll the status of a specific import job.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1510) (25 connections)
-- [Update a product and its variants. If slug changes, create a 301 redirect.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L165) (25 connections)
-- *... and 129 more nodes in this community*
+- **Base** (63 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L1) (19 connections)
+- [BrandProfile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py#L8) (18 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py#L1) (15 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L1) (13 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/router.py#L1) (13 connections)
+- [Check if a tenant ID (slug) is available.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L24) (12 connections)
+- [Fetch tenant identity and configuration for the current merchant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L52) (12 connections)
+- [Update merchant store details (name, config).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L94) (12 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L1) (10 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L1) (9 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/router.py#L1) (8 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py#L1) (8 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py#L1) (8 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L1) (7 connections)
+- [BlogPost](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/blog.dart) (7 connections)
+- [OnboardingSession](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/models.py#L8) (7 connections)
+- [generate_copy_impl()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L96) (7 connections)
+- [ImportMapping](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/models.py#L22) (6 connections)
+- [ImportAnalysisResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py#L17) (6 connections)
+- [MigrationRunbookResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py#L33) (6 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/models.py#L1) (5 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/models.py#L1) (5 connections)
+- [test_features.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L1) (5 connections)
+- [BrandVoiceProfile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py#L7) (5 connections)
+- *... and 137 more nodes in this community*
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class Collection {
+    class AICopywriterLog {
         +models.py()
     }
-    class CollectionProduct {
+    class BlogCategory {
         +models.py()
     }
-    class ColorPreset {
+    class BlogCategoryTranslation {
         +models.py()
     }
-    class ImportJob {
+    class BlogPost {
         +models.py()
     }
-    class Inventory {
+    class BlogPostTranslation {
         +models.py()
     }
-    class Product {
+    class BlogTag {
         +models.py()
     }
-    class RedirectRule {
+    class BrandProfile {
         +models.py()
     }
-    class StaffLocationAssignment {
+    class BrandVoiceProfile {
         +models.py()
     }
-    class StockLocation {
+    class CarrierCheckoutOption {
         +models.py()
     }
-    class Variant {
+    class ExportJob {
         +models.py()
     }
-    class CollectionBase {
+    class Feature {
+        +models.py()
+    }
+    class FeatureRequest {
+        +models.py()
+    }
+    class FeatureRequestVote {
+        +models.py()
+    }
+    class ImportMapping {
+        +models.py()
+    }
+    class MerchantCarrierConnection {
+        +models.py()
+    }
+    class OnboardingSession {
+        +models.py()
+    }
+    class PackagingPreset {
+        +models.py()
+    }
+    class PricingRule {
+        +models.py()
+    }
+    class PurchaseOrder {
+        +models.py()
+    }
+    class PurchaseOrderLine {
+        +models.py()
+    }
+    class ShippingSettings {
+        +models.py()
+    }
+    class StaticPage {
+        +models.py()
+    }
+    class StockTransfer {
+        +models.py()
+    }
+    class StorefrontContent {
+        +models.py()
+    }
+    class Supplier {
+        +models.py()
+    }
+    class SupplierPerformanceEvent {
+        +models.py()
+    }
+    class SupplierScoreWeights {
+        +models.py()
+    }
+    class TenantFeatureActivation {
+        +models.py()
+    }
+    class Theme {
+        +models.py()
+    }
+    class ThemeConfiguration {
+        +models.py()
+    }
+    class GeminiClient {
+        +router.py()
+        +.generate_variants()
+    }
+    class CopyVariant {
         +schemas.py()
     }
-    class CollectionCreate {
+    class ImportAnalysisRequest {
         +schemas.py()
     }
-    class CollectionResponse {
+    class ImportAnalysisResponse {
         +schemas.py()
     }
-    class CollectionUpdate {
+    class ImportExecutionRequest {
         +schemas.py()
     }
-    class ColorPresetBase {
+    class MigrationRunbookResponse {
         +schemas.py()
     }
-    class ColorPresetCreate {
+    class OnboardingStatusResponse {
         +schemas.py()
     }
-    class ColorPresetResponse {
+    class RegionSelectionRequest {
         +schemas.py()
     }
-    class ImportJobResponse {
+    class SignupRequest {
         +schemas.py()
     }
-    class ProductAssignment {
-        +schemas.py()
-    }
-    class ProductBase {
-        +schemas.py()
-    }
-    class ProductCreate {
-        +schemas.py()
-    }
-    class ProductResponse {
-        +schemas.py()
-    }
-    class ProductUpdate {
-        +schemas.py()
-    }
-    class RedirectRuleResponse {
-        +schemas.py()
-    }
-    class SkuExistsRequest {
-        +schemas.py()
-    }
-    class SkuExistsResponse {
-        +schemas.py()
-    }
-    class VariantBase {
-        +schemas.py()
-    }
-    class VariantCreate {
-        +schemas.py()
-    }
-    class VariantResponse {
-        +schemas.py()
-    }
-    CollectionCreate <|-- CollectionBase
-    CollectionResponse <|-- CollectionBase
-    CollectionBase <|-- CollectionCreate
-    CollectionBase <|-- CollectionResponse
-    ColorPresetCreate <|-- ColorPresetBase
-    ColorPresetResponse <|-- ColorPresetBase
-    ColorPresetBase <|-- ColorPresetCreate
-    ColorPresetBase <|-- ColorPresetResponse
-    ProductCreate <|-- ProductBase
-    ProductResponse <|-- ProductBase
-    ProductBase <|-- ProductCreate
-    ProductBase <|-- ProductResponse
-    VariantCreate <|-- VariantBase
-    VariantResponse <|-- VariantBase
-    VariantBase <|-- VariantCreate
-    VariantBase <|-- VariantResponse
 ```
 
 ## Relationships
 
-- [[Community 15]] (32 shared connections)
-- [[Community 14]] (28 shared connections)
-- [[Content & Features]] (11 shared connections)
-- [[Community 12]] (2 shared connections)
+- [[Community 17]] (30 shared connections)
+- [[Content & Features]] (29 shared connections)
+- [[Community 8]] (2 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\analytics\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/analytics/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\feeds\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/feeds/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\internal\provisioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/internal/provisioning.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\blog\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\blog\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pos\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\scratch\test_product_insert.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scratch/test_product_insert.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\scratch\test_row7_insert.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scratch/test_row7_insert.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_channels.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_csv_import.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_csv_import.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_inventory.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_inventory.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_pos.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_pos.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\catalog.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/catalog.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\color_presets_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/color_presets_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\onboarding\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\onboarding\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\onboarding\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\sitemap_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/sitemap_router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\themes\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/models.py)
 
 ## Audit Trail
 
-- EXTRACTED: 339 (18%)
-- INFERRED: 1562 (82%)
+- EXTRACTED: 405 (68%)
+- INFERRED: 192 (32%)
 - AMBIGUOUS: 0 (0%)
 
 ---

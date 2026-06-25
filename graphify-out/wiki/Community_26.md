@@ -4,30 +4,19 @@
 
 ## Key Concepts
 
-- [GeneratedPluginRegistrant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L63) (4 connections)
-- [GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L1) (1 connections)
-- [GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L1) (1 connections)
-- [.registerWith()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L17) (1 connections)
-- [-registerWithRegistry](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L65) (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class GeneratedPluginRegistrant {
-        +GeneratedPluginRegistrant.java()
-        +.registerWith()
-    }
-```
+- [test_bulk_import.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L1) (2 connections)
+- [test_bulk_import_csv_partial_failure()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L43) (2 connections)
+- [test_bulk_import_csv_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L7) (2 connections)
+- [Verify that some rows can fail while others succeed.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L44) (1 connections)
+- [Verify that a CSV can be uploaded and products are created.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L8) (1 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 25]] (2 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\android\app\src\main\java\io\flutter\plugins\GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_bulk_import.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py)
 
 ## Audit Trail
 
