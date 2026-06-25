@@ -95,12 +95,14 @@ Each view must fully implement the following five states (unless explicitly mark
   - [x] Error/Failure State (Fetch error toast with reload prompt)
   - [x] Empty State (Illustration indicating "No Products Found" + "Add Product" CTA)
   - [x] Input Validation State (`N/A`)
-- [x] **Product & Variant Editor**
+- [/] **Product & Variant Editor**
   - [x] Default/Active State (Slug, status, Compare-At price, digital toggles)
+  - [ ] **Pending Overhaul**: Add `Charge tax on this product` (taxable) toggle and `Tax Category` dropdown selector.
   - [x] Loading/Submitting State (Save progress loader, image uploading placeholders)
   - [x] Error/Failure State (Error modal on save failure)
   - [x] Empty State (`N/A`)
   - [x] Input Validation State (Highlight empty title, price ≤ 0 validation)
+
 - [x] **Color Presets CRUD**
   - [x] Default/Active State (Visual preset chips shelf in option editor, visual picker dialog)
   - [x] Loading/Submitting State (Colors.json cache-first display, background DB sync)
@@ -141,11 +143,12 @@ These features and fixes were implemented during the development of Journey 1 an
 | **Consumer Sign-up** | `mock-screens/consumer_register.png` | [consumer_registration_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/consumer_registration_view.dart) | `consumerAuthProvider` |
 
 - [ ] **Storefront (PDP / Cart / Checkout)**
-  - [ ] Default/Active State (Alpine themes, product details, sliding cart drawer)
-  - [ ] Loading/Submitting State (Simulated payment process overlays)
-  - [ ] Error/Failure State (Stripe mock payment failure alert)
+  - [ ] Default/Active State (Alpine themes, product details, sliding cart drawer. On checkout page: dynamically queries and displays detailed tax line items (e.g. VAT, Sales Tax) and updated grand totals as soon as shipping address fields are filled.)
+  - [ ] Loading/Submitting State (Simulated payment process overlays, tax calculation loader spinners on address entry)
+  - [ ] Error/Failure State (Stripe mock payment failure alert, tax calculation api error banner)
   - [ ] Empty State (Empty cart screen with "Back to Shop" CTA)
-  - [ ] Input Validation State (Credit card form inline error checks)
+  - [ ] Input Validation State (Credit card form inline error checks, validation of shipping address zip/state format prior to triggering tax calculations)
+
 - [ ] **Consumer Sign-up**
   - [ ] Default/Active State (Post-purchase register fields)
   - [ ] Loading/Submitting State (Registering request spinner)
@@ -196,26 +199,29 @@ These features and fixes were implemented during the development of Journey 1 an
 
 ---
 
-#### Journey 6: WYSIWYG Theme Editor & Theme Library
-*Tracks interactive storefront previews, slot content updates, responsive viewports, and carry-forward theme transitions.*
+#### Journey 6: WYSIWYG Theme Editor & Theme Library (Shopify Customizer Overhaul)
+*Tracks the active theme dual viewport preview, the 2-pane KloudThemeShop, and the 3-pane storefront editor.*
 
 | View / Screen | Mockup PNG (Archive Path) | Dart Target File | Riverpod Provider |
 | :--- | :--- | :--- | :--- |
-| **Theme Selection** | `mock-screens/themes_library.png` | [themes_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/themes_view.dart) | `themeLibraryProvider` |
-| **WYSIWYG Studio** | `mock-screens/wysiwyg_studio.png` | [wysiwyg_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) | `wysiwygEditorProvider` |
+| **Theme Selection** | `mock-screens/themes_library.png` | [themes_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/themes_view.dart) | `themeLibraryProvider`, `themeConfigurationsProvider` |
+| **Shopify Customizer** | `mock-screens/wysiwyg_studio.png` | [wysiwyg_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) | `wysiwygEditorProvider`, `themeProvider` |
 
 - [ ] **Theme Selection**
-  - [ ] Default/Active State (Palette chips, carry-forward indicators)
-  - [ ] Loading/Submitting State (Apply theme loader)
-  - [ ] Error/Failure State (Theme load error toast)
+  - [ ] Default/Active State (Active theme card with dual desktop + mobile mockup previews. Green "Customize" button and secondary actions overflow `⋯` menu. "My Themes" list of drafts below it. Curated "Popular Free Themes" shelf ending in "Explore More Themes" card.)
+  - [ ] Loading/Submitting State (Frosted skeletons during theme lists loading or draft activation)
+  - [ ] Error/Failure State (Floating red error banners on duplicate/rename/activation failures)
   - [ ] Empty State (`N/A`)
-  - [ ] Input Validation State (`N/A`)
-- [ ] **WYSIWYG Studio**
-  - [ ] Default/Active State (Split viewport, slot configuration panels, undo/redo buttons)
-  - [ ] Loading/Submitting State (Save drafts progress overlay)
-  - [ ] Error/Failure State (Save draft failure dialog)
-  - [ ] Empty State (Orphaned slots warning state)
-  - [ ] Input Validation State (Character limits on slot components)
+  - [ ] Input Validation State (Verify draft name limits and character checks in rename/duplicate popups)
+  - [ ] **KloudThemeShop Modal**: 2-pane layout (Left sidebar price/industry filters, Right grid of high-fidelity template preview cards).
+- [ ] **Shopify Customizer (WYSIWYG)**
+  - [ ] Default/Active State (3-pane layout: leftmost vertical ribbon with Exit button, sections tree editor icon, settings cog, and native apps switcher; center panel contextual workspace showing layout outline or property inputs with a back button; rightmost live preview canvas with desktop/mobile viewport toggle in the top bar. Full bi-directional highlight linking. Reusable JSON page templates switcher dropdown. Supports visual toggles in theme settings and product template blocks to display tax notices (e.g. 'Taxes included / Shipping calculated at checkout') directly below product prices.)
+
+  - [ ] Loading/Submitting State (Simulated saving/publishing loading spinner overlay, iframe reloading states)
+  - [ ] Error/Failure State (Save/publish failure error popup with detailed error log)
+  - [ ] Empty State (Blank page placeholders rendering guide graphics)
+  - [ ] Input Validation State (Character limits validation on heading/text blocks, WCAG contrast ratio indicator warning in the color picker)
+
 
 ---
 
@@ -249,26 +255,41 @@ These features and fixes were implemented during the development of Journey 1 an
 
 ---
 
-#### Journey 8: Settings & Billing Management
-*Tracks swipable Zurich/Bento/Compact UI stack card tabs and tiered billing setup.*
+#### Journey 8: Settings, Taxes & Shipping Management
+*Tracks swipable Zurich/Bento/Compact UI settings panel, centralized brand presets, manual/automated tax configuration, and shipping profiles.*
 
 | View / Screen | Mockup PNG (Archive Path) | Dart Target File | Riverpod Provider |
 | :--- | :--- | :--- | :--- |
-| **Settings Panel** | `mock-screens/settings_panel.png` | [settings_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart) | `settingsProvider` |
+| **Settings Panel** | `mock-screens/settings_panel.png` | [settings_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart) | `settingsProvider`, `tenantSettingsProvider` |
+| **Taxes Sub-view** | `N/A` | [settings_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart) | `taxSettingsProvider` |
+| **Shipping Sub-view** | `N/A` | [settings_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart) | `shippingProfilesProvider`, `carrierConnectionsProvider` |
 | **Billing & Tier Selection** | `mock-screens/billing_tier.png` | [billing_view.dart](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/billing_view.dart) | `billingProvider` |
 
 - [ ] **Settings Panel (Zurich / Bento / Compact)**
-  - [ ] Default/Active State (Swipable horizontals, chip overrides)
+  - [ ] Default/Active State (Swipable horizontals, centralized Brand Guidelines logo/favicon upload fields, color selectors, metadata titles/descriptions. Changes sync automatically to active theme.)
   - [ ] Loading/Submitting State (Updating preferences spinner)
   - [ ] Error/Failure State (Failed to save preference message)
   - [ ] Empty State (`N/A`)
-  - [ ] Input Validation State (Invalid currency / email formats)
+  - [ ] Input Validation State (Invalid currency / email formats, brand logo resolution checks)
+- [ ] **Taxes Settings Sub-view**
+  - [ ] Default/Active State (Toggle switch for "Calculate Taxes Automatically (Stripe Tax)". If checked: renders Stripe Connect Embedded view for registrations and settings. If unchecked: renders local CRUD interface for manual tax rates table by country/state.)
+  - [ ] Loading/Submitting State (Generating Stripe AccountSession loader, saving manual rate spinner)
+  - [ ] Error/Failure State (Stripe Connect load failure alert, database saving errors)
+  - [ ] Empty State (`N/A`)
+  - [ ] Input Validation State (Verify tax percentage input range 0-100%, check that country code is selected)
+- [ ] **Shipping Settings Sub-view**
+  - [ ] Default/Active State (Profiles management view showing a General profile list and an "+ Create profile" action. Inside each profile: regional zones builder with country selectors, "+ Add rate" action launching weight/price conditional flat rates form, and carrier connections options.)
+  - [ ] Loading/Submitting State (Saving profile loader)
+  - [ ] Error/Failure State (Shipping saving failed warning)
+  - [ ] Empty State ("No shipping profiles configured" - showing General profile default)
+  - [ ] Input Validation State (Overlapping rate ranges validation, required name and rate price validation)
 - [ ] **Billing & Tier Selection**
   - [ ] Default/Active State (Pricing tiers, dynamic status indicators)
   - [ ] Loading/Submitting State (Stripe customer portal redirecting indicator)
   - [ ] Error/Failure State (Stripe redirect error banner)
   - [ ] Empty State (`N/A`)
   - [ ] Input Validation State (`N/A`)
+
 
 ---
 

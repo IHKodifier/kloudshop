@@ -46,6 +46,39 @@
 
 ---
 
+## Active Overhaul Sprint: Storefront Settings & Theme Customizer Overhaul (Sprints 7 & 9)
+
+> [!IMPORTANT]
+> This sprint is dedicated to completely scraping the old Figma-style WYSIWYG editor and flat settings views, replacing them with a Shopify-cloned storefront settings and customization experience.
+
+#### Sprints 7 & 9 — Database, API & UI Implementation
+- [ ] **Database & Backend Migrations:**
+  - [ ] Create `store_tax_rates` table for manual fallback rates.
+  - [ ] Add `tax_category` and `stripe_tax_code` columns to the `products` table.
+  - [ ] Add `collect_tax_automatically` and `tax_calculation_fallback` to `brand_profiles`.
+  - [ ] Add `tax_breakdown` and `tax_calculation_source` to `orders`.
+  - [ ] Create `shipping_profiles`, `shipping_zones`, and `shipping_rates` tables. Add `shipping_profile_id` to `variants`.
+- [ ] **Tax & Shipping Backend Router Updates:**
+  - [ ] Update `/tax/*` endpoints to handle Stripe Connect automatic calculations and query manual fallbacks.
+  - [ ] Implement checkout tax calculation triggers bound to shipping address changes.
+  - [ ] Update `/shipping/*` router to handle custom profiles, country zoning, weight/price conditional rates, and checkout rate blending.
+- [ ] **Shopify Theme Customizer UI (Flutter Frontend):**
+  - [ ] Replace `wysiwyg_view.dart` with a Shopify-cloned 3-pane layout:
+    - [ ] Left vertical utility ribbon (Exit, Sections, Theme Settings, Native Features).
+    - [ ] Center properties panel with a navigation stack for drill-down editing and back buttons.
+    - [ ] Rightmost live preview canvas with desktop/mobile view toggles.
+  - [ ] Implement bi-directional highlight linking between the outline tree and preview canvas.
+  - [ ] Support reusable JSON page templates (Home, PDP, Cart) and custom template assignments.
+  - [ ] Implement Named Style Presets (saving/loading design token combinations) and WCAG contrast check.
+- [ ] **Settings & Brand Profile UI Upgrades:**
+  - [ ] Build Taxes setting page: Stripe Connect Embedded view vs manual rate editor.
+  - [ ] Build Shipping settings page: Shipping profiles directory, zones editor, and conditional flat rates builder.
+  - [ ] Sync brand logo/favicon changes automatically with the active theme settings.
+  - [ ] Update existing Product Add / Variant Creator UI to add `Charge tax on this product` (taxable) toggle and `Tax Category` dropdown selector.
+
+
+---
+
 ## Active Sprint: PHASE 8 — Launch Readiness (Sprint 20)
 
 > [!IMPORTANT]
@@ -61,6 +94,7 @@
 - [ ] **Connect Platform:** Final Live integration for merchant payouts and transaction fee collection.
 - [ ] **Security Audit:** Pentesting RBAC and data isolation boundaries.
 - [ ] **Public Launch:** Merge `dev` to `main` and activate marketing site.
+
 
 ---
 

@@ -1,3 +1,8 @@
+&lt;!-- AGENT NOTICE: Read specifications/AGENT_MANIFEST.md BEFORE making any code changes.
+     This file is the authoritative schema spec for the catalog module.
+     Recent MVP change (June 2026): collections.parent_collection_id added as CORE MVP column.
+     The SQLAlchemy model in backend/modules/catalog/models.py must be updated to match. --&gt;
+
 # 06b — Tenant Catalog Schema
 # KloudShop Stage 6 — Data Model
 
@@ -662,7 +667,8 @@ CREATE INDEX idx_variant_translations_locale
 -- SCHEMA: tenant_{tenant_id}
 -- PURPOSE: Product groupings for storefront navigation, B2B price
 --   list scoping, dynamic pricing rules, and Google Shopping feed
---   categorisation. Flat structure — no parent/child hierarchy.
+--   categorisation. Supports unlimited hierarchy depth via
+--   self-referential parent_collection_id FK.
 --
 -- BUSINESS RULES:
 --   1. A product can belong to multiple collections.
@@ -670,10 +676,24 @@ CREATE INDEX idx_variant_translations_locale
 --   3. collection_type 'automated' is post-MVP.
 --   4. is_visible = FALSE for internal collections (pricing rules,
 --      B2B) not shown in storefront navigation.
+--   5. parent_collection_id NULL = root-level collection.
+--      Non-null = child of the referenced collection.
+--   6. No circular references permitted (enforced at application
+--      layer via ancestor check before INSERT/UPDATE).
+--   7. Recursive ancestor/descendant queries use WITH RECURSIVE CTEs.
 -- ============================================================
 
 CREATE TABLE collections (
     collection_id    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    -- ── Hierarchy ───────────────────────────────────────
+    parent_collection_id UUID
+                     REFERENCES collections (collection_id)
+                     ON DELETE SET NULL,
+    -- NULL = root-level collection.
+    -- Non-null = nested child of the parent.
+    -- Depth is unlimited; circular reference prevention
+    -- is enforced at the application layer.
 
     title            TEXT NOT NULL,
     description      TEXT,
@@ -704,11 +724,16 @@ CREATE TABLE collections (
             'manual', 'best_selling', 'price_asc', 'price_desc',
             'newest', 'alpha_asc', 'alpha_desc'
         )
+    ),
+    CONSTRAINT collections_no_self_parent CHECK (
+        parent_collection_id != collection_id
     )
 );
 
 COMMENT ON TABLE collections IS
-    'Product groupings. Flat structure. Products via collection_products.';
+    'Product groupings. Hierarchical via parent_collection_id (MVP). '
+    'NULL parent = root collection. Products via collection_products. '
+    'Recursive tree queries use WITH RECURSIVE CTEs.';
 
 CREATE UNIQUE INDEX idx_collections_slug
     ON collections (slug);
@@ -718,6 +743,12 @@ CREATE INDEX idx_collections_visible_position
     ON collections (is_visible, position)
     WHERE is_visible = TRUE;
 -- Rationale: Navigation menu query — visible collections in display order.
+
+CREATE INDEX idx_collections_parent
+    ON collections (parent_collection_id)
+    WHERE parent_collection_id IS NOT NULL;
+-- Rationale: Fetch all direct children of a parent collection.
+-- Used by navigation tree rendering and collection management UI.
 ```
 
 ---

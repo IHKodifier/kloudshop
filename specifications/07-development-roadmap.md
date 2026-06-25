@@ -81,13 +81,23 @@ This sequence is ported directly from `04b-mvp-scope.md`. A "Sprint" in this con
 * **Sprint 4 (Catalog):** E04 — `/products/*`, `/collections/*`. Products with unlimited variants, collections, bulk CSV import, SEO metadata with auto-301 redirects.
 * **Sprint 5 (Orders):** E05 — `/orders/*`. Order placement via Stripe Payment Intent, fulfilment with tracking, full/partial refunds, internal notes, CSV export.
 * **Sprint 6 (Inventory):** E06 — `/inventory/*`, `/suppliers/*`, `/purchase-orders/*`. Multi-supplier ranking, AI replenishment, purchase order lifecycle.
-* **Sprint 7 (Storefront & Tax):** E17 — `/storefront/{tenant}/*` (SSR + AI search + guest checkout). E20 — `/shipping/*` (carrier rates, labels, consolidation). E13 — `/tax/*` (Stripe Tax embedded).
+* **Sprint 7 (Storefront, Tax & Shipping):** 
+  - E17 — `/storefront/{tenant}/*` (SSR + AI search + guest checkout).
+  - E20 — `/shipping/*` (multiple shipping profiles, regional shipping zones, weight & price-gated conditional rates, rate blending at checkout).
+  - E13 — `/tax/*` (Stripe Connect automated tax calculations + manual `store_tax_rates` fallback table, catalog category mapping).
+  - **Product UI Reminder**: Update the existing Product/Variant editing UI to include the new `Charge tax on this product` (taxable) toggle and `Tax Category` dropdown selector.
+
 
 ### PHASE 3 — Merchant Experience (Sprints 8–10)
 * **Goal:** A merchant can self-serve onboard and customise their brand.
 * **Sprint 8 (Onboarding):** E02 — `/onboarding/*`. CSV/Excel product, customer, and order imports. Brand setup. Migration runbook. ***Competitor scraping (`/onboarding/migration/scrape`) is Post-MVP — do NOT implement.***
-* **Sprint 9 (Themes):** E03 — `/themes/*`. WYSIWYG editor, draft/apply/discard, content slots, design token overrides, one-click theme switching.
+* **Sprint 9 (Themes Customizer Overhaul):** E03 — `/themes/*`. Complete Shopify customizer UI clone:
+  - 3-pane layout: vertical icon ribbon with exit button (left), outline & properties panel with drill-down navigation (center), and live preview canvas (right).
+  - Bi-directional selection highlighting.
+  - Reusable JSON page templates (Home, PDP, Cart, Checkout) with custom templates mapping.
+  - Global brand syncing, named style presets (seasonal presets), and WCAG contrast check.
 * **Sprint 10 (Platform Features):** E08 — `/features/*`. Feature catalogue toggle engine, Alembic migration runner, setup wizard. E15 — `/export/*`. Full data portability. E14 — `/pricing/rules/*`. Dynamic pricing engine. E23 — `/ai/*`. AI Copywriter (Gemini).
+
 
 ### PHASE 4 — B2B & Channels (Sprints 11–14)
 * **Goal:** Expanding the revenue surface for merchants.
