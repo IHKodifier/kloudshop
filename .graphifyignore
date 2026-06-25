@@ -1,13 +1,37 @@
+# Exclude dependencies and caches
+node_modules/
+venv/
+.venv/
+.dart_tool/
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-*
+# Exclude IDE and build outputs
+.git/
+.github/
+.vscode/
+.idea/
+build/
 
-# Step 2: Un-ignore ONLY your important target directories
-!backend/
-!backend/**
-!frontend/
-!frontend/**
-!specifications/
-!specifications/**
+# Exclude documentation outputs/assets
+graphify-out/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
 
-# Keep the core output configurations open
-!graphify-out/**
+# Exclude databases and local state
+*.db
+*.sqlite
+*.tfstate*
+
+# Exclude non-code/non-spec directories
+infrastructure/
+marketing strategy/
+mock-screens/
+scratch/
+sprint-handoffs/

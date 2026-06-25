@@ -1,232 +1,168 @@
 # Content & Features
 
-> 169 nodes · cohesion 0.02
+> 187 nodes · cohesion 0.02
 
 ## Key Concepts
 
-- **Base** (63 connections)
-- [Fixture to override validate_token dependency.     Usage: auth_override(UserCla](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L113) (59 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L1) (19 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py#L1) (15 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L1) (13 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/router.py#L1) (13 connections)
-- [ChannelConnection](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L7) (12 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L1) (10 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L1) (9 connections)
-- [ChannelSyncLog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L27) (9 connections)
-- [ChannelAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L8) (9 connections)
-- [FacebookAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L103) (9 connections)
-- [InstagramAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L61) (9 connections)
-- [TikTokAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L16) (9 connections)
-- [service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L1) (8 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py#L1) (8 connections)
-- [ChannelSyncService](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L142) (8 connections)
-- [LocalVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L14) (8 connections)
-- [vector_search.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L1) (7 connections)
-- [VertexAIVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L63) (6 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/models.py#L1) (5 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/models.py#L1) (5 connections)
-- [test_features.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L1) (5 connections)
-- [BrandVoiceProfile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py#L7) (5 connections)
-- [Supplier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L68) (5 connections)
-- *... and 144 more nodes in this community*
+- [UserClaims](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/auth.py#L12) (142 connections)
+- [auth_override()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L112) (44 connections)
+- [UserClaims](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/user_claims.dart) (44 connections)
+- [Tenant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/models.py#L9) (35 connections)
+- [SubscriptionStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L10) (25 connections)
+- [Subscription](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L23) (24 connections)
+- [SubscriptionTier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L17) (21 connections)
+- [Order](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/order.dart) (16 connections)
+- [Config](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/schemas.py#L24) (14 connections)
+- [InvoiceResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L26) (10 connections)
+- [PortalSessionResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L35) (10 connections)
+- [SubscriptionResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L10) (10 connections)
+- [UpgradeRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L21) (10 connections)
+- [test_catalog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L1) (9 connections)
+- [Finalizes an upgrade session.      In Stripe mode, this would verify the sessio](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L131) (9 connections)
+- [Lists all invoices from Stripe for the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L169) (9 connections)
+- [Creates a Stripe Billing Portal session.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L204) (9 connections)
+- [Manually trigger the trial expiration check.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L231) (9 connections)
+- [Fetch current subscription status for the tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L26) (9 connections)
+- [Initiates a Stripe Checkout Session for tier upgrades.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L51) (9 connections)
+- [test_analytics_needs_attention()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_analytics.py#L48) (9 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L1) (8 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L1) (8 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L1) (8 connections)
+- [List all merchants and their subscription status.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/router.py#L49) (8 connections)
+- *... and 162 more nodes in this community*
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class AICopywriterLog {
+    class UserClaims {
+        +auth.py()
+    }
+    class Subscription {
         +models.py()
     }
-    class BlogCategory {
+    class SubscriptionStatus {
         +models.py()
     }
-    class BlogCategoryTranslation {
+    class SubscriptionTier {
         +models.py()
     }
-    class BlogPost {
+    class Tenant {
         +models.py()
     }
-    class BlogPostTranslation {
-        +models.py()
-    }
-    class BlogTag {
-        +models.py()
-    }
-    class BrandVoiceProfile {
-        +models.py()
-    }
-    class CarrierCheckoutOption {
-        +models.py()
-    }
-    class ChannelConnection {
-        +models.py()
-    }
-    class ChannelSyncLog {
-        +models.py()
-    }
-    class ExportJob {
-        +models.py()
-    }
-    class Feature {
-        +models.py()
-    }
-    class FeatureRequest {
-        +models.py()
-    }
-    class FeatureRequestVote {
-        +models.py()
-    }
-    class MerchantCarrierConnection {
-        +models.py()
-    }
-    class PackagingPreset {
-        +models.py()
-    }
-    class PricingRule {
-        +models.py()
-    }
-    class PurchaseOrder {
-        +models.py()
-    }
-    class PurchaseOrderLine {
-        +models.py()
-    }
-    class ShippingSettings {
-        +models.py()
-    }
-    class StaticPage {
-        +models.py()
-    }
-    class StockTransfer {
-        +models.py()
-    }
-    class StorefrontContent {
-        +models.py()
-    }
-    class Supplier {
-        +models.py()
-    }
-    class SupplierPerformanceEvent {
-        +models.py()
-    }
-    class SupplierScoreWeights {
-        +models.py()
-    }
-    class TenantFeatureActivation {
-        +models.py()
-    }
-    class TenantFeatureConfig {
-        +models.py()
-    }
-    class Theme {
-        +models.py()
-    }
-    class ThemeConfiguration {
-        +models.py()
-    }
-    class ChannelAdapter {
-        +service.py()
-    }
-    class ChannelSyncService {
-        +service.py()
+    class PermissionChecker {
+        +rbac.py()
         +.__init__()
-        +.trigger_sync()
+        +.__call__()
     }
-    class FacebookAdapter {
-        +service.py()
-        +.__init__()
-        +.sync_catalog()
+    class Config {
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
     }
-    class InstagramAdapter {
-        +service.py()
-        +.__init__()
-        +.sync_catalog()
+    class InvoiceResponse {
+        +schemas.py()
     }
-    class TikTokAdapter {
-        +service.py()
-        +.__init__()
-        +.sync_catalog()
+    class PortalSessionResponse {
+        +schemas.py()
     }
-    class BaseVectorProvider {
-        +vector_search.py()
+    class PricingRuleBase {
+        +schemas.py()
     }
-    class LocalVectorProvider {
-        +vector_search.py()
-        +.get_embedding()
-        +.search_similar()
-        +._cosine_similarity()
+    class PricingRuleCreate {
+        +schemas.py()
     }
-    class VertexAIVectorProvider {
-        +vector_search.py()
-        +.__init__()
-        +.get_embedding()
-        +.search_similar()
+    class PricingRuleResponse {
+        +schemas.py()
     }
-    ChannelConnection --> ChannelAdapter
-    ChannelConnection --> TikTokAdapter
-    ChannelConnection --> InstagramAdapter
-    ChannelConnection --> FacebookAdapter
-    ChannelConnection --> ChannelSyncService
-    ChannelSyncLog --> ChannelAdapter
-    ChannelSyncLog --> TikTokAdapter
-    ChannelSyncLog --> InstagramAdapter
-    ChannelSyncLog --> FacebookAdapter
-    ChannelSyncLog --> ChannelSyncService
-    TikTokAdapter <|-- ChannelAdapter
-    InstagramAdapter <|-- ChannelAdapter
-    FacebookAdapter <|-- ChannelAdapter
-    ChannelAdapter --> ChannelConnection
-    ChannelAdapter --> ChannelSyncLog
-    ChannelSyncService --> ChannelConnection
-    ChannelSyncService --> ChannelSyncLog
-    ChannelAdapter <|-- FacebookAdapter
-    FacebookAdapter --> ChannelConnection
-    FacebookAdapter --> ChannelSyncLog
-    ChannelAdapter <|-- InstagramAdapter
-    InstagramAdapter --> ChannelConnection
-    InstagramAdapter --> ChannelSyncLog
-    ChannelAdapter <|-- TikTokAdapter
-    TikTokAdapter --> ChannelConnection
-    TikTokAdapter --> ChannelSyncLog
-    LocalVectorProvider <|-- BaseVectorProvider
-    VertexAIVectorProvider <|-- BaseVectorProvider
-    BaseVectorProvider <|-- LocalVectorProvider
-    BaseVectorProvider <|-- VertexAIVectorProvider
+    class SubscriptionBase {
+        +schemas.py()
+    }
+    class SubscriptionResponse {
+        +schemas.py()
+    }
+    class UpgradeRequest {
+        +schemas.py()
+    }
+    UserClaims --> PermissionChecker
+    SubscriptionStatus --> SubscriptionBase
+    SubscriptionStatus --> SubscriptionResponse
+    SubscriptionStatus --> Config
+    SubscriptionStatus --> UpgradeRequest
+    SubscriptionStatus --> InvoiceResponse
+    SubscriptionStatus --> PortalSessionResponse
+    SubscriptionTier --> SubscriptionBase
+    SubscriptionTier --> SubscriptionResponse
+    SubscriptionTier --> Config
+    SubscriptionTier --> UpgradeRequest
+    SubscriptionTier --> InvoiceResponse
+    SubscriptionTier --> PortalSessionResponse
+    PermissionChecker --> UserClaims
+    Config --> SubscriptionStatus
+    Config --> SubscriptionTier
+    InvoiceResponse --> SubscriptionStatus
+    InvoiceResponse --> SubscriptionTier
+    PortalSessionResponse --> SubscriptionStatus
+    PortalSessionResponse --> SubscriptionTier
+    PricingRuleCreate <|-- PricingRuleBase
+    PricingRuleResponse <|-- PricingRuleBase
+    PricingRuleBase <|-- PricingRuleCreate
+    PricingRuleBase <|-- PricingRuleResponse
+    SubscriptionResponse <|-- SubscriptionBase
+    SubscriptionBase --> SubscriptionStatus
+    SubscriptionBase --> SubscriptionTier
+    SubscriptionBase <|-- SubscriptionResponse
+    SubscriptionResponse --> SubscriptionStatus
+    SubscriptionResponse --> SubscriptionTier
+    UpgradeRequest --> SubscriptionStatus
+    UpgradeRequest --> SubscriptionTier
 ```
 
 ## Relationships
 
-- [[Community 4]] (1 shared connections)
-- [[Community 3]] (1 shared connections)
+- [[Community 12]] (113 shared connections)
+- [[Community 4]] (58 shared connections)
+- [[Community 3]] (38 shared connections)
+- [[Community 10]] (34 shared connections)
+- [[Community 14]] (12 shared connections)
+- [[Community 15]] (8 shared connections)
+- [[Community 17]] (6 shared connections)
+- [[Community 8]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\blog\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\tasks.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/tasks.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\webhooks.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/webhooks.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\feeds\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/feeds/router.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\i18n\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/i18n/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\sitemap_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/sitemap_router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\themes\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\themes\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/auth.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\rbac.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/rbac.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\conftest.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_analytics.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_b2b.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_billing.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_blog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_blog.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_catalog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_channels.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_collections.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_collections.py)
 
 ## Audit Trail
 
-- EXTRACTED: 437 (68%)
-- INFERRED: 203 (32%)
+- EXTRACTED: 368 (37%)
+- INFERRED: 621 (63%)
 - AMBIGUOUS: 0 (0%)
 
 ---

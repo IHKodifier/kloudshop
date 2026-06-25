@@ -1,157 +1,134 @@
 # Community 15
 
-> 52 nodes · cohesion 0.14
+> 53 nodes · cohesion 0.06
 
 ## Key Concepts
 
-- [MockStripe](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L29) (24 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L1) (21 connections)
-- [Step 2: Verify payment and create order with atomic inventory decrement.     Pu](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L128) (20 connections)
-- [Aggregate unique customers from the orders table.     For MVP, we return email,](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L313) (20 connections)
-- [Export orders for the tenant as a CSV file.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L344) (20 connections)
-- [Refund an order via Stripe.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L462) (20 connections)
-- [List all orders for the authenticated consumer.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L530) (20 connections)
-- [Get details for a specific order owned by the consumer.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L548) (20 connections)
-- [Request a return for an order. Logs an event for merchant review.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L573) (20 connections)
-- [Step 1: Calculate total and create Stripe PaymentIntent.     Public storefront](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L72) (20 connections)
-- [OrderItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py#L59) (19 connections)
-- [OrderEvent](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py#L80) (18 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L1) (17 connections)
-- [OrderNote](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py#L94) (13 connections)
-- [PaymentIntentResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L138) (13 connections)
-- [InventoryResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L40) (12 connections)
-- [OrderConfirmRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L144) (12 connections)
-- [OrderFulfilRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L156) (12 connections)
-- [OrderRefundRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L162) (12 connections)
-- [OrderResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L100) (12 connections)
-- [PaymentIntentRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L132) (12 connections)
-- [ReturnRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L167) (12 connections)
-- [StockLocationCreate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L21) (12 connections)
-- [StockLocationResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py#L24) (12 connections)
-- [OrderEvent](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/order.dart) (10 connections)
-- *... and 27 more nodes in this community*
+- [ChannelConnection](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L7) (12 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L1) (10 connections)
+- [ChannelSyncLog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L27) (9 connections)
+- [ChannelAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L8) (9 connections)
+- [FacebookAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L103) (9 connections)
+- [InstagramAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L61) (9 connections)
+- [TikTokAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L16) (9 connections)
+- [service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L1) (8 connections)
+- [ChannelSyncService](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L142) (8 connections)
+- [LocalVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L14) (8 connections)
+- [vector_search.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L1) (7 connections)
+- [VertexAIVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L63) (6 connections)
+- [.trigger_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L152) (5 connections)
+- **ABC** (4 connections)
+- [storefront_search()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L179) (4 connections)
+- [sync_channel()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L195) (4 connections)
+- [.__init__()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L143) (4 connections)
+- [BaseVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L5) (4 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L1) (3 connections)
+- [connect_channel()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L25) (3 connections)
+- [facebook_callback()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L163) (3 connections)
+- [instagram_callback()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L122) (3 connections)
+- [tiktok_callback()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L76) (3 connections)
+- [get_vector_provider()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L88) (3 connections)
+- [.search_similar()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L81) (3 connections)
+- *... and 28 more nodes in this community*
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class OrderEvent {
+    class ChannelConnection {
         +models.py()
     }
-    class OrderItem {
+    class ChannelSyncLog {
         +models.py()
     }
-    class OrderNote {
-        +models.py()
+    class ChannelAdapter {
+        +service.py()
     }
-    class MockStripe {
-        +router.py()
-        +.create_payment_intent()
-        +.retrieve_payment_intent()
-        +.create_refund()
-        +.calculate_tax()
+    class ChannelSyncService {
+        +service.py()
+        +.__init__()
+        +.trigger_sync()
     }
-    class InventoryBase {
-        +schemas.py()
+    class FacebookAdapter {
+        +service.py()
+        +.__init__()
+        +.sync_catalog()
     }
-    class InventoryResponse {
-        +schemas.py()
+    class InstagramAdapter {
+        +service.py()
+        +.__init__()
+        +.sync_catalog()
     }
-    class OrderConfirmRequest {
-        +schemas.py()
+    class TikTokAdapter {
+        +service.py()
+        +.__init__()
+        +.sync_catalog()
     }
-    class OrderFulfilRequest {
-        +schemas.py()
+    class BaseVectorProvider {
+        +vector_search.py()
     }
-    class OrderNoteBase {
-        +schemas.py()
+    class LocalVectorProvider {
+        +vector_search.py()
+        +.get_embedding()
+        +.search_similar()
+        +._cosine_similarity()
     }
-    class OrderNoteCreate {
-        +schemas.py()
+    class VertexAIVectorProvider {
+        +vector_search.py()
+        +.__init__()
+        +.get_embedding()
+        +.search_similar()
     }
-    class OrderNoteResponse {
-        +schemas.py()
-    }
-    class OrderRefundRequest {
-        +schemas.py()
-    }
-    class OrderResponse {
-        +schemas.py()
-    }
-    class PaymentIntentRequest {
-        +schemas.py()
-    }
-    class PaymentIntentResponse {
-        +schemas.py()
-    }
-    class ReturnRequest {
-        +schemas.py()
-    }
-    class StockLocationBase {
-        +schemas.py()
-    }
-    class StockLocationCreate {
-        +schemas.py()
-    }
-    class StockLocationResponse {
-        +schemas.py()
-    }
-    OrderEvent --> MockStripe
-    OrderItem --> MockStripe
-    OrderNote --> MockStripe
-    MockStripe --> OrderItem
-    MockStripe --> OrderEvent
-    MockStripe --> OrderNote
-    MockStripe --> OrderResponse
-    MockStripe --> PaymentIntentRequest
-    MockStripe --> PaymentIntentResponse
-    MockStripe --> OrderConfirmRequest
-    MockStripe --> StockLocationResponse
-    MockStripe --> StockLocationCreate
-    MockStripe --> InventoryResponse
-    MockStripe --> OrderFulfilRequest
-    MockStripe --> OrderRefundRequest
-    MockStripe --> ReturnRequest
-    InventoryResponse <|-- InventoryBase
-    InventoryBase <|-- InventoryResponse
-    InventoryResponse --> MockStripe
-    OrderConfirmRequest --> MockStripe
-    OrderFulfilRequest --> MockStripe
-    OrderNoteCreate <|-- OrderNoteBase
-    OrderNoteResponse <|-- OrderNoteBase
-    OrderNoteBase <|-- OrderNoteCreate
-    OrderNoteBase <|-- OrderNoteResponse
-    OrderRefundRequest --> MockStripe
-    OrderResponse --> MockStripe
-    PaymentIntentRequest --> MockStripe
-    PaymentIntentResponse --> MockStripe
-    ReturnRequest --> MockStripe
-    StockLocationCreate <|-- StockLocationBase
-    StockLocationResponse <|-- StockLocationBase
-    StockLocationBase <|-- StockLocationCreate
-    StockLocationCreate --> MockStripe
-    StockLocationBase <|-- StockLocationResponse
-    StockLocationResponse --> MockStripe
+    ChannelConnection --> ChannelAdapter
+    ChannelConnection --> TikTokAdapter
+    ChannelConnection --> InstagramAdapter
+    ChannelConnection --> FacebookAdapter
+    ChannelConnection --> ChannelSyncService
+    ChannelSyncLog --> ChannelAdapter
+    ChannelSyncLog --> TikTokAdapter
+    ChannelSyncLog --> InstagramAdapter
+    ChannelSyncLog --> FacebookAdapter
+    ChannelSyncLog --> ChannelSyncService
+    TikTokAdapter <|-- ChannelAdapter
+    InstagramAdapter <|-- ChannelAdapter
+    FacebookAdapter <|-- ChannelAdapter
+    ChannelAdapter --> ChannelConnection
+    ChannelAdapter --> ChannelSyncLog
+    ChannelSyncService --> ChannelConnection
+    ChannelSyncService --> ChannelSyncLog
+    ChannelAdapter <|-- FacebookAdapter
+    FacebookAdapter --> ChannelConnection
+    FacebookAdapter --> ChannelSyncLog
+    ChannelAdapter <|-- InstagramAdapter
+    InstagramAdapter --> ChannelConnection
+    InstagramAdapter --> ChannelSyncLog
+    ChannelAdapter <|-- TikTokAdapter
+    TikTokAdapter --> ChannelConnection
+    TikTokAdapter --> ChannelSyncLog
+    LocalVectorProvider <|-- BaseVectorProvider
+    VertexAIVectorProvider <|-- BaseVectorProvider
+    BaseVectorProvider <|-- LocalVectorProvider
+    BaseVectorProvider <|-- VertexAIVectorProvider
 ```
 
 ## Relationships
 
-- [[Community 3]] (21 shared connections)
-- [[Community 14]] (4 shared connections)
-- [[Content & Features]] (3 shared connections)
+- [[Content & Features]] (12 shared connections)
+- [[Community 4]] (1 shared connections)
+- [[Community 3]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\order.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/order.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\vector_search.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py)
 
 ## Audit Trail
 
-- EXTRACTED: 138 (29%)
-- INFERRED: 340 (71%)
+- EXTRACTED: 134 (69%)
+- INFERRED: 61 (31%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -1,69 +1,120 @@
 # Community 10
 
-> 91 nodes · cohesion 0.04
+> 90 nodes · cohesion 0.10
 
 ## Key Concepts
 
-- [auth_override()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L112) (44 connections)
-- [UserClaims](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/user_claims.dart) (44 connections)
-- [Order](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/order.dart) (16 connections)
-- [test_analytics_needs_attention()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_analytics.py#L48) (9 connections)
-- [conftest.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L1) (7 connections)
-- [test_billing.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L1) (6 connections)
-- [test_channels.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L1) (6 connections)
-- [test_color_presets.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_color_presets.py#L1) (6 connections)
-- [test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py#L1) (6 connections)
-- [test_complete_upgrade_mock_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L126) (5 connections)
-- [test_create_checkout_session_url_logic()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L87) (5 connections)
-- [test_facebook_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L143) (5 connections)
-- [test_instagram_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L105) (5 connections)
-- [test_tiktok_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L67) (5 connections)
-- [test_gdpr_erasure()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_hygiene.py#L8) (5 connections)
-- [test_provision_tenant_record_creation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_provisioning_extended.py#L73) (5 connections)
-- [test_provisioning_extended.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_provisioning_extended.py#L1) (4 connections)
-- [test_analytics_overview()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_analytics.py#L11) (4 connections)
-- [test_list_buyers_tenant_isolation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L54) (4 connections)
-- [test_create_portal_session_fail_no_customer()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L44) (4 connections)
-- [test_get_subscription_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L10) (4 connections)
-- [test_list_invoices_empty()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L28) (4 connections)
-- [test_list_products_tenant_isolation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L49) (4 connections)
-- [test_list_collections_tenant_isolation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_collections.py#L24) (4 connections)
-- [test_delete_color_preset_not_found()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_color_presets.py#L119) (4 connections)
-- *... and 66 more nodes in this community*
+- [Order](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py#L9) (49 connections)
+- [StaffRoleAssignment](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L30) (40 connections)
+- [StaffSecurityState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L89) (32 connections)
+- [StaffUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L22) (27 connections)
+- [B2BInvitation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L41) (25 connections)
+- [Invitation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L10) (24 connections)
+- [BuyerUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L53) (21 connections)
+- [ConsumerUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L62) (21 connections)
+- [Generate Facebook OAuth authorization URL.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L157) (21 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L1) (20 connections)
+- [Invite a new staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L236) (20 connections)
+- [List pending invitations for the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L253) (20 connections)
+- [Cancel a pending invitation.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L269) (20 connections)
+- [Update a staff member's roles and sync with Firebase claims.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L291) (20 connections)
+- [Revoke a staff member's access to the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L335) (20 connections)
+- [Transfer store ownership to another staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L364) (20 connections)
+- [Register a B2B buyer using an invitation token.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L422) (20 connections)
+- [Register a DTC consumer (post-checkout).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L479) (20 connections)
+- [Checks the active cool-off and blocked status of a Gmail account.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L547) (20 connections)
+- [Logs a failed sign-in attempt and initiates a 180s cool-off or block.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L581) (20 connections)
+- [Sends a short-lived (180s TTL) unblock token email to the user (max 3/24h).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L661) (20 connections)
+- [Verifies the unblock token and unlocks the account (does not require login).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L723) (20 connections)
+- [Allows an administrator or store owner to unblock a locked staff account.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L763) (20 connections)
+- [StaffLoginHistory](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L72) (18 connections)
+- [B2BBuyerRegistration](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py#L31) (16 connections)
+- *... and 65 more nodes in this community*
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class B2BInvitation {
+        +models.py()
+    }
+    class BuyerUser {
+        +models.py()
+    }
+    class ConsumerUser {
+        +models.py()
+    }
+    class Invitation {
+        +models.py()
+    }
+    class Order {
+        +models.py()
+    }
+    class StaffLoginHistory {
+        +models.py()
+    }
+    class StaffRoleAssignment {
+        +models.py()
+    }
+    class StaffSecurityState {
+        +models.py()
+    }
+    class StaffUser {
+        +models.py()
+    }
+    class B2BBuyerRegistration {
+        +schemas.py()
+    }
+    class ConsumerRegistration {
+        +schemas.py()
+    }
+    class FailedLoginAlert {
+        +schemas.py()
+    }
+    class InvitationCreate {
+        +schemas.py()
+    }
+    class InvitationResponse {
+        +schemas.py()
+    }
+    class OwnershipTransferRequest {
+        +schemas.py()
+    }
+    class RoleUpdate {
+        +schemas.py()
+    }
+    class UnblockRequest {
+        +schemas.py()
+    }
+    class UnblockVerify {
+        +schemas.py()
+    }
+```
 
 ## Relationships
 
-- [[Community 12]] (5 shared connections)
-- [[Content & Features]] (1 shared connections)
-- [[Community 14]] (1 shared connections)
+- [[Community 4]] (338 shared connections)
+- [[Community 3]] (12 shared connections)
+- [[Community 14]] (11 shared connections)
+- [[Content & Features]] (9 shared connections)
+- [[Community 15]] (8 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\conftest.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_analytics.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_b2b.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_billing.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_blog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_blog.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_catalog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_channels.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_collections.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_collections.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_color_presets.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_color_presets.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_consumer_self_service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_consumer_self_service.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_hygiene.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_hygiene.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_i18n.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_i18n.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_platform.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_platform.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_post_order_auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_post_order_auth.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_provisioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_provisioning.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_provisioning_extended.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_provisioning_extended.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_rag_search.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_rag_search.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_seo_redirects.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_seo_redirects.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_ssr.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ssr.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\alembic\env.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/env.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\migrations\env.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/env.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth_extended.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_extended.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth_lockout.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_lockout.py)
 
 ## Audit Trail
 
-- EXTRACTED: 152 (41%)
-- INFERRED: 218 (59%)
+- EXTRACTED: 205 (22%)
+- INFERRED: 724 (78%)
 - AMBIGUOUS: 0 (0%)
 
 ---

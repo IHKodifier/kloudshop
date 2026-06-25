@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- [theme_config.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme_config.dart) (2 connections)
-- [copyWith](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme_config.dart) (1 connections)
-- [ThemeConfigModel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme_config.dart) (1 connections)
+- [hygiene.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (2 connections)
+- [SchemaHealth](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (1 connections)
+- [SystemStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (1 connections)
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\theme_config.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme_config.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\hygiene.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart)
 
 ## Audit Trail
 

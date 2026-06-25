@@ -4,26 +4,17 @@
 
 ## Key Concepts
 
-- [SceneDelegate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift#L4) (2 connections)
-- [SceneDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift#L1) (1 connections)
-- **FlutterSceneDelegate** (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class SceneDelegate {
-        +SceneDelegate.swift()
-    }
-```
+- [send_b2b_approval_notification()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py#L6) (2 connections)
+- [notifications.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py#L1) (1 connections)
+- [Sends FCM notifications to staff members who have the necessary roles for approv](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py#L7) (1 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 34]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\SceneDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\notifications.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py)
 
 ## Audit Trail
 

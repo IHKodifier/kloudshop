@@ -1,50 +1,61 @@
 # Analytics Dashboard
 
-> 116 nodes · cohesion 0.02
+> 117 nodes · cohesion 0.02
 
 ## Key Concepts
 
-- [dashboard_page.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (106 connections)
-- [settings_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart) (38 connections)
-- [package:kloudshop/providers/analytics_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/overview_view_test.dart) (3 connections)
-- [package:kloudshop/providers/settings_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart) (2 connections)
-- [_AlertItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [AnimatedContainer](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_B2BWholesalePlaceholder](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [BarChart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [BarChartGroupData](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [BarTooltipItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [BillingView](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [BlogView](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildBarChart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildCustomBar](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildCustomerGrowthCard](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildCustomStickyHeader](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildExpandableFab](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildInsightAlertItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildKloudAIInsightsCard](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildLatestOrdersCard](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildLineChart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildMainContent](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildMockStat](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- [_buildOverlapAvatar](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart) (1 connections)
-- *... and 91 more nodes in this community*
+- [csv_import_dialog.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart) (40 connections)
+- [blog_post_editor.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/blog_post_editor.dart) (27 connections)
+- [media_gallery_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/media_gallery_uploader.dart) (20 connections)
+- [compact_media_list_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/compact_media_list_uploader.dart) (19 connections)
+- [single_image_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (18 connections)
+- [dart:typed_data](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (8 connections)
+- [package:kloudshop/services/file_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (7 connections)
+- [Column](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (5 connections)
+- [file_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/file_uploader.dart) (4 connections)
+- [package:desktop_drop/desktop_drop.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (4 connections)
+- [package:image_picker/image_picker.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (4 connections)
+- [6c3b5d2868d3_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/6c3b5d2868d3_initial_platform_schema.py#L1) (3 connections)
+- [8af18657ab30_initial_tenant_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/8af18657ab30_initial_tenant_schema.py#L1) (3 connections)
+- [0cc09dfa3754_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py#L1) (3 connections)
+- [a3f1e8b2c904_import_job_audit_fields.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py#L1) (3 connections)
+- [download_helper_none.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_none.dart) (3 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py#L21) (2 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/6c3b5d2868d3_initial_platform_schema.py#L18) (2 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/8af18657ab30_initial_tenant_schema.py#L18) (2 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py#L22) (2 connections)
+- [dart:html](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_web.dart) (2 connections)
+- [version_check_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check/version_check_web.dart) (2 connections)
+- [download_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper.dart) (2 connections)
+- [download_helper_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_web.dart) (2 connections)
+- [package:file_picker/file_picker.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart) (2 connections)
+- *... and 92 more nodes in this community*
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 5]] (4 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\dashboard_page.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/dashboard_page.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\settings_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\overview_view_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/overview_view_test.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\alembic\versions\6c3b5d2868d3_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/6c3b5d2868d3_initial_platform_schema.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\alembic\versions\8af18657ab30_initial_tenant_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/8af18657ab30_initial_tenant_schema.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\migrations\versions\0cc09dfa3754_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\migrations\versions\a3f1e8b2c904_import_job_audit_fields.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\file_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/file_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\version_check\version_check_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check/version_check_web.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\utils\download_helper\download_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\utils\download_helper\download_helper_none.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_none.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\utils\download_helper\download_helper_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_web.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\blog_post_editor.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/blog_post_editor.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\csv_import_dialog.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\upload\compact_media_list_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/compact_media_list_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\upload\media_gallery_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/media_gallery_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\upload\single_image_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 261 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 273 (97%)
+- INFERRED: 8 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

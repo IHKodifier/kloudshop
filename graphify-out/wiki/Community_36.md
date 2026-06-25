@@ -4,9 +4,18 @@
 
 ## Key Concepts
 
-- [hygiene.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (2 connections)
-- [SchemaHealth](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (1 connections)
-- [SystemStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (1 connections)
+- [SceneDelegate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift#L4) (2 connections)
+- [SceneDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift#L1) (1 connections)
+- **FlutterSceneDelegate** (1 connections)
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class SceneDelegate {
+        +SceneDelegate.swift()
+    }
+```
 
 ## Relationships
 
@@ -14,7 +23,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\hygiene.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\SceneDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift)
 
 ## Audit Trail
 

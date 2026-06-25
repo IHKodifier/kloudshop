@@ -1,140 +1,177 @@
 # Community 4
 
-> 133 nodes · cohesion 0.06
+> 150 nodes · cohesion 0.07
 
 ## Key Concepts
 
-- [UserClaims](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/auth.py#L12) (142 connections)
-- [Order](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py#L9) (49 connections)
-- [StaffRoleAssignment](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L30) (40 connections)
-- [StaffSecurityState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L89) (32 connections)
-- [StaffUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L22) (27 connections)
-- [B2BInvitation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L41) (25 connections)
-- [Invitation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L10) (24 connections)
-- [BuyerUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L53) (21 connections)
-- [ConsumerUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L62) (21 connections)
-- [Generate Facebook OAuth authorization URL.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L157) (21 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L1) (20 connections)
-- [Invite a new staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L236) (20 connections)
-- [List pending invitations for the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L253) (20 connections)
-- [Cancel a pending invitation.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L269) (20 connections)
-- [Update a staff member's roles and sync with Firebase claims.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L291) (20 connections)
-- [Revoke a staff member's access to the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L335) (20 connections)
-- [Transfer store ownership to another staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L364) (20 connections)
-- [Register a B2B buyer using an invitation token.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L422) (20 connections)
-- [Register a DTC consumer (post-checkout).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L479) (20 connections)
-- [Checks the active cool-off and blocked status of a Gmail account.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L547) (20 connections)
-- [Logs a failed sign-in attempt and initiates a 180s cool-off or block.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L581) (20 connections)
-- [Sends a short-lived (180s TTL) unblock token email to the user (max 3/24h).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L661) (20 connections)
-- [Verifies the unblock token and unlocks the account (does not require login).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L723) (20 connections)
-- [Allows an administrator or store owner to unblock a locked staff account.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L763) (20 connections)
-- [StaffLoginHistory](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L72) (18 connections)
-- *... and 108 more nodes in this community*
+- [Variant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L81) (100 connections)
+- [Product](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L10) (73 connections)
+- [StockLocation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L7) (62 connections)
+- [Inventory](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L39) (61 connections)
+- [ImportJob](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L202) (40 connections)
+- [Mark an order as fulfilled and log tracking information.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L418) (40 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1) (35 connections)
+- [Collection](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L159) (28 connections)
+- [CollectionProduct](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L194) (27 connections)
+- [RedirectRule](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L237) (27 connections)
+- [ProductResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L118) (27 connections)
+- [ColorPreset](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L257) (26 connections)
+- [SkuExistsResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L209) (26 connections)
+- [VariantCreate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L47) (26 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L1) (25 connections)
+- [Return sorted list of N for all Option{N} Name/Value pairs found in headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1021) (25 connections)
+- [Background task: parse file, upsert products+variants+inventory, update job, sen](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1042) (25 connections)
+- [List products for the authenticated tenant.     Supports pagination and filteri](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L134) (25 connections)
+- [Download a pre-filled CSV template with all supported import column headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1383) (25 connections)
+- [Check which SKUs from the provided list already exist in this tenant's catalog.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1421) (25 connections)
+- [Upload a .csv or .xlsx file to bulk-import products and variants.     Returns a](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1443) (25 connections)
+- [Returns all import jobs for this tenant, newest first.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1495) (25 connections)
+- [Poll the status of a specific import job.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1510) (25 connections)
+- [Update a product and its variants. If slug changes, create a 301 redirect.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L165) (25 connections)
+- [Create a new product with its variants.     Enforces catalog:write permission a](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L35) (25 connections)
+- *... and 125 more nodes in this community*
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class UserClaims {
-        +auth.py()
-    }
-    class B2BInvitation {
+    class Collection {
         +models.py()
     }
-    class BuyerUser {
+    class CollectionProduct {
         +models.py()
     }
-    class ConsumerUser {
+    class ColorPreset {
         +models.py()
     }
-    class Invitation {
+    class ImportJob {
         +models.py()
     }
-    class Order {
+    class Inventory {
         +models.py()
     }
-    class StaffLoginHistory {
+    class Product {
         +models.py()
     }
-    class StaffRoleAssignment {
+    class RedirectRule {
         +models.py()
     }
-    class StaffSecurityState {
+    class StaffLocationAssignment {
         +models.py()
     }
-    class StaffUser {
+    class StockLocation {
         +models.py()
     }
-    class PermissionChecker {
-        +rbac.py()
-        +.__init__()
-        +.__call__()
+    class Variant {
+        +models.py()
     }
-    class B2BBuyerRegistration {
+    class CollectionBase {
         +schemas.py()
     }
-    class ConsumerRegistration {
+    class CollectionCreate {
         +schemas.py()
     }
-    class FailedLoginAlert {
+    class CollectionResponse {
         +schemas.py()
     }
-    class InvitationCreate {
+    class CollectionUpdate {
         +schemas.py()
     }
-    class InvitationResponse {
+    class ColorPresetBase {
         +schemas.py()
     }
-    class OwnershipTransferRequest {
+    class ColorPresetCreate {
         +schemas.py()
     }
-    class RoleUpdate {
+    class ColorPresetResponse {
         +schemas.py()
     }
-    class UnblockRequest {
+    class ImportJobResponse {
         +schemas.py()
     }
-    class UnblockVerify {
+    class ProductAssignment {
         +schemas.py()
     }
-    UserClaims --> StaffSecurityState
-    UserClaims --> PermissionChecker
-    StaffSecurityState --> UserClaims
-    PermissionChecker --> UserClaims
+    class ProductBase {
+        +schemas.py()
+    }
+    class ProductCreate {
+        +schemas.py()
+    }
+    class ProductResponse {
+        +schemas.py()
+    }
+    class ProductUpdate {
+        +schemas.py()
+    }
+    class RedirectRuleResponse {
+        +schemas.py()
+    }
+    class SkuExistsRequest {
+        +schemas.py()
+    }
+    class SkuExistsResponse {
+        +schemas.py()
+    }
+    class VariantBase {
+        +schemas.py()
+    }
+    class VariantCreate {
+        +schemas.py()
+    }
+    class VariantResponse {
+        +schemas.py()
+    }
+    CollectionCreate <|-- CollectionBase
+    CollectionResponse <|-- CollectionBase
+    CollectionBase <|-- CollectionCreate
+    CollectionBase <|-- CollectionResponse
+    ColorPresetCreate <|-- ColorPresetBase
+    ColorPresetResponse <|-- ColorPresetBase
+    ColorPresetBase <|-- ColorPresetCreate
+    ColorPresetBase <|-- ColorPresetResponse
+    ProductCreate <|-- ProductBase
+    ProductResponse <|-- ProductBase
+    ProductBase <|-- ProductCreate
+    ProductBase <|-- ProductResponse
+    VariantCreate <|-- VariantBase
+    VariantResponse <|-- VariantBase
+    VariantBase <|-- VariantCreate
+    VariantBase <|-- VariantResponse
 ```
 
 ## Relationships
 
-- [[Community 3]] (46 shared connections)
-- [[Community 14]] (22 shared connections)
-- [[Content & Features]] (19 shared connections)
-- [[Community 15]] (16 shared connections)
-- [[Community 12]] (15 shared connections)
-- [[Community 10]] (15 shared connections)
-- [[Community 17]] (3 shared connections)
-- [[Community 8]] (1 shared connections)
+- [[Community 3]] (657 shared connections)
+- [[Community 15]] (32 shared connections)
+- [[Community 14]] (28 shared connections)
+- [[Content & Features]] (11 shared connections)
+- [[Community 12]] (2 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\alembic\env.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/env.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\migrations\env.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/env.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\analytics\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/analytics/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\hygiene_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/hygiene_router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/auth.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\rbac.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/rbac.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth_extended.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_extended.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth_lockout.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_lockout.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_catalog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_collections.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_collections.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\feeds\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/feeds/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\internal\provisioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/internal/provisioning.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pos\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_channels.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_csv_import.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_csv_import.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_inventory.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_inventory.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_pos.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_pos.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\catalog.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/catalog.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\color_presets_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/color_presets_provider.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 290 (25%)
-- INFERRED: 889 (75%)
+- EXTRACTED: 335 (18%)
+- INFERRED: 1553 (82%)
 - AMBIGUOUS: 0 (0%)
 
 ---

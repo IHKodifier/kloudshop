@@ -126,9 +126,9 @@ sequenceDiagram
     participant P117 as BuyerUser
     participant P118 as ConsumerUser
     participant P119 as OrderItem
-    participant P120 as BrandProfile
-    participant P121 as StaffLoginHistory
-    participant P122 as OrderEvent
+    participant P120 as StaffLoginHistory
+    participant P121 as OrderEvent
+    participant P122 as BrandProfile
     participant P123 as ApprovalWorkflow
     participant P124 as PriceList
     participant P125 as PriceListItem

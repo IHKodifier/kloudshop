@@ -1,12 +1,13 @@
 # Community 32
 
-> 3 nodes · cohesion 1.00
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- [fix_slugs.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L1) (2 connections)
-- [main()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L11) (2 connections)
-- [slugify()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L5) (2 connections)
+- [subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (3 connections)
+- [_parseStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
+- [_parseTier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
+- [SubscriptionModel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
 
 ## Relationships
 
@@ -14,7 +15,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\scripts\fix_slugs.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart)
 
 ## Audit Trail
 

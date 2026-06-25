@@ -365,7 +365,15 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                   HoverScale(
                     child: IconButton(
                       icon: const Icon(LucideIcons.save, size: 20),
-                      onPressed: () => _handlePublish(),
+                      onPressed: () => _handleSaveDraft(),
+                      tooltip: 'Save Draft',
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  HoverScale(
+                    child: IconButton(
+                      icon: const Icon(LucideIcons.rocket, size: 20),
+                      onPressed: () => _handleSaveAndPublishConfirmation(),
                       tooltip: 'Save & Publish',
                     ),
                   ),
@@ -673,12 +681,26 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                       ),
                       const SizedBox(width: 12),
 
-                      // Publish
+                      // Save Draft
+                      HoverScale(
+                        child: OutlinedButton.icon(
+                          onPressed: () => _handleSaveDraft(),
+                          icon: const Icon(LucideIcons.save, size: 14),
+                          label: const Text('Save Draft', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+
+                      // Save & Publish
                       HoverScale(
                         child: ElevatedButton.icon(
-                          onPressed: () => _handlePublish(),
+                          onPressed: () => _handleSaveAndPublishConfirmation(),
                           icon: const Icon(LucideIcons.rocket, size: 16, color: Colors.white),
-                          label: const Text('Publish', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                          label: const Text('Save & Publish', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.brandEmerald500,
                             elevation: 0,
@@ -2730,6 +2752,388 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleSaveDraft() async {
+    try {
+      await ref.read(activeThemeConfigProvider.notifier).saveDraft();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Draft saved successfully!'),
+            backgroundColor: AppTheme.brandEmerald600,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleSaveAndPublishConfirmation() async {
+    final config = ref.read(activeThemeConfigProvider).value;
+    if (config == null) return;
+
+    // First save any unsaved draft modifications to the server
+    try {
+      await ref.read(activeThemeConfigProvider.notifier).saveDraft();
+    } catch (e) {
+      debugPrint('Save draft before publish failed: $e');
+    }
+
+    if (!mounted) return;
+
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Retrieve active design tokens for display
+    final primaryColorHex = config.draftTokens['primary_color'] ?? '#0D9488';
+    final canvasColorHex = config.draftTokens['background_color'] ?? '#FFFFFF';
+    final fontName = config.draftTokens['font_family'] ?? 'Inter';
+    final shaderName = config.draftTokens['background_shader'] ?? 'wave';
+
+    // Parse all pages/layouts
+    final pagesList = <Map<String, dynamic>>[];
+    config.draftSlots.forEach((key, value) {
+      if (key == 'layout') {
+        pagesList.add({'name': 'Home Page', 'key': key, 'sections': _countTopLevelSections(value)});
+      } else if (key.startsWith('layout_')) {
+        final pageName = key.replaceFirst('layout_', '').toUpperCase();
+        pagesList.add({'name': '$pageName Page', 'key': key, 'sections': _countTopLevelSections(value)});
+      }
+    });
+
+    // Sort layouts so Home is first
+    pagesList.sort((a, b) {
+      if (a['key'] == 'layout') return -1;
+      if (b['key'] == 'layout') return 1;
+      return (a['name'] as String).compareTo(b['name'] as String);
+    });
+
+    final primaryColor = _parseColor(primaryColorHex, AppTheme.brandEmerald500);
+    final canvasColor = _parseColor(canvasColorHex, Colors.white);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+              child: Container(
+                width: 500,
+                constraints: const BoxConstraints(maxHeight: 650),
+                decoration: BoxDecoration(
+                  color: isDark 
+                      ? const Color(0xFF0F172A).withOpacity(0.85) 
+                      : Colors.white.withOpacity(0.9),
+                  border: Border.all(
+                    color: isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.08),
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title Block
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppTheme.brandEmerald500.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(LucideIcons.rocket, size: 22, color: AppTheme.brandEmerald500),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Publish Storefront',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Outfit',
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Review changes to make live on your storefront',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: theme.hintColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(height: 1),
+                    const SizedBox(height: 20),
+
+                    // Layout Name
+                    Text(
+                      'ACTIVE LAYOUT CONFIGURATION',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
+                        color: theme.hintColor,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      config.name,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Design Tokens Summary
+                    Text(
+                      'DESIGN TOKENS BEING PUBLISHED',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
+                        color: theme.hintColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1E293B).withOpacity(0.4) : const Color(0xFFF1F5F9).withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(LucideIcons.palette, size: 14, color: AppTheme.brandEmerald500),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Primary Color:',
+                                  style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                                ),
+                              ),
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: theme.dividerColor, width: 0.5),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                primaryColorHex,
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: theme.colorScheme.onSurface),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(LucideIcons.paintBucket, size: 14, color: AppTheme.brandEmerald500),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Canvas Background:',
+                                  style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                                ),
+                              ),
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: canvasColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: theme.dividerColor, width: 0.5),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                canvasColorHex,
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: theme.colorScheme.onSurface),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(LucideIcons.type, size: 14, color: AppTheme.brandEmerald500),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Typography Font:',
+                                  style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                                ),
+                              ),
+                              Text(
+                                fontName,
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(LucideIcons.sparkles, size: 14, color: AppTheme.brandEmerald500),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Background Shader:',
+                                  style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                                ),
+                              ),
+                              Text(
+                                shaderName.toUpperCase(),
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Pages Summary
+                    Text(
+                      'PAGES / LAYOUTS TO BE UPDATED',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
+                        color: theme.hintColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: pagesList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, idx) {
+                          final page = pagesList[idx];
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF1E293B).withOpacity(0.25) : const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: theme.dividerColor.withOpacity(0.03)),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(LucideIcons.fileText, size: 14, color: theme.hintColor),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    page['name'],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.colorScheme.onSurface,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.brandEmerald500.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '${page['sections']} sections',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: AppTheme.brandEmerald500,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(height: 1),
+                    const SizedBox(height: 20),
+
+                    // Action buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(
+                            'Keep Editing',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _handlePublish();
+                          },
+                          icon: const Icon(LucideIcons.rocket, size: 14, color: Colors.white),
+                          label: const Text(
+                            'Confirm & Publish',
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.brandEmerald500,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  int _countTopLevelSections(dynamic slotValue) {
+    if (slotValue is Map && slotValue['children'] is List) {
+      return (slotValue['children'] as List).length;
+    }
+    return 0;
   }
 
   Future<void> _handlePublish() async {

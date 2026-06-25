@@ -195,8 +195,8 @@ sequenceDiagram
     participant P184 as Subscription
     participant P185 as BuyerUser
     participant P186 as ConsumerUser
-    participant P187 as BrandProfile
-    participant P188 as StaffLoginHistory
+    participant P187 as StaffLoginHistory
+    participant P188 as BrandProfile
     participant P189 as ApprovalWorkflow
     participant P190 as PriceList
     participant P191 as PriceListItem
@@ -631,10 +631,10 @@ sequenceDiagram
     P27-->>- P0: return
     P0->>+ P187: uses
     P187-->>- P0: return
-    P0->>+ P188: uses
-    P188-->>- P0: return
     P0->>+ P28: uses
     P28-->>- P0: return
+    P0->>+ P188: uses
+    P188-->>- P0: return
     P0->>+ P189: uses
     P189-->>- P0: return
     P0->>+ P190: uses

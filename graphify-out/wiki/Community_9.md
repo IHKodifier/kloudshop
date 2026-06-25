@@ -1,35 +1,35 @@
 # Community 9
 
-> 97 nodes · cohesion 0.02
+> 91 nodes · cohesion 0.02
 
 ## Key Concepts
 
-- [product_editor_variants_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart) (31 connections)
-- [product_editor_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (27 connections)
-- [product_editor_info_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart) (23 connections)
-- [variant_management_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/variant_management_test.dart) (15 connections)
-- [lottie_toggle.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/lottie_toggle.dart) (14 connections)
-- [rich_text_toolbar.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (13 connections)
-- [package:kloudshop/providers/product_editor_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/variant_management_test.dart) (5 connections)
-- [package:lottie/lottie.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart) (4 connections)
-- [package:rich_field_controller/rich_field_controller.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart) (2 connections)
-- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [Center](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [CircularProgressIndicator](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [Dialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [Expanded](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [Icon](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [Padding](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [ProductEditorView](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [_ProductEditorViewState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [ScaffoldMessenger](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [ScaleTransition](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [_showNotification](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [SizedBox](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [StatefulBuilder](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (1 connections)
-- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/lottie_toggle.dart) (1 connections)
-- [didUpdateWidget](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/lottie_toggle.dart) (1 connections)
-- *... and 72 more nodes in this community*
+- [wysiwyg_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (103 connections)
+- [_AccordionHeaderTile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_AccordionHeaderTileState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_addComponentToSelectedOrRoot](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildAbsolutePositionFields](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildBrowserWrapper](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildColorSwatchesRow](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildComponentLibraryInline](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildComponentTree](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildConfigGroup](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildDeviceToggle](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildFigmaAlignmentSelector](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildGeometryField](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildLeftCollapseRibbon](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildLeftComponentStack](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildMobilePhoneWrapper](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildNodeColorPickerTile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildNodeDropdown](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildNodeSpinInput](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildNodeTextEditor](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildPreviewCanvas](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildRightCollapseRibbon](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildRightConfigPanel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- [_buildRightConfigPanelContent](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart) (1 connections)
+- *... and 66 more nodes in this community*
 
 ## Relationships
 
@@ -37,17 +37,11 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\product_editor_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\lottie_toggle.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/lottie_toggle.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_editor_info_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_editor_variants_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_variants_section.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\rich_text_toolbar.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\variant_management_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/variant_management_test.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\wysiwyg_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/wysiwyg_view.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 222 (100%)
+- EXTRACTED: 193 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

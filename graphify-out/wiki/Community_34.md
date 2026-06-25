@@ -4,17 +4,17 @@
 
 ## Key Concepts
 
-- [send_b2b_approval_notification()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py#L6) (2 connections)
-- [notifications.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py#L1) (1 connections)
-- [Sends FCM notifications to staff members who have the necessary roles for approv](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py#L7) (1 connections)
+- [track_event()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L8) (2 connections)
+- [Track an event for BigQuery sync.     In production, this would publish to Pub/](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L15) (1 connections)
+- [analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L1) (1 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 33]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\notifications.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/notifications.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py)
 
 ## Audit Trail
 
