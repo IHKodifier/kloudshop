@@ -1,46 +1,39 @@
 # Community 24
 
-> 9 nodes · cohesion 0.22
+> 17 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- [AppDelegate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L4) (8 connections)
-- [.application()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L6) (1 connections)
-- [.applicationShouldTerminateAfterLastWindowClosed()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L6) (1 connections)
-- [.applicationSupportsSecureRestorableState()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L10) (1 connections)
-- [.didInitializeImplicitFlutterEngine()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L13) (1 connections)
-- [AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L1) (1 connections)
-- [AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L1) (1 connections)
-- **FlutterAppDelegate** (1 connections)
-- **FlutterImplicitEngineDelegate** (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class AppDelegate {
-        +AppDelegate.swift()
-        +.application()
-        +.didInitializeImplicitFlutterEngine()
-        +AppDelegate.swift()
-        +.applicationShouldTerminateAfterLastWindowClosed()
-        +.applicationSupportsSecureRestorableState()
-    }
-```
+- [test_catalog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L1) (9 connections)
+- [Verify that prescription_document_required requires requires_prescription=True.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L112) (2 connections)
+- [Verify that is_perishable flag is saved correctly on Product.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L127) (2 connections)
+- [Verify that an owner can create a product with variants.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L13) (2 connections)
+- [Verify that updating a variant SKU with email_sku_report=true triggers change de](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L146) (2 connections)
+- [Verify that collapsing variants from options to simple product triggers collapse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L182) (2 connections)
+- [Verify that accessing /products without a token returns 403.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L7) (2 connections)
+- [Verify that creating a variant with negative price fails with 400.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L81) (2 connections)
+- [Verify that PWYW variants cannot have a compare_at_price.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L94) (2 connections)
+- [test_create_product_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L12) (2 connections)
+- [test_get_products_unauthorized()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L6) (2 connections)
+- [test_product_is_perishable()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L126) (2 connections)
+- [test_product_prescription_logic()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L111) (2 connections)
+- [test_update_product_collapse_report()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L181) (2 connections)
+- [test_update_product_sku_report()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L145) (2 connections)
+- [test_variant_price_constraint()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L80) (2 connections)
+- [test_variant_pwyw_no_compare_at()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py#L93) (2 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 21]] (8 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\Runner\AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_catalog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py)
 
 ## Audit Trail
 
-- EXTRACTED: 16 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 33 (80%)
+- INFERRED: 8 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

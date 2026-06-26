@@ -6,7 +6,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from shared.db import get_db
-from shared.auth import UserClaims
+from shared.auth import UserClaims, validate_token
 from shared.rbac import has_permissions
 from .models import (
     BrandProfile, StorefrontContent, StaticPage,
@@ -419,6 +419,72 @@ async def create_static_page(
     await db.commit()
     await db.refresh(page)
     return page
+
+@router.get("/pages", response_model=List[StaticPageResponse])
+async def list_static_pages(
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    if not user.tenant_id:
+        raise HTTPException(status_code=400, detail="Tenant ID missing")
+    
+    result = await db.execute(
+        select(StaticPage).where(StaticPage.tenant_id == user.tenant_id)
+    )
+    return result.scalars().all()
+
+@router.get("/pages/{page_id}", response_model=StaticPageResponse)
+async def get_static_page(
+    page_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = Depends(validate_token)
+):
+    result = await db.execute(
+        select(StaticPage).where(StaticPage.page_id == page_id, StaticPage.tenant_id == user.tenant_id)
+    )
+    page = result.scalar_one_or_none()
+    if not page:
+        raise HTTPException(status_code=404, detail="Static page not found")
+    return page
+
+@router.patch("/pages/{page_id}", response_model=StaticPageResponse)
+async def update_static_page(
+    page_id: str,
+    page_in: StaticPageUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["storefront:write"])
+):
+    result = await db.execute(
+        select(StaticPage).where(StaticPage.page_id == page_id, StaticPage.tenant_id == user.tenant_id)
+    )
+    page = result.scalar_one_or_none()
+    if not page:
+        raise HTTPException(status_code=404, detail="Static page not found")
+    
+    update_data = page_in.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(page, field, value)
+        
+    await db.commit()
+    await db.refresh(page)
+    return page
+
+@router.delete("/pages/{page_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_static_page(
+    page_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: UserClaims = has_permissions(["storefront:write"])
+):
+    result = await db.execute(
+        select(StaticPage).where(StaticPage.page_id == page_id, StaticPage.tenant_id == user.tenant_id)
+    )
+    page = result.scalar_one_or_none()
+    if not page:
+        raise HTTPException(status_code=404, detail="Static page not found")
+    
+    await db.delete(page)
+    await db.commit()
+    return None
 
 # --- Shipping Management ---
 

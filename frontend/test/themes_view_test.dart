@@ -6,8 +6,10 @@ import 'package:kloudshop/models/theme.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/providers/theme_providers.dart';
 import 'package:kloudshop/views/themes_view.dart';
+import 'test_helper.dart';
 
 void main() {
+  setUpAll(registerTestHttpOverrides);
   testWidgets('ThemesView renders list and shows active status', (tester) async {
     final mockThemes = [
       ThemeModel(
@@ -52,7 +54,9 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
 
     // Verify layout name is listed
     expect(find.text('Active Layout One'), findsOneWidget);
@@ -61,7 +65,7 @@ void main() {
     expect(find.text('LIVE ACTIVE'), findsOneWidget);
     
     // Verify actions exist
-    expect(find.text('Customize Live Layout'), findsOneWidget);
+    expect(find.text('Customize'), findsOneWidget);
   });
 }
 

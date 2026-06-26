@@ -263,14 +263,8 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
       );
     }
 
-    Widget bodyContent = Column(
-      children: [
-        // Standard persistent Header
-        _buildHeader(primaryColor, textColor, surfaceColor, borderRad),
-        
-        // Recursive layout render block
-        _renderNode(layoutMap, context, primaryColor, textColor, surfaceColor, borderRad),
-      ],
+    Widget bodyContent = SingleChildScrollView(
+      child: _renderNode(layoutMap, context, primaryColor, textColor, surfaceColor, borderRad),
     );
 
     // Dynamic Liquid Shader Background if type == shader
@@ -344,7 +338,7 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
     if (node['hidden'] == true) return const SizedBox.shrink();
 
     final rawType = node['type'] ?? 'flexCol';
-    final type = ['flexRow', 'flexCol', 'grid', 'stack', 'text', 'button', 'product_card', 'pdp_tabs', 'divider', 'icon', 'testimonials', 'trust_badges', 'collection_list', 'newsletter_signup', 'store_locator', 'spacer'].contains(rawType)
+    final type = ['flexRow', 'flexCol', 'grid', 'stack', 'text', 'button', 'product_card', 'pdp_tabs', 'divider', 'icon', 'testimonials', 'trust_badges', 'collection_list', 'newsletter_signup', 'store_locator', 'spacer', 'announcement_bar', 'header', 'footer', 'image_banner', 'collection'].contains(rawType)
         ? rawType
         : 'flexCol';
     final props = node['properties'] ?? {};
@@ -830,6 +824,300 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
           contentWidget = SizedBox(height: h);
           break;
 
+        case 'announcement_bar':
+          final barText = props['text'] ?? 'Welcome to our store';
+          final barBgColor = _parseColor(props['background_color'], primary);
+          final barTextColor = _parseColor(props['text_color'], Colors.white);
+          contentWidget = Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            color: barBgColor,
+            alignment: Alignment.center,
+            child: Text(
+              barText,
+              style: TextStyle(
+                color: barTextColor,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          );
+          break;
+
+        case 'header':
+          final logoText = props['logo_text'] ?? 'Dawn';
+          final logoImageUrl = props['logo_image_url'] as String?;
+          
+          contentWidget = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: surface,
+              border: Border(bottom: BorderSide(color: text.withOpacity(0.1))),
+            ),
+            child: Row(
+              children: [
+                if (logoImageUrl != null && logoImageUrl.isNotEmpty)
+                  Image.network(logoImageUrl, height: 28, errorBuilder: (_, __, ___) => Icon(LucideIcons.store, color: primary))
+                else ...[
+                  Icon(LucideIcons.store, color: primary),
+                  const SizedBox(width: 12),
+                  Text(
+                    logoText,
+                    style: TextStyle(
+                      color: text,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      fontFamily: 'Outfit',
+                    ),
+                  ),
+                ],
+                const Spacer(),
+                if (!widget.isMobile) ...[
+                  _navItem('Home', text),
+                  _navItem('Catalog', text),
+                  _navItem('Contact', text),
+                ],
+                const SizedBox(width: 12),
+                Icon(LucideIcons.search, color: text, size: 20),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => setState(() => _isCartOpen = !_isCartOpen),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(LucideIcons.shoppingBag, color: text, size: 20),
+                      Positioned(
+                        right: -6,
+                        top: -6,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.redAccent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Text(
+                            '2',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+          break;
+
+        case 'image_banner':
+          final overlayOpacity = _parseDouble(props['overlay_opacity'], 0.4);
+          final bannerHeightStr = props['banner_height'] ?? 'Medium';
+          final bannerImageUrl = props['image_url'] as String? ?? 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800';
+          
+          double bannerHeight = 250.0;
+          if (bannerHeightStr == 'Small') bannerHeight = 180.0;
+          if (bannerHeightStr == 'Large') bannerHeight = 350.0;
+
+          List<Widget> bannerChildren = [];
+          for (final child in children) {
+            bannerChildren.add(_renderNode(child, context, primary, text, surface, radius));
+          }
+
+          contentWidget = Container(
+            height: bannerHeight,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius),
+              image: DecorationImage(
+                image: NetworkImage(bannerImageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(radius),
+                color: Colors.black.withOpacity(overlayOpacity),
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: bannerChildren.expand((child) => [child, const SizedBox(height: 12)]).toList()..removeLast(),
+              ),
+            ),
+          );
+          break;
+
+        case 'collection_list':
+          final listTitle = props['title'] ?? 'Shop by Collection';
+          final listSpacing = _parseDouble(props['spacing'], 16.0);
+          
+          List<Widget> listChildren = [];
+          for (final child in children) {
+            listChildren.add(Expanded(
+              child: _renderNode(child, context, primary, text, surface, radius),
+            ));
+          }
+
+          contentWidget = Padding(
+            padding: paddingEdgeInsets,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  listTitle,
+                  style: TextStyle(color: text, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: listChildren.isEmpty 
+                    ? [Text('No collections added.', style: TextStyle(color: text.withOpacity(0.5)))]
+                    : listChildren.expand((item) => [item, SizedBox(width: listSpacing)]).toList()..removeLast(),
+                ),
+              ],
+            ),
+          );
+          break;
+
+        case 'collection':
+          final colName = props['collection_name'] ?? 'Collection';
+          final colImageUrl = props['image_url'] as String? ?? 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500';
+          contentWidget = Container(
+            height: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius),
+              image: DecorationImage(
+                image: NetworkImage(colImageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(radius),
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              alignment: Alignment.bottomLeft,
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    colName,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                  const Icon(LucideIcons.arrowRight, color: Colors.white, size: 16),
+                ],
+              ),
+            ),
+          );
+          break;
+
+        case 'footer':
+          final showNewsletter = props['show_newsletter'] == true;
+          final showPayment = props['show_payment_methods'] == true;
+          final footerBg = _parseColor(props['background_color'], const Color(0xFF0F172A));
+          final isDarkFooter = footerBg.computeLuminance() < 0.5;
+          final footerText = isDarkFooter ? Colors.white : const Color(0xFF0F172A);
+
+          contentWidget = Container(
+            color: footerBg,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Quick Links', style: TextStyle(color: footerText, fontWeight: FontWeight.bold, fontSize: 13)),
+                          const SizedBox(height: 12),
+                          _navItem('Search', footerText.withOpacity(0.7)),
+                          _navItem('Privacy Policy', footerText.withOpacity(0.7)),
+                          _navItem('Terms of Service', footerText.withOpacity(0.7)),
+                        ],
+                      ),
+                    ),
+                    if (showNewsletter)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Subscribe to our emails', style: TextStyle(color: footerText, fontWeight: FontWeight.bold, fontSize: 13)),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 38,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color: isDarkFooter ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                                      borderRadius: BorderRadius.horizontal(left: Radius.circular(radius)),
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'email@example.com',
+                                      style: TextStyle(color: footerText.withOpacity(0.4), fontSize: 11),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    color: primary,
+                                    borderRadius: BorderRadius.horizontal(right: Radius.circular(radius)),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  alignment: Alignment.center,
+                                  child: Icon(LucideIcons.arrowRight, color: Colors.white, size: 16),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Divider(color: footerText.withOpacity(0.1)),
+                const SizedBox(height: 16),
+                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '© 2026, Dawn Powered by KloudShop',
+                        style: TextStyle(color: footerText.withOpacity(0.5), fontSize: 11),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (showPayment)
+                      Row(
+                        children: [
+                          Icon(LucideIcons.creditCard, color: footerText.withOpacity(0.6), size: 18),
+                          const SizedBox(width: 8),
+                          Icon(LucideIcons.wallet, color: footerText.withOpacity(0.6), size: 18),
+                        ],
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          );
+          break;
+
         default:
           contentWidget = const SizedBox.shrink();
           break;
@@ -903,6 +1191,27 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
                           border: Border.all(
                             color: highlightColor,
                             width: 2.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: -18,
+                    left: 4,
+                    child: IgnorePointer(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: highlightColor,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          node['customName'] ?? node['type'] ?? '',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -1804,124 +2113,87 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
 
   // Pre-configured layout trees matching theme parameters
   Map<String, dynamic> _getDefaultLayout() {
+    final shader = widget.tokens['background_shader'] ?? 'wave';
+    final heading = widget.slots['hero_heading'] ?? 'Where Quality Meets Style';
+
     return {
       "id": "root",
       "type": "flexCol",
       "properties": {"padding": 0.0},
       "children": [
-        // Premium Hero Section
+        {
+          "id": "announcement_bar",
+          "type": "announcement_bar",
+          "customName": "Announcement bar",
+          "properties": {
+            "text": "Welcome to our store",
+            "background_color": "tokens.primary",
+            "text_color": "#FFFFFF"
+          }
+        },
+        {
+          "id": "header_section",
+          "type": "header",
+          "customName": "Header",
+          "properties": {
+            "logo_text": "Dawn",
+            "logo_width": 90.0,
+            "menu_handle": "main-menu"
+          }
+        },
         {
           "id": "hero_section",
-          "type": "flexCol",
+          "type": "image_banner",
+          "customName": "Image banner",
           "properties": {
             "padding": 54.0,
-            "shader_source": widget.tokens['background_shader'] ?? 'wave',
+            "shader_source": shader,
             "alignment": "center",
-            "spacing": 16.0
+            "spacing": 16.0,
+            "overlay_opacity": 0.4,
+            "banner_height": "Large"
           },
           "children": [
             {
               "id": "hero_heading",
               "type": "text",
-              "value": widget.slots['hero_heading'] ?? 'Modern. Sleek. Professional.',
-              "style": {
-                "font_size": widget.isMobile ? 26.0 : 36.0,
-                "font_weight": "bold",
-                "color": "#FFFFFF",
-                "font_family": "Outfit",
-                "align": "center"
-              }
+              "value": heading,
+              "style": {"font_size": widget.isMobile ? 26.0 : 36.0, "font_weight": "bold", "color": "#FFFFFF", "font_family": "Outfit", "align": "center"}
             },
             {
-              "id": "hero_subheading",
-              "type": "text",
-              "value": widget.slots['hero_subheading'] ?? 'The next generation of e-commerce is here.',
-              "style": {
-                "font_size": 15.0,
-                "color": "#E2E8F0",
-                "font_family": "Inter",
-                "align": "center"
-              }
-            },
-            {
-              "id": "hero_button",
+              "id": "hero_buttons",
               "type": "button",
-              "value": "Shop Collection",
+              "value": "Buttons",
               "style": {"background_color": "tokens.primary", "text_color": "#FFFFFF", "border_radius": 8.0}
             }
           ]
         },
-        // PDP Section
         {
           "id": "featured_section",
-          "type": "flexCol",
+          "type": "collection_list",
+          "customName": "Collection list",
           "properties": {
             "padding": 24.0,
             "spacing": 16.0,
+            "columns": 3
           },
           "children": [
-            {
-              "id": "featured_heading",
-              "type": "text",
-              "value": "Featured Products",
-              "style": {
-                "font_size": 18.0,
-                "font_weight": "bold",
-                "font_family": "Outfit"
-              }
-            },
-            {
-              "id": "featured_grid",
-              "type": "grid",
-              "properties": {
-                "columns": 3,
-                "spacing": 16.0
-              },
-              "children": [
-                {"id": "prod_1", "type": "product_card", "product_name": "Premium Jacket", "price": "\$129"},
-                {"id": "prod_2", "type": "product_card", "product_name": "Urban Sneakers", "price": "\$89"},
-                {"id": "prod_3", "type": "product_card", "product_name": "Classic Watch", "price": "\$199"}
-              ]
-            }
+            {"id": "col_1", "type": "collection", "customName": "Collection", "properties": {"collection_id": "hoodies", "collection_name": "Hoodies"}},
+            {"id": "col_2", "type": "collection", "customName": "Collection", "properties": {"collection_id": "shorts", "collection_name": "Shorts"}},
+            {"id": "col_3", "type": "collection", "customName": "Collection", "properties": {"collection_id": "tshirts", "collection_name": "T-shirts"}}
           ]
         },
-        // PDP Specifications Tabs Card
-        {
-          "id": "spec_tabs_section",
-          "type": "flexCol",
-          "properties": {
-            "padding": 24.0,
-            "background_color": "tokens.background",
-            "border_style": "solid",
-            "stroke_width": 1.0,
-            "border_color": "#E2E8F0"
-          },
-          "children": [
-            {"id": "pdp_tabs_widget", "type": "pdp_tabs"}
-          ]
-        },
-        // Footer Block
         {
           "id": "footer_section",
-          "type": "flexCol",
+          "type": "footer",
+          "customName": "Footer",
           "properties": {
             "padding": 36.0,
             "background_color": "#0F172A",
-            "alignment": "center"
-          },
-          "children": [
-            {
-              "id": "footer_text",
-              "type": "text",
-              "value": "© 2026 KloudShop. Challenging the giants with native speed.",
-              "style": {
-                "font_size": 11.0,
-                "color": "#94A3B8",
-                "font_family": "Inter",
-                "align": "center"
-              }
-            }
-          ]
+            "alignment": "center",
+            "show_payment_methods": true,
+            "show_newsletter": true
+          }
         }
       ]
     };

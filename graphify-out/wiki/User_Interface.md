@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- [GpuPreference()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/dart_project.h#L14) (1 connections)
-- [dart_project.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/dart_project.h#L1) (1 connections)
+- [color_preset.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/color_preset.dart) (1 connections)
+- [ColorPreset](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/color_preset.dart) (1 connections)
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\dart_project.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/dart_project.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\color_preset.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/color_preset.dart)
 
 ## Audit Trail
 

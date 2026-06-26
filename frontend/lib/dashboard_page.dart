@@ -6,6 +6,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:kloudshop/models/analytics.dart';
+import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/models/user_claims.dart';
 import 'package:kloudshop/services/auth_service.dart';
 import 'package:kloudshop/services/api_service.dart';
@@ -19,13 +20,14 @@ import 'package:kloudshop/views/customers_view.dart';
 import 'package:kloudshop/views/settings_view.dart';
 import 'package:kloudshop/providers/billing_providers.dart';
 import 'package:kloudshop/providers/theme_provider.dart';
+import 'package:kloudshop/providers/theme_providers.dart';
 import 'package:kloudshop/providers/settings_providers.dart';
-import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/views/themes_view.dart';
+import 'package:kloudshop/views/pages_view.dart';
+import 'package:kloudshop/views/navigation_view.dart';
+import 'package:kloudshop/views/preferences_view.dart';
 import 'package:kloudshop/widgets/feature_gate.dart';
-import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:kloudshop/widgets/theme_toggle_switch.dart';
-import 'package:kloudshop/provisioning_page.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:kloudshop/views/product_editor_view.dart';
 
@@ -42,10 +44,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   int _selectedIndex = 0;
   bool _isRailExtended = true;
   bool _isMouseOverSidebar = false;
+  bool _isOnlineStoreExpanded = true;
+  bool _isProductsExpanded = false;
 
   @override
   void initState() {
     super.initState();
+    _isRailExtended = ref.read(sidebarExtendedProvider);
     _handleBillingSession();
   }
 
@@ -108,7 +113,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         children: [
           // 1. Main Content Area
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 400),
+            duration: const Duration(milliseconds: 3600),
             curve: Curves.bounceOut,
             left: _isRailExtended ? 240.0 : 0.0,
             right: 0,
@@ -116,17 +121,34 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             bottom: 0,
             child: Listener(
               onPointerSignal: (pointerSignal) {
-                if (pointerSignal is PointerScrollEvent && _isMouseOverSidebar) {
-                  GestureBinding.instance.pointerSignalResolver.register(pointerSignal, (event) {
-                    // Absorb scroll events to isolate sidebar scrolling
-                  });
+                if (pointerSignal is PointerScrollEvent &&
+                    _isMouseOverSidebar) {
+                  GestureBinding.instance.pointerSignalResolver.register(
+                    pointerSignal,
+                    (event) {
+                      // Absorb scroll events to isolate sidebar scrolling
+                    },
+                  );
                 }
               },
-              child: Column(
+              child: Stack(
                 children: [
-                  _buildCustomStickyHeader(),
-                  Expanded(
-                    child: _buildMainContent(),
+                  Positioned.fill(
+                    child: AnimatedPadding(
+                      duration: const Duration(milliseconds: 3600),
+                      curve: Curves.bounceOut,
+                      padding: EdgeInsets.only(
+                        top: 64.0,
+                        left: _isRailExtended ? 0.0 : 80.0,
+                      ),
+                      child: _buildMainContent(),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildCustomStickyHeader(),
                   ),
                 ],
               ),
@@ -135,10 +157,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
           // 2. Sidebar / Navigation Rail
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 400),
+            duration: const Duration(milliseconds: 3600),
             curve: Curves.bounceOut,
             left: _isRailExtended ? 0.0 : 12.0,
-            top: _isRailExtended ? 0.0 : 12.0,
+            top: _isRailExtended ? 0.0 : 76.0,
             bottom: _isRailExtended ? 0.0 : 12.0,
             width: _isRailExtended ? 240.0 : 68.0,
             child: MouseRegion(
@@ -150,10 +172,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
           // 3. Floating Toggle Button (Overlaps the right border)
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 400),
+            duration: const Duration(milliseconds: 3600),
             curve: Curves.bounceOut,
             left: _isRailExtended ? 240.0 - 14.0 : 12.0 + 68.0 - 14.0,
-            top: 28.0,
+            top: MediaQuery.of(context).size.height / 2 - 14.0,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
@@ -161,12 +183,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   setState(() {
                     _isRailExtended = !_isRailExtended;
                   });
+                  ref.read(sidebarExtendedProvider.notifier).toggle(_isRailExtended);
                 },
                 child: Container(
                   width: 28,
                   height: 28,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0F172A),
+                    color: Theme.of(context).primaryColor,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -181,10 +204,15 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     ),
                   ),
                   child: Center(
-                    child: Icon(
-                      _isRailExtended ? LucideIcons.chevronLeft : LucideIcons.chevronRight,
-                      color: Colors.white,
-                      size: 14,
+                    child: AnimatedRotation(
+                      turns: _isRailExtended ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 3600),
+                      curve: Curves.bounceOut,
+                      child: const Icon(
+                        LucideIcons.chevronRight,
+                        color: Colors.white,
+                        size: 14,
+                      ),
                     ),
                   ),
                 ),
@@ -204,6 +232,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
         border: Border(
           bottom: BorderSide(
             color: theme.dividerColor.withValues(alpha: 0.1),
@@ -212,46 +247,80 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Search box
-          Container(
-            width: 380,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF1E293B)
-                  : const Color(0xFFF3F4F6),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Icon(
-                  LucideIcons.search,
-                  size: 16,
-                  color: theme.hintColor,
+          // Logo & Title (permanent part of the app bar)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.primaryColor,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    style: const TextStyle(fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: 'Search orders, customers, or analytics...',
-                      hintStyle: TextStyle(
-                        fontSize: 13,
-                        color: theme.hintColor,
+                child: Image.asset(
+                  'assets/logo3d.png',
+                  width: 20,
+                  height: 20,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      LucideIcons.store,
+                      color: Colors.white,
+                      size: 20,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'KloudShop',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+
+          if (MediaQuery.of(context).size.width > 950) ...[
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 3600),
+              curve: Curves.bounceOut,
+              width: _isRailExtended ? 380.0 : 500.0,
+              height: 40,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(LucideIcons.search, size: 16, color: theme.hintColor),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      style: const TextStyle(fontSize: 13),
+                      decoration: InputDecoration(
+                        hintText: 'Search orders, customers, or analytics...',
+                        hintStyle: TextStyle(
+                          fontSize: 13,
+                          color: theme.hintColor,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
                       ),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          
+            const Spacer(),
+          ],
+
           // Right items
           Row(
             children: [
@@ -297,40 +366,74 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 },
               ),
               const SizedBox(width: 16),
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=80',
-                      width: 32,
-                      height: 32,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: 32,
-                        height: 32,
-                        color: theme.primaryColor,
-                        child: const Center(
-                          child: Text(
-                            'MA',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
+              Consumer(
+                builder: (context, ref, child) {
+                  final settingsAsync = ref.watch(tenantSettingsProvider);
+                  return Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(
+                          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=80',
+                          width: 32,
+                          height: 32,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                width: 32,
+                                height: 32,
+                                color: theme.primaryColor,
+                                child: const Center(
+                                  child: Text(
+                                    'MA',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Merchant Admin',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+                      if (MediaQuery.of(context).size.width > 800) ...[
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Merchant Admin',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                height: 1.2,
+                              ),
+                            ),
+                            settingsAsync.when(
+                              data: (settings) {
+                                final name = settings.name.toUpperCase();
+                                final sector =
+                                    (settings.config['sector'] as String?)
+                                        ?.toUpperCase() ??
+                                    'MERCHANT';
+                                return Text(
+                                  '$name • $sector',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w500,
+                                    color: theme.hintColor,
+                                  ),
+                                );
+                              },
+                              loading: () => const SizedBox.shrink(),
+                              error: (e, s) => const SizedBox.shrink(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  );
+                },
               ),
             ],
           ),
@@ -346,80 +449,39 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         final isDark = theme.brightness == Brightness.dark;
 
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: 3600),
           curve: Curves.bounceOut,
+          clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : Colors.white,
-            borderRadius: _isRailExtended ? BorderRadius.zero : BorderRadius.circular(20.0),
+            color: isDark ? const Color(0xFF18181A) : const Color(0xFFF1F2F4),
+            borderRadius: _isRailExtended
+                ? BorderRadius.zero
+                : BorderRadius.circular(20.0),
             boxShadow: _isRailExtended
                 ? []
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.45 : 0.08),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.35 : 0.08,
+                      ),
+                      blurRadius: 24,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 8),
                     ),
                   ],
             border: _isRailExtended
-                ? Border(
-                    right: BorderSide(
-                      color: theme.dividerColor.withValues(alpha: 0.1),
-                      width: 1,
-                    ),
-                  )
+                ? null
                 : Border.all(
-                    color: theme.dividerColor.withValues(alpha: 0.1),
-                    width: 1,
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.08,
+                    ),
+                    width: 0.8,
                   ),
           ),
           child: SafeArea(
             child: Column(
               children: [
-                // Header section (Fixed height, always visible)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 16.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: _isRailExtended
-                        ? MainAxisAlignment.start
-                        : MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: theme.primaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Image.asset(
-                          'assets/logo3d.png',
-                          width: 20,
-                          height: 20,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              LucideIcons.store,
-                              color: Colors.white,
-                              size: 20,
-                            );
-                          },
-                        ),
-                      ),
-                      if (_isRailExtended) ...[
-                        const SizedBox(width: 12),
-                        const Text(
-                          'KloudShop',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 8),
 
                 // Main navigation scroll view (Scrollable center)
                 Expanded(
@@ -427,80 +489,206 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Store Info badge (only when extended)
-                        if (_isRailExtended) ...[
-                          Consumer(
-                            builder: (context, ref, child) {
-                              final settingsAsync = ref.watch(
-                                tenantSettingsProvider,
-                              );
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                ),
-                                child: settingsAsync.when(
-                                  data: (settings) => Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          theme.colorScheme.surfaceContainerLow,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          settings.name.toUpperCase(),
-                                          style: theme.textTheme.labelSmall
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                letterSpacing: 1.2,
-                                                color: theme.primaryColor,
-                                              ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          (settings.config['sector'] as String?)
-                                                  ?.toUpperCase() ??
-                                              'MERCHANT',
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(fontSize: 10),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  loading: () =>
-                                      const LinearProgressIndicator(),
-                                  error: (e, s) => const SizedBox.shrink(),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-
-                        // Navigation Menu Items (Excluding Settings)
                         _SidebarItemTile(
                           index: 0,
-                          icon: LucideIcons.layoutDashboard,
-                          label: 'Overview',
+                          icon: LucideIcons.home,
+                          label: 'Home',
                           isSelected: _selectedIndex == 0,
                           isExtended: _isRailExtended,
                           onTap: () => setState(() => _selectedIndex = 0),
                         ),
                         _SidebarItemTile(
                           index: 1,
-                          icon: LucideIcons.shoppingCart,
-                          label: 'Catalog',
-                          isSelected: _selectedIndex == 1,
+                          icon: LucideIcons.tag,
+                          label: 'Products',
+                          isSelected:
+                              _selectedIndex == 1 ||
+                              (_selectedIndex >= 13 && _selectedIndex <= 17),
                           isExtended: _isRailExtended,
-                          onTap: () => setState(() => _selectedIndex = 1),
+                          isExpanded: _isProductsExpanded,
+                          onTap: () {
+                            setState(() {
+                              _selectedIndex = 1;
+                              _isProductsExpanded = !_isProductsExpanded;
+                            });
+                          },
+                        ),
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 3600),
+                          curve: Curves.bounceOut,
+                          child: _isProductsExpanded
+                              ? (!_isRailExtended
+                                    ? Container(
+                                        key: const ValueKey(
+                                          'products_collapsed_menu',
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 12.0,
+                                          vertical: 4.0,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isDark
+                                              ? const Color(
+                                                  0xFF10B981,
+                                                ).withValues(alpha: 0.12)
+                                              : const Color(
+                                                  0xFF10B981,
+                                                ).withValues(alpha: 0.06),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: const Color(
+                                              0xFF10B981,
+                                            ).withValues(alpha: 0.15),
+                                            width: 0.8,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            _SidebarItemTile(
+                                              index: 13,
+                                              icon: LucideIcons.layers,
+                                              label: 'Collections',
+                                              isSelected: _selectedIndex == 13,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 13,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 14,
+                                              icon: LucideIcons.packageOpen,
+                                              label: 'Inventory',
+                                              isSelected: _selectedIndex == 14,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 14,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 15,
+                                              icon: LucideIcons.fileInput,
+                                              label: 'Purchase orders',
+                                              isSelected: _selectedIndex == 15,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 15,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 16,
+                                              icon: LucideIcons.arrowLeftRight,
+                                              label: 'Transfers',
+                                              isSelected: _selectedIndex == 16,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 16,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 17,
+                                              icon: LucideIcons.gift,
+                                              label: 'Gift cards',
+                                              isSelected: _selectedIndex == 17,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 17,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Column(
+                                        key: const ValueKey(
+                                          'products_expanded_menu',
+                                        ),
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 13,
+                                              icon: LucideIcons.layers,
+                                              label: 'Collections',
+                                              isSelected: _selectedIndex == 13,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 13,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 14,
+                                              icon: LucideIcons.packageOpen,
+                                              label: 'Inventory',
+                                              isSelected: _selectedIndex == 14,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 14,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 15,
+                                              icon: LucideIcons.fileInput,
+                                              label: 'Purchase orders',
+                                              isSelected: _selectedIndex == 15,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 15,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 16,
+                                              icon: LucideIcons.arrowLeftRight,
+                                              label: 'Transfers',
+                                              isSelected: _selectedIndex == 16,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 16,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 17,
+                                              icon: LucideIcons.gift,
+                                              label: 'Gift cards',
+                                              isSelected: _selectedIndex == 17,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 17,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ))
+                              : const SizedBox.shrink(
+                                  key: ValueKey('products_empty_menu'),
+                                ),
                         ),
                         _SidebarItemTile(
                           index: 2,
@@ -518,6 +706,288 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           isExtended: _isRailExtended,
                           onTap: () => setState(() => _selectedIndex = 3),
                         ),
+                        if (!_isRailExtended)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                              vertical: 6.0,
+                            ),
+                            child: Divider(
+                              height: 1,
+                              thickness: 1.6,
+                              color: const Color(
+                                0xFF10B981,
+                              ).withValues(alpha: 0.25),
+                            ),
+                          )
+                        else ...[
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20.0,
+                              top: 8.0,
+                              bottom: 2.0,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Sales channels',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? const Color(0xFF9CA3AF)
+                                      : const Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+
+                        _SidebarItemTile(
+                          index: -1,
+                          icon: LucideIcons.globe,
+                          label: 'Online Store',
+                          isSelected:
+                              _selectedIndex == 8 ||
+                              _selectedIndex == 5 ||
+                              _selectedIndex == 10 ||
+                              _selectedIndex == 11 ||
+                              _selectedIndex == 12,
+                          isExtended: _isRailExtended,
+                          isExpanded: _isOnlineStoreExpanded,
+                          onTap: () {
+                            setState(() {
+                              _isOnlineStoreExpanded = !_isOnlineStoreExpanded;
+                            });
+                          },
+                        ),
+
+                        // Render Online Store items if expanded or if rail is collapsed (show all in rail)
+                        // Render Online Store items if expanded
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 3600),
+                          curve: Curves.bounceOut,
+                          child: _isOnlineStoreExpanded
+                              ? (!_isRailExtended
+                                    ? Container(
+                                        key: const ValueKey(
+                                          'onlinestore_collapsed_menu',
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 12.0,
+                                          vertical: 4.0,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isDark
+                                              ? const Color(
+                                                  0xFF10B981,
+                                                ).withValues(alpha: 0.12)
+                                              : const Color(
+                                                  0xFF10B981,
+                                                ).withValues(alpha: 0.06),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: const Color(
+                                              0xFF10B981,
+                                            ).withValues(alpha: 0.15),
+                                            width: 0.8,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            _SidebarItemTile(
+                                              index: 8,
+                                              icon: LucideIcons.palette,
+                                              label: 'Themes',
+                                              isSelected: _selectedIndex == 8,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 8,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 5,
+                                              icon: LucideIcons.newspaper,
+                                              label: 'Blog',
+                                              isSelected: _selectedIndex == 5,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 5,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 10,
+                                              icon: LucideIcons.fileText,
+                                              label: 'Pages',
+                                              isSelected: _selectedIndex == 10,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 10,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 11,
+                                              icon: LucideIcons.menu,
+                                              label: 'Navigation',
+                                              isSelected: _selectedIndex == 11,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 11,
+                                              ),
+                                            ),
+                                            _SidebarItemTile(
+                                              index: 12,
+                                              icon: LucideIcons.settings2,
+                                              label: 'Preferences',
+                                              isSelected: _selectedIndex == 12,
+                                              isExtended: false,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Column(
+                                        key: const ValueKey(
+                                          'onlinestore_expanded_menu',
+                                        ),
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 8,
+                                              icon: LucideIcons.palette,
+                                              label: 'Themes',
+                                              isSelected: _selectedIndex == 8,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 8,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 5,
+                                              icon: LucideIcons.newspaper,
+                                              label: 'Blog',
+                                              isSelected: _selectedIndex == 5,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 5,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 10,
+                                              icon: LucideIcons.fileText,
+                                              label: 'Pages',
+                                              isSelected: _selectedIndex == 10,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 10,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 11,
+                                              icon: LucideIcons.menu,
+                                              label: 'Navigation',
+                                              isSelected: _selectedIndex == 11,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 11,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 16.0,
+                                            ),
+                                            child: _SidebarItemTile(
+                                              index: 12,
+                                              icon: LucideIcons.settings2,
+                                              label: 'Preferences',
+                                              isSelected: _selectedIndex == 12,
+                                              isExtended: true,
+                                              onTap: () => setState(
+                                                () => _selectedIndex = 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ))
+                              : const SizedBox.shrink(
+                                  key: ValueKey('onlinestore_empty_menu'),
+                                ),
+                        ),
+
+                        _SidebarItemTile(
+                          index: 6,
+                          icon: LucideIcons.usersRound,
+                          label: 'Wholesale',
+                          isSelected: _selectedIndex == 6,
+                          isExtended: _isRailExtended,
+                          onTap: () => setState(() => _selectedIndex = 6),
+                        ),
+                        if (!_isRailExtended)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                              vertical: 6.0,
+                            ),
+                            child: Divider(
+                              height: 1,
+                              thickness: 1.6,
+                              color: const Color(
+                                0xFF10B981,
+                              ).withValues(alpha: 0.25),
+                            ),
+                          )
+                        else ...[
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20.0,
+                              top: 8.0,
+                              bottom: 2.0,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Admin & platform',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? const Color(0xFF9CA3AF)
+                                      : const Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                         _SidebarItemTile(
                           index: 4,
                           icon: LucideIcons.creditCard,
@@ -527,36 +997,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           onTap: () => setState(() => _selectedIndex = 4),
                         ),
                         _SidebarItemTile(
-                          index: 5,
-                          icon: LucideIcons.newspaper,
-                          label: 'Blog',
-                          isSelected: _selectedIndex == 5,
-                          isExtended: _isRailExtended,
-                          onTap: () => setState(() => _selectedIndex = 5),
-                        ),
-                        _SidebarItemTile(
-                          index: 6,
-                          icon: LucideIcons.usersRound,
-                          label: 'Wholesale',
-                          isSelected: _selectedIndex == 6,
-                          isExtended: _isRailExtended,
-                          onTap: () => setState(() => _selectedIndex = 6),
-                        ),
-                        _SidebarItemTile(
                           index: 7,
                           icon: LucideIcons.shieldCheck,
                           label: 'Compliance',
                           isSelected: _selectedIndex == 7,
                           isExtended: _isRailExtended,
                           onTap: () => setState(() => _selectedIndex = 7),
-                        ),
-                        _SidebarItemTile(
-                          index: 8,
-                          icon: LucideIcons.palette,
-                          label: 'Themes',
-                          isSelected: _selectedIndex == 8,
-                          isExtended: _isRailExtended,
-                          onTap: () => setState(() => _selectedIndex = 8),
                         ),
                       ],
                     ),
@@ -568,7 +1014,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 // Footer section (Fixed height, always visible, containing Settings, Theme Mode, and Sign Out)
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
+                    vertical: 4.0,
                     horizontal: 4.0,
                   ),
                   child: Column(
@@ -587,28 +1033,47 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       Consumer(
                         builder: (context, ref, child) {
                           final themeMode = ref.watch(themeModeProvider);
-                          final isDark = themeMode == ThemeMode.dark;
+                          final isDark =
+                              themeMode == ThemeMode.dark ||
+                              (themeMode == ThemeMode.system &&
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark);
 
                           if (_isRailExtended) {
                             return Material(
                               color: Colors.transparent,
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                                leading: Icon(
-                                  isDark ? LucideIcons.moon : LucideIcons.sun,
-                                  size: 20,
-                                ),
-                                title: const Text(
-                                  'Theme Mode',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                trailing: ThemeToggleSwitch(
-                                  value: isDark,
-                                  onChanged: (val) {
-                                    _triggerThemeSwitchWithOverlay(context, ref, val);
-                                  },
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: SizedBox(
+                                  width: 232,
+                                  child: ListTile(
+                                    dense: true,
+                                    visualDensity: VisualDensity.compact,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    leading: Icon(
+                                      isDark
+                                          ? LucideIcons.moon
+                                          : LucideIcons.sun,
+                                      size: 20,
+                                    ),
+                                    title: const Text(
+                                      'Theme Mode',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    trailing: ThemeToggleSwitch(
+                                      value: isDark,
+                                      onChanged: (val) {
+                                        _triggerThemeSwitchWithOverlay(
+                                          context,
+                                          ref,
+                                          val,
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
                             );
@@ -616,10 +1081,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                             return IconButton(
                               icon: Icon(
                                 isDark ? LucideIcons.moon : LucideIcons.sun,
-                                size: 20,
+                                size: 15,
                               ),
                               onPressed: () {
-                                _triggerThemeSwitchWithOverlay(context, ref, !isDark);
+                                _triggerThemeSwitchWithOverlay(
+                                  context,
+                                  ref,
+                                  !isDark,
+                                );
                               },
                               tooltip: isDark
                                   ? 'Switch to Light Mode'
@@ -633,31 +1102,40 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           if (_isRailExtended) {
                             return Material(
                               color: Colors.transparent,
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                                leading: const Icon(
-                                  LucideIcons.logOut,
-                                  size: 20,
-                                  color: Colors.redAccent,
-                                ),
-                                title: const Text(
-                                  'Sign Out',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.redAccent,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: SizedBox(
+                                  width: 232,
+                                  child: ListTile(
+                                    dense: true,
+                                    visualDensity: VisualDensity.compact,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    leading: const Icon(
+                                      LucideIcons.logOut,
+                                      size: 20,
+                                      color: Colors.redAccent,
+                                    ),
+                                    title: const Text(
+                                      'Sign Out',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.redAccent,
+                                      ),
+                                    ),
+                                    onTap: () =>
+                                        ref.read(authServiceProvider).signOut(),
                                   ),
                                 ),
-                                onTap: () =>
-                                    ref.read(authServiceProvider).signOut(),
                               ),
                             );
                           } else {
                             return IconButton(
                               icon: const Icon(
                                 LucideIcons.logOut,
-                                size: 20,
+                                size: 15,
                                 color: Colors.redAccent,
                               ),
                               onPressed: () =>
@@ -681,7 +1159,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   Widget _buildMainContent() {
     switch (_selectedIndex) {
       case 0:
-        return _OverviewView(claims: widget.claims);
+        return _OverviewView(
+          claims: widget.claims,
+          onNavigate: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        );
       case 1:
         return const CatalogView();
       case 2:
@@ -703,12 +1188,81 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         return const ThemesView();
       case 9:
         return const SettingsView();
+      case 10:
+        return const PagesView();
+      case 11:
+        return const NavigationView();
+      case 12:
+        return const PreferencesView();
+      case 13:
+        return _buildSubMenuPlaceholder('Collections', LucideIcons.layers);
+      case 14:
+        return _buildSubMenuPlaceholder('Inventory', LucideIcons.packageOpen);
+      case 15:
+        return _buildSubMenuPlaceholder(
+          'Purchase Orders',
+          LucideIcons.fileInput,
+        );
+      case 16:
+        return _buildSubMenuPlaceholder(
+          'Transfers',
+          LucideIcons.arrowLeftRight,
+        );
+      case 17:
+        return _buildSubMenuPlaceholder('Gift Cards', LucideIcons.gift);
       default:
         return Center(child: Text('Module Coming Soon: $_selectedIndex'));
     }
   }
 
-  void _triggerThemeSwitchWithOverlay(BuildContext context, WidgetRef ref, bool targetIsDark) {
+  Widget _buildSubMenuPlaceholder(String title, IconData icon) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor: isDark
+          ? const Color(0xFF020617)
+          : const Color(0xFFF8FAFC),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: theme.primaryColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 40, color: theme.primaryColor),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                title,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'This section is coming soon. Manage your store\'s $title here.',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.hintColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _triggerThemeSwitchWithOverlay(
+    BuildContext context,
+    WidgetRef ref,
+    bool targetIsDark,
+  ) {
     final overlay = Overlay.of(context);
     late OverlayEntry entry;
 
@@ -730,29 +1284,544 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 }
 
-class _OverviewView extends ConsumerWidget {
+class _OverviewView extends ConsumerStatefulWidget {
   final UserClaims claims;
-  const _OverviewView({required this.claims});
+  final Function(int) onNavigate;
+  const _OverviewView({required this.claims, required this.onNavigate});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_OverviewView> createState() => _OverviewViewState();
+}
+
+class _OverviewViewState extends ConsumerState<_OverviewView> {
+  int _expandedIndex = 0;
+  final List<bool> _completedSteps = [false, false, false, false];
+
+  Widget _buildStepIllustration(int index, bool isDark) {
+    final accentColor = AppTheme.brandEmerald500;
+    final bgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+
+    switch (index) {
+      case 0: // Product Card Illustration
+        return Container(
+          width: 140,
+          height: 100,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                top: 8,
+                left: 8,
+                right: 8,
+                bottom: 36,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(
+                    LucideIcons.package,
+                    size: 24,
+                    color: accentColor.withOpacity(0.8),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 22,
+                left: 8,
+                child: Container(
+                  width: 60,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white30 : Colors.black26,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 8,
+                left: 8,
+                child: Container(
+                  width: 30,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: accentColor.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      case 1: // Online Store Illustration
+        return Container(
+          width: 140,
+          height: 100,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                top: 12,
+                left: 12,
+                right: 12,
+                bottom: 12,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: isDark ? Colors.white24 : Colors.black26,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 8,
+                        color: accentColor.withOpacity(0.1),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 4),
+                            Container(
+                              width: 4,
+                              height: 4,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 2),
+                            Container(
+                              width: 4,
+                              height: 4,
+                              decoration: const BoxDecoration(
+                                color: Colors.amber,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 2),
+                            Container(
+                              width: 4,
+                              height: 4,
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 25,
+                                decoration: BoxDecoration(
+                                  color: accentColor.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                                child: Icon(
+                                  LucideIcons.layout,
+                                  size: 10,
+                                  color: accentColor,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 4,
+                                      color: isDark
+                                          ? Colors.white30
+                                          : Colors.black26,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      width: 20,
+                                      height: 4,
+                                      color: isDark
+                                          ? Colors.white10
+                                          : Colors.black12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      case 2: // Shipping & Taxes Illustration
+        return Container(
+          width: 140,
+          height: 100,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Icon(
+                LucideIcons.globe,
+                size: 36,
+                color: accentColor.withOpacity(0.4),
+              ),
+              Positioned(
+                top: 16,
+                right: 24,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'USA',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 16,
+                left: 20,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF334155) : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: accentColor.withOpacity(0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(LucideIcons.truck, size: 8, color: accentColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Free',
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      case 3: // Launch Rocket Illustration
+        return Container(
+          width: 140,
+          height: 100,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+          ),
+          child: Center(
+            child: Icon(LucideIcons.rocket, size: 40, color: accentColor),
+          ),
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final statsAsync = ref.watch(analyticsOverviewProvider);
+    final alertsAsync = ref.watch(needsAttentionProvider);
+    final stats = statsAsync.value;
+    final alerts = alertsAsync.value;
+
+    final completedCount = _completedSteps.where((c) => c).length;
+    final progressPercentage = completedCount / _completedSteps.length;
+
+    final setupGuideCard = Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: theme.dividerColor.withOpacity(0.1)),
+      ),
+      color: isDark ? const Color(0xFF0F172A) : Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Setup guide',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Use this personalized guide to get your store up and running.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.hintColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  '$completedCount / 4 completed',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: theme.hintColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progressPercentage,
+                minHeight: 8,
+                backgroundColor: isDark ? Colors.white10 : Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppTheme.brandEmerald500,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            _buildAccordionItem(
+              index: 0,
+              title: 'Add your first product',
+              description:
+                  'Write a description, add photos, and set pricing for the products you plan to sell.',
+              action: Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => widget.onNavigate(1),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.brandEmerald500,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Add product',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => widget.onNavigate(1),
+                    style: TextButton.styleFrom(
+                      foregroundColor: theme.brightness == Brightness.dark
+                          ? Colors.white70
+                          : Colors.black87,
+                    ),
+                    child: const Text('Import products'),
+                  ),
+                ],
+              ),
+              isDark: isDark,
+              theme: theme,
+            ),
+            _buildDivider(theme),
+
+            _buildAccordionItem(
+              index: 1,
+              title: 'Set up your online store theme',
+              description:
+                  'Choose a theme, add a logo, and customize the look of your store to match your brand.',
+              action: ElevatedButton(
+                onPressed: () => widget.onNavigate(8),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.brandEmerald500,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Customize theme',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              isDark: isDark,
+              theme: theme,
+            ),
+            _buildDivider(theme),
+
+            _buildAccordionItem(
+              index: 2,
+              title: 'Configure shipping & taxes',
+              description:
+                  'Set up delivery zones, conditional shipping rates, and automatic Stripe tax fallbacks.',
+              action: ElevatedButton(
+                onPressed: () => widget.onNavigate(9),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.brandEmerald500,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Configure settings',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              isDark: isDark,
+              theme: theme,
+            ),
+            _buildDivider(theme),
+
+            _buildAccordionItem(
+              index: 3,
+              title: 'Launch your online store',
+              description:
+                  'Remove visitor password protection and launch your storefront so anyone can browse and buy.',
+              action: ElevatedButton(
+                onPressed: () => widget.onNavigate(12),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.brandEmerald500,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Launch store',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              isDark: isDark,
+              theme: theme,
+            ),
+
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  LucideIcons.checkCircle2,
+                  color: completedCount == 4
+                      ? AppTheme.brandEmerald500
+                      : theme.hintColor.withOpacity(0.5),
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  completedCount == 4
+                      ? "You're all set! Ready to make your first sale!"
+                      : 'All caught up',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: completedCount == 4
+                        ? AppTheme.brandEmerald500
+                        : theme.hintColor,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final rightColumn = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildKloudAIInsightsCard(context),
+        if (alerts != null) ...[
+          const SizedBox(height: 24),
+          _buildNeedsAttentionCard(context, alerts),
+        ],
+        const SizedBox(height: 24),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            _DashboardStatCard(
+              title: 'Total Revenue',
+              value: stats != null ? '${stats.currency} ${stats.gmv.toStringAsFixed(2)}' : '\$12,482.00',
+              trend: '+12.5%',
+              isPositive: true,
+            ),
+            _DashboardStatCard(
+              title: 'Orders',
+              value: stats != null ? '${stats.orderCount}' : '84',
+              trend: '+4.2%',
+              isPositive: true,
+            ),
+            _DashboardStatCard(
+              title: 'Avg. Order Value',
+              value: stats != null ? '${stats.currency} ${stats.aov.toStringAsFixed(2)}' : '\$148.60',
+              trend: 'Steady',
+              isPositive: false,
+              isSteady: true,
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        _buildTopProductsCard(context),
+        const SizedBox(height: 24),
+        _buildCustomerGrowthCard(context),
+      ],
+    );
 
     return Scaffold(
       backgroundColor: theme.brightness == Brightness.dark
           ? const Color(0xFF020617)
           : const Color(0xFFF8FAFC),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Greeting & Stats Row
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth > 900;
-                  final greetingWidget = Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -768,468 +1837,166 @@ class _OverviewView extends ConsumerWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        "Here's what's happening in your shop today.",
+                        "Here's a guide to get started. As your business grows, you'll get fresh tips and insights here.",
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.hintColor,
                         ),
                       ),
                     ],
-                  );
-
-                  final statsWidget = Wrap(
-                    spacing: 16,
-                    runSpacing: 16,
-                    children: const [
-                      _DashboardStatCard(
-                        title: 'Total Revenue',
-                        value: '\$12,482.00',
-                        trend: '+12.5%',
-                        isPositive: true,
-                      ),
-                      _DashboardStatCard(
-                        title: 'Orders',
-                        value: '84',
-                        trend: '+4.2%',
-                        isPositive: true,
-                      ),
-                      _DashboardStatCard(
-                        title: 'Avg. Order Value',
-                        value: '\$148.60',
-                        trend: 'Steady',
-                        isPositive: false,
-                        isSteady: true,
-                      ),
-                    ],
-                  );
-
-                  if (isWide) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(child: greetingWidget),
-                        statsWidget,
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        greetingWidget,
-                        const SizedBox(height: 24),
-                        statsWidget,
-                      ],
-                    );
-                  }
-                },
+                  ),
+                  const SizedBox(height: 32),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isWide = constraints.maxWidth > 950;
+                      if (isWide) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(flex: 3, child: setupGuideCard),
+                            const SizedBox(width: 24),
+                            Expanded(flex: 2, child: rightColumn),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            setupGuideCard,
+                            const SizedBox(height: 24),
+                            rightColumn,
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: 32),
-
-              // Columns Grid
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth > 950;
-                  final leftColumn = Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSalesGrowthCard(context),
-                      const SizedBox(height: 24),
-                      _buildLatestOrdersCard(context),
-                    ],
-                  );
-
-                  final rightColumn = Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildKloudAIInsightsCard(context),
-                      const SizedBox(height: 24),
-                      _buildTopProductsCard(context),
-                      const SizedBox(height: 24),
-                      _buildCustomerGrowthCard(context),
-                    ],
-                  );
-
-                  if (isWide) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(flex: 3, child: leftColumn),
-                        const SizedBox(width: 24),
-                        Expanded(flex: 2, child: rightColumn),
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        leftColumn,
-                        const SizedBox(height: 24),
-                        rightColumn,
-                      ],
-                    );
-                  }
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: _buildExpandableFab(context),
     );
   }
 
-  Widget _buildTimeTab(BuildContext context, String text, bool isActive) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: isActive
-            ? (theme.brightness == Brightness.dark ? const Color(0xFF334155) : Colors.white)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isActive
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                )
-              ]
-            : [],
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: isActive
-              ? (theme.brightness == Brightness.dark ? Colors.white : const Color(0xFF0F172A))
-              : theme.hintColor,
-        ),
-      ),
+  Widget _buildDivider(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Divider(color: theme.dividerColor.withOpacity(0.08)),
     );
   }
 
-  Widget _buildSalesGrowthCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return Container(
-      height: 380,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(LucideIcons.trendingUp, size: 18, color: Color(0xFF057857)),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Sales Growth',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(20),
+  Widget _buildAccordionItem({
+    required int index,
+    required String title,
+    required String description,
+    required Widget action,
+    required bool isDark,
+    required ThemeData theme,
+  }) {
+    final isExpanded = _expandedIndex == index;
+    final isCompleted = _completedSteps[index];
+
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _expandedIndex = index;
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  icon: isCompleted
+                      ? const Icon(
+                          LucideIcons.checkCircle2,
+                          color: Color(0xFF10B981),
+                          size: 22,
+                        )
+                      : Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: theme.hintColor.withOpacity(0.5),
+                              width: 1.5,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                        ),
+                  onPressed: () {
+                    setState(() {
+                      _completedSteps[index] = !_completedSteps[index];
+                    });
+                  },
                 ),
-                padding: const EdgeInsets.all(4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildTimeTab(context, '30 Days', true),
-                    _buildTimeTab(context, '90 Days', false),
-                    _buildTimeTab(context, '1 Year', false),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-          Expanded(
-            child: LineChart(
-              LineChartData(
-                gridData: const FlGridData(show: false),
-                titlesData: const FlTitlesData(show: false),
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: theme.dividerColor.withValues(alpha: 0.1),
-                      width: 1,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: isExpanded
+                          ? FontWeight.bold
+                          : FontWeight.w600,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
                     ),
                   ),
                 ),
-                minX: 0,
-                maxX: 7.5,
-                minY: 0.8,
-                maxY: 2.8,
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: const [
-                      FlSpot(0, 1.3),
-                      FlSpot(1.5, 1.45),
-                      FlSpot(3, 1.3),
-                      FlSpot(4.5, 2.3),
-                      FlSpot(6, 1.6),
-                      FlSpot(7.5, 2.2),
-                    ],
-                    isCurved: true,
-                    color: const Color(0xFF057857),
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                        radius: 4,
-                        color: const Color(0xFF057857),
-                        strokeWidth: 2,
-                        strokeColor: isDark ? const Color(0xFF0F172A) : Colors.white,
-                      ),
-                    ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF057857).withValues(alpha: 0.25),
-                          const Color(0xFF057857).withValues(alpha: 0.01),
+                Icon(
+                  isExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  size: 16,
+                  color: theme.hintColor,
+                ),
+              ],
+            ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              child: isExpanded
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 36.0, top: 12.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  description,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    height: 1.4,
+                                    color: theme.brightness == Brightness.dark
+                                        ? Colors.white70
+                                        : Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                action,
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          _buildStepIllustration(index, isDark),
                         ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
                       ),
-                    ),
-                  ),
-                ],
-              ),
+                    )
+                  : const SizedBox.shrink(),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildLatestOrdersCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Latest Orders',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'View all',
-                  style: TextStyle(
-                    color: Color(0xFF057857),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Headers
-          _buildTableHeader(context),
-          const Divider(height: 24),
-          // Row 1
-          _buildTableRow(
-            context,
-            '#KL-9402',
-            'Sarah Jenkins',
-            '\$182.00',
-            'Processing',
-            const Color(0xFFECFDF5),
-            const Color(0xFF057857),
-          ),
-          const Divider(height: 20),
-          // Row 2
-          _buildTableRow(
-            context,
-            '#KL-9401',
-            'Michael Chen',
-            '\$64.50',
-            'Shipped',
-            const Color(0xFFFFF7ED),
-            const Color(0xFFD97706),
-          ),
-          const Divider(height: 20),
-          // Row 3
-          _buildTableRow(
-            context,
-            '#KL-9400',
-            'Elena Rodriguez',
-            '\$1,240.00',
-            'Processing',
-            const Color(0xFFECFDF5),
-            const Color(0xFF057857),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTableHeader(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Text(
-            'Order',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: theme.hintColor,
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Text(
-            'Customer',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: theme.hintColor,
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Text(
-            'Total',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: theme.hintColor,
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Text(
-            'Status',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: theme.hintColor,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTableRow(
-    BuildContext context,
-    String order,
-    String customer,
-    String total,
-    String status,
-    Color bgBadge,
-    Color fgBadge,
-  ) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Text(
-            order,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Text(
-            customer,
-            style: TextStyle(
-              fontSize: 13,
-              color: isDark ? Colors.grey[300] : const Color(0xFF374151),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Text(
-            total,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.grey[200] : const Color(0xFF1F2937),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: isDark ? fgBadge.withValues(alpha: 0.15) : bgBadge,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? fgBadge.withValues(alpha: 0.9) : fgBadge,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -1256,7 +2023,11 @@ class _OverviewView extends ConsumerWidget {
               children: [
                 Row(
                   children: const [
-                    Icon(LucideIcons.sparkles, color: Color(0xFF34D399), size: 20),
+                    Icon(
+                      LucideIcons.sparkles,
+                      color: Color(0xFF34D399),
+                      size: 20,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'Kloud AI Insights',
@@ -1270,7 +2041,7 @@ class _OverviewView extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Alert 1
                 _buildInsightAlertItem(
                   context,
@@ -1279,7 +2050,7 @@ class _OverviewView extends ConsumerWidget {
                   'Reorder now',
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Alert 2
                 _buildInsightAlertItem(
                   context,
@@ -1290,7 +2061,7 @@ class _OverviewView extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // Bottom glowing design
           Container(
             height: 90,
@@ -1298,10 +2069,7 @@ class _OverviewView extends ConsumerWidget {
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF022C22),
-                  Color(0xFF064E3B),
-                ],
+                colors: [Color(0xFF022C22), Color(0xFF064E3B)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -1322,7 +2090,7 @@ class _OverviewView extends ConsumerWidget {
                           color: const Color(0xFF10B981).withValues(alpha: 0.3),
                           blurRadius: 40,
                           spreadRadius: 20,
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -1335,7 +2103,10 @@ class _OverviewView extends ConsumerWidget {
                       Container(
                         width: 8,
                         height: 8,
-                        decoration: const BoxDecoration(color: Color(0xFF34D399), shape: BoxShape.circle),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF34D399),
+                          shape: BoxShape.circle,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Container(
@@ -1347,16 +2118,69 @@ class _OverviewView extends ConsumerWidget {
                       Container(
                         width: 8,
                         height: 8,
-                        decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF10B981),
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNeedsAttentionCard(BuildContext context, NeedsAttention alerts) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Needs Attention',
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildAttentionItem(theme, 'Overdue Orders', '${alerts.pendingOrdersOverdue}'),
+              _buildAttentionItem(theme, 'Low Stock', '${alerts.lowStockVariants}'),
+              _buildAttentionItem(theme, 'B2B Approvals', '${alerts.pendingB2bApprovals}'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAttentionItem(ThemeData theme, String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.redAccent,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+        ),
+      ],
     );
   }
 
@@ -1372,9 +2196,7 @@ class _OverviewView extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.08),
-        ),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1422,9 +2244,7 @@ class _OverviewView extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -1493,7 +2313,11 @@ class _OverviewView extends ConsumerWidget {
               width: 40,
               height: 40,
               color: const Color(0xFF022C22),
-              child: const Icon(LucideIcons.package, color: Colors.white, size: 20),
+              child: const Icon(
+                LucideIcons.package,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
           ),
         ),
@@ -1512,10 +2336,7 @@ class _OverviewView extends ConsumerWidget {
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: theme.hintColor,
-                ),
+                style: TextStyle(fontSize: 11, color: theme.hintColor),
               ),
             ],
           ),
@@ -1540,9 +2361,7 @@ class _OverviewView extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -1559,10 +2378,7 @@ class _OverviewView extends ConsumerWidget {
             children: const [
               Text(
                 'Customer Growth',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               Text(
                 '+28% this month',
@@ -1604,11 +2420,17 @@ class _OverviewView extends ConsumerWidget {
                   children: [
                     Positioned(
                       left: 0,
-                      child: _buildOverlapAvatar(context, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50&h=50&fit=crop&q=80'),
+                      child: _buildOverlapAvatar(
+                        context,
+                        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50&h=50&fit=crop&q=80',
+                      ),
                     ),
                     Positioned(
                       left: 14,
-                      child: _buildOverlapAvatar(context, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&q=80'),
+                      child: _buildOverlapAvatar(
+                        context,
+                        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&q=80',
+                      ),
                     ),
                     Positioned(
                       left: 28,
@@ -1639,10 +2461,7 @@ class _OverviewView extends ConsumerWidget {
               Expanded(
                 child: Text(
                   'New high-value customers identified.',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: theme.hintColor,
-                  ),
+                  style: TextStyle(fontSize: 11, color: theme.hintColor),
                 ),
               ),
             ],
@@ -1652,17 +2471,24 @@ class _OverviewView extends ConsumerWidget {
     );
   }
 
-  Widget _buildCustomBar(BuildContext context, double percentage, bool isDarkGreen, bool isEmerald) {
+  Widget _buildCustomBar(
+    BuildContext context,
+    double percentage,
+    bool isDarkGreen,
+    bool isEmerald,
+  ) {
     final theme = Theme.of(context);
     final isDarkTheme = theme.brightness == Brightness.dark;
-    
+
     Color barColor;
     if (isEmerald) {
       barColor = const Color(0xFF10B981);
     } else if (isDarkGreen) {
       barColor = const Color(0xFF022C22);
     } else {
-      barColor = isDarkTheme ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+      barColor = isDarkTheme
+          ? const Color(0xFF334155)
+          : const Color(0xFFE2E8F0);
     }
 
     return Expanded(
@@ -1692,7 +2518,8 @@ class _OverviewView extends ConsumerWidget {
         child: Image.network(
           url,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey),
+          errorBuilder: (context, error, stackTrace) =>
+              Container(color: Colors.grey),
         ),
       ),
     );
@@ -1713,7 +2540,9 @@ class _OverviewView extends ConsumerWidget {
         tooltip: 'Import CSV (Placeholder)',
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Placeholder Action 2: CSV Import coming soon')),
+            const SnackBar(
+              content: Text('Placeholder Action 2: CSV Import coming soon'),
+            ),
           );
         },
       ),
@@ -1722,7 +2551,9 @@ class _OverviewView extends ConsumerWidget {
         tooltip: 'Add Customer (Placeholder)',
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Placeholder Action 3: Add Customer coming soon')),
+            const SnackBar(
+              content: Text('Placeholder Action 3: Add Customer coming soon'),
+            ),
           );
         },
       ),
@@ -1776,7 +2607,7 @@ class _DashboardStatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     final trendColor = isSteady
         ? theme.hintColor
         : (isPositive ? const Color(0xFF057857) : Colors.redAccent);
@@ -1790,9 +2621,7 @@ class _DashboardStatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -1855,153 +2684,6 @@ class _ExpandableFabAction {
     required this.tooltip,
     required this.onPressed,
   });
-}
-
-class _AlertItem extends StatelessWidget {
-  final String label;
-  final int count;
-  final IconData icon;
-  final Color color;
-
-  const _AlertItem({
-    required this.label,
-    required this.count,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return HoverScale(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: color.withValues(
-                alpha: Theme.of(context).brightness == Brightness.dark
-                    ? 0.1
-                    : 0.05,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: color.withValues(
-                  alpha: Theme.of(context).brightness == Brightness.dark
-                      ? 0.3
-                      : 0.15,
-                ),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 16, color: color),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      count.toString(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      label,
-                      style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return HoverScale(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: theme.cardColor.withValues(
-                alpha: theme.brightness == Brightness.dark ? 0.6 : 0.8,
-              ),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: theme.dividerColor.withValues(alpha: 0.5),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 15,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(
-                      alpha: theme.brightness == Brightness.dark ? 0.25 : 0.1,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: theme.colorScheme.primary, size: 20),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  title,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.hintColor,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 enum ChartType { line, bar }
@@ -2560,6 +3242,7 @@ class _SidebarItemTile extends StatefulWidget {
   final bool isSelected;
   final bool isExtended;
   final VoidCallback onTap;
+  final bool? isExpanded;
 
   const _SidebarItemTile({
     required this.index,
@@ -2568,6 +3251,7 @@ class _SidebarItemTile extends StatefulWidget {
     required this.isSelected,
     required this.isExtended,
     required this.onTap,
+    this.isExpanded,
   });
 
   @override
@@ -2582,14 +3266,14 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final activeBgColor = theme.primaryColor.withValues(
-      alpha: isDark ? 0.15 : 0.08,
-    );
-    final hoverBgColor = theme.primaryColor.withValues(
-      alpha: isDark ? 0.08 : 0.03,
-    );
-    final activeTextColor = theme.primaryColor;
-    final inactiveTextColor = isDark ? Colors.grey[400]! : Colors.grey[700]!;
+    final activeBgColor = isDark ? const Color(0xFF2C2C2E) : Colors.white;
+    final hoverBgColor = isDark
+        ? Colors.white.withOpacity(0.04)
+        : Colors.black.withOpacity(0.04);
+    final activeTextColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
+    final inactiveTextColor = isDark
+        ? const Color(0xFF9CA3AF)
+        : const Color(0xFF5C5F62);
 
     final currentBgColor = widget.isSelected
         ? activeBgColor
@@ -2600,86 +3284,119 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
 
     Widget content;
     if (widget.isExtended) {
-      content = Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-        child: Row(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              width: 4,
-              height: 20,
-              decoration: BoxDecoration(
-                color: widget.isSelected
-                    ? theme.primaryColor
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(2),
-              ),
+      content = SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: SizedBox(
+          width: 216,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 4.0,
             ),
-            const SizedBox(width: 12),
-            Icon(widget.icon, size: 20, color: currentTextColor),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                widget.label,
-                style: TextStyle(
-                  color: currentTextColor,
-                  fontWeight: widget.isSelected
-                      ? FontWeight.w600
-                      : FontWeight.w500,
-                  fontSize: 14,
+            child: Row(
+              children: [
+                Icon(widget.icon, size: 20, color: currentTextColor),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    widget.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: currentTextColor,
+                      fontWeight: widget.isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                if (widget.isExpanded != null)
+                  AnimatedRotation(
+                    turns: widget.isExpanded! ? 0.25 : 0.0,
+                    duration: const Duration(milliseconds: 3600),
+                    curve: Curves.bounceOut,
+                    child: Icon(
+                      LucideIcons.chevronRight,
+                      size: 14,
+                      color: currentTextColor.withValues(alpha: 0.7),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      Widget iconWidget = Icon(widget.icon, size: 17, color: currentTextColor);
+      if (widget.isExpanded != null) {
+        iconWidget = Stack(
+          clipBehavior: Clip.none,
+          children: [
+            iconWidget,
+            Positioned(
+              right: -6,
+              bottom: -2,
+              child: AnimatedRotation(
+                turns: widget.isExpanded! ? 0.25 : 0.0,
+                duration: const Duration(milliseconds: 3600),
+                curve: Curves.bounceOut,
+                child: Icon(
+                  LucideIcons.chevronRight,
+                  size: 10,
+                  color: currentTextColor.withValues(alpha: 0.7),
                 ),
               ),
             ),
           ],
-        ),
-      );
-    } else {
+        );
+      }
       content = Tooltip(
         message: widget.label,
         waitDuration: const Duration(milliseconds: 500),
         child: Container(
-          height: 48,
+          height: 34,
           alignment: Alignment.center,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Positioned(
-                left: 0,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  width: 4,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: widget.isSelected
-                        ? theme.primaryColor
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              Icon(widget.icon, size: 22, color: currentTextColor),
-            ],
-          ),
+          child: iconWidget,
         ),
       );
     }
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-          decoration: BoxDecoration(
-            color: currentBgColor,
-            borderRadius: BorderRadius.circular(10),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        MouseRegion(
+          onEnter: (_) => setState(() => _isHovered = true),
+          onExit: (_) => setState(() => _isHovered = false),
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.8),
+              decoration: BoxDecoration(
+                color: currentBgColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: content,
+            ),
           ),
-          child: content,
         ),
-      ),
+        if (widget.isSelected)
+          Positioned(
+            left: 8.0,
+            top: 6,
+            bottom: 6,
+            child: Container(
+              width: 3.5,
+              decoration: const BoxDecoration(
+                color: Color(0xFF007A5A),
+                borderRadius: BorderRadius.all(Radius.circular(2.0)),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -2690,14 +3407,14 @@ class _ThemeSwitchOverlayWidget extends StatefulWidget {
   final VoidCallback onComplete;
 
   const _ThemeSwitchOverlayWidget({
-    super.key,
     required this.targetIsDark,
     required this.onSwitchTheme,
     required this.onComplete,
   });
 
   @override
-  State<_ThemeSwitchOverlayWidget> createState() => _ThemeSwitchOverlayWidgetState();
+  State<_ThemeSwitchOverlayWidget> createState() =>
+      _ThemeSwitchOverlayWidgetState();
 }
 
 class _ThemeSwitchOverlayWidgetState extends State<_ThemeSwitchOverlayWidget> {
@@ -2718,13 +3435,13 @@ class _ThemeSwitchOverlayWidgetState extends State<_ThemeSwitchOverlayWidget> {
       if (mounted) {
         widget.onSwitchTheme();
       }
-      
+
       // Step 2: Keep overlay visible for 500ms to let theme settle, then fade out
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           setState(() => _opacity = 0.0);
         }
-        
+
         // Step 3: Complete after fade-out finishes (e.g. 350ms)
         Future.delayed(const Duration(milliseconds: 350), () {
           if (mounted) {
@@ -2750,9 +3467,7 @@ class _ThemeSwitchOverlayWidgetState extends State<_ThemeSwitchOverlayWidget> {
           children: [
             // Semi-transparent dark background tint
             Positioned.fill(
-              child: Container(
-                color: Colors.black.withOpacity(0.65),
-              ),
+              child: Container(color: Colors.black.withOpacity(0.65)),
             ),
             // Center Dialog Card
             Center(
@@ -2762,7 +3477,10 @@ class _ThemeSwitchOverlayWidgetState extends State<_ThemeSwitchOverlayWidget> {
                   filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                   child: Container(
                     width: 290,
-                    padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 28,
+                      horizontal: 24,
+                    ),
                     decoration: BoxDecoration(
                       color: isDarkTheme
                           ? const Color(0xFF1E293B).withOpacity(0.9)
@@ -2789,7 +3507,9 @@ class _ThemeSwitchOverlayWidgetState extends State<_ThemeSwitchOverlayWidget> {
                           height: 32,
                           child: CircularProgressIndicator(
                             strokeWidth: 3,
-                            valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.primaryColor,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -2800,7 +3520,8 @@ class _ThemeSwitchOverlayWidgetState extends State<_ThemeSwitchOverlayWidget> {
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: isDarkTheme ? Colors.white : Colors.black87,
-                            decoration: TextDecoration.none, // Disable yellow underline in dialogs
+                            decoration: TextDecoration
+                                .none, // Disable yellow underline in dialogs
                             fontFamily: theme.textTheme.bodyMedium?.fontFamily,
                           ),
                         ),

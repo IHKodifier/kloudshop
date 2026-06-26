@@ -1,25 +1,38 @@
 # Community 32
 
-> 4 nodes · cohesion 0.50
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
-- [subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (3 connections)
-- [_parseStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
-- [_parseTier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
-- [SubscriptionModel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
+- [StripeMock](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py#L5) (4 connections)
+- [.create_payment_intent()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py#L6) (2 connections)
+- [stripe_mock.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py#L1) (1 connections)
+- [Mock Stripe PaymentIntent for B2C orders.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py#L7) (1 connections)
+- [.retrieve_payment_intent()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py#L32) (1 connections)
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class StripeMock {
+        +stripe_mock.py()
+        +.create_payment_intent()
+        +.create_invoice()
+        +.retrieve_payment_intent()
+    }
+```
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Analytics Monitoring]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\stripe_mock.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py)
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 9 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

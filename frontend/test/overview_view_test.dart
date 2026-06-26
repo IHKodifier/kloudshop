@@ -5,8 +5,10 @@ import 'package:kloudshop/dashboard_page.dart';
 import 'package:kloudshop/providers/analytics_providers.dart';
 import 'package:kloudshop/models/analytics.dart';
 import 'package:kloudshop/models/user_claims.dart';
+import 'test_helper.dart';
 
 void main() {
+  setUpAll(registerTestHttpOverrides);
   testWidgets('Dashboard Overview displays live analytics', (tester) async {
     final mockStats = AnalyticsOverview(
       gmv: 5000.0,
@@ -55,6 +57,8 @@ void main() {
 
     // Wait for data
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
 
     // Verify stats
     expect(find.text('USD 5000.00'), findsOneWidget);

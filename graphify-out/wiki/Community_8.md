@@ -1,184 +1,156 @@
 # Community 8
 
-> 107 nodes · cohesion 0.04
+> 93 nodes · cohesion 0.14
 
 ## Key Concepts
 
-- [Fixture to override validate_token dependency.     Usage: auth_override(UserCla](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L113) (59 connections)
-- **str** (44 connections)
-- [B2B Buyer places an order.     1. Validate Buyer Account     2. Calculate Tota](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L347) (29 connections)
-- [Returns the product catalog scoped for the B2B buyer,     including custom pric](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L518) (29 connections)
-- [B2BAccount](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L10) (27 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/schemas.py#L1) (25 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L1) (21 connections)
-- [ApprovalWorkflow](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L116) (17 connections)
-- [ApprovalRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L135) (16 connections)
-- [B2BInvoice](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L163) (16 connections)
-- [PriceList](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L66) (16 connections)
-- [PriceListItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py#L92) (16 connections)
-- [Verify that approval workflow can be retrieved and updated (upsert).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L102) (11 connections)
-- [Verify B2B portal order placement and threshold-based approval.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L125) (11 connections)
-- [Verify that an admin can invite a B2B buyer.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L15) (11 connections)
-- [Verify B2B portal catalog returns custom pricing.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L194) (11 connections)
-- [Verify that an invoice is generated upon B2B order approval.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L255) (11 connections)
-- [Verify that inviting a duplicate email fails with 409.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L37) (11 connections)
-- [Verify tenant isolation for B2B buyers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L55) (11 connections)
-- [Verify price list creation.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L85) (11 connections)
-- [Verify that accessing B2B endpoints without a token returns 403.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L9) (11 connections)
-- [test_get_b2b_catalog_overrides()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L193) (10 connections)
-- [test_b2b.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L1) (9 connections)
-- [provision_tenant()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/internal/provisioning.py#L41) (9 connections)
-- [place_b2b_order()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py#L341) (9 connections)
-- *... and 82 more nodes in this community*
+- [StockLocation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L7) (63 connections)
+- [Inventory](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L39) (62 connections)
+- [ImportJob](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L207) (41 connections)
+- [Mark an order as fulfilled and log tracking information.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L418) (40 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1) (35 connections)
+- [Collection](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L164) (30 connections)
+- [CollectionProduct](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L199) (28 connections)
+- [RedirectRule](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L242) (28 connections)
+- [ColorPreset](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L262) (27 connections)
+- [ProductResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L118) (27 connections)
+- [SkuExistsResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L209) (26 connections)
+- [VariantCreate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L47) (26 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L1) (25 connections)
+- [Return sorted list of N for all Option{N} Name/Value pairs found in headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1021) (25 connections)
+- [Background task: parse file, upsert products+variants+inventory, update job, sen](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1042) (25 connections)
+- [List products for the authenticated tenant.     Supports pagination and filteri](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L134) (25 connections)
+- [Download a pre-filled CSV template with all supported import column headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1383) (25 connections)
+- [Check which SKUs from the provided list already exist in this tenant's catalog.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1421) (25 connections)
+- [Upload a .csv or .xlsx file to bulk-import products and variants.     Returns a](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1443) (25 connections)
+- [Returns all import jobs for this tenant, newest first.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1495) (25 connections)
+- [Poll the status of a specific import job.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1510) (25 connections)
+- [Update a product and its variants. If slug changes, create a 301 redirect.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L165) (25 connections)
+- [Create a new product with its variants.     Enforces catalog:write permission a](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L35) (25 connections)
+- [List 301 redirects for the tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L407) (25 connections)
+- [# TODO: Implement XML feed regeneration logic](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L423) (25 connections)
+- *... and 68 more nodes in this community*
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class Config {
-        +db.py()
-    }
-    class Settings {
-        +db.py()
-    }
-    class ApprovalRequest {
+    class Collection {
         +models.py()
     }
-    class ApprovalWorkflow {
+    class CollectionProduct {
         +models.py()
     }
-    class B2BAccount {
+    class ColorPreset {
         +models.py()
     }
-    class B2BInvoice {
+    class ImportJob {
         +models.py()
     }
-    class PriceList {
+    class Inventory {
         +models.py()
     }
-    class PriceListItem {
+    class RedirectRule {
         +models.py()
     }
-    class TenantFeatureConfig {
+    class StockLocation {
         +models.py()
     }
-    class AccountStatus {
+    class CollectionBase {
         +schemas.py()
     }
-    class ApprovalRequestResponse {
+    class CollectionCreate {
         +schemas.py()
     }
-    class ApprovalStatus {
+    class CollectionResponse {
         +schemas.py()
     }
-    class ApprovalWorkflowBase {
+    class CollectionUpdate {
         +schemas.py()
     }
-    class ApprovalWorkflowResponse {
+    class ColorPresetBase {
         +schemas.py()
     }
-    class ApprovalWorkflowUpdate {
+    class ColorPresetCreate {
         +schemas.py()
     }
-    class B2BAccountBase {
+    class ColorPresetResponse {
         +schemas.py()
     }
-    class B2BAccountCreate {
+    class ImportJobResponse {
         +schemas.py()
     }
-    class B2BAccountResponse {
+    class ProductAssignment {
         +schemas.py()
     }
-    class B2BAccountUpdate {
+    class ProductBase {
         +schemas.py()
     }
-    class B2BInvoiceResponse {
+    class ProductCreate {
         +schemas.py()
     }
-    class B2BPortalOrderRequest {
+    class ProductResponse {
         +schemas.py()
     }
-    class InvoicePaymentStatus {
+    class ProductUpdate {
         +schemas.py()
     }
-    class OverrideType {
+    class RedirectRuleResponse {
         +schemas.py()
     }
-    class PriceListBase {
+    class SkuExistsRequest {
         +schemas.py()
     }
-    class PriceListCreate {
+    class SkuExistsResponse {
         +schemas.py()
     }
-    class PriceListItemBase {
+    class VariantBase {
         +schemas.py()
     }
-    class PriceListItemCreate {
+    class VariantCreate {
         +schemas.py()
     }
-    class PriceListItemResponse {
+    class VariantResponse {
         +schemas.py()
     }
-    class PriceListResponse {
-        +schemas.py()
-    }
-    class PriceListUpdate {
-        +schemas.py()
-    }
-    class StripeMock {
-        +stripe_mock.py()
-        +.create_payment_intent()
-        +.create_invoice()
-        +.retrieve_payment_intent()
-    }
-    ApprovalWorkflowUpdate <|-- ApprovalWorkflowBase
-    ApprovalWorkflowResponse <|-- ApprovalWorkflowBase
-    ApprovalWorkflowBase <|-- ApprovalWorkflowResponse
-    ApprovalWorkflowBase <|-- ApprovalWorkflowUpdate
-    B2BAccountCreate <|-- B2BAccountBase
-    B2BAccountResponse <|-- B2BAccountBase
-    B2BAccountBase <|-- B2BAccountCreate
-    B2BAccountBase <|-- B2BAccountResponse
-    PriceListCreate <|-- PriceListBase
-    PriceListResponse <|-- PriceListBase
-    PriceListBase <|-- PriceListCreate
-    PriceListItemCreate <|-- PriceListItemBase
-    PriceListItemResponse <|-- PriceListItemBase
-    PriceListItemBase <|-- PriceListItemCreate
-    PriceListItemBase <|-- PriceListItemResponse
-    PriceListBase <|-- PriceListResponse
+    CollectionCreate <|-- CollectionBase
+    CollectionResponse <|-- CollectionBase
+    CollectionBase <|-- CollectionCreate
+    CollectionBase <|-- CollectionResponse
+    ColorPresetCreate <|-- ColorPresetBase
+    ColorPresetResponse <|-- ColorPresetBase
+    ColorPresetBase <|-- ColorPresetCreate
+    ColorPresetBase <|-- ColorPresetResponse
+    ProductCreate <|-- ProductBase
+    ProductResponse <|-- ProductBase
+    ProductBase <|-- ProductCreate
+    ProductBase <|-- ProductResponse
+    VariantCreate <|-- VariantBase
+    VariantResponse <|-- VariantBase
+    VariantBase <|-- VariantCreate
+    VariantBase <|-- VariantResponse
 ```
 
 ## Relationships
 
-- [[Community 14]] (104 shared connections)
-- [[Content & Features]] (7 shared connections)
-- [[Community 4]] (6 shared connections)
-- [[Community 3]] (6 shared connections)
-- [[Community 12]] (3 shared connections)
+- [[Community 10]] (506 shared connections)
+- [[App Bootstrap]] (73 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\internal\media_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/internal/media_router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\internal\provisioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/internal/provisioning.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\hygiene_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/hygiene_router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\ssr_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\db.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/db.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\seo.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\stripe_mock.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/stripe_mock.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\conftest.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_b2b.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_inventory.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_inventory.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\color_presets_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/color_presets_provider.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 256 (37%)
-- INFERRED: 445 (63%)
+- EXTRACTED: 235 (16%)
+- INFERRED: 1200 (84%)
 - AMBIGUOUS: 0 (0%)
 
 ---

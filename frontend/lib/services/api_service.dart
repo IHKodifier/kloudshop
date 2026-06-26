@@ -1241,6 +1241,379 @@ class ApiService {
       rethrow;
     }
   }
+
+  // --- Shipping ---
+  Future<List<Map<String, dynamic>>> listShippingProfiles() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/shipping/profiles'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Map<String, dynamic>.from(item)).toList();
+    }
+    throw ApiException(response.statusCode, 'Failed to list shipping profiles');
+  }
+
+  Future<Map<String, dynamic>> createShippingProfile(String name, bool isGeneral) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/shipping/profiles'),
+      headers: headers,
+      body: jsonEncode({'name': name, 'is_general': isGeneral}),
+    );
+    if (response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create shipping profile');
+  }
+
+  Future<void> deleteShippingProfile(String profileId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/shipping/profiles/$profileId'),
+      headers: headers,
+    );
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete shipping profile');
+    }
+  }
+
+  Future<Map<String, dynamic>> createShippingZone(String profileId, String name, List<String> countries) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/shipping/profiles/$profileId/zones'),
+      headers: headers,
+      body: jsonEncode({'name': name, 'countries': countries}),
+    );
+    if (response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create shipping zone');
+  }
+
+  Future<void> deleteShippingZone(String zoneId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/shipping/zones/$zoneId'),
+      headers: headers,
+    );
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete shipping zone');
+    }
+  }
+
+  Future<Map<String, dynamic>> createShippingRate({
+    required String zoneId,
+    required String name,
+    required double price,
+    double? minValue,
+    double? maxValue,
+    double? minWeight,
+    double? maxWeight,
+    required String rateType,
+  }) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/shipping/zones/$zoneId/rates'),
+      headers: headers,
+      body: jsonEncode({
+        'name': name,
+        'price': price,
+        'min_value': minValue,
+        'max_value': maxValue,
+        'min_weight': minWeight,
+        'max_weight': maxWeight,
+        'rate_type': rateType,
+      }),
+    );
+    if (response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create shipping rate');
+  }
+
+  Future<void> deleteShippingRate(String rateId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/shipping/rates/$rateId'),
+      headers: headers,
+    );
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete shipping rate');
+    }
+  }
+
+  // --- Taxes ---
+  Future<List<Map<String, dynamic>>> listTaxRates() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/tax/rates'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Map<String, dynamic>.from(item)).toList();
+    }
+    throw ApiException(response.statusCode, 'Failed to list tax rates');
+  }
+
+  Future<Map<String, dynamic>> createTaxRate({
+    required String countryCode,
+    String? stateCode,
+    required double taxPercentage,
+    required bool isActive,
+  }) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/tax/rates'),
+      headers: headers,
+      body: jsonEncode({
+        'country_code': countryCode,
+        'state_code': stateCode,
+        'tax_percentage': taxPercentage,
+        'is_active': isActive,
+      }),
+    );
+    if (response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create tax rate');
+  }
+
+  Future<void> deleteTaxRate(String taxRateId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/tax/rates/$taxRateId'),
+      headers: headers,
+    );
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete tax rate');
+    }
+  }
+
+  // --- Navigation ---
+  Future<List<Map<String, dynamic>>> listNavigationMenus() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/navigation/menus'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Map<String, dynamic>.from(item)).toList();
+    }
+    throw ApiException(response.statusCode, 'Failed to list navigation menus');
+  }
+
+  Future<Map<String, dynamic>> createNavigationMenu(String name, String handle) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/navigation/menus'),
+      headers: headers,
+      body: jsonEncode({'name': name, 'handle': handle}),
+    );
+    if (response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create navigation menu');
+  }
+
+  Future<void> deleteNavigationMenu(String menuId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/navigation/menus/$menuId'),
+      headers: headers,
+    );
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete navigation menu');
+    }
+  }
+
+  Future<Map<String, dynamic>> createNavigationItem({
+    required String menuId,
+    String? parentId,
+    required String title,
+    required String url,
+    required String linkType,
+    String? resourceId,
+    required int position,
+  }) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/navigation/menus/$menuId/items'),
+      headers: headers,
+      body: jsonEncode({
+        'parent_id': parentId,
+        'title': title,
+        'url': url,
+        'link_type': linkType,
+        'resource_id': resourceId,
+        'position': position,
+      }),
+    );
+    if (response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create navigation item');
+  }
+
+  Future<void> deleteNavigationItem(String itemId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/navigation/items/$itemId'),
+      headers: headers,
+    );
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete navigation item');
+    }
+  }
+
+  Future<void> reorderNavigationItems(String menuId, List<Map<String, dynamic>> items) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/navigation/menus/$menuId/reorder'),
+      headers: headers,
+      body: jsonEncode({'items': items}),
+    );
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to reorder navigation items');
+    }
+  }
+
+  // --- Policies ---
+  Future<List<Map<String, dynamic>>> listPolicies() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/policies'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Map<String, dynamic>.from(item)).toList();
+    }
+    throw ApiException(response.statusCode, 'Failed to list policies');
+  }
+
+  Future<Map<String, dynamic>> createPolicy(String policyType, String draftContent) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/policies'),
+      headers: headers,
+      body: jsonEncode({
+        'policy_type': policyType,
+        'draft_content': draftContent,
+        'published_content': '',
+      }),
+    );
+    if (response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create policy');
+  }
+
+  Future<Map<String, dynamic>> updatePolicyDraft(String policyId, String draftContent) async {
+    final headers = await _getHeaders();
+    final response = await http.patch(
+      Uri.parse('$baseUrl/policies/$policyId'),
+      headers: headers,
+      body: jsonEncode({'draft_content': draftContent}),
+    );
+    if (response.statusCode == 200) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to update policy draft');
+  }
+
+  Future<Map<String, dynamic>> publishPolicy(String policyId, {bool force = false}) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/policies/$policyId/publish?force=$force'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to publish policy');
+  }
+
+  Future<String> seedPolicyTemplate(String policyType) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/policies/seed-template'),
+      headers: headers,
+      body: jsonEncode({'policy_type': policyType}),
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['seeded_content'] as String;
+    }
+    throw ApiException(response.statusCode, 'Failed to seed policy template');
+  }
+
+  Future<List<Map<String, dynamic>>> listCollections() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/products/collections'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Map<String, dynamic>.from(item)).toList();
+    }
+    throw ApiException(response.statusCode, 'Failed to list collections');
+  }
+
+  Future<List<Map<String, dynamic>>> listStorefrontPages() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/storefront/pages'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((item) => Map<String, dynamic>.from(item)).toList();
+    }
+    throw ApiException(response.statusCode, 'Failed to list storefront pages');
+  }
+
+  Future<Map<String, dynamic>> createStorefrontPage(Map<String, dynamic> data) async {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/storefront/pages'),
+      headers: headers,
+      body: jsonEncode(data),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to create storefront page');
+  }
+
+  Future<Map<String, dynamic>> updateStorefrontPage(String pageId, Map<String, dynamic> data) async {
+    final headers = await _getHeaders();
+    final response = await http.patch(
+      Uri.parse('$baseUrl/storefront/pages/$pageId'),
+      headers: headers,
+      body: jsonEncode(data),
+    );
+    if (response.statusCode == 200) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, 'Failed to update storefront page');
+  }
+
+  Future<void> deleteStorefrontPage(String pageId) async {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/storefront/pages/$pageId'),
+      headers: headers,
+    );
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'Failed to delete storefront page');
+    }
+  }
 }
 
 class ApiException implements Exception {

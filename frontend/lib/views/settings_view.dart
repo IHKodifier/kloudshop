@@ -39,10 +39,47 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   // Zurich Sidebar selection index
   int _zurichSidebarIndex = 0;
 
+  // Shipping sub-view state
+  Future<List<Map<String, dynamic>>>? _shippingProfilesFuture;
+  void _refreshShippingProfiles() {
+    _shippingProfilesFuture = ref.read(apiServiceProvider).listShippingProfiles();
+  }
+
+  // Taxes sub-view state
+  bool _stripeTaxEnabled = false;
+  Future<List<Map<String, dynamic>>>? _taxRatesFuture;
+  void _refreshTaxRates() {
+    _taxRatesFuture = ref.read(apiServiceProvider).listTaxRates();
+  }
+
+  // Navigation sub-view state
+  Future<List<Map<String, dynamic>>>? _navigationMenusFuture;
+  String? _selectedMenuId;
+  void _refreshNavigationMenus() {
+    _navigationMenusFuture = ref.read(apiServiceProvider).listNavigationMenus().then((menus) {
+      if (menus.isNotEmpty && _selectedMenuId == null) {
+        setState(() {
+          _selectedMenuId = menus.first['menu_id']?.toString();
+        });
+      }
+      return menus;
+    });
+  }
+
+  // Policies sub-view state
+  Future<List<Map<String, dynamic>>>? _policiesFuture;
+  void _refreshPolicies() {
+    _policiesFuture = ref.read(apiServiceProvider).listPolicies();
+  }
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    _refreshShippingProfiles();
+    _refreshTaxRates();
+    _refreshNavigationMenus();
+    _refreshPolicies();
   }
 
   @override
@@ -74,6 +111,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           'city': _cityController.text,
           'state': _stateController.text,
           'postal_code': _postalController.text,
+          'stripe_tax_enabled': _stripeTaxEnabled,
         },
       });
       if (!mounted) return;
@@ -133,6 +171,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             _selectedTimezone =
                 cfg['timezone'] as String? ?? 'GMT-05:00 Eastern Time';
             _selectedUnitSystem = cfg['unit_system'] as String? ?? 'Metric';
+            _stripeTaxEnabled = cfg['stripe_tax_enabled'] as bool? ?? false;
           }
           return Column(
             children: [
@@ -452,7 +491,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   ) {
     final sidebarItems = [
       {'title': 'Store Details', 'icon': LucideIcons.store},
-      {'title': 'Shipping & Regional', 'icon': LucideIcons.globe},
+      {'title': 'Shipping Profiles', 'icon': LucideIcons.truck},
+      {'title': 'Taxes & Stripe', 'icon': LucideIcons.percent},
+      {'title': 'Navigation Menus', 'icon': LucideIcons.menu},
+      {'title': 'Store Policies', 'icon': LucideIcons.fileText},
+      {'title': 'Regional Standards', 'icon': LucideIcons.globe},
       {'title': 'Infrastructure', 'icon': LucideIcons.cloud},
       {'title': 'Communications', 'icon': LucideIcons.mail},
     ];
@@ -605,6 +648,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   Widget _buildZurichPanelContent(ThemeData theme, tenantSettings) {
+    final isDark = theme.brightness == Brightness.dark;
     switch (_zurichSidebarIndex) {
       case 0:
         return Column(
@@ -641,12 +685,20 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           ],
         );
       case 1:
+        return _buildShippingSettingsTab(theme, isDark);
+      case 2:
+        return _buildTaxesSettingsTab(theme, isDark, tenantSettings);
+      case 3:
+        return _buildNavigationSettingsTab(theme, isDark);
+      case 4:
+        return _buildPoliciesSettingsTab(theme, isDark);
+      case 5:
         return Column(
-          key: const ValueKey(1),
+          key: const ValueKey(5),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _PremiumSection(
-              title: 'Shipping & Regional Standards',
+              title: 'Regional Standards',
               icon: LucideIcons.globe,
               accentColor: const Color(0xFFF59E0B),
               children: [
@@ -686,9 +738,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ),
           ],
         );
-      case 2:
+      case 6:
         return Column(
-          key: const ValueKey(2),
+          key: const ValueKey(6),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _PremiumSection(
@@ -709,9 +761,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ),
           ],
         );
-      case 3:
+      case 7:
         return Column(
-          key: const ValueKey(3),
+          key: const ValueKey(7),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _PremiumSection(
@@ -737,6 +789,1150 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       default:
         return const SizedBox();
     }
+  }
+
+  // --- Shipping Settings Helper View ---
+  Widget _buildShippingSettingsTab(ThemeData theme, bool isDark) {
+    return Column(
+      key: const ValueKey(101),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PremiumSection(
+          title: 'Shipping Profiles & Regional zones',
+          icon: LucideIcons.truck,
+          accentColor: AppTheme.brandEmerald500,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Shipping Profiles',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _showCreateProfileDialog(theme),
+                  icon: const Icon(LucideIcons.plus, size: 14),
+                  label: const Text('Create Profile'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.brandEmerald500,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _shippingProfilesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500));
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.redAccent));
+                }
+                final profiles = snapshot.data ?? [];
+                if (profiles.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                    child: Center(child: Text('No shipping profiles configured. Click "Create Profile" to start.')),
+                  );
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: profiles.length,
+                  itemBuilder: (context, idx) {
+                    final profile = profiles[idx];
+                    final profileId = profile['profile_id']?.toString() ?? '';
+                    final isGeneral = profile['is_general'] == true;
+                    final zones = (profile['zones'] as List?) ?? [];
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: theme.dividerColor),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  profile['name']?.toString() ?? 'Unnamed Profile',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                                const SizedBox(width: 8),
+                                if (isGeneral)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.brandEmerald500.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Text(
+                                      'General',
+                                      style: TextStyle(color: AppTheme.brandEmerald500, fontSize: 10, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                const Spacer(),
+                                if (!isGeneral)
+                                  IconButton(
+                                    icon: const Icon(LucideIcons.trash2, size: 16, color: Colors.redAccent),
+                                    onPressed: () async {
+                                      await ref.read(apiServiceProvider).deleteShippingProfile(profileId);
+                                      _refreshShippingProfiles();
+                                    },
+                                  ),
+                              ],
+                            ),
+                            const Divider(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Zones', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                                TextButton.icon(
+                                  onPressed: () => _showCreateZoneDialog(theme, profileId),
+                                  icon: const Icon(LucideIcons.plus, size: 12),
+                                  label: const Text('Add Zone'),
+                                ),
+                              ],
+                            ),
+                            if (zones.isEmpty)
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text('No shipping zones in this profile.', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                              ),
+                            ...zones.map((zone) {
+                              final zoneId = zone['zone_id']?.toString() ?? '';
+                              final countries = (zone['countries'] as List?) ?? [];
+                              final rates = (zone['rates'] as List?) ?? [];
+
+                              return Container(
+                                margin: const EdgeInsets.only(top: 12),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: isDark ? const Color(0xFF1E293B).withOpacity(0.5) : const Color(0xFFF8FAFC),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                zone['name']?.toString() ?? 'Unnamed Zone',
+                                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                'Countries: ${countries.join(", ")}',
+                                                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(LucideIcons.trash2, size: 14, color: Colors.redAccent),
+                                          onPressed: () async {
+                                            await ref.read(apiServiceProvider).deleteShippingZone(zoneId);
+                                            _refreshShippingProfiles();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    const Divider(height: 16),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('Rates', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11)),
+                                        TextButton.icon(
+                                          onPressed: () => _showCreateRateDialog(theme, zoneId),
+                                          icon: const Icon(LucideIcons.plus, size: 10),
+                                          label: const Text('Add Rate', style: TextStyle(fontSize: 11)),
+                                        ),
+                                      ],
+                                    ),
+                                    if (rates.isEmpty)
+                                      const Text('No rates configured for this zone.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                                    ...rates.map((rate) {
+                                      final rateId = rate['rate_id']?.toString() ?? '';
+                                      final price = rate['price'] ?? 0.0;
+                                      final rateType = rate['rate_type']?.toString() ?? 'price';
+                                      final minVal = rate['min_value'];
+                                      final maxVal = rate['max_value'];
+                                      final minWt = rate['min_weight'];
+                                      final maxWt = rate['max_weight'];
+
+                                      String conditionStr = 'Any condition';
+                                      if (rateType == 'price' && (minVal != null || maxVal != null)) {
+                                        conditionStr = 'Price: \$${minVal ?? 0.0}' + (maxVal != null ? ' - \$${maxVal}' : '+');
+                                      } else if (rateType == 'weight' && (minWt != null || maxWt != null)) {
+                                        conditionStr = 'Weight: ${minWt ?? 0.0}kg' + (maxWt != null ? ' - ${maxWt}kg' : '+');
+                                      }
+
+                                      return ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        dense: true,
+                                        title: Text(rate['name']?.toString() ?? 'Unnamed Rate', style: const TextStyle(fontSize: 12)),
+                                        subtitle: Text(conditionStr, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text('\$${price.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                            IconButton(
+                                              icon: const Icon(LucideIcons.trash2, size: 14, color: Colors.redAccent),
+                                              onPressed: () async {
+                                                await ref.read(apiServiceProvider).deleteShippingRate(rateId);
+                                                _refreshShippingProfiles();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _showCreateProfileDialog(ThemeData theme) {
+    final nameCtrl = TextEditingController();
+    bool isGeneral = false;
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Create Shipping Profile'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(labelText: 'Profile Name', hintText: 'e.g. Fragile Items'),
+              ),
+              CheckboxListTile(
+                title: const Text('General Shipping Profile'),
+                value: isGeneral,
+                onChanged: (val) {
+                  setDialogState(() {
+                    isGeneral = val ?? false;
+                  });
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () async {
+                if (nameCtrl.text.isNotEmpty) {
+                  await ref.read(apiServiceProvider).createShippingProfile(nameCtrl.text, isGeneral);
+                  _refreshShippingProfiles();
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Create'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCreateZoneDialog(ThemeData theme, String profileId) {
+    final nameCtrl = TextEditingController();
+    final countriesCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Shipping Zone'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameCtrl,
+              decoration: const InputDecoration(labelText: 'Zone Name', hintText: 'e.g. Domestic US'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: countriesCtrl,
+              decoration: const InputDecoration(labelText: 'Countries (comma separated ISO codes)', hintText: 'e.g. US, CA, MX'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameCtrl.text.isNotEmpty && countriesCtrl.text.isNotEmpty) {
+                final countryList = countriesCtrl.text.split(',').map((c) => c.trim().toUpperCase()).toList();
+                await ref.read(apiServiceProvider).createShippingZone(profileId, nameCtrl.text, countryList);
+                _refreshShippingProfiles();
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCreateRateDialog(ThemeData theme, String zoneId) {
+    final nameCtrl = TextEditingController();
+    final priceCtrl = TextEditingController();
+    final minCtrl = TextEditingController();
+    final maxCtrl = TextEditingController();
+    String rateType = 'price'; // 'price' or 'weight'
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Add Shipping Rate'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameCtrl,
+                  decoration: const InputDecoration(labelText: 'Rate Name', hintText: 'e.g. Standard Shipping'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: priceCtrl,
+                  decoration: const InputDecoration(labelText: 'Price (\$)', hintText: 'e.g. 5.99'),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: rateType,
+                  decoration: const InputDecoration(labelText: 'Condition Type'),
+                  items: const [
+                    DropdownMenuItem(value: 'price', child: Text('Price-based')),
+                    DropdownMenuItem(value: 'weight', child: Text('Weight-based')),
+                  ],
+                  onChanged: (val) {
+                    setDialogState(() {
+                      rateType = val!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: minCtrl,
+                  decoration: InputDecoration(
+                    labelText: rateType == 'price' ? 'Min Order Value (\$)' : 'Min Weight (kg)',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: maxCtrl,
+                  decoration: InputDecoration(
+                    labelText: rateType == 'price' ? 'Max Order Value (\$)' : 'Max Weight (kg)',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () async {
+                if (nameCtrl.text.isNotEmpty && priceCtrl.text.isNotEmpty) {
+                  final price = double.tryParse(priceCtrl.text) ?? 0.0;
+                  final minVal = double.tryParse(minCtrl.text);
+                  final maxVal = double.tryParse(maxCtrl.text);
+
+                  await ref.read(apiServiceProvider).createShippingRate(
+                    zoneId: zoneId,
+                    name: nameCtrl.text,
+                    price: price,
+                    minValue: rateType == 'price' ? minVal : null,
+                    maxValue: rateType == 'price' ? maxVal : null,
+                    minWeight: rateType == 'weight' ? minVal : null,
+                    maxWeight: rateType == 'weight' ? maxVal : null,
+                    rateType: rateType,
+                  );
+                  _refreshShippingProfiles();
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- Taxes Settings View ---
+  Widget _buildTaxesSettingsTab(ThemeData theme, bool isDark, tenantSettings) {
+    return Column(
+      key: const ValueKey(102),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PremiumSection(
+          title: 'Taxes Configuration',
+          icon: LucideIcons.percent,
+          accentColor: const Color(0xFFF59E0B),
+          children: [
+            SwitchListTile(
+              title: const Text('Stripe Connect Automated Tax'),
+              subtitle: const Text('Use Stripe automated address detection to compute taxes dynamically.'),
+              value: _stripeTaxEnabled,
+              activeColor: AppTheme.brandEmerald500,
+              onChanged: (val) {
+                setState(() {
+                  _stripeTaxEnabled = val;
+                });
+              },
+            ),
+            const Divider(height: 32),
+            if (!_stripeTaxEnabled) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Manual Fallback Tax Rates',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () => _showAddTaxRateDialog(theme),
+                    icon: const Icon(LucideIcons.plus, size: 12),
+                    label: const Text('Add Tax Rate'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.brandEmerald500,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              FutureBuilder<List<Map<String, dynamic>>>(
+                future: _taxRatesFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500));
+                  }
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  final rates = snapshot.data ?? [];
+                  if (rates.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text('No manual tax rates configured.', style: TextStyle(color: Colors.grey)),
+                    );
+                  }
+                  return Table(
+                    columnWidths: const {
+                      0: FlexColumnWidth(2),
+                      1: FlexColumnWidth(2),
+                      2: FlexColumnWidth(2),
+                      3: FlexColumnWidth(1),
+                    },
+                    border: TableBorder.all(color: theme.dividerColor, width: 0.5, borderRadius: BorderRadius.circular(8)),
+                    children: [
+                      TableRow(
+                        decoration: BoxDecoration(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.03)),
+                        children: const [
+                          Padding(padding: EdgeInsets.all(8.0), child: Text('Country', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                          Padding(padding: EdgeInsets.all(8.0), child: Text('State/Region', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                          Padding(padding: EdgeInsets.all(8.0), child: Text('Tax Rate (%)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                          Padding(padding: EdgeInsets.all(8.0), child: Text('Action', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                        ],
+                      ),
+                      ...rates.map((rate) {
+                        final rateId = rate['tax_rate_id']?.toString() ?? '';
+                        return TableRow(
+                          children: [
+                            Padding(padding: const EdgeInsets.all(8.0), child: Text(rate['country_code']?.toString() ?? '', style: const TextStyle(fontSize: 12))),
+                            Padding(padding: const EdgeInsets.all(8.0), child: Text(rate['state_code']?.toString() ?? 'All States', style: const TextStyle(fontSize: 12))),
+                            Padding(padding: const EdgeInsets.all(8.0), child: Text('${rate['tax_percentage']}%', style: const TextStyle(fontSize: 12))),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: IconButton(
+                                icon: const Icon(LucideIcons.trash2, size: 14, color: Colors.redAccent),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () async {
+                                  await ref.read(apiServiceProvider).deleteTaxRate(rateId);
+                                  _refreshTaxRates();
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                    ],
+                  );
+                },
+              ),
+            ] else ...[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.brandEmerald500.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.brandEmerald500.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(LucideIcons.shieldCheck, color: AppTheme.brandEmerald500, size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Stripe Tax is active. All fallback manual rates are ignored, and sales tax is calculated automatically at checkout based on regional rules.',
+                        style: theme.textTheme.bodyMedium?.copyWith(height: 1.4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _showAddTaxRateDialog(ThemeData theme) {
+    final countryCtrl = TextEditingController();
+    final stateCtrl = TextEditingController();
+    final percentCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Manual Tax Rate'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: countryCtrl,
+              decoration: const InputDecoration(labelText: 'Country Code (2 letters)', hintText: 'e.g. US'),
+              maxLength: 2,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: stateCtrl,
+              decoration: const InputDecoration(labelText: 'State/Region Code (optional)', hintText: 'e.g. NY'),
+              maxLength: 2,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: percentCtrl,
+              decoration: const InputDecoration(labelText: 'Tax Percentage (%)', hintText: 'e.g. 8.25'),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (countryCtrl.text.isNotEmpty && percentCtrl.text.isNotEmpty) {
+                final pct = double.tryParse(percentCtrl.text) ?? 0.0;
+                await ref.read(apiServiceProvider).createTaxRate(
+                  countryCode: countryCtrl.text,
+                  stateCode: stateCtrl.text.isEmpty ? null : stateCtrl.text,
+                  taxPercentage: pct,
+                  isActive: true,
+                );
+                _refreshTaxRates();
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- Navigation Settings View ---
+  Widget _buildNavigationSettingsTab(ThemeData theme, bool isDark) {
+    return Column(
+      key: const ValueKey(103),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PremiumSection(
+          title: 'Storefront Navigation Builder',
+          icon: LucideIcons.menu,
+          accentColor: const Color(0xFF6366F1),
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Navigation Menus',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _showCreateMenuDialog(theme),
+                  icon: const Icon(LucideIcons.plus, size: 12),
+                  label: const Text('Create Menu'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.brandEmerald500,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _navigationMenusFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500));
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                final menus = snapshot.data ?? [];
+                if (menus.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                    child: Text('No navigation menus created. Click "Create Menu" to add one.'),
+                  );
+                }
+
+                // Dropdown to select active menu
+                final selectedMenu = menus.firstWhere(
+                  (m) => m['menu_id']?.toString() == _selectedMenuId,
+                  orElse: () => menus.first,
+                );
+                _selectedMenuId = selectedMenu['menu_id']?.toString();
+
+                final menuItems = (selectedMenu['items'] as List?) ?? [];
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text('Active Menu: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 12),
+                        DropdownButton<String>(
+                          value: _selectedMenuId,
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedMenuId = val;
+                            });
+                          },
+                          items: menus.map((m) {
+                            return DropdownMenuItem<String>(
+                              value: m['menu_id']?.toString(),
+                              child: Text('${m['name']} (${m['handle']})'),
+                            );
+                          }).toList(),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(LucideIcons.trash2, color: Colors.redAccent, size: 16),
+                          onPressed: () async {
+                            if (_selectedMenuId != null) {
+                              await ref.read(apiServiceProvider).deleteNavigationMenu(_selectedMenuId!);
+                              setState(() {
+                                _selectedMenuId = null;
+                              });
+                              _refreshNavigationMenus();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Menu Items Outline', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        ElevatedButton.icon(
+                          onPressed: () => _showAddMenuItemDialog(theme, _selectedMenuId!),
+                          icon: const Icon(LucideIcons.plus, size: 12),
+                          label: const Text('Add Menu Item', style: TextStyle(fontSize: 11)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.brandEmerald500.withOpacity(0.1),
+                            foregroundColor: AppTheme.brandEmerald500,
+                            elevation: 0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    if (menuItems.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24.0),
+                        child: Text('No items in this menu. Click "Add Menu Item" to add links.', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      ),
+                    ...menuItems.map((item) {
+                      final itemId = item['item_id']?.toString() ?? '';
+                      final title = item['title']?.toString() ?? '';
+                      final type = item['link_type']?.toString() ?? '';
+                      final url = item['url']?.toString() ?? '';
+                      final children = (item['children'] as List?) ?? [];
+                      final pos = item['position'] ?? 0;
+
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: ExpansionTile(
+                          leading: const Icon(LucideIcons.link, size: 16, color: AppTheme.brandEmerald500),
+                          title: Text('$title ($type)', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                          subtitle: Text('Slug: $url', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(LucideIcons.arrowUp, size: 14),
+                                onPressed: pos > 0 ? () async {
+                                  // Simple move up simulation
+                                  final reorderedItems = menuItems.map((m) {
+                                    int p = m['position'] ?? 0;
+                                    if (m['item_id'] == itemId) {
+                                      return {'item_id': m['item_id'], 'position': p - 1};
+                                    } else if (p == pos - 1) {
+                                      return {'item_id': m['item_id'], 'position': p + 1};
+                                    }
+                                    return {'item_id': m['item_id'], 'position': p};
+                                  }).toList();
+                                  await ref.read(apiServiceProvider).reorderNavigationItems(_selectedMenuId!, reorderedItems);
+                                  _refreshNavigationMenus();
+                                } : null,
+                              ),
+                              IconButton(
+                                icon: const Icon(LucideIcons.arrowDown, size: 14),
+                                onPressed: pos < menuItems.length - 1 ? () async {
+                                  // Simple move down simulation
+                                  final reorderedItems = menuItems.map((m) {
+                                    int p = m['position'] ?? 0;
+                                    if (m['item_id'] == itemId) {
+                                      return {'item_id': m['item_id'], 'position': p + 1};
+                                    } else if (p == pos + 1) {
+                                      return {'item_id': m['item_id'], 'position': p - 1};
+                                    }
+                                    return {'item_id': m['item_id'], 'position': p};
+                                  }).toList();
+                                  await ref.read(apiServiceProvider).reorderNavigationItems(_selectedMenuId!, reorderedItems);
+                                  _refreshNavigationMenus();
+                                } : null,
+                              ),
+                              IconButton(
+                                icon: const Icon(LucideIcons.trash2, size: 14, color: Colors.redAccent),
+                                onPressed: () async {
+                                  await ref.read(apiServiceProvider).deleteNavigationItem(itemId);
+                                  _refreshNavigationMenus();
+                                },
+                              ),
+                            ],
+                          ),
+                          children: children.map<Widget>((child) {
+                            final childId = child['item_id']?.toString() ?? '';
+                            return ListTile(
+                              contentPadding: const EdgeInsets.only(left: 32, right: 16),
+                              leading: const Icon(LucideIcons.cornerDownRight, size: 14, color: Colors.grey),
+                              title: Text(child['title']?.toString() ?? '', style: const TextStyle(fontSize: 12)),
+                              subtitle: Text(child['url']?.toString() ?? '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              trailing: IconButton(
+                                icon: const Icon(LucideIcons.trash2, size: 14, color: Colors.redAccent),
+                                onPressed: () async {
+                                  await ref.read(apiServiceProvider).deleteNavigationItem(childId);
+                                  _refreshNavigationMenus();
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    }),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _showCreateMenuDialog(ThemeData theme) {
+    final nameCtrl = TextEditingController();
+    final handleCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create Navigation Menu'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameCtrl,
+              decoration: const InputDecoration(labelText: 'Menu Name', hintText: 'e.g. Header Menu'),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: handleCtrl,
+              decoration: const InputDecoration(labelText: 'Menu Handle (URL identifier)', hintText: 'e.g. main-menu'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameCtrl.text.isNotEmpty && handleCtrl.text.isNotEmpty) {
+                await ref.read(apiServiceProvider).createNavigationMenu(nameCtrl.text, handleCtrl.text);
+                _refreshNavigationMenus();
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddMenuItemDialog(ThemeData theme, String menuId) {
+    final titleCtrl = TextEditingController();
+    final urlCtrl = TextEditingController();
+    String linkType = 'custom_url';
+    String? resourceId;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Add Menu Item'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleCtrl,
+                  decoration: const InputDecoration(labelText: 'Link Title', hintText: 'e.g. Shop All'),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: linkType,
+                  decoration: const InputDecoration(labelText: 'Link Destination Type'),
+                  items: const [
+                    DropdownMenuItem(value: 'custom_url', child: Text('Custom URL')),
+                    DropdownMenuItem(value: 'product', child: Text('Linked Product')),
+                    DropdownMenuItem(value: 'collection', child: Text('Linked Collection')),
+                    DropdownMenuItem(value: 'page', child: Text('Linked Static Page')),
+                    DropdownMenuItem(value: 'policy', child: Text('Linked Store Policy')),
+                  ],
+                  onChanged: (val) {
+                    setDialogState(() {
+                      linkType = val!;
+                      // Reset resourceId when type changes
+                      resourceId = null;
+                      if (linkType == 'custom_url') {
+                        urlCtrl.text = '/';
+                      } else {
+                        urlCtrl.text = '/$linkType/';
+                      }
+                    });
+                  },
+                ),
+                const SizedBox(height: 8),
+                if (linkType != 'custom_url') ...[
+                  TextField(
+                    onChanged: (val) {
+                      setDialogState(() {
+                        resourceId = val;
+                        urlCtrl.text = '/$linkType/$resourceId';
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Linked Resource ID / Handle',
+                      hintText: 'e.g. winter-boots-sku',
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 8),
+                TextField(
+                  controller: urlCtrl,
+                  decoration: const InputDecoration(labelText: 'Generated URL slug'),
+                  readOnly: linkType != 'custom_url',
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () async {
+                if (titleCtrl.text.isNotEmpty) {
+                  await ref.read(apiServiceProvider).createNavigationItem(
+                    menuId: menuId,
+                    title: titleCtrl.text,
+                    url: urlCtrl.text,
+                    linkType: linkType,
+                    resourceId: resourceId,
+                    position: 9999, // default last position
+                  );
+                  _refreshNavigationMenus();
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- Policies Settings View ---
+  String _selectedPolicyType = 'refund';
+  final _policyContentCtrl = TextEditingController();
+
+  Widget _buildPoliciesSettingsTab(ThemeData theme, bool isDark) {
+    return Column(
+      key: const ValueKey(104),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PremiumSection(
+          title: 'Store Legal Policies',
+          icon: LucideIcons.fileText,
+          accentColor: const Color(0xFFEC4899),
+          children: [
+            Row(
+              children: [
+                const Text('Select Policy: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(width: 12),
+                DropdownButton<String>(
+                  value: _selectedPolicyType,
+                  onChanged: (val) {
+                    setState(() {
+                      _selectedPolicyType = val!;
+                      // Clear controller so it fetches the fresh policy type
+                      _policyContentCtrl.clear();
+                    });
+                  },
+                  items: const [
+                    DropdownMenuItem(value: 'refund', child: Text('Refund Policy')),
+                    DropdownMenuItem(value: 'privacy', child: Text('Privacy Policy')),
+                    DropdownMenuItem(value: 'terms', child: Text('Terms of Service')),
+                    DropdownMenuItem(value: 'shipping', child: Text('Shipping Policy')),
+                  ],
+                ),
+              ],
+            ),
+            const Divider(height: 32),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _policiesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(color: AppTheme.brandEmerald500));
+                }
+                if (snapshot.hasError) {
+                  return Text('Error loading policies: ${snapshot.error}');
+                }
+                final policies = snapshot.data ?? [];
+                
+                // Find policy object locally
+                final policy = policies.firstWhere(
+                  (p) => p['policy_type']?.toString().toLowerCase() == _selectedPolicyType,
+                  orElse: () => <String, dynamic>{},
+                );
+
+                final policyId = policy['policy_id']?.toString() ?? '';
+                final isPublished = policy['is_active'] == true;
+                final publishedContent = policy['published_content']?.toString() ?? '';
+                
+                if (_policyContentCtrl.text.isEmpty && policy['draft_content'] != null) {
+                  _policyContentCtrl.text = policy['draft_content'].toString();
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '${_selectedPolicyType.toUpperCase()} Policy Editor',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        const SizedBox(width: 8),
+                        if (isPublished)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.brandEmerald500.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text('Published', style: TextStyle(color: AppTheme.brandEmerald500, fontSize: 10, fontWeight: FontWeight.bold)),
+                          )
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text('Draft', style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _policyContentCtrl,
+                      maxLines: 12,
+                      style: const TextStyle(fontFamily: 'Courier', fontSize: 13),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: isDark ? Colors.white10 : Colors.grey.withOpacity(0.03),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        hintText: 'Enter HTML content or click Seed Template below...',
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final seeded = await ref.read(apiServiceProvider).seedPolicyTemplate(_selectedPolicyType);
+                            setState(() {
+                              _policyContentCtrl.text = seeded;
+                            });
+                          },
+                          icon: const Icon(LucideIcons.fileText, size: 14),
+                          label: const Text('Seed Template'),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            if (policyId.isEmpty) {
+                              // create new
+                              await ref.read(apiServiceProvider).createPolicy(_selectedPolicyType, _policyContentCtrl.text);
+                            } else {
+                              // update draft
+                              await ref.read(apiServiceProvider).updatePolicyDraft(policyId, _policyContentCtrl.text);
+                            }
+                            _refreshPolicies();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Draft saved successfully!')),
+                            );
+                          },
+                          icon: const Icon(LucideIcons.save, size: 14),
+                          label: const Text('Save Draft'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueGrey,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            if (policyId.isEmpty) return;
+                            try {
+                              await ref.read(apiServiceProvider).publishPolicy(policyId, force: false);
+                              _refreshPolicies();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Policy published successfully!')),
+                              );
+                            } catch (e) {
+                              // Show confirmation if it failed due to lack of links (Unprocessable Entity 422)
+                              if (e.toString().contains('422')) {
+                                _showPublishBypassDialog(policyId);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Publish failed: $e'), backgroundColor: Colors.redAccent),
+                                );
+                              }
+                            }
+                          },
+                          icon: const Icon(LucideIcons.rocket, size: 14),
+                          label: const Text('Publish'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.brandEmerald500,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (publishedContent.isNotEmpty) ...[
+                      const Divider(height: 48),
+                      const Text(
+                        'Currently Published Storefront HTML Preview:',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white10 : Colors.black.withOpacity(0.02),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: theme.dividerColor),
+                        ),
+                        child: Text(
+                          publishedContent,
+                          style: const TextStyle(fontSize: 12, height: 1.4),
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _showPublishBypassDialog(String policyId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('No Storefront Link Detected'),
+        content: const Text(
+          'This policy has no active links pointing to it from any navigation menus.\n\n'
+          'Would you like to force publish it anyway?',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              await ref.read(apiServiceProvider).publishPolicy(policyId, force: true);
+              _refreshPolicies();
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Policy published (bypass validated) successfully!')),
+              );
+            },
+            child: const Text('Publish Anyway'),
+          ),
+        ],
+      ),
+    );
   }
 
   // --- VARIANT 2: BENTO GRID LAYOUT ---

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kloudshop/views/wysiwyg_view.dart';
+import 'package:kloudshop/views/theme_customizer_view.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/widgets/storefront_preview.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'test_helper.dart';
+
 class MockApiService extends Mock implements ApiService {}
 
 void main() {
   late MockApiService mockApi;
+
+  setUpAll(registerTestHttpOverrides);
 
   setUp(() {
     mockApi = MockApiService();
@@ -22,7 +26,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
   }
 
-  testWidgets('WysiwygView undo/redo functionality', (tester) async {
+  testWidgets('ThemeCustomizerView undo/redo functionality', (tester) async {
     // Set a larger surface size to avoid overflow issues in test
     tester.view.physicalSize = const Size(1920, 1080);
     tester.view.devicePixelRatio = 1.0;
@@ -52,7 +56,7 @@ void main() {
           apiServiceProvider.overrideWithValue(mockApi),
         ],
         child: const MaterialApp(
-          home: WysiwygView(),
+          home: ThemeCustomizerView(),
         ),
       ),
     );

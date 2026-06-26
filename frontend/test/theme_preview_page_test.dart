@@ -5,10 +5,13 @@ import 'package:mocktail/mocktail.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:kloudshop/views/theme_preview_page.dart';
+import 'test_helper.dart';
 
 class MockApiService extends Mock implements ApiService {}
 
 void main() {
+  setUpAll(registerTestHttpOverrides);
+  
   late MockApiService mockApi;
 
   setUp(() {

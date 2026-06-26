@@ -5,6 +5,19 @@ import 'package:kloudshop/models/theme.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/services/api_service.dart';
 
+final sidebarExtendedProvider = NotifierProvider<SidebarExtendedNotifier, bool>(
+  SidebarExtendedNotifier.new,
+);
+
+class SidebarExtendedNotifier extends Notifier<bool> {
+  @override
+  bool build() => true;
+
+  void toggle(bool val) {
+    state = val;
+  }
+}
+
 final themesProvider = FutureProvider<List<ThemeModel>>((ref) async {
   final apiService = ref.watch(apiServiceProvider);
   return apiService.listThemes();

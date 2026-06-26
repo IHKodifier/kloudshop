@@ -37,6 +37,10 @@ async def lifespan(app: FastAPI):
             from modules.channels.models import ChannelConnection, ChannelSyncLog
             from modules.pricing.models import PricingRule
             from modules.b2b.models import B2BAccount, PriceList, PriceListItem, ApprovalWorkflow, ApprovalRequest, B2BInvoice
+            from modules.shipping.models import StoreShippingProfile, StoreShippingZone, StoreShippingRate
+            from modules.tax.models import StoreTaxRate
+            from modules.navigation.models import StoreNavigationMenu, StoreNavigationItem
+            from modules.policies.models import StorePolicy
 
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
@@ -114,6 +118,10 @@ from modules.storefront.sitemap_router import router as sitemap_router
 from modules.analytics.router import router as analytics_router 
 from modules.platform.hygiene_router import router as hygiene_router
 from modules.internal.media_router import router as media_router
+from modules.shipping.router import router as shipping_router
+from modules.tax.router import router as tax_router
+from modules.navigation.router import router as navigation_router
+from modules.policies.router import router as policies_router
 from modules.storefront.ssr_router import router as ssr_storefront_router
 
 # API Routes
@@ -142,6 +150,10 @@ app.include_router(sitemap_router, prefix="/api/v1/storefront", tags=["SEO"])
 app.include_router(analytics_router, prefix="/api/v1/analytics", tags=["Analytics"])
 app.include_router(hygiene_router, prefix="/api/v1/internal", tags=["Hygiene"])
 app.include_router(media_router, prefix="/api/v1/internal/media", tags=["Media"])
+app.include_router(shipping_router, prefix="/api/v1/shipping", tags=["Shipping"])
+app.include_router(tax_router, prefix="/api/v1/tax", tags=["Tax"])
+app.include_router(navigation_router, prefix="/api/v1/navigation", tags=["Navigation"])
+app.include_router(policies_router, prefix="/api/v1/policies", tags=["Policies"])
 
 # SSR Storefront Routes (Must be after API to avoid shadowing /api)
 app.include_router(ssr_storefront_router, tags=["Storefront SSR"])

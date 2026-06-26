@@ -57,6 +57,9 @@ class Product(Base):
     requires_prescription = Column(Boolean, nullable=False, default=False)
     prescription_document_required = Column(Boolean, nullable=False, default=False)
     
+    # Tax category
+    tax_category = Column(String, nullable=False, default="Standard Physical Goods")
+    
     # AI Semantic Search (Skipped pgvector for SQLite compatibility)
     # embedding = Column(...)
     
@@ -129,6 +132,7 @@ class Variant(Base):
     is_active = Column(Boolean, nullable=False, default=True)
     requires_shipping = Column(Boolean, nullable=False, default=True)
     taxable = Column(Boolean, nullable=False, default=True)
+    shipping_profile_id = Column(String, ForeignKey("store_shipping_profiles.profile_id"), nullable=True)
     
     # Metadata
     position = Column(Integer, nullable=False, default=0)
@@ -138,6 +142,7 @@ class Variant(Base):
     # Relationships
     product = relationship("Product", back_populates="variants")
     inventory_items = relationship("Inventory", back_populates="variant", cascade="all, delete-orphan")
+    shipping_profile = relationship("StoreShippingProfile")
 
     @property
     def stock(self) -> int:

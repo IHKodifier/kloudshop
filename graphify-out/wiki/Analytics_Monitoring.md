@@ -1,25 +1,21 @@
 # Analytics Monitoring
 
-> 5 nodes · cohesion 0.40
+> 12 nodes · cohesion 0.17
 
 ## Key Concepts
 
-- [RunnerTests](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L5) (4 connections)
-- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift#L1) (1 connections)
-- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L1) (1 connections)
-- [.testExample()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L7) (1 connections)
-- **XCTestCase** (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class RunnerTests {
-        +RunnerTests.swift()
-        +.testExample()
-        +RunnerTests.swift()
-    }
-```
+- [rich_text_toolbar.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (13 connections)
+- [package:rich_field_controller/rich_field_controller.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart) (2 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [_buildToolbarButton](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [Container](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [_formatLine](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [_formatText](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [RichTextToolbar](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [SizedBox](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [TextStyle](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [_toggleStyle](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
+- [Tooltip](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (1 connections)
 
 ## Relationships
 
@@ -27,12 +23,12 @@ classDiagram
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_editor_info_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\rich_text_toolbar.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 25 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,69 +1,40 @@
 # Community 15
 
-> 53 nodes · cohesion 0.06
+> 53 nodes · cohesion 0.05
 
 ## Key Concepts
 
-- [ChannelConnection](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L7) (12 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L1) (10 connections)
-- [ChannelSyncLog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L27) (9 connections)
-- [ChannelAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L8) (9 connections)
-- [FacebookAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L103) (9 connections)
-- [InstagramAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L61) (9 connections)
-- [TikTokAdapter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L16) (9 connections)
-- [service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L1) (8 connections)
-- [ChannelSyncService](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L142) (8 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L1) (23 connections)
 - [LocalVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L14) (8 connections)
 - [vector_search.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L1) (7 connections)
+- [generate_meta_tags()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py#L65) (6 connections)
 - [VertexAIVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L63) (6 connections)
-- [.trigger_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L152) (5 connections)
+- [ssr_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py#L1) (5 connections)
 - **ABC** (4 connections)
+- [resolve_locale()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/locale.py#L4) (4 connections)
 - [storefront_search()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L179) (4 connections)
-- [sync_channel()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L195) (4 connections)
-- [.__init__()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py#L143) (4 connections)
+- [generate_article_jsonld()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py#L4) (4 connections)
+- [generate_product_jsonld()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py#L32) (4 connections)
+- [serve_storefront_blog_post()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py#L110) (4 connections)
+- [serve_storefront_product()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py#L65) (4 connections)
 - [BaseVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L5) (4 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py#L1) (3 connections)
-- [connect_channel()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L25) (3 connections)
-- [facebook_callback()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L163) (3 connections)
-- [instagram_callback()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L122) (3 connections)
-- [tiktok_callback()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L76) (3 connections)
+- [seo.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py#L1) (3 connections)
+- [get_storefront_blog_post()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L282) (3 connections)
+- [serve_order_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py#L149) (3 connections)
+- [serve_storefront_home()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py#L27) (3 connections)
 - [get_vector_provider()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L88) (3 connections)
 - [.search_similar()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L81) (3 connections)
+- [create_brand_profile()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L341) (2 connections)
+- [create_carrier_connection()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L492) (2 connections)
+- [create_checkout_option()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L518) (2 connections)
+- [create_static_page()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L408) (2 connections)
+- [get_storefront_product()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L106) (2 connections)
 - *... and 28 more nodes in this community*
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class ChannelConnection {
-        +models.py()
-    }
-    class ChannelSyncLog {
-        +models.py()
-    }
-    class ChannelAdapter {
-        +service.py()
-    }
-    class ChannelSyncService {
-        +service.py()
-        +.__init__()
-        +.trigger_sync()
-    }
-    class FacebookAdapter {
-        +service.py()
-        +.__init__()
-        +.sync_catalog()
-    }
-    class InstagramAdapter {
-        +service.py()
-        +.__init__()
-        +.sync_catalog()
-    }
-    class TikTokAdapter {
-        +service.py()
-        +.__init__()
-        +.sync_catalog()
-    }
     class BaseVectorProvider {
         +vector_search.py()
     }
@@ -79,32 +50,6 @@ classDiagram
         +.get_embedding()
         +.search_similar()
     }
-    ChannelConnection --> ChannelAdapter
-    ChannelConnection --> TikTokAdapter
-    ChannelConnection --> InstagramAdapter
-    ChannelConnection --> FacebookAdapter
-    ChannelConnection --> ChannelSyncService
-    ChannelSyncLog --> ChannelAdapter
-    ChannelSyncLog --> TikTokAdapter
-    ChannelSyncLog --> InstagramAdapter
-    ChannelSyncLog --> FacebookAdapter
-    ChannelSyncLog --> ChannelSyncService
-    TikTokAdapter <|-- ChannelAdapter
-    InstagramAdapter <|-- ChannelAdapter
-    FacebookAdapter <|-- ChannelAdapter
-    ChannelAdapter --> ChannelConnection
-    ChannelAdapter --> ChannelSyncLog
-    ChannelSyncService --> ChannelConnection
-    ChannelSyncService --> ChannelSyncLog
-    ChannelAdapter <|-- FacebookAdapter
-    FacebookAdapter --> ChannelConnection
-    FacebookAdapter --> ChannelSyncLog
-    ChannelAdapter <|-- InstagramAdapter
-    InstagramAdapter --> ChannelConnection
-    InstagramAdapter --> ChannelSyncLog
-    ChannelAdapter <|-- TikTokAdapter
-    TikTokAdapter --> ChannelConnection
-    TikTokAdapter --> ChannelSyncLog
     LocalVectorProvider <|-- BaseVectorProvider
     VertexAIVectorProvider <|-- BaseVectorProvider
     BaseVectorProvider <|-- LocalVectorProvider
@@ -113,22 +58,20 @@ classDiagram
 
 ## Relationships
 
-- [[Content & Features]] (12 shared connections)
-- [[Community 4]] (1 shared connections)
-- [[Community 3]] (1 shared connections)
+- [[Community 14]] (6 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/service.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\ssr_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\locale.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/locale.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\seo.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\vector_search.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py)
 
 ## Audit Trail
 
-- EXTRACTED: 134 (69%)
-- INFERRED: 61 (31%)
+- EXTRACTED: 113 (76%)
+- INFERRED: 35 (24%)
 - AMBIGUOUS: 0 (0%)
 
 ---

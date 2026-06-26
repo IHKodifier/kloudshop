@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- [encodable_value.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/encodable_value.h#L1) (1 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/encodable_value.h#L35) (1 connections)
+- [customer.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/customer.dart) (1 connections)
+- [Customer](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/customer.dart) (1 connections)
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\encodable_value.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/encodable_value.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\customer.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/customer.dart)
 
 ## Audit Trail
 

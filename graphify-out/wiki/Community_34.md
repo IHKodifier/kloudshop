@@ -1,24 +1,37 @@
 # Community 34
 
-> 3 nodes · cohesion 0.67
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
-- [track_event()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L8) (2 connections)
-- [Track an event for BigQuery sync.     In production, this would publish to Pub/](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L15) (1 connections)
-- [analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py#L1) (1 connections)
+- [GeneratedPluginRegistrant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L63) (4 connections)
+- [GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L1) (1 connections)
+- [GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L1) (1 connections)
+- [.registerWith()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L17) (1 connections)
+- [-registerWithRegistry](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L65) (1 connections)
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class GeneratedPluginRegistrant {
+        +GeneratedPluginRegistrant.java()
+        +.registerWith()
+    }
+```
 
 ## Relationships
 
-- [[Community 33]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/analytics.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\android\app\src\main\java\io\flutter\plugins\GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m)
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- [flutter_plugin_registrar.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/flutter_plugin_registrar.h#L1) (0 connections)
+- [build.gradle.kts](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/build.gradle.kts#L1) (0 connections)
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\flutter_plugin_registrar.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/flutter_plugin_registrar.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\android\build.gradle.kts](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/build.gradle.kts)
 
 ## Audit Trail
 

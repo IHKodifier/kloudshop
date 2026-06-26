@@ -1,73 +1,51 @@
 # Community 13
 
-> 58 nodes · cohesion 0.05
+> 69 nodes · cohesion 0.03
 
 ## Key Concepts
 
-- [win32_window.cpp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L1) (19 connections)
-- [Create()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L123) (10 connections)
-- [flutter_engine.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_engine.cc#L1) (9 connections)
-- [OnCreate()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/flutter_window.cpp#L12) (7 connections)
-- [Destroy()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L224) (7 connections)
-- [wWinMain()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/main.cpp#L8) (5 connections)
-- [MessageHandler()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L176) (5 connections)
-- [flutter_view_controller.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_view_controller.cc#L1) (4 connections)
-- [flutter_window.cpp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/flutter_window.cpp#L1) (4 connections)
-- [create_portal_session()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L199) (4 connections)
-- [GetClientArea()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L252) (4 connections)
-- [WndProc()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L157) (4 connections)
-- [utils.cpp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/utils.cpp#L1) (3 connections)
-- [ShutDown()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_engine.cc#L70) (3 connections)
-- [FlutterViewController()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_view_controller.cc#L12) (3 connections)
-- [MessageHandler()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/flutter_window.cpp#L50) (3 connections)
-- [RegisterPlugins()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/generated_plugin_registrant.cc#L15) (3 connections)
-- [MainFlutterWindow](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/MainFlutterWindow.swift#L4) (3 connections)
-- [.awakeFromNib()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/MainFlutterWindow.swift#L5) (3 connections)
-- [GetCommandLineArguments()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/utils.cpp#L24) (3 connections)
-- [Utf8FromUtf16()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/utils.cpp#L44) (3 connections)
-- [SetChildContent()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L241) (3 connections)
-- [UpdateTheme()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp#L275) (3 connections)
-- [FlutterEngine()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_engine.cc#L15) (2 connections)
-- [GetRegistrarForPlugin()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_engine.cc#L85) (2 connections)
-- *... and 33 more nodes in this community*
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class MainFlutterWindow {
-        +MainFlutterWindow.swift()
-        +.awakeFromNib()
-    }
-    class WindowClassRegistrar {
-        +win32_window.cpp()
-        +.WindowClassRegistrar()
-    }
-```
+- [catalog_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (38 connections)
+- [import_history_panel.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (27 connections)
+- [csv_import_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (22 connections)
+- [package:kloudshop/providers/catalog_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart) (4 connections)
+- [package:kloudshop/providers/import_history_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (3 connections)
+- [package:kloudshop/views/product_editor_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (2 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [cancelPolling](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [copyWith](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [CsvImportNotifier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [CsvImportState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [CsvProductGroup](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [parseFileBytes](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [_ParseParams](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [reset](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [setCustomSku](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [setStrategy](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [_slugify](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [_startPolling](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart) (1 connections)
+- [AnimatedBuilder](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (1 connections)
+- [Badge](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (1 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (1 connections)
+- [_buildEmptyState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (1 connections)
+- [_buildErrorState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (1 connections)
+- [CatalogView](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart) (1 connections)
+- *... and 44 more nodes in this community*
 
 ## Relationships
 
-- [[Community 12]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\linux\runner\my_application.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/my_application.cc)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\Flutter\GeneratedPluginRegistrant.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Flutter/GeneratedPluginRegistrant.swift)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\Runner\MainFlutterWindow.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/MainFlutterWindow.swift)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_engine.cc)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/flutter_view_controller.cc)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\generated_plugin_registrant.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/generated_plugin_registrant.cc)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\runner\flutter_window.cpp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/flutter_window.cpp)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\runner\flutter_window.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/flutter_window.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\runner\main.cpp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/main.cpp)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\runner\utils.cpp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/utils.cpp)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\runner\win32_window.cpp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/runner/win32_window.cpp)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\csv_import_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/csv_import_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\catalog_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/catalog_view.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\settings_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/settings_view.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\import_history_panel.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 131 (76%)
-- INFERRED: 42 (24%)
+- EXTRACTED: 159 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

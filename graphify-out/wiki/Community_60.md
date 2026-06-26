@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- [event_stream_handler_functions.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_stream_handler_functions.h#L1) (1 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_stream_handler_functions.h#L13) (1 connections)
+- [theme.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme.dart) (1 connections)
+- [ThemeModel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme.dart) (1 connections)
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\event_stream_handler_functions.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_stream_handler_functions.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\theme.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme.dart)
 
 ## Audit Trail
 

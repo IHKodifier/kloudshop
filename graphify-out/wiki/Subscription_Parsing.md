@@ -1,26 +1,28 @@
 # Subscription Parsing
 
-> 4 nodes · cohesion 0.50
+> 6 nodes · cohesion 0.33
 
 ## Key Concepts
 
-- [flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L1) (2 connections)
-- [handle_new_rx_page()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L7) (2 connections)
-- [__lldb_init_module()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L24) (1 connections)
-- [Intercept NOTIFY_DEBUGGER_ABOUT_RX_PAGES and touch the pages.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L8) (1 connections)
+- [test_features.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L1) (5 connections)
+- [seed_features()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L8) (2 connections)
+- [test_activate_feature()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L45) (1 connections)
+- [test_feature_config()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L67) (1 connections)
+- [test_feature_requests_voting()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L83) (1 connections)
+- [test_list_features()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L34) (1 connections)
 
 ## Relationships
 
-- [[Community 30]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Flutter\ephemeral\flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_features.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py)
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 10 (91%)
+- INFERRED: 1 (9%)
 - AMBIGUOUS: 0 (0%)
 
 ---

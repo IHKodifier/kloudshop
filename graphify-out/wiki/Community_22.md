@@ -1,31 +1,34 @@
 # Community 22
 
-> 22 nodes · cohesion 0.09
+> 25 nodes · cohesion 0.08
 
 ## Key Concepts
 
-- [import_history_panel.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (27 connections)
-- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [_buildMetric](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [_buildStatusBadge](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Center](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [ClipRRect](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Column](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Container](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Dialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [dispose](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Divider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [FadeTransition](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [initState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Padding](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [_PulsingDot](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [_PulsingDotState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Row](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [showImportHistoryPanel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [_showReportDetailsDialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [SizedBox](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Stack](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
-- [Text](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart) (1 connections)
+- [navigation_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (31 connections)
+- [AlertDialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_applySequentialPositionsAndSave](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_clearItemForm](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [dispose](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_fetchMenus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_hasDeepNesting](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_indentItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [initState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [LinearProgressIndicator](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_loadMenuTree](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_moveItemDown](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_moveItemUp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [NavigationView](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_NavigationViewState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_outdentItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [Padding](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [Scaffold](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_showCreateMenuDialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_showError](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_showSuccess](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [SizedBox](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_startEditingItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [traverse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
 
 ## Relationships
 
@@ -33,11 +36,11 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\import_history_panel.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/import_history_panel.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\navigation_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 48 (100%)
+- EXTRACTED: 55 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -37,6 +37,10 @@ from modules.export.models import ExportJob
 from modules.channels.models import ChannelConnection, ChannelSyncLog
 from modules.pricing.models import PricingRule
 from modules.b2b.models import B2BAccount, PriceList, PriceListItem, ApprovalWorkflow, ApprovalRequest, B2BInvoice
+from modules.shipping.models import StoreShippingProfile, StoreShippingZone, StoreShippingRate
+from modules.tax.models import StoreTaxRate
+from modules.navigation.models import StoreNavigationMenu, StoreNavigationItem
+from modules.policies.models import StorePolicy
 from shared.db import get_db, engine, AsyncSessionLocal as SharedAsyncSessionLocal
 
 @pytest_asyncio.fixture(autouse=True)

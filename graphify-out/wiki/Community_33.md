@@ -1,24 +1,26 @@
 # Community 33
 
-> 3 nodes · cohesion 1.00
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
-- [fix_slugs.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L1) (2 connections)
-- [main()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L11) (2 connections)
-- [slugify()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py#L5) (2 connections)
+- [test_bulk_import.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L1) (2 connections)
+- [test_bulk_import_csv_partial_failure()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L43) (2 connections)
+- [test_bulk_import_csv_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L7) (2 connections)
+- [Verify that some rows can fail while others succeed.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L44) (1 connections)
+- [Verify that a CSV can be uploaded and products are created.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py#L8) (1 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[unknown]] (2 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\scripts\fix_slugs.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/fix_slugs.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_bulk_import.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_bulk_import.py)
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

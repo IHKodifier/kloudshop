@@ -1,13 +1,16 @@
 # Community 30
 
-> 4 nodes · cohesion 0.50
+> 7 nodes · cohesion 0.38
 
 ## Key Concepts
 
-- [test_ai.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L1) (3 connections)
-- [test_accept_variant()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L47) (1 connections)
-- [test_brand_voice_crud()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L8) (1 connections)
-- [test_generate_product_title()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L30) (1 connections)
+- [test_storefront.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L1) (6 connections)
+- [setup_test_store()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L5) (3 connections)
+- [test_static_page_crud()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L53) (2 connections)
+- [test_storefront_search()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L97) (2 connections)
+- [test_create_and_get_brand_profile()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L25) (1 connections)
+- [test_shipping_rates()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L77) (1 connections)
+- [test_storefront_profile_not_found()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py#L20) (1 connections)
 
 ## Relationships
 
@@ -15,11 +18,11 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_ai.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_storefront.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_storefront.py)
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 16 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

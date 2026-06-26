@@ -1,57 +1,149 @@
 # Community 14
 
-> 56 nodes · cohesion 0.05
+> 61 nodes · cohesion 0.09
 
 ## Key Concepts
 
-- [standard_codec.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L1) (18 connections)
-- [core_implementations.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L1) (12 connections)
-- [WriteValue()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L98) (8 connections)
-- [plugin_registrar.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc#L1) (6 connections)
-- [GetInstance()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc#L49) (6 connections)
-- [Resize()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L130) (5 connections)
-- [ReadValue()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L92) (5 connections)
-- [SetMessageHandler()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L116) (4 connections)
-- [method_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L1) (4 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h#L15) (4 connections)
-- [ReadValueOfType()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L168) (4 connections)
-- [ResizeChannel()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L181) (3 connections)
-- [Send()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L87) (3 connections)
-- [SetChannelWarnsOnOverflow()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L194) (3 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_channel.h#L17) (3 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/message_codec.h#L12) (3 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L18) (3 connections)
-- [DecodeAndProcessResponseEnvelope()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h#L75) (3 connections)
-- [PluginRegistrar()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc#L19) (3 connections)
-- [DecodeAndProcessResponseEnvelopeInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L434) (3 connections)
-- [DecodeMessageInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L319) (3 connections)
-- [DecodeMethodCallInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L367) (3 connections)
-- [EncodeMessageInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L329) (3 connections)
-- [EncodeMethodCallInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L384) (3 connections)
-- [EncodeSuccessEnvelopeInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L398) (3 connections)
-- *... and 31 more nodes in this community*
+- [Tenant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/models.py#L9) (38 connections)
+- [Subscription](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L23) (25 connections)
+- [SubscriptionStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L10) (25 connections)
+- [SubscriptionTier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L17) (21 connections)
+- [Config](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/schemas.py#L18) (18 connections)
+- [InvoiceResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L26) (10 connections)
+- [PortalSessionResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L35) (10 connections)
+- [SubscriptionResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L10) (10 connections)
+- [UpgradeRequest](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L21) (10 connections)
+- [Finalizes an upgrade session.      In Stripe mode, this would verify the sessio](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L131) (9 connections)
+- [Lists all invoices from Stripe for the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L169) (9 connections)
+- [Creates a Stripe Billing Portal session.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L204) (9 connections)
+- [Manually trigger the trial expiration check.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L231) (9 connections)
+- [Fetch current subscription status for the tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L26) (9 connections)
+- [Initiates a Stripe Checkout Session for tier upgrades.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L51) (9 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py#L1) (8 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py#L1) (8 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py#L1) (8 connections)
+- [List all merchants and their subscription status.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/router.py#L49) (8 connections)
+- [Verify that a merchant can fetch their subscription.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L11) (6 connections)
+- [Verify that complete-upgrade correctly identifies and processes a mock session.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L127) (6 connections)
+- [Verify that list_invoices returns empty list if no stripe customer.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L29) (6 connections)
+- [Verify that creating portal session fails without a stripe customer.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L45) (6 connections)
+- [Verify that the trial check task suspends expired tenants.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L61) (6 connections)
+- [Verify that the success URL correctly appends session_id if missing.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L88) (6 connections)
+- *... and 36 more nodes in this community*
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class Subscription {
+        +models.py()
+    }
+    class SubscriptionStatus {
+        +models.py()
+    }
+    class SubscriptionTier {
+        +models.py()
+    }
+    class Tenant {
+        +models.py()
+    }
+    class Config {
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+        +schemas.py()
+    }
+    class InvoiceResponse {
+        +schemas.py()
+    }
+    class PortalSessionResponse {
+        +schemas.py()
+    }
+    class PricingRuleBase {
+        +schemas.py()
+    }
+    class PricingRuleCreate {
+        +schemas.py()
+    }
+    class PricingRuleResponse {
+        +schemas.py()
+    }
+    class SubscriptionBase {
+        +schemas.py()
+    }
+    class SubscriptionResponse {
+        +schemas.py()
+    }
+    class UpgradeRequest {
+        +schemas.py()
+    }
+    SubscriptionStatus --> SubscriptionBase
+    SubscriptionStatus --> SubscriptionResponse
+    SubscriptionStatus --> Config
+    SubscriptionStatus --> UpgradeRequest
+    SubscriptionStatus --> InvoiceResponse
+    SubscriptionStatus --> PortalSessionResponse
+    SubscriptionTier --> SubscriptionBase
+    SubscriptionTier --> SubscriptionResponse
+    SubscriptionTier --> Config
+    SubscriptionTier --> UpgradeRequest
+    SubscriptionTier --> InvoiceResponse
+    SubscriptionTier --> PortalSessionResponse
+    Config --> SubscriptionStatus
+    Config --> SubscriptionTier
+    InvoiceResponse --> SubscriptionStatus
+    InvoiceResponse --> SubscriptionTier
+    PortalSessionResponse --> SubscriptionStatus
+    PortalSessionResponse --> SubscriptionTier
+    PricingRuleCreate <|-- PricingRuleBase
+    PricingRuleResponse <|-- PricingRuleBase
+    PricingRuleBase <|-- PricingRuleCreate
+    PricingRuleBase <|-- PricingRuleResponse
+    SubscriptionResponse <|-- SubscriptionBase
+    SubscriptionBase --> SubscriptionStatus
+    SubscriptionBase --> SubscriptionTier
+    SubscriptionBase <|-- SubscriptionResponse
+    SubscriptionResponse --> SubscriptionStatus
+    SubscriptionResponse --> SubscriptionTier
+    UpgradeRequest --> SubscriptionStatus
+    UpgradeRequest --> SubscriptionTier
+```
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 13]] (98 shared connections)
+- [[App Bootstrap]] (8 shared connections)
+- [[Community 9]] (6 shared connections)
+- [[Community 4]] (4 shared connections)
+- [[Community 20]] (3 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\provisioning_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/provisioning_provider.dart)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\basic_message_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/basic_message_channel.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\engine_method_result.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/engine_method_result.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\event_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_channel.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\message_codec.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/message_codec.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\method_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\method_codec.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\tasks.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/tasks.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\webhooks.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/webhooks.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\feeds\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/feeds/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\i18n\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/i18n/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\tax\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_billing.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\api_service.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/api_service.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 125 (74%)
-- INFERRED: 43 (26%)
+- EXTRACTED: 149 (37%)
+- INFERRED: 253 (63%)
 - AMBIGUOUS: 0 (0%)
 
 ---

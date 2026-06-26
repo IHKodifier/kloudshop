@@ -1,12 +1,13 @@
 # Community 37
 
-> 3 nodes · cohesion 0.67
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- [hygiene.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (2 connections)
-- [SchemaHealth](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (1 connections)
-- [SystemStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart) (1 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L1) (3 connections)
+- [start_export()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L42) (2 connections)
+- [get_export_job()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L64) (1 connections)
+- [run_export_job()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L13) (1 connections)
 
 ## Relationships
 
@@ -14,12 +15,12 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\hygiene.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/hygiene.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py)
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

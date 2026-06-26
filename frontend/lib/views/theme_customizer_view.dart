@@ -12,14 +12,14 @@ import 'package:kloudshop/widgets/hover_scale.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:kloudshop/services/api_service.dart';
 
-class WysiwygView extends ConsumerStatefulWidget {
-  const WysiwygView({super.key});
+class ThemeCustomizerView extends ConsumerStatefulWidget {
+  const ThemeCustomizerView({super.key});
 
   @override
-  ConsumerState<WysiwygView> createState() => _WysiwygViewState();
+  ConsumerState<ThemeCustomizerView> createState() => _ThemeCustomizerViewState();
 }
 
-class _WysiwygViewState extends ConsumerState<WysiwygView> {
+class _ThemeCustomizerViewState extends ConsumerState<ThemeCustomizerView> {
   bool _isMobile = false;
   String _previewState = 'default'; // 'default', 'loading', 'error', 'empty', 'validation'
   bool _isLeftCollapsed = false;
@@ -193,9 +193,14 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                     curve: Curves.easeInOut,
                     clipBehavior: Clip.antiAlias,
                     decoration: const BoxDecoration(),
-                    child: SizedBox(
-                      width: 280,
-                      child: _buildLeftComponentStack(themeConfigAsync.value, theme, isDark),
+                    child: OverflowBox(
+                      minWidth: 0,
+                      maxWidth: 280,
+                      alignment: Alignment.topLeft,
+                      child: SizedBox(
+                        width: 280,
+                        child: _buildLeftComponentStack(themeConfigAsync.value, theme, isDark),
+                      ),
                     ),
                   ),
 
@@ -220,9 +225,14 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                     curve: Curves.easeInOut,
                     clipBehavior: Clip.antiAlias,
                     decoration: const BoxDecoration(),
-                    child: SizedBox(
-                      width: 350,
-                      child: _buildRightConfigPanel(themeConfigAsync, theme, isDark),
+                    child: OverflowBox(
+                      minWidth: 0,
+                      maxWidth: 350,
+                      alignment: Alignment.topLeft,
+                      child: SizedBox(
+                        width: 350,
+                        child: _buildRightConfigPanel(themeConfigAsync, theme, isDark),
+                      ),
                     ),
                   ),
                 ],
@@ -589,31 +599,6 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                       ),
                       const SizedBox(width: 24),
 
-                      // Fullscreen Preview Tab
-                      HoverScale(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => WysiwygFullscreenPreview(
-                                  tokens: config?.draftTokens ?? {},
-                                  slots: config?.draftSlots ?? {},
-                                  page: _selectedPage,
-                                  previewState: _previewState,
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(LucideIcons.externalLink, size: 14),
-                          label: const Text('Preview', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
                       // Clone Layout Button (A/B testing)
                       HoverScale(
                         child: OutlinedButton.icon(
@@ -679,39 +664,69 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-
-                      // Save Draft
-                      HoverScale(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _handleSaveDraft(),
-                          icon: const Icon(LucideIcons.save, size: 14),
-                          label: const Text('Save Draft', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      // Save & Publish
-                      HoverScale(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _handleSaveAndPublishConfirmation(),
-                          icon: const Icon(LucideIcons.rocket, size: 16, color: Colors.white),
-                          label: const Text('Save & Publish', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.brandEmerald500,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(width: 16),
+              // 3. Fixed Right Section (Always visible actions)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Fullscreen Preview
+                  HoverScale(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ThemeCustomizerFullscreenPreview(
+                              tokens: config?.draftTokens ?? {},
+                              slots: config?.draftSlots ?? {},
+                              page: _selectedPage,
+                              previewState: _previewState,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(LucideIcons.externalLink, size: 14),
+                      label: const Text('Preview', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Save Draft Button
+                  HoverScale(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _handleSaveDraft(),
+                      icon: const Icon(LucideIcons.save, size: 14),
+                      label: const Text('Save Draft', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Save & Publish Button
+                  HoverScale(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _handleSaveAndPublishConfirmation(),
+                      icon: const Icon(LucideIcons.rocket, size: 16, color: Colors.white),
+                      label: const Text('Publish', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.brandEmerald500,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -3932,13 +3947,13 @@ class _WysiwygViewState extends ConsumerState<WysiwygView> {
   }
 }
 
-class WysiwygFullscreenPreview extends StatelessWidget {
+class ThemeCustomizerFullscreenPreview extends StatelessWidget {
   final Map<String, dynamic> tokens;
   final Map<String, dynamic> slots;
   final String page;
   final String previewState;
 
-  const WysiwygFullscreenPreview({
+  const ThemeCustomizerFullscreenPreview({
     super.key,
     required this.tokens,
     required this.slots,

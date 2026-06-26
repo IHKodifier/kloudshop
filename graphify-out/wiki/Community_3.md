@@ -1,193 +1,513 @@
 # Community 3
 
-> 162 nodes · cohesion 0.02
+> 171 nodes · cohesion 0.02
 
 ## Key Concepts
 
-- **Base** (63 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L1) (19 connections)
-- [BrandProfile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py#L8) (18 connections)
+- **BaseModel** (126 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/schemas.py#L1) (20 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/schemas.py#L1) (16 connections)
 - [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py#L1) (15 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L1) (13 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/router.py#L1) (13 connections)
-- [Check if a tenant ID (slug) is available.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L24) (12 connections)
-- [Fetch tenant identity and configuration for the current merchant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L52) (12 connections)
-- [Update merchant store details (name, config).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L94) (12 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py#L1) (10 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L1) (9 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/router.py#L1) (8 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py#L1) (8 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py#L1) (8 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L1) (7 connections)
-- [BlogPost](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/blog.dart) (7 connections)
-- [OnboardingSession](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/models.py#L8) (7 connections)
-- [generate_copy_impl()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L96) (7 connections)
-- [ImportMapping](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/models.py#L22) (6 connections)
-- [ImportAnalysisResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py#L17) (6 connections)
-- [MigrationRunbookResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py#L33) (6 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/models.py#L1) (5 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/models.py#L1) (5 connections)
-- [test_features.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L1) (5 connections)
-- [BrandVoiceProfile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py#L7) (5 connections)
-- *... and 137 more nodes in this community*
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/schemas.py#L1) (15 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L1) (14 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/schemas.py#L1) (12 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/router.py#L1) (11 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/router.py#L1) (11 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/schemas.py#L1) (9 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/schemas.py#L1) (8 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/schemas.py#L1) (8 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py#L1) (7 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/schemas.py#L1) (7 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/schemas.py#L1) (7 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/router.py#L1) (6 connections)
+- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/schemas.py#L1) (5 connections)
+- [StoreTaxRate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/models.py#L5) (5 connections)
+- [NavigationMenuResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/schemas.py#L37) (5 connections)
+- [build_menu_tree()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/router.py#L20) (4 connections)
+- [calculate_shipping()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/router.py#L197) (4 connections)
+- [BlogCategoryBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L26) (4 connections)
+- [BlogPostBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L58) (4 connections)
+- [BlogTagBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L44) (4 connections)
+- [BlogTranslationBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L5) (4 connections)
+- *... and 146 more nodes in this community*
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class AICopywriterLog {
+    class StoreTaxRate {
         +models.py()
     }
-    class BlogCategory {
-        +models.py()
-    }
-    class BlogCategoryTranslation {
-        +models.py()
-    }
-    class BlogPost {
-        +models.py()
-    }
-    class BlogPostTranslation {
-        +models.py()
-    }
-    class BlogTag {
-        +models.py()
-    }
-    class BrandProfile {
-        +models.py()
-    }
-    class BrandVoiceProfile {
-        +models.py()
-    }
-    class CarrierCheckoutOption {
-        +models.py()
-    }
-    class ExportJob {
-        +models.py()
-    }
-    class Feature {
-        +models.py()
-    }
-    class FeatureRequest {
-        +models.py()
-    }
-    class FeatureRequestVote {
-        +models.py()
-    }
-    class ImportMapping {
-        +models.py()
-    }
-    class MerchantCarrierConnection {
-        +models.py()
-    }
-    class OnboardingSession {
-        +models.py()
-    }
-    class PackagingPreset {
-        +models.py()
-    }
-    class PricingRule {
-        +models.py()
-    }
-    class PurchaseOrder {
-        +models.py()
-    }
-    class PurchaseOrderLine {
-        +models.py()
-    }
-    class ShippingSettings {
-        +models.py()
-    }
-    class StaticPage {
-        +models.py()
-    }
-    class StockTransfer {
-        +models.py()
-    }
-    class StorefrontContent {
-        +models.py()
-    }
-    class Supplier {
-        +models.py()
-    }
-    class SupplierPerformanceEvent {
-        +models.py()
-    }
-    class SupplierScoreWeights {
-        +models.py()
-    }
-    class TenantFeatureActivation {
-        +models.py()
-    }
-    class Theme {
-        +models.py()
-    }
-    class ThemeConfiguration {
-        +models.py()
-    }
-    class GeminiClient {
-        +router.py()
-        +.generate_variants()
-    }
-    class CopyVariant {
+    class B2BPortalOrderItem {
         +schemas.py()
     }
-    class ImportAnalysisRequest {
+    class BlendedRateDetail {
         +schemas.py()
     }
-    class ImportAnalysisResponse {
+    class BlogCategoryBase {
         +schemas.py()
     }
-    class ImportExecutionRequest {
+    class BlogCategoryCreate {
         +schemas.py()
     }
-    class MigrationRunbookResponse {
+    class BlogCategoryRead {
         +schemas.py()
     }
-    class OnboardingStatusResponse {
+    class BlogPostBase {
         +schemas.py()
     }
-    class RegionSelectionRequest {
+    class BlogPostCreate {
         +schemas.py()
     }
-    class SignupRequest {
+    class BlogPostRead {
         +schemas.py()
     }
+    class BlogPostUpdate {
+        +schemas.py()
+    }
+    class BlogTagBase {
+        +schemas.py()
+    }
+    class BlogTagCreate {
+        +schemas.py()
+    }
+    class BlogTagRead {
+        +schemas.py()
+    }
+    class BlogTranslationBase {
+        +schemas.py()
+    }
+    class BlogTranslationCreate {
+        +schemas.py()
+    }
+    class BlogTranslationRead {
+        +schemas.py()
+    }
+    class BrandProfileBase {
+        +schemas.py()
+    }
+    class BrandProfileCreate {
+        +schemas.py()
+    }
+    class BrandProfileResponse {
+        +schemas.py()
+    }
+    class BrandProfileUpdate {
+        +schemas.py()
+    }
+    class BrandVoiceProfileBase {
+        +schemas.py()
+    }
+    class BrandVoiceProfileResponse {
+        +schemas.py()
+    }
+    class CarrierConnectionBase {
+        +schemas.py()
+    }
+    class CarrierConnectionCreate {
+        +schemas.py()
+    }
+    class CarrierConnectionResponse {
+        +schemas.py()
+    }
+    class ChannelConnectionBase {
+        +schemas.py()
+    }
+    class ChannelConnectionCreate {
+        +schemas.py()
+    }
+    class ChannelConnectionRead {
+        +schemas.py()
+    }
+    class ChannelSyncStatus {
+        +schemas.py()
+    }
+    class CheckoutOptionBase {
+        +schemas.py()
+    }
+    class CheckoutOptionCreate {
+        +schemas.py()
+    }
+    class CheckoutOptionResponse {
+        +schemas.py()
+    }
+    class CopyAcceptanceRequest {
+        +schemas.py()
+    }
+    class CopyGenerationRequest {
+        +schemas.py()
+    }
+    class CopyGenerationResponse {
+        +schemas.py()
+    }
+    class ExportJobResponse {
+        +schemas.py()
+    }
+    class ExportRequest {
+        +schemas.py()
+    }
+    class FeatureActivationRequest {
+        +schemas.py()
+    }
+    class FeatureBase {
+        +schemas.py()
+    }
+    class FeatureConfigRequest {
+        +schemas.py()
+    }
+    class FeatureRequestBase {
+        +schemas.py()
+    }
+    class FeatureRequestCreate {
+        +schemas.py()
+    }
+    class FeatureRequestResponse {
+        +schemas.py()
+    }
+    class FeatureResponse {
+        +schemas.py()
+    }
+    class FeatureVoteResponse {
+        +schemas.py()
+    }
+    class LinkResolveResponse {
+        +schemas.py()
+    }
+    class NavigationItemBase {
+        +schemas.py()
+    }
+    class NavigationItemCreate {
+        +schemas.py()
+    }
+    class NavigationItemResponse {
+        +schemas.py()
+    }
+    class NavigationItemTreeResponse {
+        +schemas.py()
+    }
+    class NavigationMenuBase {
+        +schemas.py()
+    }
+    class NavigationMenuCreate {
+        +schemas.py()
+    }
+    class NavigationMenuResponse {
+        +schemas.py()
+    }
+    class NavigationReorderItem {
+        +schemas.py()
+    }
+    class NavigationReorderRequest {
+        +schemas.py()
+    }
+    class OrderEventResponse {
+        +schemas.py()
+    }
+    class OrderItemBase {
+        +schemas.py()
+    }
+    class OrderItemResponse {
+        +schemas.py()
+    }
+    class POCreate {
+        +schemas.py()
+    }
+    class PolicyBase {
+        +schemas.py()
+    }
+    class PolicyCreate {
+        +schemas.py()
+    }
+    class PolicyResponse {
+        +schemas.py()
+    }
+    class PolicyTemplateSeedRequest {
+        +schemas.py()
+    }
+    class PolicyTemplateSeedResponse {
+        +schemas.py()
+    }
+    class PolicyUpdate {
+        +schemas.py()
+    }
+    class POLineBase {
+        +schemas.py()
+    }
+    class POLineCreate {
+        +schemas.py()
+    }
+    class POLineResponse {
+        +schemas.py()
+    }
+    class POReceiveLine {
+        +schemas.py()
+    }
+    class POReceiveRequest {
+        +schemas.py()
+    }
+    class POResponse {
+        +schemas.py()
+    }
+    class POSItemCreate {
+        +schemas.py()
+    }
+    class POSLocationResponse {
+        +schemas.py()
+    }
+    class POSOrderCreate {
+        +schemas.py()
+    }
+    class POUpdate {
+        +schemas.py()
+    }
+    class ShippingCalculateItem {
+        +schemas.py()
+    }
+    class ShippingCalculateRequest {
+        +schemas.py()
+    }
+    class ShippingCalculateResponse {
+        +schemas.py()
+    }
+    class ShippingProfileBase {
+        +schemas.py()
+    }
+    class ShippingProfileCreate {
+        +schemas.py()
+    }
+    class ShippingProfileResponse {
+        +schemas.py()
+    }
+    class ShippingRateBase {
+        +schemas.py()
+    }
+    class ShippingRateCreate {
+        +schemas.py()
+    }
+    class ShippingRateRequest {
+        +schemas.py()
+    }
+    class ShippingRateResponse {
+        +schemas.py()
+        +schemas.py()
+    }
+    class ShippingZoneBase {
+        +schemas.py()
+    }
+    class ShippingZoneCreate {
+        +schemas.py()
+    }
+    class ShippingZoneResponse {
+        +schemas.py()
+    }
+    class StaffLocationAssignmentCreate {
+        +schemas.py()
+    }
+    class StaffLocationAssignmentSchema {
+        +schemas.py()
+    }
+    class StaffMember {
+        +schemas.py()
+    }
+    class StaticPageBase {
+        +schemas.py()
+    }
+    class StaticPageCreate {
+        +schemas.py()
+    }
+    class StaticPageResponse {
+        +schemas.py()
+    }
+    class StaticPageUpdate {
+        +schemas.py()
+    }
+    class StockTransferCreate {
+        +schemas.py()
+    }
+    class StockTransferResponse {
+        +schemas.py()
+    }
+    class StorefrontContentBase {
+        +schemas.py()
+    }
+    class StorefrontContentCreate {
+        +schemas.py()
+    }
+    class StorefrontContentResponse {
+        +schemas.py()
+    }
+    class SupplierBase {
+        +schemas.py()
+    }
+    class SupplierCreate {
+        +schemas.py()
+    }
+    class SupplierResponse {
+        +schemas.py()
+    }
+    class SupplierUpdate {
+        +schemas.py()
+    }
+    class TaxCalculateItem {
+        +schemas.py()
+    }
+    class TaxCalculateRequest {
+        +schemas.py()
+    }
+    class TaxCalculateResponse {
+        +schemas.py()
+    }
+    class TaxRateBase {
+        +schemas.py()
+    }
+    class TaxRateCreate {
+        +schemas.py()
+    }
+    class TaxRateResponse {
+        +schemas.py()
+    }
+    class ThemeBase {
+        +schemas.py()
+    }
+    class ThemeCloneRequest {
+        +schemas.py()
+    }
+    class ThemeConfigRequest {
+        +schemas.py()
+    }
+    class ThemeConfigResponse {
+        +schemas.py()
+    }
+    class ThemeResponse {
+        +schemas.py()
+    }
+    class ThemeSelectionRequest {
+        +schemas.py()
+    }
+    class VariantUpdate {
+        +schemas.py()
+    }
+    BlogCategoryCreate <|-- BlogCategoryBase
+    BlogCategoryRead <|-- BlogCategoryBase
+    BlogCategoryBase <|-- BlogCategoryCreate
+    BlogCategoryBase <|-- BlogCategoryRead
+    BlogPostCreate <|-- BlogPostBase
+    BlogPostRead <|-- BlogPostBase
+    BlogPostBase <|-- BlogPostCreate
+    BlogPostBase <|-- BlogPostRead
+    BlogTagCreate <|-- BlogTagBase
+    BlogTagRead <|-- BlogTagBase
+    BlogTagBase <|-- BlogTagCreate
+    BlogTagBase <|-- BlogTagRead
+    BlogTranslationCreate <|-- BlogTranslationBase
+    BlogTranslationRead <|-- BlogTranslationBase
+    BlogTranslationBase <|-- BlogTranslationCreate
+    BlogTranslationBase <|-- BlogTranslationRead
+    BrandProfileCreate <|-- BrandProfileBase
+    BrandProfileResponse <|-- BrandProfileBase
+    BrandProfileBase <|-- BrandProfileCreate
+    BrandProfileBase <|-- BrandProfileResponse
+    BrandVoiceProfileResponse <|-- BrandVoiceProfileBase
+    BrandVoiceProfileBase <|-- BrandVoiceProfileResponse
+    CarrierConnectionCreate <|-- CarrierConnectionBase
+    CarrierConnectionResponse <|-- CarrierConnectionBase
+    CarrierConnectionBase <|-- CarrierConnectionCreate
+    CarrierConnectionBase <|-- CarrierConnectionResponse
+    ChannelConnectionCreate <|-- ChannelConnectionBase
+    ChannelConnectionRead <|-- ChannelConnectionBase
+    ChannelConnectionBase <|-- ChannelConnectionCreate
+    ChannelConnectionBase <|-- ChannelConnectionRead
+    CheckoutOptionCreate <|-- CheckoutOptionBase
+    CheckoutOptionResponse <|-- CheckoutOptionBase
+    CheckoutOptionBase <|-- CheckoutOptionCreate
+    CheckoutOptionBase <|-- CheckoutOptionResponse
+    FeatureResponse <|-- FeatureBase
+    FeatureRequestCreate <|-- FeatureRequestBase
+    FeatureRequestResponse <|-- FeatureRequestBase
+    FeatureRequestBase <|-- FeatureRequestCreate
+    FeatureRequestBase <|-- FeatureRequestResponse
+    FeatureBase <|-- FeatureResponse
+    NavigationItemCreate <|-- NavigationItemBase
+    NavigationItemResponse <|-- NavigationItemBase
+    NavigationItemBase <|-- NavigationItemCreate
+    NavigationItemBase <|-- NavigationItemResponse
+    NavigationItemTreeResponse <|-- NavigationItemResponse
+    NavigationItemResponse <|-- NavigationItemTreeResponse
+    NavigationMenuCreate <|-- NavigationMenuBase
+    NavigationMenuResponse <|-- NavigationMenuBase
+    NavigationMenuBase <|-- NavigationMenuCreate
+    NavigationMenuBase <|-- NavigationMenuResponse
+    PolicyCreate <|-- PolicyBase
+    PolicyResponse <|-- PolicyBase
+    PolicyBase <|-- PolicyCreate
+    PolicyBase <|-- PolicyResponse
+    POLineCreate <|-- POLineBase
+    POLineResponse <|-- POLineBase
+    POLineBase <|-- POLineCreate
+    POLineBase <|-- POLineResponse
+    ShippingProfileCreate <|-- ShippingProfileBase
+    ShippingProfileResponse <|-- ShippingProfileBase
+    ShippingProfileBase <|-- ShippingProfileCreate
+    ShippingProfileBase <|-- ShippingProfileResponse
+    ShippingRateCreate <|-- ShippingRateBase
+    ShippingRateResponse <|-- ShippingRateBase
+    ShippingRateBase <|-- ShippingRateCreate
+    ShippingRateBase <|-- ShippingRateResponse
+    ShippingZoneCreate <|-- ShippingZoneBase
+    ShippingZoneResponse <|-- ShippingZoneBase
+    ShippingZoneBase <|-- ShippingZoneCreate
+    ShippingZoneBase <|-- ShippingZoneResponse
+    StaticPageCreate <|-- StaticPageBase
+    StaticPageResponse <|-- StaticPageBase
+    StaticPageBase <|-- StaticPageCreate
+    StaticPageBase <|-- StaticPageResponse
+    StorefrontContentCreate <|-- StorefrontContentBase
+    StorefrontContentResponse <|-- StorefrontContentBase
+    StorefrontContentBase <|-- StorefrontContentCreate
+    StorefrontContentBase <|-- StorefrontContentResponse
+    SupplierCreate <|-- SupplierBase
+    SupplierResponse <|-- SupplierBase
+    SupplierBase <|-- SupplierCreate
+    SupplierBase <|-- SupplierResponse
+    TaxRateCreate <|-- TaxRateBase
+    TaxRateResponse <|-- TaxRateBase
+    TaxRateBase <|-- TaxRateCreate
+    TaxRateBase <|-- TaxRateResponse
+    ThemeResponse <|-- ThemeBase
+    ThemeBase <|-- ThemeResponse
 ```
 
 ## Relationships
 
-- [[Community 17]] (30 shared connections)
-- [[Content & Features]] (29 shared connections)
-- [[Community 8]] (2 shared connections)
+- [[App Bootstrap]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\blog\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\blog\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\blog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/schemas.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\onboarding\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\onboarding\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\onboarding\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/onboarding/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\sitemap_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/sitemap_router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\themes\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\navigation\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\navigation\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\policies\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\policies\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pos\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\shipping\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\shipping\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\tax\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/models.py)
 
 ## Audit Trail
 
-- EXTRACTED: 405 (68%)
-- INFERRED: 192 (32%)
+- EXTRACTED: 621 (95%)
+- INFERRED: 34 (5%)
 - AMBIGUOUS: 0 (0%)
 
 ---

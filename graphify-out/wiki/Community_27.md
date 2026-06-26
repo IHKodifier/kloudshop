@@ -1,38 +1,47 @@
 # Community 27
 
-> 5 nodes · cohesion 0.40
+> 13 nodes · cohesion 0.17
 
 ## Key Concepts
 
-- [GeneratedPluginRegistrant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L63) (4 connections)
-- [GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L1) (1 connections)
-- [GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L1) (1 connections)
-- [.registerWith()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L17) (1 connections)
-- [-registerWithRegistry](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L65) (1 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py#L1) (8 connections)
+- [StorePolicy](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/models.py#L6) (6 connections)
+- [test_navigation_reorder_and_resolver()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_navigation_resolver.py#L12) (5 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/models.py#L1) (2 connections)
+- [test_policies_versioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_policies_versioning.py#L1) (2 connections)
+- [create_policy()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py#L22) (2 connections)
+- [test_policy_publish_validation_and_lifecycle()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_policies_versioning.py#L42) (2 connections)
+- [test_navigation_resolver.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_navigation_resolver.py#L1) (1 connections)
+- [get_policy()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py#L62) (1 connections)
+- [list_policies()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py#L46) (1 connections)
+- [publish_policy()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py#L99) (1 connections)
+- [update_policy_draft()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py#L76) (1 connections)
+- [test_policy_draft_crud_and_seeding()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_policies_versioning.py#L10) (1 connections)
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class GeneratedPluginRegistrant {
-        +GeneratedPluginRegistrant.java()
-        +.registerWith()
+    class StorePolicy {
+        +models.py()
     }
 ```
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[App Bootstrap]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\android\app\src\main\java\io\flutter\plugins\GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\policies\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\policies\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_navigation_resolver.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_navigation_resolver.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_policies_versioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_policies_versioning.py)
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 23 (70%)
+- INFERRED: 10 (30%)
 - AMBIGUOUS: 0 (0%)
 
 ---

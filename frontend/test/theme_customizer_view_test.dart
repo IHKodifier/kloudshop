@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import 'package:kloudshop/views/wysiwyg_view.dart';
+import 'package:kloudshop/views/theme_customizer_view.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/services/api_service.dart';
 import 'package:mocktail/mocktail.dart';
+
+import 'test_helper.dart';
 
 class MockApiService extends Mock implements ApiService {}
 
 void main() {
   late MockApiService mockApi;
+
+  setUpAll(registerTestHttpOverrides);
 
   setUp(() {
     mockApi = MockApiService();
@@ -22,7 +26,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
   }
 
-  testWidgets('WysiwygView renders sidebar and preview', (tester) async {
+  testWidgets('ThemeCustomizerView renders sidebar and preview', (tester) async {
     // Set a large screen size for the test
     tester.view.physicalSize = const Size(1920, 1080);
     tester.view.devicePixelRatio = 1.0;
@@ -49,7 +53,7 @@ void main() {
           apiServiceProvider.overrideWithValue(mockApi),
         ],
         child: const MaterialApp(
-          home: WysiwygView(),
+          home: ThemeCustomizerView(),
         ),
       ),
     );
@@ -60,7 +64,7 @@ void main() {
     expect(find.text('Welcome to KloudShop'), findsOneWidget);
   });
 
-  testWidgets('WysiwygView collapsible sidebars and selection', (tester) async {
+  testWidgets('ThemeCustomizerView collapsible sidebars and selection', (tester) async {
     tester.view.physicalSize = const Size(1920, 1080);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -90,7 +94,7 @@ void main() {
           apiServiceProvider.overrideWithValue(mockApi),
         ],
         child: const MaterialApp(
-          home: WysiwygView(),
+          home: ThemeCustomizerView(),
         ),
       ),
     );

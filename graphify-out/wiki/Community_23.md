@@ -1,37 +1,65 @@
 # Community 23
 
-> 15 nodes · cohesion 0.13
+> 23 nodes · cohesion 0.10
 
 ## Key Concepts
 
-- [test_auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L1) (7 connections)
-- [test_cancel_invitation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L65) (2 connections)
-- [test_create_invitation_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L23) (2 connections)
-- [test_get_me_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L11) (2 connections)
-- [test_get_me_unauthorized()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L5) (2 connections)
-- [test_list_invitations()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L47) (2 connections)
-- [test_revoke_staff_access()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L103) (2 connections)
-- [test_update_staff_roles()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L85) (2 connections)
-- [Verify that an owner can revoke staff access.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L104) (1 connections)
-- [Verify that accessing /auth/me with a valid token returns user info.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L12) (1 connections)
-- [Verify that an owner can invite a staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L24) (1 connections)
-- [Verify that an owner can list pending invitations.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L48) (1 connections)
-- [Verify that accessing /auth/me without a token returns 403 (FastAPI default for](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L6) (1 connections)
-- [Verify that an owner can cancel an invitation.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L66) (1 connections)
-- [Verify that an owner can update staff member roles.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L86) (1 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L1) (9 connections)
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L1) (7 connections)
+- [generate_copy_impl()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L96) (7 connections)
+- [BrandVoiceProfile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py#L7) (6 connections)
+- [GeminiClient](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L14) (4 connections)
+- [Simulates the cloud tasks migration job described in US-049.     In production,](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L15) (3 connections)
+- [update_feature_config()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L126) (3 connections)
+- [CopyVariant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py#L25) (3 connections)
+- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py#L1) (2 connections)
+- [activate_feature()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L51) (2 connections)
+- [create_request()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L182) (2 connections)
+- [.generate_variants()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L16) (2 connections)
+- [generate_product_description()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L136) (2 connections)
+- [generate_product_title()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L128) (2 connections)
+- [get_brand_voice()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L37) (2 connections)
+- [simulate_feature_migration()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L14) (2 connections)
+- [update_brand_voice()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L62) (2 connections)
+- [vote_request()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L199) (2 connections)
+- [accept_copy_variant()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L144) (1 connections)
+- [deactivate_feature()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L94) (1 connections)
+- [get_feature_config()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L111) (1 connections)
+- [list_features()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L27) (1 connections)
+- [list_requests()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L155) (1 connections)
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class BrandVoiceProfile {
+        +models.py()
+    }
+    class GeminiClient {
+        +router.py()
+        +.generate_variants()
+    }
+    class CopyVariant {
+        +schemas.py()
+    }
+```
 
 ## Relationships
 
-- [[Community 22]] (7 shared connections)
+- [[App Bootstrap]] (2 shared connections)
+- [[Community 19]] (2 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py)
 
 ## Audit Trail
 
-- EXTRACTED: 28 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 50 (75%)
+- INFERRED: 17 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

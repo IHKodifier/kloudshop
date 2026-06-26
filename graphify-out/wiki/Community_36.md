@@ -1,21 +1,14 @@
 # Community 36
 
-> 3 nodes · cohesion 0.67
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
-- [SceneDelegate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift#L4) (2 connections)
-- [SceneDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift#L1) (1 connections)
-- **FlutterSceneDelegate** (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class SceneDelegate {
-        +SceneDelegate.swift()
-    }
-```
+- [analytics.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (4 connections)
+- [AnalyticsOverview](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
+- [DataPoint](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
+- [NeedsAttention](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
+- [_toDouble](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
 
 ## Relationships
 
@@ -23,11 +16,11 @@ classDiagram
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\SceneDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/SceneDelegate.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\analytics.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
