@@ -102,14 +102,12 @@ classDiagram
 
 ## Relationships
 
-- [[Analytics Dashboard]] (349 shared connections)
-- [[Content & Features]] (67 shared connections)
-- [[Community 8]] (23 shared connections)
-- [[Community 4]] (21 shared connections)
-- [[Community 14]] (20 shared connections)
-- [[Community 24]] (16 shared connections)
-- [[Community 11]] (3 shared connections)
-- [[Community 23]] (1 shared connections)
+- [[App Bootstrap]] (55 shared connections)
+- [[Community 11]] (23 shared connections)
+- [[Community 14]] (15 shared connections)
+- [[Community 10]] (15 shared connections)
+- [[Content & Features]] (3 shared connections)
+- [[Community 18]] (1 shared connections)
 
 ## Source Files
 

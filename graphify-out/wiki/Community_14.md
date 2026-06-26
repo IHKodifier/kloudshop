@@ -117,10 +117,10 @@ classDiagram
 
 ## Relationships
 
-- [[Content & Features]] (8 shared connections)
-- [[Analytics Dashboard]] (6 shared connections)
-- [[Community 4]] (4 shared connections)
-- [[Community 11]] (3 shared connections)
+- [[App Bootstrap]] (8 shared connections)
+- [[Community 5]] (8 shared connections)
+- [[Community 10]] (4 shared connections)
+- [[Content & Features]] (3 shared connections)
 
 ## Source Files
 

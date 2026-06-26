@@ -435,12 +435,10 @@ classDiagram
 
 ## Relationships
 
-- [[Content & Features]] (510 shared connections)
-- [[Community 8]] (109 shared connections)
-- [[Analytics Dashboard]] (14 shared connections)
-- [[Community 11]] (9 shared connections)
+- [[Community 11]] (109 shared connections)
+- [[Community 5]] (14 shared connections)
+- [[Content & Features]] (9 shared connections)
 - [[Community 14]] (2 shared connections)
-- [[Community 4]] (1 shared connections)
 
 ## Source Files
 

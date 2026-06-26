@@ -127,8 +127,7 @@ classDiagram
 
 ## Relationships
 
-- [[Community 8]] (458 shared connections)
-- [[Content & Features]] (24 shared connections)
+- [[App Bootstrap]] (24 shared connections)
 
 ## Source Files
 

@@ -503,7 +503,7 @@ classDiagram
 
 ## Relationships
 
-- [[Community 11]] (21 shared connections)
+- [[App Bootstrap]] (2 shared connections)
 
 ## Source Files
 

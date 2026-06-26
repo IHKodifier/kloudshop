@@ -22,7 +22,7 @@
 
 ## Relationships
 
-- [[Community 26]] (7 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 

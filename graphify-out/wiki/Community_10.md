@@ -33,9 +33,8 @@
 
 ## Relationships
 
-- [[Community 4]] (15 shared connections)
 - [[Community 14]] (5 shared connections)
-- [[Content & Features]] (3 shared connections)
+- [[App Bootstrap]] (3 shared connections)
 
 ## Source Files
 

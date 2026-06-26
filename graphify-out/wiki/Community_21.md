@@ -34,7 +34,7 @@ classDiagram
 
 ## Relationships
 
-- [[Content & Features]] (4 shared connections)
+- [[App Bootstrap]] (4 shared connections)
 
 ## Source Files
 
