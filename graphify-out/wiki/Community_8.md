@@ -1,156 +1,59 @@
 # Community 8
 
-> 93 nodes · cohesion 0.14
+> 97 nodes · cohesion 0.02
 
 ## Key Concepts
 
-- [StockLocation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L7) (63 connections)
-- [Inventory](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py#L39) (62 connections)
-- [ImportJob](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L207) (41 connections)
-- [Mark an order as fulfilled and log tracking information.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py#L418) (40 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1) (35 connections)
-- [Collection](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L164) (30 connections)
-- [CollectionProduct](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L199) (28 connections)
-- [RedirectRule](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L242) (28 connections)
-- [ColorPreset](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py#L262) (27 connections)
-- [ProductResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L118) (27 connections)
-- [SkuExistsResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L209) (26 connections)
-- [VariantCreate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L47) (26 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py#L1) (25 connections)
-- [Return sorted list of N for all Option{N} Name/Value pairs found in headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1021) (25 connections)
-- [Background task: parse file, upsert products+variants+inventory, update job, sen](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1042) (25 connections)
-- [List products for the authenticated tenant.     Supports pagination and filteri](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L134) (25 connections)
-- [Download a pre-filled CSV template with all supported import column headers.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1383) (25 connections)
-- [Check which SKUs from the provided list already exist in this tenant's catalog.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1421) (25 connections)
-- [Upload a .csv or .xlsx file to bulk-import products and variants.     Returns a](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1443) (25 connections)
-- [Returns all import jobs for this tenant, newest first.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1495) (25 connections)
-- [Poll the status of a specific import job.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L1510) (25 connections)
-- [Update a product and its variants. If slug changes, create a 301 redirect.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L165) (25 connections)
-- [Create a new product with its variants.     Enforces catalog:write permission a](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L35) (25 connections)
-- [List 301 redirects for the tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L407) (25 connections)
-- [# TODO: Implement XML feed regeneration logic](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py#L423) (25 connections)
-- *... and 68 more nodes in this community*
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class Collection {
-        +models.py()
-    }
-    class CollectionProduct {
-        +models.py()
-    }
-    class ColorPreset {
-        +models.py()
-    }
-    class ImportJob {
-        +models.py()
-    }
-    class Inventory {
-        +models.py()
-    }
-    class RedirectRule {
-        +models.py()
-    }
-    class StockLocation {
-        +models.py()
-    }
-    class CollectionBase {
-        +schemas.py()
-    }
-    class CollectionCreate {
-        +schemas.py()
-    }
-    class CollectionResponse {
-        +schemas.py()
-    }
-    class CollectionUpdate {
-        +schemas.py()
-    }
-    class ColorPresetBase {
-        +schemas.py()
-    }
-    class ColorPresetCreate {
-        +schemas.py()
-    }
-    class ColorPresetResponse {
-        +schemas.py()
-    }
-    class ImportJobResponse {
-        +schemas.py()
-    }
-    class ProductAssignment {
-        +schemas.py()
-    }
-    class ProductBase {
-        +schemas.py()
-    }
-    class ProductCreate {
-        +schemas.py()
-    }
-    class ProductResponse {
-        +schemas.py()
-    }
-    class ProductUpdate {
-        +schemas.py()
-    }
-    class RedirectRuleResponse {
-        +schemas.py()
-    }
-    class SkuExistsRequest {
-        +schemas.py()
-    }
-    class SkuExistsResponse {
-        +schemas.py()
-    }
-    class VariantBase {
-        +schemas.py()
-    }
-    class VariantCreate {
-        +schemas.py()
-    }
-    class VariantResponse {
-        +schemas.py()
-    }
-    CollectionCreate <|-- CollectionBase
-    CollectionResponse <|-- CollectionBase
-    CollectionBase <|-- CollectionCreate
-    CollectionBase <|-- CollectionResponse
-    ColorPresetCreate <|-- ColorPresetBase
-    ColorPresetResponse <|-- ColorPresetBase
-    ColorPresetBase <|-- ColorPresetCreate
-    ColorPresetBase <|-- ColorPresetResponse
-    ProductCreate <|-- ProductBase
-    ProductResponse <|-- ProductBase
-    ProductBase <|-- ProductCreate
-    ProductBase <|-- ProductResponse
-    VariantCreate <|-- VariantBase
-    VariantResponse <|-- VariantBase
-    VariantBase <|-- VariantCreate
-    VariantBase <|-- VariantResponse
-```
+- [csv_import_dialog.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart) (40 connections)
+- [media_gallery_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/media_gallery_uploader.dart) (20 connections)
+- [compact_media_list_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/compact_media_list_uploader.dart) (19 connections)
+- [single_image_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (18 connections)
+- [dart:typed_data](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (8 connections)
+- [package:kloudshop/services/file_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (7 connections)
+- [Column](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (5 connections)
+- [file_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/file_uploader.dart) (4 connections)
+- [package:desktop_drop/desktop_drop.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (4 connections)
+- [package:image_picker/image_picker.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (4 connections)
+- [6c3b5d2868d3_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/6c3b5d2868d3_initial_platform_schema.py#L1) (3 connections)
+- [8af18657ab30_initial_tenant_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/8af18657ab30_initial_tenant_schema.py#L1) (3 connections)
+- [0cc09dfa3754_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py#L1) (3 connections)
+- [a3f1e8b2c904_import_job_audit_fields.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py#L1) (3 connections)
+- [download_helper_none.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_none.dart) (3 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py#L21) (2 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/6c3b5d2868d3_initial_platform_schema.py#L18) (2 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/8af18657ab30_initial_tenant_schema.py#L18) (2 connections)
+- [upgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py#L22) (2 connections)
+- [dart:io](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/test_helper.dart) (2 connections)
+- [download_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper.dart) (2 connections)
+- [package:file_picker/file_picker.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart) (2 connections)
+- [downgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py#L68) (1 connections)
+- [initial_platform_schema  Revision ID: 0cc09dfa3754 Revises:  Create Date: 20](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py#L1) (1 connections)
+- [downgrade()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/6c3b5d2868d3_initial_platform_schema.py#L32) (1 connections)
+- *... and 72 more nodes in this community*
 
 ## Relationships
 
-- [[Community 10]] (506 shared connections)
-- [[App Bootstrap]] (73 shared connections)
+- [[Community 5]] (4 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_inventory.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_inventory.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\color_presets_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/color_presets_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\alembic\versions\6c3b5d2868d3_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/6c3b5d2868d3_initial_platform_schema.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\alembic\versions\8af18657ab30_initial_tenant_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/versions/8af18657ab30_initial_tenant_schema.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\migrations\versions\0cc09dfa3754_initial_platform_schema.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/0cc09dfa3754_initial_platform_schema.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\migrations\versions\a3f1e8b2c904_import_job_audit_fields.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/versions/a3f1e8b2c904_import_job_audit_fields.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\file_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/file_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\utils\download_helper\download_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\utils\download_helper\download_helper_none.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_none.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\csv_import_dialog.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/csv_import_dialog.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\upload\compact_media_list_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/compact_media_list_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\upload\media_gallery_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/media_gallery_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\upload\single_image_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\test_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/test_helper.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 235 (16%)
-- INFERRED: 1200 (84%)
+- EXTRACTED: 225 (97%)
+- INFERRED: 8 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

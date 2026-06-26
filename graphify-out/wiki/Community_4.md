@@ -1,77 +1,56 @@
 # Community 4
 
-> 121 nodes · cohesion 0.03
+> 162 nodes · cohesion 0.01
 
 ## Key Concepts
 
-- [auth_override()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L116) (44 connections)
-- [UserClaims](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/user_claims.dart) (44 connections)
-- [Product](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/catalog.dart) (28 connections)
-- [Order](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/order.dart) (16 connections)
-- [StaffLocationAssignment](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/models.py#L6) (10 connections)
-- [seed_demo_data()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/internal/provisioning.py#L217) (10 connections)
-- [test_pos_sale_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_pos.py#L35) (10 connections)
-- [test_analytics_needs_attention()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_analytics.py#L48) (9 connections)
-- [test_pos_sale_insufficient_stock()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_pos.py#L89) (9 connections)
-- [conftest.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L1) (7 connections)
-- [test_b2b_invoice_generation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py#L254) (7 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/router.py#L1) (6 connections)
-- [test_billing.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L1) (6 connections)
-- [test_channels.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L1) (6 connections)
-- [test_color_presets.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_color_presets.py#L1) (6 connections)
-- [test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py#L1) (6 connections)
-- [OrderItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/order.dart) (5 connections)
-- [create_pos_order()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/router.py#L55) (5 connections)
-- [test_complete_upgrade_mock_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L126) (5 connections)
-- [test_create_checkout_session_url_logic()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L87) (5 connections)
-- [test_facebook_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L143) (5 connections)
-- [test_instagram_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L105) (5 connections)
-- [test_tiktok_sync()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py#L67) (5 connections)
-- [test_gdpr_erasure()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_hygiene.py#L8) (5 connections)
-- [test_provision_tenant_record_creation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_provisioning_extended.py#L73) (5 connections)
-- *... and 96 more nodes in this community*
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class StaffLocationAssignment {
-        +models.py()
-    }
-```
+- [theme_customizer_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/theme_customizer_view.dart) (103 connections)
+- [themes_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/themes_view.dart) (35 connections)
+- [app.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart) (26 connections)
+- [theme_customizer_undo_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_customizer_undo_test.dart) (12 connections)
+- [theme_customizer_view_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_customizer_view_test.dart) (12 connections)
+- [themes_view_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/themes_view_test.dart) (11 connections)
+- [theme_preview_page_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_preview_page_test.dart) (10 connections)
+- [package:flutter_test/flutter_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/widget_test.dart) (10 connections)
+- [package:kloudshop/models/theme_config.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_preview_page_test.dart) (9 connections)
+- [widget_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/widget_test.dart) (6 connections)
+- [package:kloudshop/models/theme.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/themes_view_test.dart) (5 connections)
+- [package:kloudshop/providers/theme_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/themes_view_test.dart) (5 connections)
+- [test_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_preview_page_test.dart) (5 connections)
+- [package:kloudshop/widgets/storefront_preview.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_customizer_undo_test.dart) (4 connections)
+- [package:mocktail/mocktail.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_preview_page_test.dart) (4 connections)
+- [package:kloudshop/providers/theme_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/landing_page.dart) (3 connections)
+- [package:kloudshop/views/theme_customizer_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_customizer_view_test.dart) (3 connections)
+- [package:url_launcher/url_launcher.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/theme_customizer_view.dart) (3 connections)
+- [package:kloudshop/landing_page.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/widget_test.dart) (2 connections)
+- [package:kloudshop/views/theme_preview_page.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_preview_page_test.dart) (2 connections)
+- [package:kloudshop/views/themes_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/themes_view_test.dart) (2 connections)
+- [AuthGate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart) (1 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart) (1 connections)
+- [DashboardPage](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart) (1 connections)
+- [Icon](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart) (1 connections)
+- *... and 137 more nodes in this community*
 
 ## Relationships
 
-- [[App Bootstrap]] (12 shared connections)
-- [[Community 13]] (5 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\internal\provisioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/internal/provisioning.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pos\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pos\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\conftest.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_analytics.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_analytics.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_b2b.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_b2b.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_billing.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_blog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_blog.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_catalog.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_catalog.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_channels.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_channels.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_collections.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_collections.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_color_presets.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_color_presets.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_consumer_self_service.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_consumer_self_service.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_hygiene.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_hygiene.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_i18n.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_i18n.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_orders.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_orders.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_platform.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_platform.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_pos.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_pos.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_post_order_auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_post_order_auth.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_provisioning.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_provisioning.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\app.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/app.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\landing_page.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/landing_page.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\theme_customizer_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/theme_customizer_view.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\themes_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/themes_view.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\theme_customizer_undo_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_customizer_undo_test.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\theme_customizer_view_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_customizer_view_test.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\theme_preview_page_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/theme_preview_page_test.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\themes_view_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/themes_view_test.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\widget_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/widget_test.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 214 (42%)
-- INFERRED: 295 (58%)
+- EXTRACTED: 413 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

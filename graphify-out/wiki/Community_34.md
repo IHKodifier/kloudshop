@@ -1,24 +1,13 @@
 # Community 34
 
-> 5 nodes · cohesion 0.40
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- [GeneratedPluginRegistrant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L63) (4 connections)
-- [GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L1) (1 connections)
-- [GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L1) (1 connections)
-- [.registerWith()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java#L17) (1 connections)
-- [-registerWithRegistry](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m#L65) (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class GeneratedPluginRegistrant {
-        +GeneratedPluginRegistrant.java()
-        +.registerWith()
-    }
-```
+- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py#L1) (3 connections)
+- [create_pricing_rule()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py#L13) (2 connections)
+- [delete_pricing_rule()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py#L39) (1 connections)
+- [list_pricing_rules()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py#L29) (1 connections)
 
 ## Relationships
 
@@ -26,13 +15,12 @@ classDiagram
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\android\app\src\main\java\io\flutter\plugins\GeneratedPluginRegistrant.java](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\GeneratedPluginRegistrant.m](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/GeneratedPluginRegistrant.m)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/router.py)
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

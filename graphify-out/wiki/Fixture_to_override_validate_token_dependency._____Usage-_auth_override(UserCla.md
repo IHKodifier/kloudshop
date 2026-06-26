@@ -2,7 +2,7 @@
 
 > God node · 58 connections · [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\conftest.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/conftest.py#L113)
 
-**Community:** [[App Bootstrap]]
+**Community:** [[Content & Features]]
 
 ## Call Trace Diagram
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/binary_messenger_impl.h#L15) (1 connections)
-- [binary_messenger_impl.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/binary_messenger_impl.h#L1) (1 connections)
+- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/byte_streams.h#L10) (1 connections)
+- [byte_streams.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/byte_streams.h#L1) (1 connections)
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\binary_messenger_impl.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/binary_messenger_impl.h)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\byte_streams.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/byte_streams.h)
 
 ## Audit Trail
 

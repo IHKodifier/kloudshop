@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L1) (3 connections)
-- [start_export()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L42) (2 connections)
-- [get_export_job()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L64) (1 connections)
-- [run_export_job()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py#L13) (1 connections)
+- [subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (3 connections)
+- [_parseStatus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
+- [_parseTier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
+- [SubscriptionModel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart) (1 connections)
 
 ## Relationships
 
@@ -15,12 +15,12 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\subscription.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/subscription.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 6 (86%)
-- INFERRED: 1 (14%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

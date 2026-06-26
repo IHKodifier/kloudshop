@@ -105,7 +105,3 @@
 | 100 | Community 100 | Unable to determine domain due to missing code entities. |
 | 101 | Community 101 | Unable to determine domain due to missing code entities. |
 | 102 | Community 102 | Unable to determine domain due to missing code entities. |
-| 103 | Community 103 | Unable to determine domain due to missing code entities. |
-| 104 | Community 104 | Unable to determine domain due to missing code entities. |
-| 105 | Community 105 | Unable to determine domain due to missing code entities. |
-| 106 | Community 106 | Unable to determine domain due to missing code entities. |

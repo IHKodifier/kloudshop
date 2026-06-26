@@ -1,6 +1,6 @@
 # Community 14
 
-> 61 nodes · cohesion 0.09
+> 55 nodes · cohesion 0.10
 
 ## Key Concepts
 
@@ -29,7 +29,7 @@
 - [Verify that creating portal session fails without a stripe customer.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L45) (6 connections)
 - [Verify that the trial check task suspends expired tenants.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L61) (6 connections)
 - [Verify that the success URL correctly appends session_id if missing.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_billing.py#L88) (6 connections)
-- *... and 36 more nodes in this community*
+- *... and 30 more nodes in this community*
 
 ## Class Diagram
 
@@ -117,11 +117,10 @@ classDiagram
 
 ## Relationships
 
-- [[Community 13]] (98 shared connections)
-- [[App Bootstrap]] (8 shared connections)
-- [[Community 9]] (6 shared connections)
+- [[Content & Features]] (8 shared connections)
+- [[Analytics Dashboard]] (6 shared connections)
 - [[Community 4]] (4 shared connections)
-- [[Community 20]] (3 shared connections)
+- [[Community 11]] (3 shared connections)
 
 ## Source Files
 
@@ -130,9 +129,7 @@ classDiagram
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/schemas.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\tasks.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/tasks.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\billing\webhooks.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/billing/webhooks.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\feeds\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/feeds/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\i18n\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/i18n/router.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/models.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\platform\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/platform/router.py)
 - [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pricing\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pricing/schemas.py)
@@ -142,8 +139,8 @@ classDiagram
 
 ## Audit Trail
 
-- EXTRACTED: 149 (37%)
-- INFERRED: 253 (63%)
+- EXTRACTED: 138 (36%)
+- INFERRED: 248 (64%)
 - AMBIGUOUS: 0 (0%)
 
 ---

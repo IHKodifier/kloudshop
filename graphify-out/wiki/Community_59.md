@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- [settings.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/settings.dart) (1 connections)
-- [TenantSettings](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/settings.dart) (1 connections)
+- [texture_registrar_impl.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/texture_registrar_impl.h#L1) (1 connections)
+- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/texture_registrar_impl.h#L10) (1 connections)
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\settings.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/settings.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\texture_registrar_impl.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/texture_registrar_impl.h)
 
 ## Audit Trail
 

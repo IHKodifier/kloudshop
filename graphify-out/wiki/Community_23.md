@@ -1,65 +1,46 @@
 # Community 23
 
-> 23 nodes · cohesion 0.10
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L1) (9 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L1) (7 connections)
-- [generate_copy_impl()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L96) (7 connections)
-- [BrandVoiceProfile](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py#L7) (6 connections)
-- [GeminiClient](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L14) (4 connections)
-- [Simulates the cloud tasks migration job described in US-049.     In production,](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L15) (3 connections)
-- [update_feature_config()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L126) (3 connections)
-- [CopyVariant](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py#L25) (3 connections)
-- [models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py#L1) (2 connections)
-- [activate_feature()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L51) (2 connections)
-- [create_request()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L182) (2 connections)
-- [.generate_variants()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L16) (2 connections)
-- [generate_product_description()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L136) (2 connections)
-- [generate_product_title()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L128) (2 connections)
-- [get_brand_voice()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L37) (2 connections)
-- [simulate_feature_migration()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L14) (2 connections)
-- [update_brand_voice()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L62) (2 connections)
-- [vote_request()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L199) (2 connections)
-- [accept_copy_variant()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py#L144) (1 connections)
-- [deactivate_feature()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L94) (1 connections)
-- [get_feature_config()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L111) (1 connections)
-- [list_features()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L27) (1 connections)
-- [list_requests()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py#L155) (1 connections)
+- [AppDelegate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L4) (8 connections)
+- [.application()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L6) (1 connections)
+- [.applicationShouldTerminateAfterLastWindowClosed()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L6) (1 connections)
+- [.applicationSupportsSecureRestorableState()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L10) (1 connections)
+- [.didInitializeImplicitFlutterEngine()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L13) (1 connections)
+- [AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift#L1) (1 connections)
+- [AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift#L1) (1 connections)
+- **FlutterAppDelegate** (1 connections)
+- **FlutterImplicitEngineDelegate** (1 connections)
 
 ## Class Diagram
 
 ```mermaid
 classDiagram
-    class BrandVoiceProfile {
-        +models.py()
-    }
-    class GeminiClient {
-        +router.py()
-        +.generate_variants()
-    }
-    class CopyVariant {
-        +schemas.py()
+    class AppDelegate {
+        +AppDelegate.swift()
+        +.application()
+        +.didInitializeImplicitFlutterEngine()
+        +AppDelegate.swift()
+        +.applicationShouldTerminateAfterLastWindowClosed()
+        +.applicationSupportsSecureRestorableState()
     }
 ```
 
 ## Relationships
 
-- [[App Bootstrap]] (2 shared connections)
-- [[Community 19]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/router.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/AppDelegate.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\Runner\AppDelegate.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/Runner/AppDelegate.swift)
 
 ## Audit Trail
 
-- EXTRACTED: 50 (75%)
-- INFERRED: 17 (25%)
+- EXTRACTED: 16 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -1,513 +1,64 @@
 # Community 3
 
-> 171 nodes · cohesion 0.02
+> 194 nodes · cohesion 0.01
 
 ## Key Concepts
 
-- **BaseModel** (126 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/schemas.py#L1) (20 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/schemas.py#L1) (16 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py#L1) (15 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/schemas.py#L1) (15 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L1) (14 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/schemas.py#L1) (12 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/router.py#L1) (11 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/router.py#L1) (11 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/schemas.py#L1) (9 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/schemas.py#L1) (8 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/schemas.py#L1) (8 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py#L1) (7 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/schemas.py#L1) (7 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/themes/schemas.py#L1) (7 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/router.py#L1) (6 connections)
-- [schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/schemas.py#L1) (5 connections)
-- [StoreTaxRate](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/models.py#L5) (5 connections)
-- [NavigationMenuResponse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/schemas.py#L37) (5 connections)
-- [build_menu_tree()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/router.py#L20) (4 connections)
-- [calculate_shipping()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/router.py#L197) (4 connections)
-- [BlogCategoryBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L26) (4 connections)
-- [BlogPostBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L58) (4 connections)
-- [BlogTagBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L44) (4 connections)
-- [BlogTranslationBase](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py#L5) (4 connections)
-- *... and 146 more nodes in this community*
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class StoreTaxRate {
-        +models.py()
-    }
-    class B2BPortalOrderItem {
-        +schemas.py()
-    }
-    class BlendedRateDetail {
-        +schemas.py()
-    }
-    class BlogCategoryBase {
-        +schemas.py()
-    }
-    class BlogCategoryCreate {
-        +schemas.py()
-    }
-    class BlogCategoryRead {
-        +schemas.py()
-    }
-    class BlogPostBase {
-        +schemas.py()
-    }
-    class BlogPostCreate {
-        +schemas.py()
-    }
-    class BlogPostRead {
-        +schemas.py()
-    }
-    class BlogPostUpdate {
-        +schemas.py()
-    }
-    class BlogTagBase {
-        +schemas.py()
-    }
-    class BlogTagCreate {
-        +schemas.py()
-    }
-    class BlogTagRead {
-        +schemas.py()
-    }
-    class BlogTranslationBase {
-        +schemas.py()
-    }
-    class BlogTranslationCreate {
-        +schemas.py()
-    }
-    class BlogTranslationRead {
-        +schemas.py()
-    }
-    class BrandProfileBase {
-        +schemas.py()
-    }
-    class BrandProfileCreate {
-        +schemas.py()
-    }
-    class BrandProfileResponse {
-        +schemas.py()
-    }
-    class BrandProfileUpdate {
-        +schemas.py()
-    }
-    class BrandVoiceProfileBase {
-        +schemas.py()
-    }
-    class BrandVoiceProfileResponse {
-        +schemas.py()
-    }
-    class CarrierConnectionBase {
-        +schemas.py()
-    }
-    class CarrierConnectionCreate {
-        +schemas.py()
-    }
-    class CarrierConnectionResponse {
-        +schemas.py()
-    }
-    class ChannelConnectionBase {
-        +schemas.py()
-    }
-    class ChannelConnectionCreate {
-        +schemas.py()
-    }
-    class ChannelConnectionRead {
-        +schemas.py()
-    }
-    class ChannelSyncStatus {
-        +schemas.py()
-    }
-    class CheckoutOptionBase {
-        +schemas.py()
-    }
-    class CheckoutOptionCreate {
-        +schemas.py()
-    }
-    class CheckoutOptionResponse {
-        +schemas.py()
-    }
-    class CopyAcceptanceRequest {
-        +schemas.py()
-    }
-    class CopyGenerationRequest {
-        +schemas.py()
-    }
-    class CopyGenerationResponse {
-        +schemas.py()
-    }
-    class ExportJobResponse {
-        +schemas.py()
-    }
-    class ExportRequest {
-        +schemas.py()
-    }
-    class FeatureActivationRequest {
-        +schemas.py()
-    }
-    class FeatureBase {
-        +schemas.py()
-    }
-    class FeatureConfigRequest {
-        +schemas.py()
-    }
-    class FeatureRequestBase {
-        +schemas.py()
-    }
-    class FeatureRequestCreate {
-        +schemas.py()
-    }
-    class FeatureRequestResponse {
-        +schemas.py()
-    }
-    class FeatureResponse {
-        +schemas.py()
-    }
-    class FeatureVoteResponse {
-        +schemas.py()
-    }
-    class LinkResolveResponse {
-        +schemas.py()
-    }
-    class NavigationItemBase {
-        +schemas.py()
-    }
-    class NavigationItemCreate {
-        +schemas.py()
-    }
-    class NavigationItemResponse {
-        +schemas.py()
-    }
-    class NavigationItemTreeResponse {
-        +schemas.py()
-    }
-    class NavigationMenuBase {
-        +schemas.py()
-    }
-    class NavigationMenuCreate {
-        +schemas.py()
-    }
-    class NavigationMenuResponse {
-        +schemas.py()
-    }
-    class NavigationReorderItem {
-        +schemas.py()
-    }
-    class NavigationReorderRequest {
-        +schemas.py()
-    }
-    class OrderEventResponse {
-        +schemas.py()
-    }
-    class OrderItemBase {
-        +schemas.py()
-    }
-    class OrderItemResponse {
-        +schemas.py()
-    }
-    class POCreate {
-        +schemas.py()
-    }
-    class PolicyBase {
-        +schemas.py()
-    }
-    class PolicyCreate {
-        +schemas.py()
-    }
-    class PolicyResponse {
-        +schemas.py()
-    }
-    class PolicyTemplateSeedRequest {
-        +schemas.py()
-    }
-    class PolicyTemplateSeedResponse {
-        +schemas.py()
-    }
-    class PolicyUpdate {
-        +schemas.py()
-    }
-    class POLineBase {
-        +schemas.py()
-    }
-    class POLineCreate {
-        +schemas.py()
-    }
-    class POLineResponse {
-        +schemas.py()
-    }
-    class POReceiveLine {
-        +schemas.py()
-    }
-    class POReceiveRequest {
-        +schemas.py()
-    }
-    class POResponse {
-        +schemas.py()
-    }
-    class POSItemCreate {
-        +schemas.py()
-    }
-    class POSLocationResponse {
-        +schemas.py()
-    }
-    class POSOrderCreate {
-        +schemas.py()
-    }
-    class POUpdate {
-        +schemas.py()
-    }
-    class ShippingCalculateItem {
-        +schemas.py()
-    }
-    class ShippingCalculateRequest {
-        +schemas.py()
-    }
-    class ShippingCalculateResponse {
-        +schemas.py()
-    }
-    class ShippingProfileBase {
-        +schemas.py()
-    }
-    class ShippingProfileCreate {
-        +schemas.py()
-    }
-    class ShippingProfileResponse {
-        +schemas.py()
-    }
-    class ShippingRateBase {
-        +schemas.py()
-    }
-    class ShippingRateCreate {
-        +schemas.py()
-    }
-    class ShippingRateRequest {
-        +schemas.py()
-    }
-    class ShippingRateResponse {
-        +schemas.py()
-        +schemas.py()
-    }
-    class ShippingZoneBase {
-        +schemas.py()
-    }
-    class ShippingZoneCreate {
-        +schemas.py()
-    }
-    class ShippingZoneResponse {
-        +schemas.py()
-    }
-    class StaffLocationAssignmentCreate {
-        +schemas.py()
-    }
-    class StaffLocationAssignmentSchema {
-        +schemas.py()
-    }
-    class StaffMember {
-        +schemas.py()
-    }
-    class StaticPageBase {
-        +schemas.py()
-    }
-    class StaticPageCreate {
-        +schemas.py()
-    }
-    class StaticPageResponse {
-        +schemas.py()
-    }
-    class StaticPageUpdate {
-        +schemas.py()
-    }
-    class StockTransferCreate {
-        +schemas.py()
-    }
-    class StockTransferResponse {
-        +schemas.py()
-    }
-    class StorefrontContentBase {
-        +schemas.py()
-    }
-    class StorefrontContentCreate {
-        +schemas.py()
-    }
-    class StorefrontContentResponse {
-        +schemas.py()
-    }
-    class SupplierBase {
-        +schemas.py()
-    }
-    class SupplierCreate {
-        +schemas.py()
-    }
-    class SupplierResponse {
-        +schemas.py()
-    }
-    class SupplierUpdate {
-        +schemas.py()
-    }
-    class TaxCalculateItem {
-        +schemas.py()
-    }
-    class TaxCalculateRequest {
-        +schemas.py()
-    }
-    class TaxCalculateResponse {
-        +schemas.py()
-    }
-    class TaxRateBase {
-        +schemas.py()
-    }
-    class TaxRateCreate {
-        +schemas.py()
-    }
-    class TaxRateResponse {
-        +schemas.py()
-    }
-    class ThemeBase {
-        +schemas.py()
-    }
-    class ThemeCloneRequest {
-        +schemas.py()
-    }
-    class ThemeConfigRequest {
-        +schemas.py()
-    }
-    class ThemeConfigResponse {
-        +schemas.py()
-    }
-    class ThemeResponse {
-        +schemas.py()
-    }
-    class ThemeSelectionRequest {
-        +schemas.py()
-    }
-    class VariantUpdate {
-        +schemas.py()
-    }
-    BlogCategoryCreate <|-- BlogCategoryBase
-    BlogCategoryRead <|-- BlogCategoryBase
-    BlogCategoryBase <|-- BlogCategoryCreate
-    BlogCategoryBase <|-- BlogCategoryRead
-    BlogPostCreate <|-- BlogPostBase
-    BlogPostRead <|-- BlogPostBase
-    BlogPostBase <|-- BlogPostCreate
-    BlogPostBase <|-- BlogPostRead
-    BlogTagCreate <|-- BlogTagBase
-    BlogTagRead <|-- BlogTagBase
-    BlogTagBase <|-- BlogTagCreate
-    BlogTagBase <|-- BlogTagRead
-    BlogTranslationCreate <|-- BlogTranslationBase
-    BlogTranslationRead <|-- BlogTranslationBase
-    BlogTranslationBase <|-- BlogTranslationCreate
-    BlogTranslationBase <|-- BlogTranslationRead
-    BrandProfileCreate <|-- BrandProfileBase
-    BrandProfileResponse <|-- BrandProfileBase
-    BrandProfileBase <|-- BrandProfileCreate
-    BrandProfileBase <|-- BrandProfileResponse
-    BrandVoiceProfileResponse <|-- BrandVoiceProfileBase
-    BrandVoiceProfileBase <|-- BrandVoiceProfileResponse
-    CarrierConnectionCreate <|-- CarrierConnectionBase
-    CarrierConnectionResponse <|-- CarrierConnectionBase
-    CarrierConnectionBase <|-- CarrierConnectionCreate
-    CarrierConnectionBase <|-- CarrierConnectionResponse
-    ChannelConnectionCreate <|-- ChannelConnectionBase
-    ChannelConnectionRead <|-- ChannelConnectionBase
-    ChannelConnectionBase <|-- ChannelConnectionCreate
-    ChannelConnectionBase <|-- ChannelConnectionRead
-    CheckoutOptionCreate <|-- CheckoutOptionBase
-    CheckoutOptionResponse <|-- CheckoutOptionBase
-    CheckoutOptionBase <|-- CheckoutOptionCreate
-    CheckoutOptionBase <|-- CheckoutOptionResponse
-    FeatureResponse <|-- FeatureBase
-    FeatureRequestCreate <|-- FeatureRequestBase
-    FeatureRequestResponse <|-- FeatureRequestBase
-    FeatureRequestBase <|-- FeatureRequestCreate
-    FeatureRequestBase <|-- FeatureRequestResponse
-    FeatureBase <|-- FeatureResponse
-    NavigationItemCreate <|-- NavigationItemBase
-    NavigationItemResponse <|-- NavigationItemBase
-    NavigationItemBase <|-- NavigationItemCreate
-    NavigationItemBase <|-- NavigationItemResponse
-    NavigationItemTreeResponse <|-- NavigationItemResponse
-    NavigationItemResponse <|-- NavigationItemTreeResponse
-    NavigationMenuCreate <|-- NavigationMenuBase
-    NavigationMenuResponse <|-- NavigationMenuBase
-    NavigationMenuBase <|-- NavigationMenuCreate
-    NavigationMenuBase <|-- NavigationMenuResponse
-    PolicyCreate <|-- PolicyBase
-    PolicyResponse <|-- PolicyBase
-    PolicyBase <|-- PolicyCreate
-    PolicyBase <|-- PolicyResponse
-    POLineCreate <|-- POLineBase
-    POLineResponse <|-- POLineBase
-    POLineBase <|-- POLineCreate
-    POLineBase <|-- POLineResponse
-    ShippingProfileCreate <|-- ShippingProfileBase
-    ShippingProfileResponse <|-- ShippingProfileBase
-    ShippingProfileBase <|-- ShippingProfileCreate
-    ShippingProfileBase <|-- ShippingProfileResponse
-    ShippingRateCreate <|-- ShippingRateBase
-    ShippingRateResponse <|-- ShippingRateBase
-    ShippingRateBase <|-- ShippingRateCreate
-    ShippingRateBase <|-- ShippingRateResponse
-    ShippingZoneCreate <|-- ShippingZoneBase
-    ShippingZoneResponse <|-- ShippingZoneBase
-    ShippingZoneBase <|-- ShippingZoneCreate
-    ShippingZoneBase <|-- ShippingZoneResponse
-    StaticPageCreate <|-- StaticPageBase
-    StaticPageResponse <|-- StaticPageBase
-    StaticPageBase <|-- StaticPageCreate
-    StaticPageBase <|-- StaticPageResponse
-    StorefrontContentCreate <|-- StorefrontContentBase
-    StorefrontContentResponse <|-- StorefrontContentBase
-    StorefrontContentBase <|-- StorefrontContentCreate
-    StorefrontContentBase <|-- StorefrontContentResponse
-    SupplierCreate <|-- SupplierBase
-    SupplierResponse <|-- SupplierBase
-    SupplierBase <|-- SupplierCreate
-    SupplierBase <|-- SupplierResponse
-    TaxRateCreate <|-- TaxRateBase
-    TaxRateResponse <|-- TaxRateBase
-    TaxRateBase <|-- TaxRateCreate
-    TaxRateBase <|-- TaxRateResponse
-    ThemeResponse <|-- ThemeBase
-    ThemeBase <|-- ThemeResponse
-```
+- [storefront_preview.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/storefront_preview.dart) (51 connections)
+- [option_category_editor.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/option_category_editor.dart) (38 connections)
+- [product_editor_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart) (33 connections)
+- [provisioning_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/provisioning_provider.dart) (22 connections)
+- [theme_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/theme_providers.dart) (21 connections)
+- [test_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/test_helper.dart) (13 connections)
+- [dart:async](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/themes_view_test.dart) (11 connections)
+- [splash_page.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/splash_page.dart) (11 connections)
+- [import_history_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/import_history_provider.dart) (9 connections)
+- [main.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/main.dart) (7 connections)
+- [version_check_service.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check_service.dart) (7 connections)
+- [package:flutter/foundation.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check_service.dart) (7 connections)
+- [color_presets_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/color_presets_provider.dart) (6 connections)
+- [auth_service.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/auth_service.dart) (6 connections)
+- [dart:convert](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/test_helper.dart) (5 connections)
+- [dart:developer](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check/version_check_web.dart) (5 connections)
+- [dart:math](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/storefront_preview.dart) (4 connections)
+- [firebase_options.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/firebase_options.dart) (4 connections)
+- [package:http/http.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check_service.dart) (3 connections)
+- [package:kloudshop/models/color_preset.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/option_category_editor.dart) (3 connections)
+- [dart:html](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_web.dart) (2 connections)
+- [Exception](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/auth_service.dart) (2 connections)
+- [version_check_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check/version_check_web.dart) (2 connections)
+- [download_helper_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_web.dart) (2 connections)
+- [package:firebase_core/firebase_core.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/main.dart) (2 connections)
+- *... and 169 more nodes in this community*
 
 ## Relationships
 
-- [[App Bootstrap]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\ai\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/ai/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\b2b\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/b2b/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\blog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/blog/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\catalog\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/catalog/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\export\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/export/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\features\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/features/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\inventory\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/inventory/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\navigation\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\navigation\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/navigation/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\orders\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/orders/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\policies\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\policies\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/policies/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\pos\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/pos/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\shipping\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\shipping\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/shipping/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\storefront\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\tax\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/tax/models.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\firebase_options.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/firebase_options.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\main.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/main.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\color_presets_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/color_presets_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\import_history_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/import_history_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\product_editor_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/product_editor_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\provisioning_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/provisioning_provider.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\theme_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/theme_providers.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\auth_service.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/auth_service.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\version_check\version_check_none.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check/version_check_none.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\version_check\version_check_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check/version_check_web.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\services\version_check_service.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/services/version_check_service.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\utils\download_helper\download_helper_web.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/utils/download_helper/download_helper_web.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\splash_page.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/splash_page.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\option_category_editor.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/option_category_editor.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\storefront_preview.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/storefront_preview.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\test_helper.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/test_helper.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\themes_view_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/themes_view_test.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 621 (95%)
-- INFERRED: 34 (5%)
+- EXTRACTED: 448 (100%)
+- INFERRED: 1 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

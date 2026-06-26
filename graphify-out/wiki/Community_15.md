@@ -1,6 +1,6 @@
 # Community 15
 
-> 53 nodes · cohesion 0.05
+> 52 nodes · cohesion 0.05
 
 ## Key Concepts
 
@@ -10,7 +10,6 @@
 - [generate_meta_tags()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py#L65) (6 connections)
 - [VertexAIVectorProvider](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/vector_search.py#L63) (6 connections)
 - [ssr_router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/ssr_router.py#L1) (5 connections)
-- **ABC** (4 connections)
 - [resolve_locale()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/locale.py#L4) (4 connections)
 - [storefront_search()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L179) (4 connections)
 - [generate_article_jsonld()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/seo.py#L4) (4 connections)
@@ -29,7 +28,8 @@
 - [create_checkout_option()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L518) (2 connections)
 - [create_static_page()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L408) (2 connections)
 - [get_storefront_product()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L106) (2 connections)
-- *... and 28 more nodes in this community*
+- [list_storefront_blog()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/storefront/router.py#L238) (2 connections)
+- *... and 27 more nodes in this community*
 
 ## Class Diagram
 
@@ -58,7 +58,7 @@ classDiagram
 
 ## Relationships
 
-- [[Community 14]] (6 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
@@ -70,7 +70,7 @@ classDiagram
 
 ## Audit Trail
 
-- EXTRACTED: 113 (76%)
+- EXTRACTED: 109 (76%)
 - INFERRED: 35 (24%)
 - AMBIGUOUS: 0 (0%)
 

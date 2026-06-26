@@ -1,35 +1,35 @@
 # Community 17
 
-> 48 nodes · cohesion 0.06
+> 38 nodes · cohesion 0.05
 
 ## Key Concepts
 
-- [standard_codec.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L1) (18 connections)
-- [core_implementations.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L1) (12 connections)
-- [WriteValue()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L98) (8 connections)
-- [Resize()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L130) (5 connections)
-- [ReadValue()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L92) (5 connections)
-- [SetMessageHandler()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L116) (4 connections)
-- [method_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L1) (4 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h#L15) (4 connections)
-- [ReadValueOfType()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L168) (4 connections)
-- [ResizeChannel()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L181) (3 connections)
-- [Send()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L87) (3 connections)
-- [SetChannelWarnsOnOverflow()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc#L194) (3 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_channel.h#L17) (3 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/message_codec.h#L12) (3 connections)
-- [flutter()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h#L18) (3 connections)
-- [DecodeAndProcessResponseEnvelope()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h#L75) (3 connections)
-- [DecodeAndProcessResponseEnvelopeInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L434) (3 connections)
-- [DecodeMessageInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L319) (3 connections)
-- [DecodeMethodCallInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L367) (3 connections)
-- [EncodeMessageInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L329) (3 connections)
-- [EncodeMethodCallInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L384) (3 connections)
-- [EncodeSuccessEnvelopeInternal()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L398) (3 connections)
-- [ReadSize()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L229) (3 connections)
-- [ReadVector()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L260) (3 connections)
-- [WriteSize()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc#L244) (3 connections)
-- *... and 23 more nodes in this community*
+- [product_editor_logistics_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (20 connections)
+- [my_application.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/my_application.cc#L1) (9 connections)
+- [Text](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart) (7 connections)
+- [dispose](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (6 connections)
+- [seed()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/seed_dev.py#L17) (3 connections)
+- [t()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/test_conn.py#L5) (3 connections)
+- [main.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/main.py#L1) (2 connections)
+- [fl_register_plugins()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/flutter/generated_plugin_registrant.cc#L13) (2 connections)
+- [lifespan()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/main.py#L9) (2 connections)
+- [main()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/main.cc#L3) (2 connections)
+- [my_application_activate()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/my_application.cc#L23) (2 connections)
+- [my_application_dispose()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/my_application.cc#L121) (2 connections)
+- [my_application_new()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/my_application.cc#L138) (2 connections)
+- [seed_dev.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/seed_dev.py#L1) (1 connections)
+- [test_conn.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/test_conn.py#L1) (1 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [initState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [_onHeightChanged](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [_onLengthChanged](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [_onMetaDescriptionChanged](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [_onMetaTitleChanged](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [_onMinimumAgeChanged](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [_onWeightChanged](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [_onWidthChanged](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- [ProductEditorLogisticsStep](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart) (1 connections)
+- *... and 13 more nodes in this community*
 
 ## Relationships
 
@@ -37,19 +37,19 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\basic_message_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/basic_message_channel.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\engine_method_result.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/engine_method_result.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\event_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/event_channel.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\message_codec.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/message_codec.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\method_channel.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_channel.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\include\flutter\method_codec.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/method_codec.h)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\main.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/main.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\scripts\seed_dev.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/scripts/seed_dev.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\test_conn.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/test_conn.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_editor_logistics_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_logistics_step.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\upload\single_image_uploader.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/upload/single_image_uploader.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\linux\flutter\generated_plugin_registrant.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/flutter/generated_plugin_registrant.cc)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\linux\runner\main.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/main.cc)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\linux\runner\my_application.cc](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/linux/runner/my_application.cc)
 
 ## Audit Trail
 
-- EXTRACTED: 108 (74%)
-- INFERRED: 37 (26%)
+- EXTRACTED: 66 (76%)
+- INFERRED: 21 (24%)
 - AMBIGUOUS: 0 (0%)
 
 ---

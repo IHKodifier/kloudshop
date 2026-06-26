@@ -1,0 +1,33 @@
+name: Remote Graphify Sync
+on:
+  push:
+    branches: [ main, dev ] # Triggers only on remote push
+  pull_request:
+    types: [ closed ]
+    branches: [ dev ]
+jobs:
+  update-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Install Python & UV
+        uses: astral-sh/setup-uv@v1
+        
+      - name: Install Graphify
+        run: uv tool install graphifyy
+
+      - name: Run Incremental Graph Update
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} # Needed if parsing multimodal docs/images
+        run: graphify update ./raw --progress
+
+      - name: Commit and Push Updated Graph
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add graphify-out/
+          git diff-index --quiet HEAD || git commit -m "chore: remote auto-update graphify-out [skip ci]"
+          git push

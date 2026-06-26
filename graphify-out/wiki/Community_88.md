@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- [build.gradle.kts](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/build.gradle.kts#L1) (0 connections)
+- [Runner-Bridging-Header.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/Runner-Bridging-Header.h#L1) (0 connections)
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\android\build.gradle.kts](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/android/build.gradle.kts)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Runner\Runner-Bridging-Header.h](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Runner/Runner-Bridging-Header.h)
 
 ## Audit Trail
 

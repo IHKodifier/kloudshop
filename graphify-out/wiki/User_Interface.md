@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- [color_preset.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/color_preset.dart) (1 connections)
-- [ColorPreset](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/color_preset.dart) (1 connections)
+- [theme.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme.dart) (1 connections)
+- [ThemeModel](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme.dart) (1 connections)
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\color_preset.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/color_preset.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\theme.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/theme.dart)
 
 ## Audit Trail
 

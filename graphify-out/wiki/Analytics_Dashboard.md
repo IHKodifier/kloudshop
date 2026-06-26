@@ -1,120 +1,56 @@
 # Analytics Dashboard
 
-> 100 nodes · cohesion 0.08
+> 129 nodes · cohesion 0.02
 
 ## Key Concepts
 
-- [StaffRoleAssignment](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L30) (41 connections)
-- [StaffSecurityState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L89) (33 connections)
-- [StaffUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L22) (28 connections)
-- [B2BInvitation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L41) (26 connections)
-- [Invitation](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L10) (25 connections)
-- [BuyerUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L53) (22 connections)
-- [ConsumerUser](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L62) (22 connections)
-- [Generate Facebook OAuth authorization URL.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py#L157) (21 connections)
-- [router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L1) (20 connections)
-- [Invite a new staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L236) (20 connections)
-- [List pending invitations for the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L253) (20 connections)
-- [Cancel a pending invitation.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L269) (20 connections)
-- [Update a staff member's roles and sync with Firebase claims.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L291) (20 connections)
-- [Revoke a staff member's access to the current tenant.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L335) (20 connections)
-- [Transfer store ownership to another staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L364) (20 connections)
-- [Register a B2B buyer using an invitation token.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L422) (20 connections)
-- [Register a DTC consumer (post-checkout).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L479) (20 connections)
-- [Checks the active cool-off and blocked status of a Gmail account.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L547) (20 connections)
-- [Logs a failed sign-in attempt and initiates a 180s cool-off or block.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L581) (20 connections)
-- [Sends a short-lived (180s TTL) unblock token email to the user (max 3/24h).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L661) (20 connections)
-- [Verifies the unblock token and unlocks the account (does not require login).](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L723) (20 connections)
-- [Allows an administrator or store owner to unblock a locked staff account.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py#L763) (20 connections)
-- [StaffLoginHistory](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py#L72) (19 connections)
-- [B2BBuyerRegistration](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py#L31) (16 connections)
-- [ConsumerRegistration](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py#L36) (16 connections)
-- *... and 75 more nodes in this community*
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class B2BInvitation {
-        +models.py()
-    }
-    class BuyerUser {
-        +models.py()
-    }
-    class ConsumerUser {
-        +models.py()
-    }
-    class Invitation {
-        +models.py()
-    }
-    class StaffLoginHistory {
-        +models.py()
-    }
-    class StaffRoleAssignment {
-        +models.py()
-    }
-    class StaffSecurityState {
-        +models.py()
-    }
-    class StaffUser {
-        +models.py()
-    }
-    class PermissionChecker {
-        +rbac.py()
-        +.__init__()
-        +.__call__()
-    }
-    class B2BBuyerRegistration {
-        +schemas.py()
-    }
-    class ConsumerRegistration {
-        +schemas.py()
-    }
-    class FailedLoginAlert {
-        +schemas.py()
-    }
-    class InvitationCreate {
-        +schemas.py()
-    }
-    class InvitationResponse {
-        +schemas.py()
-    }
-    class OwnershipTransferRequest {
-        +schemas.py()
-    }
-    class RoleUpdate {
-        +schemas.py()
-    }
-    class UnblockRequest {
-        +schemas.py()
-    }
-    class UnblockVerify {
-        +schemas.py()
-    }
-```
+- [navigation_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (31 connections)
+- [product_editor_variants_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart) (31 connections)
+- [product_editor_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart) (27 connections)
+- [product_editor_info_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart) (23 connections)
+- [variant_management_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/variant_management_test.dart) (15 connections)
+- [lottie_toggle.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/lottie_toggle.dart) (14 connections)
+- [rich_text_toolbar.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart) (13 connections)
+- [package:kloudshop/models/catalog.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart) (9 connections)
+- [catalog_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/catalog_providers.dart) (8 connections)
+- [package:kloudshop/providers/product_editor_provider.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/variant_management_test.dart) (5 connections)
+- [package:lottie/lottie.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart) (4 connections)
+- [package:rich_field_controller/rich_field_controller.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart) (2 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/catalog_providers.dart) (1 connections)
+- [ProductSearchQuery](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/catalog_providers.dart) (1 connections)
+- [ProductStatusFilterNotifier](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/catalog_providers.dart) (1 connections)
+- [setFilter](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/catalog_providers.dart) (1 connections)
+- [setQuery](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/catalog_providers.dart) (1 connections)
+- [AlertDialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_applySequentialPositionsAndSave](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_clearItemForm](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [dispose](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_fetchMenus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_hasDeepNesting](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [_indentItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- *... and 104 more nodes in this community*
 
 ## Relationships
 
-- [[Community 9]] (324 shared connections)
-- [[App Bootstrap]] (19 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\alembic\env.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/alembic/env.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\migrations\env.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/migrations/env.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\models.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/models.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\auth\schemas.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/auth/schemas.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\modules\channels\router.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/modules/channels/router.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/auth.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\shared\rbac.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/shared/rbac.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth_extended.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_extended.py)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth_lockout.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth_lockout.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\providers\catalog_providers.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/providers/catalog_providers.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\navigation_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\product_editor_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/product_editor_view.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\lottie_toggle.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/lottie_toggle.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_editor_info_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_info_step.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_editor_variants_step.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_editor_variants_step.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\product\product_variants_section.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/product/product_variants_section.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\widgets\rich_text_toolbar.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/widgets/rich_text_toolbar.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\test\variant_management_test.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/test/variant_management_test.dart)
 
 ## Audit Trail
 
-- EXTRACTED: 227 (25%)
-- INFERRED: 690 (75%)
+- EXTRACTED: 299 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

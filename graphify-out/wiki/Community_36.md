@@ -1,26 +1,25 @@
 # Community 36
 
-> 5 nodes · cohesion 0.40
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- [analytics.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (4 connections)
-- [AnalyticsOverview](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
-- [DataPoint](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
-- [NeedsAttention](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
-- [_toDouble](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart) (1 connections)
+- [flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L1) (2 connections)
+- [handle_new_rx_page()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L7) (2 connections)
+- [__lldb_init_module()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L24) (1 connections)
+- [Intercept NOTIFY_DEBUGGER_ABOUT_RX_PAGES and touch the pages.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py#L8) (1 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[unknown]] (1 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\models\analytics.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/models/analytics.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\Flutter\ephemeral\flutter_lldb_helper.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/Flutter/ephemeral/flutter_lldb_helper.py)
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

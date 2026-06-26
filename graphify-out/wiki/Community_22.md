@@ -1,46 +1,36 @@
 # Community 22
 
-> 25 nodes · cohesion 0.08
+> 15 nodes · cohesion 0.13
 
 ## Key Concepts
 
-- [navigation_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (31 connections)
-- [AlertDialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_applySequentialPositionsAndSave](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [build](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_clearItemForm](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [dispose](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_fetchMenus](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_hasDeepNesting](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_indentItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [initState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [LinearProgressIndicator](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_loadMenuTree](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_moveItemDown](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_moveItemUp](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [NavigationView](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_NavigationViewState](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_outdentItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [Padding](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [Scaffold](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_showCreateMenuDialog](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_showError](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_showSuccess](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [SizedBox](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [_startEditingItem](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
-- [traverse](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart) (1 connections)
+- [test_auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L1) (7 connections)
+- [test_cancel_invitation()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L65) (2 connections)
+- [test_create_invitation_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L23) (2 connections)
+- [test_get_me_success()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L11) (2 connections)
+- [test_get_me_unauthorized()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L5) (2 connections)
+- [test_list_invitations()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L47) (2 connections)
+- [test_revoke_staff_access()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L103) (2 connections)
+- [test_update_staff_roles()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L85) (2 connections)
+- [Verify that an owner can revoke staff access.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L104) (1 connections)
+- [Verify that accessing /auth/me with a valid token returns user info.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L12) (1 connections)
+- [Verify that an owner can invite a staff member.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L24) (1 connections)
+- [Verify that an owner can list pending invitations.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L48) (1 connections)
+- [Verify that accessing /auth/me without a token returns 403 (FastAPI default for](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L6) (1 connections)
+- [Verify that an owner can cancel an invitation.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L66) (1 connections)
+- [Verify that an owner can update staff member roles.](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py#L86) (1 connections)
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 26]] (7 shared connections)
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\lib\views\navigation_view.dart](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/lib/views/navigation_view.dart)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_auth.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_auth.py)
 
 ## Audit Trail
 
-- EXTRACTED: 55 (100%)
+- EXTRACTED: 28 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

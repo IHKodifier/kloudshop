@@ -1,25 +1,13 @@
 # Community 35
 
-> 5 nodes · cohesion 0.40
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- [RunnerTests](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L5) (4 connections)
-- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift#L1) (1 connections)
-- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L1) (1 connections)
-- [.testExample()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L7) (1 connections)
-- **XCTestCase** (1 connections)
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class RunnerTests {
-        +RunnerTests.swift()
-        +.testExample()
-        +RunnerTests.swift()
-    }
-```
+- [test_ai.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L1) (3 connections)
+- [test_accept_variant()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L47) (1 connections)
+- [test_brand_voice_crud()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L8) (1 connections)
+- [test_generate_product_title()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py#L30) (1 connections)
 
 ## Relationships
 
@@ -27,12 +15,11 @@ classDiagram
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift)
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_ai.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_ai.py)
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

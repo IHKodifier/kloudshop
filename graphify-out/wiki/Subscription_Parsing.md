@@ -1,15 +1,25 @@
 # Subscription Parsing
 
-> 6 nodes · cohesion 0.33
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
-- [test_features.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L1) (5 connections)
-- [seed_features()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L8) (2 connections)
-- [test_activate_feature()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L45) (1 connections)
-- [test_feature_config()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L67) (1 connections)
-- [test_feature_requests_voting()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L83) (1 connections)
-- [test_list_features()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py#L34) (1 connections)
+- [RunnerTests](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L5) (4 connections)
+- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift#L1) (1 connections)
+- [RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L1) (1 connections)
+- [.testExample()](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift#L7) (1 connections)
+- **XCTestCase** (1 connections)
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class RunnerTests {
+        +RunnerTests.swift()
+        +.testExample()
+        +RunnerTests.swift()
+    }
+```
 
 ## Relationships
 
@@ -17,12 +27,13 @@
 
 ## Source Files
 
-- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\backend\tests\test_features.py](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/backend/tests/test_features.py)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\ios\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/ios/RunnerTests/RunnerTests.swift)
+- [E:\Non_Office\Dev_Space\vibe_skool\kloudShop\frontend\macos\RunnerTests\RunnerTests.swift](file:///E:/Non_Office/Dev_Space/vibe_skool/kloudShop/frontend/macos/RunnerTests/RunnerTests.swift)
 
 ## Audit Trail
 
-- EXTRACTED: 10 (91%)
-- INFERRED: 1 (9%)
+- EXTRACTED: 8 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---
