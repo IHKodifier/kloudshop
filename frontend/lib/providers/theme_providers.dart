@@ -55,6 +55,8 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
   String? _lastEditKey;
   DateTime? _lastEditTime;
 
+  ThemeConfigModel? _originalConfig;
+
   @override
   FutureOr<ThemeConfigModel?> build() async {
     ref.onDispose(() => _saveTimer?.cancel());
@@ -67,10 +69,71 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
       config = await ref.watch(apiServiceProvider).getThemeConfig(editingId);
     }
 
-    if (config != null && _history.isEmpty) {
-      _addToHistory(config);
+    if (config != null) {
+      _originalConfig ??= config;
+      if (_history.isEmpty) {
+        _addToHistory(config);
+      }
     }
     return config;
+  }
+
+  int getSessionChangesCount() {
+    final current = state.value;
+    if (current == null || _originalConfig == null) return 0;
+    int changes = 0;
+    
+    // Compare tokens
+    current.draftTokens.forEach((k, v) {
+      if (_originalConfig!.draftTokens[k] != v) {
+        changes++;
+      }
+    });
+    _originalConfig!.draftTokens.forEach((k, v) {
+      if (!current.draftTokens.containsKey(k)) {
+        changes++;
+      }
+    });
+
+    // Compare slots
+    current.draftSlots.forEach((k, v) {
+      final origVal = _originalConfig!.draftSlots[k];
+      if (!_areEqual(origVal, v)) {
+        changes++;
+      }
+    });
+    _originalConfig!.draftSlots.forEach((k, v) {
+      if (!current.draftSlots.containsKey(k)) {
+        changes++;
+      }
+    });
+
+    // Compare name
+    if (current.name != _originalConfig!.name) {
+      changes++;
+    }
+
+    return changes;
+  }
+
+  bool _areEqual(dynamic a, dynamic b) {
+    if (a == b) return true;
+    if (a is Map && b is Map) {
+      if (a.length != b.length) return false;
+      for (final key in a.keys) {
+        if (!b.containsKey(key)) return false;
+        if (!_areEqual(a[key], b[key])) return false;
+      }
+      return true;
+    }
+    if (a is List && b is List) {
+      if (a.length != b.length) return false;
+      for (int i = 0; i < a.length; i++) {
+        if (!_areEqual(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    return false;
   }
 
   void _addToHistory(ThemeConfigModel config, {String? editKey}) {
@@ -212,9 +275,27 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
             slots: current.draftSlots,
           );
     } catch (e) {
-      // Log error but keep local state for now
       log('Failed to save theme draft: $e');
     }
+  }
+
+  Future<void> commitSave() async {
+    final current = state.value;
+    if (current == null) return;
+    
+    await saveDraft();
+    _originalConfig = current;
+    state = AsyncValue.data(current);
+  }
+
+  Future<void> revertToOriginal() async {
+    if (_originalConfig == null) return;
+    
+    state = AsyncValue.data(_originalConfig);
+    _history.clear();
+    _historyIndex = -1;
+    _addToHistory(_originalConfig!);
+    await saveDraft();
   }
 
   Future<void> publish() async {
@@ -227,3 +308,66 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
     );
   }
 }
+
+// ── Theme Customizer Panel State ──────────────────────────────────────────────
+
+/// Which mode the left icon ribbon is in.
+enum CustomizerMode { outline, settings, embeds }
+
+class CustomizerModeNotifier extends Notifier<CustomizerMode> {
+  @override
+  CustomizerMode build() => CustomizerMode.outline;
+
+  void setMode(CustomizerMode val) {
+    state = val;
+  }
+}
+
+/// Controls which center panel view is active in the customizer.
+final customizerModeProvider = NotifierProvider<CustomizerModeNotifier, CustomizerMode>(
+  CustomizerModeNotifier.new,
+);
+
+class CustomizerNavStackNotifier extends Notifier<List<String>> {
+  @override
+  List<String> build() => const [];
+
+  void setStack(List<String> val) {
+    state = val;
+  }
+}
+
+/// Breadcrumb navigation stack for center panel drill-down.
+/// Empty list = outline root. Each entry is a section/block ID being drilled into.
+final customizerNavStackProvider = NotifierProvider<CustomizerNavStackNotifier, List<String>>(
+  CustomizerNavStackNotifier.new,
+);
+
+class SelectedSectionIdNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setSelectedId(String? val) {
+    state = val;
+  }
+}
+
+/// Shared selection bus for bi-directional section highlighting.
+/// Written by both the outline panel and the canvas preview.
+final selectedSectionIdProvider = NotifierProvider<SelectedSectionIdNotifier, String?>(
+  SelectedSectionIdNotifier.new,
+);
+
+class EnabledFeatureModulesNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+
+  void setEnabledFeatures(Set<String> val) {
+    state = val;
+  }
+}
+
+/// Set of enabled native feature module IDs for the current merchant.
+final enabledFeatureModulesProvider = NotifierProvider<EnabledFeatureModulesNotifier, Set<String>>(
+  EnabledFeatureModulesNotifier.new,
+);

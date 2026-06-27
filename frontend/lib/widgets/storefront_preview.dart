@@ -15,6 +15,7 @@ class StorefrontPreview extends StatefulWidget {
   final Function(String nodeId, double newLeft, double newTop)? onNodeMoved;
   final String page;
   final bool isDragging;
+  final Map<String, GlobalKey>? sectionKeys;
 
   const StorefrontPreview({
     super.key,
@@ -28,6 +29,7 @@ class StorefrontPreview extends StatefulWidget {
     this.onNodeMoved,
     this.page = 'home',
     this.isDragging = false,
+    this.sectionKeys,
   });
 
   @override
@@ -1250,6 +1252,11 @@ class _StorefrontPreviewState extends State<StorefrontPreview>
         ),
         child: rendered,
       );
+    }
+
+    if (widget.sectionKeys != null && id.isNotEmpty) {
+      final key = widget.sectionKeys!.putIfAbsent(id, () => GlobalKey());
+      rendered = KeyedSubtree(key: key, child: rendered);
     }
 
     return rendered;

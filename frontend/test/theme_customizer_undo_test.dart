@@ -68,7 +68,7 @@ void main() {
     expect(find.descendant(of: find.byType(StorefrontPreview), matching: find.text('Original Heading')), findsOneWidget);
     
     // Tap to select the node
-    await tester.tap(find.text('Original Heading'));
+    await tester.tap(find.descendant(of: find.byType(StorefrontPreview), matching: find.text('Original Heading')));
     await pumpMultiple(tester);
 
     // Find the TextField in the sidebar
