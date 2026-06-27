@@ -27,6 +27,7 @@ class DataPoint {
 class AnalyticsOverview {
   final double gmv;
   final int orderCount;
+
   final double aov;
   final double conversionRate;
   final String currency;
