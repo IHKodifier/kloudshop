@@ -55,6 +55,9 @@ class MockFileUploader implements FileUploader {
 
     // Run the actual API upload once mock loading completes
     final relativeUrl = await apiUpload(bytes, fileName);
+    if (relativeUrl.startsWith('http')) {
+      return relativeUrl;
+    }
     return "http://127.0.0.1:8000$relativeUrl";
   }
 }

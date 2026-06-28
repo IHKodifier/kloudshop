@@ -853,7 +853,7 @@ class _ThemeCustomizerViewState extends ConsumerState<ThemeCustomizerView> {
           width: double.infinity,
           height: double.infinity,
           alignment: Alignment.center,
-          color: isDark ? const Color(0xFF090D16) : const Color(0xFFE2E8F0),
+          color: isDark ? const Color(0xFF090D16) : const Color(0xFF474D57),
           child: configAsync.when(
             data: (config) {
               final previewWidget = StorefrontPreview(
@@ -936,9 +936,23 @@ class _ThemeCustomizerViewState extends ConsumerState<ThemeCustomizerView> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor, width: 1.5),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.15) : Colors.black.withOpacity(0.1),
+          width: 1.0,
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 36, offset: const Offset(0, 16)),
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.45 : 0.18),
+            blurRadius: 42,
+            spreadRadius: 3,
+            offset: const Offset(0, 26),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.25 : 0.08),
+            blurRadius: 22,
+            spreadRadius: -2,
+            offset: const Offset(0, 16),
+          ),
         ],
       ),
       child: Column(

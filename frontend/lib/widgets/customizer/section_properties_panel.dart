@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:kloudshop/widgets/upload/asset_selection_dialog.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/providers/theme_providers.dart';
@@ -160,46 +161,21 @@ class _SectionPropertiesPanelState extends ConsumerState<SectionPropertiesPanel>
     }
   }
 
-  void _simulateSelectImage(String nodeId, String propertyKey) {
-    final theme = Theme.of(context);
-    showDialog(
+  void _simulateSelectImage(String nodeId, String propertyKey, String? currentUrl) {
+    showDialog<dynamic>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: theme.dialogBackgroundColor,
-          title: const Text('Select Image', style: TextStyle(fontFamily: 'Outfit')),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _ImageSelectTile(
-                name: 'Apparel banner background (3:2)',
-                url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
-                onSelect: (url) {
-                  Navigator.pop(context);
-                  _updateNodeProperties(nodeId, {propertyKey: url});
-                },
-              ),
-              _ImageSelectTile(
-                name: 'Modern tech background (16:9)',
-                url: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c',
-                onSelect: (url) {
-                  Navigator.pop(context);
-                  _updateNodeProperties(nodeId, {propertyKey: url});
-                },
-              ),
-              _ImageSelectTile(
-                name: 'Store logo (Square)',
-                url: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6',
-                onSelect: (url) {
-                  Navigator.pop(context);
-                  _updateNodeProperties(nodeId, {propertyKey: url});
-                },
-              ),
-            ],
-          ),
+        return AssetSelectionDialog(
+          title: 'Select Image',
+          isMultiSelect: false,
+          initialUrls: currentUrl != null && currentUrl.isNotEmpty ? [currentUrl] : const [],
         );
       },
-    );
+    ).then((selected) {
+      if (selected is String && selected.isNotEmpty) {
+        _updateNodeProperties(nodeId, {propertyKey: selected});
+      }
+    });
   }
 
   @override
@@ -458,7 +434,7 @@ class _SectionPropertiesPanelState extends ConsumerState<SectionPropertiesPanel>
     final isSelected = currentUrl != null && currentUrl.isNotEmpty;
 
     return InkWell(
-      onTap: () => _simulateSelectImage(nodeId, propertyKey),
+      onTap: () => _simulateSelectImage(nodeId, propertyKey, currentUrl),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         height: 120,

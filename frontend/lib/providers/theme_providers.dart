@@ -224,6 +224,25 @@ class ActiveThemeConfigNotifier extends AsyncNotifier<ThemeConfigModel?> {
     _debouncedSave();
   }
 
+  void deleteTokens(List<String> keysToDelete, {String? editKey}) {
+    final current = state.value;
+    if (current == null) return;
+
+    final newTokens = {...current.draftTokens};
+    for (final key in keysToDelete) {
+      newTokens.remove(key);
+    }
+
+    final updated = current.copyWith(
+      draftTokens: newTokens,
+      updatedAt: DateTime.now(),
+    );
+
+    state = AsyncValue.data(updated);
+    _addToHistory(updated, editKey: editKey ?? 'delete_tokens');
+    _debouncedSave();
+  }
+
   void updateLocalSlot(String key, String value) {
     updateSlots({key: value}, editKey: key);
   }

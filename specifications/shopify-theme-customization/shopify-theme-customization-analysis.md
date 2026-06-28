@@ -12,7 +12,7 @@ This document provides a comparative analysis of Shopify's admin navigation and 
 
 Also, although ocassionally but in this analysis, the terms **user** and **merchant** are used interchangeably. both refer to tthe athenticated kloudshop user (who from app'perspective is just an authenticated user with a certain subscription /plan subscribed but from his own perspective, the user is a merchant  who is utilizing kloudshop  as a sales platform to run and grow his business.
 
-> All media assets are siblings of this file inside the `shopify-theme-customization/` folder.
+> All media assets are inside the `shopify-theme-customization/media/` folder.
 
 ---
 
@@ -22,7 +22,7 @@ Also, although ocassionally but in this analysis, the terms **user** and **merch
 
 Below is the sidebar structure observed in the Shopify admin panel:
 
-![Shopify Sidebar Menu](shopify-sidebar-menu.png)
+![Shopify Sidebar Menu](media/shopify-sidebar-menu.png)
 
 ### Comparison Table
 
@@ -52,7 +52,7 @@ This is the central dashboard a merchant sees under **Online Store → Themes** 
 
 > **Notable detail**: The active theme card has a clear primary green CTA (**Customize**) and a utility menu button (**`⋯`**) to access technical/content controls (Rename, Duplicate, Download theme file, Edit code, Edit default theme content) alongside an amber trial warning gate.
 
-![Shopify Themes Management Page](shopify-themes-page-2-pane-view.png)
+<img src="media/shopify-themes-page-2-pane-view.png" title="" alt="Shopify Themes Management Page" style="zoom:100%;">
 
 ### User's own "My Themes"  Section
 
@@ -63,7 +63,7 @@ The **My Themes** section below the active theme displays themes the user has pr
 > [!NOTE]
 > Below the "**My Themes **" cardcard, Shopify displays a curated selection of "Popular themes" (e.g., Dawn, Spotlight, Refresh). This provides merchants with instant, single-click additions to experiment with different aesthetics.at the end of popular themes, there is a card to visit KloudThemeShop  a vast library of all themes available in Kloud shop assorted and categorized by categiry,industry, brand identityy  design language etc. Popular  themes card is just an appetizer to increase the appetite for exploring more themes and visiting the full-blown Kloud theme shop. 
 
-![Popular Free Themes Shelf](shopify-themes-browser-free.png)
+![Popular Free Themes Shelf](media/shopify-themes-browser-free.png)
 
 ---
 
@@ -72,7 +72,7 @@ The **My Themes** section below the active theme displays themes the user has pr
 > [!NOTE]
 > Scrolling down the theme library lists additional popular themes, culminating in a call-to-action tile: **Explore more themes** with a button to **Visit Theme Store**. This launches the full KloudThemesShop  in a unified experience.
 
-![Explore More Themes Card](shopify-themes-browser-explore-card.png)
+![Explore More Themes Card](media/shopify-themes-browser-explore-card.png)
 
 ---
 
@@ -84,7 +84,7 @@ The **My Themes** section below the active theme displays themes the user has pr
 > - **Left Sidebar Filters**: Allows filtering themes by Price (Free vs. Paid) and Industry (e.g., Arts and crafts, Baby and kids, Books, music, and video, Business equipment and supplies, Clothing).
 > - **Right Visual Grid**: Displays high-fidelity card listings showing previews of how the templates look in desktop and mobile viewport mockups.
 
-![Shopify Theme Store Directory](shopify-themes-browser-theme-store.png)
+![Shopify Theme Store Directory](media/shopify-themes-browser-theme-store.png)
 
 ---
 
@@ -120,7 +120,7 @@ When a merchant enters the customization view, the workspace is structured as a 
 3. **Right Panel (Live Preview Canvas)**:
    Renders the live, responsive storefront simulation in real time. It reacts instantly to changes made in the configuration panels.
 
-![Shopify Theme Customizer Layout](shopify-theme-customizer-3-pane-structure.png)
+![Shopify Theme Customizer Layout](media/shopify-theme-customizer-3-pane-structure.png)
 
 ---
 
@@ -133,7 +133,7 @@ The middle panel's **Sections Editor** maps the page layout into three primary r
 > [!NOTE]
 > Selecting or hovering over the **Announcement bar** item in the middle panel outlines the element dynamically on the live preview canvas (Welcome to our store). Merchants use this block to highlight sales banners (e.g., Black Friday promo campaigns).
 
-![Announcement Bar Hover Highlight](shopify-theme-customizer-announcement-bar-hover.png)
+![Announcement Bar Hover Highlight](media/shopify-theme-customizer-announcement-bar-hover.png)
 
 ---
 
@@ -142,7 +142,7 @@ The middle panel's **Sections Editor** maps the page layout into three primary r
 > [!NOTE]
 > Hovering over or clicking a section item in the middle outline (e.g., **Image banner**) draws a blue boundary around that specific block in the live preview canvas. Clicking it collapses the outline view in the middle panel and displays that section's customizable properties (text, buttons, background image alignment).
 
-![Image Banner Hover Highlight](shopify-theme-customizer-image-banner-hover.png)
+![Image Banner Hover Highlight](media/shopify-theme-customizer-image-banner-hover.png)
 
 ---
 
@@ -151,7 +151,7 @@ The middle panel's **Sections Editor** maps the page layout into three primary r
 > [!NOTE]
 > Each layout section or sub-block within the Header, Template, and Footer hierarchy features a contextual **visibility toggle (eye icon)** on hover in the middle outline pane. This enables merchants to hide or reveal sections dynamically (e.g., hiding a seasonal announcement bar or placeholder collections list) without permanently deleting them.
 
-![Visibility Toggles in Outline](shopify-theme-customizer-outline-visibility-toggle.png)
+![Visibility Toggles in Outline](media/shopify-theme-customizer-outline-visibility-toggle.png)
 
 ---
 
@@ -164,7 +164,7 @@ Selecting the middle settings cog icon updates the middle pane to display global
 > [!NOTE]
 > This displays the upper half of the theme settings list. Merchants can customize the global Logo, Colors schemes, Typography, Layout constraints, Animation behaviors, Buttons, Variant pills, Inputs, and card elements.
 
-![Theme Settings Upper List](shopify-theme-customizer-settings-menu-top.png)
+![Theme Settings Upper List](media/shopify-theme-customizer-settings-menu-top.png)
 
 ---
 
@@ -173,7 +173,7 @@ Selecting the middle settings cog icon updates the middle pane to display global
 > [!NOTE]
 > Scrolling down reveals additional properties: Badges, Brand information presets, Social media URLs, Search input behaviors, Currency formats, Cart behaviors, Checkout forms, Custom CSS, and active Theme style states.(some options displayed in Shopify's Theme settings cog might not apply to Kloudshop for instance custom CSS, since Kloudshop is not CSS based but we may be we can use it to save "named" styling profiles for the same theme. e.g. having a "summer/winter/spring/christmas" presets of styling the same theme ).
 
-![Theme Settings Lower List](shopify-theme-customizer-settings-menu-bottom.png)
+![Theme Settings Lower List](media/shopify-theme-customizer-settings-menu-bottom.png)
 
 ---
 
@@ -182,7 +182,7 @@ Selecting the middle settings cog icon updates the middle pane to display global
 > [!NOTE]
 > Expanding the **Social media** tile exposes standard input fields for linking social channels (Facebook, Instagram, YouTube, TikTok, Twitter, Snapchat, Pinterest, Tumblr, Vimeo). These URLs dynamically populate footer icons in compatible templates.
 
-![Social Media Settings](shopify-theme-customizer-settings-social-expanded.png)
+![Social Media Settings](media/shopify-theme-customizer-settings-social-expanded.png)
 
 ---
 
@@ -191,7 +191,7 @@ Selecting the middle settings cog icon updates the middle pane to display global
 > [!NOTE]
 > Expanding the **Logo** tile provides controls to upload or edit the logo asset, adjust the desktop logo width via a pixel slider, set a custom storefront Favicon (scaled to 32x32px), and adjust structural elements like logo placement (middle-left, top-left, etc.).
 
-![Logo and Favicon Settings](shopify-theme-customizer-settings-logo-details.png)
+![Logo and Favicon Settings](media/shopify-theme-customizer-settings-logo-details.png)
 
 ---
 
@@ -217,28 +217,28 @@ This section details how the storefront customizer manages multi-page templates 
 > [!NOTE]
 > Clicking the dropdown at the top center of the theme customizer header launches the **Page Selector** directory. It displays a searchable list of page types and templates: Products, Collections, Collections list, Pages, Blogs, Blog posts, Cart, and Checkout.
 
-![Shopify Page Switcher Dropdown](shopify-theme-customizer-page-selector.png)
+![Shopify Page Switcher Dropdown](media/shopify-theme-customizer-page-selector.png)
 
 #### 2. Sub-Category Template Directory (Products Example)
 
 > [!NOTE]
 > Expanding a page category (e.g. Products) displays its active templates (e.g., "Default product (Assigned to 5 products)" with a star icon indicating the system default) and a "+ Create template" action to generate new layouts for specific product groups.
 
-![Shopify Products Template Selector](shopify-theme-customizer-product-template-selector.png)
+![Shopify Products Template Selector](media/shopify-theme-customizer-product-template-selector.png)
 
 #### 3. Default Product Page Preview & Outline
 
 > [!NOTE]
 > Selecting the "Default product" template updates the customizer's page preview context. The center canvas renders the product detail page layout preview (showing a VESTURA Cap, dynamic price, quantity picker, and checkout buttons), and the left sidebar outline displays the product-specific template blocks (Product information: Text, Title, Price, Variant picker, Quantity selector, Buy buttons, Description, Share).
 
-![Shopify Default Product Template Layout](shopify-theme-customizer-default-product-preview.png)
+![Shopify Default Product Template Layout](media/shopify-theme-customizer-default-product-preview.png)
 
 #### 4. Bi-Directional Highlight & Selection
 
 > [!NOTE]
 > Selecting the "Product information" container on the canvas highlights it in blue with a dotted border, while simultaneously expanding and highlighting the corresponding node in the left outline sidebar. This selection synchronization works bi-directionally.
 
-![Shopify Bi-Directional Highlight](shopify-theme-customizer-bi-directional-selection.png)
+![Shopify Bi-Directional Highlight](media/shopify-theme-customizer-bi-directional-selection.png)
 
 ### Comparison Table
 
@@ -272,13 +272,13 @@ This screenshot shows the left sidebar **after clicking the "Image banner" secti
 - **Left icon ribbon (3 icons)**: Visible on the far left edge — outline/sections icon (active), gear/settings icon, and a grid/blocks icon. These are the sidebar mode switchers.
 - **Canvas label tag**: On the canvas, the selected section shows a blue outline + "Image banner" label chip at the top-left corner.
 
-![Shopify Image Banner — Section Properties Close-up](shopify-section-props-image-banner.png)
+![Shopify Image Banner — Section Properties Close-up](media/shopify-section-props-image-banner.png)
 
 ### 4b. Image Banner Properties — Empty State (Wide view)
 
 Below is the property editor when the "Image banner" section is selected in Shopify (Empty State):
 
-![Shopify Section Properties — empty](shopify-section-properties-empty-state.png)
+![Shopify Section Properties — empty](media/shopify-section-properties-empty-state.png)
 
 ### 4c. Block-Level Editing — Heading Block (Live Text Edit)
 
@@ -298,19 +298,19 @@ Key observations:
 - **Canvas: blue label chip** — "⊕ Heading" label appears at the top-left of the selected block on canvas.
 - **Canvas: floating block toolbar** — A small contextual toolbar floats *below* the selected text block on the canvas, containing: move/reposition, align, emoji/insert, visibility toggle, and delete (🗑️).
 
-![Shopify Heading Block — Live Editing](shopify-heading-block-edit.png)
+![Shopify Heading Block — Live Editing](media/shopify-heading-block-edit.png)
 
 ### 4d. Selected Image State
 
 Below is the property editor after selecting/uploading a background banner image in Shopify:
 
-![Shopify Section Properties — image selected](shopify-section-properties-image-selected.png)
+![Shopify Section Properties — image selected](media/shopify-section-properties-image-selected.png)
 
 ### 4e. Inline Text/Tagline Editing State
 
 Below is the property editor when selecting a text block (Heading) inside the banner:
 
-![Shopify Tagline / Heading Editing](shopify-tagline-heading-editing.png)
+![Shopify Tagline / Heading Editing](media/shopify-tagline-heading-editing.png)
 
 ### 4f. Media Selector Modal (Empty vs. Populated)
 
@@ -318,14 +318,14 @@ Below are the empty and populated states of the asset browser pop-up (Media Libr
 
 #### Empty State (Initial Upload Zone)
 
-![Shopify Media / Asset Browser Modal (Empty)](shopify-media-asset-browser-modal.png)
+![Shopify Media / Asset Browser Modal (Empty)](media/shopify-media-asset-browser-modal.png)
 
 #### Populated State (Accumulated Media Assets)
 
 > [!NOTE]
 > This populated modal is a direct continuation of the **Media Selector Modal** journey. It shows the library after the merchant has uploaded assets throughout the setup (e.g. logos from **[§15](#15-branding--centralized-brand-assets)**, product images). It introduces checkbox selection, a green `✓ File uploaded` toast indicator, and left-sidebar category segmentation ("Store library" -> "Images" and "Saved Views").
 
-![Shopify Media / Asset Browser Modal (Populated)](shopify-media-library-select-modal.png)
+![Shopify Media / Asset Browser Modal (Populated)](media/shopify-media-library-select-modal.png)
 
 ### 4g. Footer Customization & Policy Links
 
@@ -334,14 +334,14 @@ Below are the empty and populated states of the asset browser pop-up (Media Libr
 > [!NOTE]
 > This screen shows the customization view when configuring the storefront **Footer** section. The left sidebar shows the Footer outline containing the "Quick links" block. The canvas renders a visual preview of these links (mapping to the standard legal policies created under **Settings → Policies** in **[§16](#16-implied-admin-settings--navigation-map-triangulation-tracker)**), the newsletter subscribe box, and active payment gateway badges (e.g. PayPal, representing enabled providers from **[§12a](#12a-payment-gateways-capture-methods--transaction-fees)**).
 
-![Shopify Footer Customization](shopify-theme-footer-block.png)
+![Shopify Footer Customization](media/shopify-theme-footer-block.png)
 
 #### 2. Footer Block Selection & Discovery Dropdown
 
 > [!NOTE]
 > This screen captures the dialog overlay when a merchant clicks "+ Add block" under the Footer in the customizer outline panel. It presents a searchable directory split into "THEME BLOCKS" (Menu, Brand information, Text, and Image) and "APP BLOCKS" (which houses integrations from third-party ecosystems). For Kloudshop, where all extended block functionalities are provided natively on the platform itself, this picker represents the primary entry point for modular storefront layout assembly.
 
-![Shopify Footer Add Block Dialog](shopify-theme-footer-add-block.png)
+![Shopify Footer Add Block Dialog](media/shopify-theme-footer-add-block.png)
 
 ### Comparison Table
 
@@ -368,35 +368,35 @@ This section details the merchant's workflow when adding new sections to the mai
 > [!NOTE]
 > Clicking "+ Add section" under `TEMPLATE` opens a popup directory displaying available storefront widgets (Featured collection, Featured product, Collection list, Rich text, Image with text, Image banner, Slideshow, Collage, Multicolumn, Multirow, Collapsible content). Hovering over an item displays a thumbnail layout preview on the right.
 
-![Shopify Add Section Dialog](shopify-theme-customizer-add-section-dialog.png)
+![Shopify Add Section Dialog](media/shopify-theme-customizer-add-section-dialog.png)
 
 #### 2. Collection List Added (Empty State)
 
 > [!NOTE]
 > When the "Collection list" section is added, it displays three default empty cards with generic placeholder graphics and "Your collection's name" labels, maintaining grid visual balance prior to data binding.
 
-![Shopify Collection List Empty State](shopify-theme-customizer-collection-list-added.png)
+![Shopify Collection List Empty State](media/shopify-theme-customizer-collection-list-added.png)
 
 #### 3. Block Selection on Canvas
 
 > [!NOTE]
 > Clicking a collection card on the canvas selects it with a blue outline container, preparing the left sidebar to load configuration fields for that specific nested block.
 
-![Shopify Collection Block Selected](shopify-theme-customizer-collection-block-selected.png)
+![Shopify Collection Block Selected](media/shopify-theme-customizer-collection-block-selected.png)
 
 #### 4. Collection Binder Sidebar Panel
 
 > [!NOTE]
 > The left sidebar transitions to the "Select collection" view, showing a search input, "+ Create collection" shortcut button, and a list of configured catalog collections (Home page, Hoodies, Shorts, Tshirts). A Kloudshop merchant can create any number of Collection in his inventory/product catalogue.
 
-![Shopify Select Collection Panel](shopify-theme-customizer-select-collection-panel.png)
+![Shopify Select Collection Panel](media/shopify-theme-customizer-select-collection-panel.png)
 
 #### 5. Collection Data Binding Populated
 
 > [!NOTE]
 > Once the merchant selects the "Hoodies" collection, the block binds the collection's primary image and text label ("Hoodies") to the card instantly, rendering live on the storefront preview.
 
-![Shopify Collection List Populated](shopify-theme-customizer-collection-populated.png)
+![Shopify Collection List Populated](media/shopify-theme-customizer-collection-populated.png)
 
 ### Comparison Table Updates
 
@@ -414,7 +414,7 @@ This section details the merchant's workflow when adding new sections to the mai
 
 Below is the sidebar for global theme styling, accessed by clicking the **gear icon** on the left vertical icon ribbon:
 
-![Shopify Global Theme Settings](shopify-global-theme-settings.png)
+![Shopify Global Theme Settings](media/shopify-global-theme-settings.png)
 
 ### 5a. Logo Upload & Width Control (Theme Settings → Logo)
 
@@ -427,7 +427,7 @@ This is the **first category** inside Theme Settings — the Logo section. The m
 - **Canvas real-time feedback**: The "VESTURA" logo renders immediately in the store header on the canvas as settings are changed — with a green arrow annotation in this screenshot pointing to where it appears on the live canvas.
 - **Context**: The gear icon on the left icon ribbon is active (highlighted) — confirming we are in "Theme settings" mode, not "Outline" mode.
 
-![Shopify Theme Settings — Logo Upload & Width](shopify-theme-settings-logo.png)
+![Shopify Theme Settings — Logo Upload & Width](media/shopify-theme-settings-logo.png)
 
 ### 5b. Colors & Typography (Theme Settings — Color Schemes)
 
@@ -461,7 +461,7 @@ Shopify does not use a single set of global colors. Instead it uses **Color Sche
 
 > **Note**: "Color Schemes" is a fundamentally different model from a flat global palette. Each section can independently use a different scheme, allowing sections of a page to alternate between light and dark backgrounds while staying brand-consistent. This is a very powerful concept worth replicating in KloudShop.
 
-![Shopify Theme Settings — Colors & Typography](shopify-theme-settings-colors-typography.png)
+![Shopify Theme Settings — Colors & Typography](media/shopify-theme-settings-colors-typography.png)
 
 ### Comparison Table
 
@@ -523,7 +523,7 @@ The merchant has exited the theme customizer (clicked the save button in theme e
 - The theme preview thumbnails are now **updated** — the desktop preview shows the VESTURA logo and a darker banner, and the mobile preview shows "Where Quality Meets Style" heading and a "Shop it" button — reflecting all the edits made during the customization session.
 - The merchant is now hovering over **"Products"** in the main left sidebar, about to navigate there to add products to the store.
 
-![Shopify — Back to Themes page, navigating to Products](shopify-back-to-themes-add-products.png)
+![Shopify — Back to Themes page, navigating to Products](media/shopify-back-to-themes-add-products.png)
 
 ### Key Architectural Insight: Theme vs. Content are Completely Separate Concerns
 
@@ -568,7 +568,7 @@ However, the crucial difference is in **how the theme displays data**:
 
 The merchant is on the "Add product" screen for "VESTURA Classic Hoodie". They have clicked the **AI sparkle button (✦)** in the description editor toolbar, opening an inline popup for AI-assisted content generation.
 
-![Shopify Add Product — AI Description Generation](shopify-add-product-ai-description.png)
+![Shopify Add Product — AI Description Generation](media/shopify-add-product-ai-description.png)
 
 ### What this screen reveals
 
@@ -644,12 +644,12 @@ Collections in Shopify are **named product groupings** that:
 > [!NOTE]
 > **Collections Management Entry Point**: This screen under **Products → Collections** displays the merchant's active collection directory. Each card lists a visual thumbnail, collection Title (e.g. Shorts, Tshirts, Hoodies), Product counts, and automated condition rules, serving as the data feed source for customizer widgets.
 
-![Shopify Collections Management Entry Point](shopify-settings-collections-entry.png)
+![Shopify Collections Management Entry Point](media/shopify-settings-collections-entry.png)
 
 > [!NOTE]
 > **Manual Product Association (Add Products Modal)**: This screen captures the modal popup window when manually associating products to a collection (e.g., searching "hoo" to select and link "VESTURA Classic Hoodie"). It verifies that manual collections rely on query-based multi-select search modals to bind catalog product IDs to the collection grouping.
 
-![Shopify Collections Manual Add Products](shopify-settings-collections-add-products-modal.png)
+![Shopify Collections Manual Add Products](media/shopify-settings-collections-add-products-modal.png)
 
 **Examples by merchant type:**
 | Store type               | Example collections                                                    |
@@ -680,7 +680,7 @@ Hierarchical potential: "Mountaineering Gear" as parent → "Alpine Climate Wear
 
 This screen is presented to merchants who have finished initial catalog setup/onboarding and are transitioning to a paid plan. It highlights the billing cycle structure, timeline of charges, payment methods, and package details.
 
-![Shopify Plan Confirmation](shopify-plan-confirmation-billing.png)
+![Shopify Plan Confirmation](media/shopify-plan-confirmation-billing.png)
 
 ### Comparison Table
 
@@ -704,7 +704,7 @@ This screen is presented to merchants who have finished initial catalog setup/on
 
 Once core theme customizations are saved and products are populated, Shopify displays a **Setup Guide** checklist on the Home dashboard to track remaining steps before the store is fully ready to open to the public. 
 
-![Shopify Setup Guide](shopify-setup-guide-publish-store.png)
+![Shopify Setup Guide](media/shopify-setup-guide-publish-store.png)
 
 ### Comparison Table
 
@@ -729,7 +729,7 @@ Once core theme customizations are saved and products are populated, Shopify dis
 
 This is the screen under **Settings → Domains** where merchants manage how customers access their online storefront. It provides clear options for buying new domains or mapping external custom domains.
 
-![Shopify Domain Settings](shopify-settings-domains.png)
+![Shopify Domain Settings](media/shopify-settings-domains.png)
 
 ### Comparison Table
 
@@ -758,14 +758,14 @@ This section manages core tenant-level meta information including primary curren
 > [!NOTE]
 > This screen under **Settings → Store details** manages general storefront settings including currency code settings.
 
-![Shopify Store Currency Settings](shopify-settings-store-details-currency.png)
+![Shopify Store Currency Settings](media/shopify-settings-store-details-currency.png)
 
 #### 2. Default Business Address Setup
 
 > [!NOTE]
 > This modal popup appears during payment setup or general configuration to collect default business details (country, name, street address, postal code, city, and phone number). This information acts as the merchant's billing address and the default shipping origin coordinate.
 
-![Shopify Store Address Modal](shopify-settings-payments-add-address-modal.png)
+![Shopify Store Address Modal](media/shopify-settings-payments-add-address-modal.png)
 
 ### Comparison Table
 
@@ -795,28 +795,28 @@ This section details how merchants configure customer-facing payment gateways, c
 > [!NOTE]
 > This is the initial, unconfigured state of the Payments settings dashboard. It displays the primary landing card prompting the merchant to "Activate Shopify Payments" to see competitive credit card rates, and includes a link to "See all other providers" to set up secondary gateways.
 
-![Shopify Payments Empty State](shopify-settings-payments-entry.png)
+![Shopify Payments Empty State](media/shopify-settings-payments-entry.png)
 
 #### 2. Configured Payments Dashboard (Setup Incomplete)
 
 > [!NOTE]
 > This is the primary Payments settings screen after activation is initiated. It manages native provider settings (Shopify Payments, showing accepted cards), transaction fee structures, credit card rates, and payment capture methods (such as "Automatic at checkout" or manual), with an onboarding alert showing "Complete account setup".
 
-![Shopify Payments Settings](shopify-settings-payments.png)
+![Shopify Payments Settings](media/shopify-settings-payments.png)
 
 #### 3. Gateway Detail Config — PayPal Express Checkout
 
 > [!NOTE]
 > This screen shows the configuration view when setting up or managing PayPal Express Checkout. It details the connected account status ("Setup incomplete"), transaction fees (0%), and dynamic account pre-generation mapping using the store's primary registration email (`meticsmedia5@gmail.com`).
 
-![Shopify PayPal Express Checkout Settings](shopify-settings-payments-paypal.png)
+![Shopify PayPal Express Checkout Settings](media/shopify-settings-payments-paypal.png)
 
 #### 4. Additional & Manual Payment Methods Settings
 
 > [!NOTE]
 > This screen details the sub-panels for discovering extra payment gateways ("Add payment methods" selector) and configuring manual offline payment channels (e.g., Cash on Delivery (COD), bank deposits), stating that orders placed through manual methods require merchant review before fulfillment.
 
-![Shopify Additional & Manual Payments Settings](shopify-settings-payments-additional.png)
+![Shopify Additional & Manual Payments Settings](media/shopify-settings-payments-additional.png)
 
 ### Comparison Table
 
@@ -853,28 +853,28 @@ Below are the entry point, configured, and detailed setup profiles for fulfillme
 > [!NOTE]
 > This is the initial unconfigured state of the Shipping settings dashboard. It splits the general shipping rates default zones into `Domestic` and `International` and prompts the merchant to click "Manage" to configure locations and rates.
 
-![Shopify Shipping Settings (Entry Point)](shopify-settings-shipping-delivery-entry.png)
+![Shopify Shipping Settings (Entry Point)](media/shopify-settings-shipping-delivery-entry.png)
 
 #### 2. Configured State (General Dashboard)
 
 > [!NOTE]
 > This is the configured state of the shipping dashboard, summarizing active configurations as `Rates for 2 locations -> 2 zones` once routing zones have been mapped.
 
-![Shopify Shipping Settings (Configured)](shopify-settings-shipping-delivery.png)
+![Shopify Shipping Settings (Configured)](media/shopify-settings-shipping-delivery.png)
 
 #### 3. Shipping Origins & Zonal Inactivity Alerts
 
 > [!NOTE]
 > This screen displays the details inside a specific shipping profile, listing the shipping origin (warehouse location, correlating to `Locations` settings in **[§16](#16-implied-admin-settings--navigation-map-triangulation-tracker)**) and associated shipping zones (Domestic vs. International). It surfaces inactivity checks linking directly to the `Markets` configurations in **[§16](#16-implied-admin-settings--navigation-map-triangulation-tracker)**.
 
-![Shopify Shipping Origins & Zones](shopify-settings-shipping-origins-zones.png)
+![Shopify Shipping Origins & Zones](media/shopify-settings-shipping-origins-zones.png)
 
 #### 4. Custom Manual Shipping Rates (Weight vs. Price)
 
 > [!NOTE]
 > This screen displays the modal popup when clicking "Add rate", allowing merchants to configure manual (flat) rates instead of third-party carrier calculations. It supports weight limits and cart basket thresholds.
 
-![Shopify Add Shipping Rate Modal](shopify-settings-shipping-add-rate-modal.png)
+![Shopify Add Shipping Rate Modal](media/shopify-settings-shipping-add-rate-modal.png)
 
 ### Comparison Table
 
@@ -904,14 +904,14 @@ Below are the entry point (upper half) and continuation (lower half) screens for
 > [!NOTE]
 > This is the initial entry point when clicking **Taxes and duties**. It displays the "Manage sales tax collection" card, directing merchants to configure shipping zones first. It lists country-specific collection statuses and includes regional search/sorting filters.
 
-![Shopify Taxes Settings (Entry Point)](shopify-settings-taxes-entry.png)
+![Shopify Taxes Settings (Entry Point)](media/shopify-settings-taxes-entry.png)
 
 #### 2. Continuation (Lower Half)
 
 > [!NOTE]
 > This is the continuation of the Taxes and duties dashboard (scrolled down), showcasing duties upsell configurations and transaction fee disclosures.
 
-![Shopify Taxes Settings (Continuation)](shopify-settings-taxes.png)
+![Shopify Taxes Settings (Continuation)](media/shopify-settings-taxes.png)
 
 ### Comparison Table
 
@@ -940,21 +940,21 @@ Below are the empty, populated, and color configuration states of the global bra
 > [!NOTE]
 > This represents the initial, empty layout of the **Settings → Brand** screen before the merchant has uploaded assets. It displays placeholder upload targets with recommended dimensions, an empty sidebar checklist, and an external integration suggestion ("No logo? Create one with Hatchful").
 
-![Shopify Brand Settings (Empty)](shopify-settings-branding-empty.png)
+![Shopify Brand Settings (Empty)](media/shopify-settings-branding-empty.png)
 
 #### 2. Populated State (Active Brand Identity)
 
 > [!NOTE]
 > This settings panel serves as the data source for the logo configuration seen inside the Theme Customizer in **[§5a](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/specifications/shopify-theme-customization/shopify-theme-customization-analysis.md#L169-L180)**. The `VESTURA` PNG uploaded here automatically populates the theme editor's logo preview card, demonstrating the direct link between global tenant branding settings and individual theme customize views.
 
-![Shopify Brand Settings (Populated)](shopify-settings-branding.png)
+![Shopify Brand Settings (Populated)](media/shopify-settings-branding.png)
 
 #### 3. Color & Contrast Selection
 
 > [!NOTE]
 > This captures the color selection popover inside the Brand Settings screen. The primary and secondary colors defined here automatically populate the default **Color Schemes** cards inside the Theme settings customizer (**[§5b](file:///e:/Non_Office/Dev_Space/vibe_skool/kloudShop/specifications/shopify-theme-customization/shopify-theme-customization-analysis.md#L182-L215)**).
 
-![Shopify Brand Settings — Colors](shopify-settings-branding-colors.png)
+![Shopify Brand Settings — Colors](media/shopify-settings-branding-colors.png)
 
 ### Comparison Table
 
@@ -982,28 +982,28 @@ This section covers the step-by-step merchant configuration journey for storefro
 > [!NOTE]
 > This screen shows the navigation menu editor inside **Online Store → Navigation** when configuring the `Footer menu`. Clicking "+ Add menu item" launches a right-side drawer containing input fields for the menu item's Name and Link routing.
 
-![Shopify Navigation Add Menu Item](shopify-settings-navigation-add-item.png)
+![Shopify Navigation Add Menu Item](media/shopify-settings-navigation-add-item.png)
 
 #### 2. Suggestion & Search Suggestions Popover
 
 > [!NOTE]
 > This screen captures the popover suggestions when a merchant clicks the **Link** input field. It displays a categorized list of standard store assets, specifically suggesting administrative legal policies (Contact Information, Privacy Policy, Refund Policy, etc.) configured in Settings.
 
-![Shopify Link Selection Suggestions](shopify-settings-navigation-link-selector.png)
+![Shopify Link Selection Suggestions](media/shopify-settings-navigation-link-selector.png)
 
 #### 3. Menu Item Link Mapping
 
 > [!NOTE]
 > This screen shows the modal state after the merchant selects a suggested link target (e.g. "Contact Information"). It automatically pre-populates the "Name" input field with the target's label to reduce manual naming effort.
 
-![Shopify Link Mapping Auto-Populate](shopify-settings-navigation-item-selected.png)
+![Shopify Link Mapping Auto-Populate](media/shopify-settings-navigation-item-selected.png)
 
 #### 4. Fully Configured Navigation Menu
 
 > [!NOTE]
 > This screen displays the completed footer menu listing all mapped links (Search, Contact Info, Policies). It lists a unique text "Handle" (value = `footer`) on the right, which Liquid theme templates use to dynamically retrieve and render this menu in the storefront footer layout.
 
-![Shopify Fully Configured Footer Menu](shopify-settings-navigation-fully-configured.png)
+![Shopify Fully Configured Footer Menu](media/shopify-settings-navigation-fully-configured.png)
 
 ### Comparison Table
 
@@ -1028,28 +1028,28 @@ This section covers the creation, formatting, and administrative setup of standa
 > [!NOTE]
 > This screen shows the merchant clicking on **Settings → Policies** at the bottom of the Shopify settings sidebar to configure storefront terms and conditions.
 
-![Shopify Policies Settings Entry](shopify-settings-policies-entry.png)
+![Shopify Policies Settings Entry](media/shopify-settings-policies-entry.png)
 
 #### 2. Onboarding Return Rules
 
 > [!NOTE]
 > This screen details the configuration of automated refund policies (toggling return windows, restocking fees, and free return shipping rules) before editing the policy document text.
 
-![Shopify Policies — Return Rules Configuration](shopify-settings-policies-details-rules.png)
+![Shopify Policies — Return Rules Configuration](media/shopify-settings-policies-details-rules.png)
 
 #### 3. Configurable Policies Directory
 
 > [!NOTE]
 > This screen showcases the multiple legal policy sections that can be configured (Return & Refund, Privacy Policy, Terms of Service, Shipping, Contact info), each providing a rich-text textarea editor.
 
-![Shopify Configurable Policies List](shopify-settings-policies-list-scrolled.png)
+![Shopify Configurable Policies List](media/shopify-settings-policies-list-scrolled.png)
 
 #### 4. Rich HTML Document Inline Editor
 
 > [!NOTE]
 > This screen captures a populated Return & Refund Policy editor. The toolbar features a raw HTML source code toggle (`</>`), letting merchants paste external styled document structures directly. It also exposes a "Create from template" utility that auto-fills templates with default tenant values (email, business address).
 
-![Shopify Policies Editor — Populated](shopify-settings-policies-editor-populated.png)
+![Shopify Policies Editor — Populated](media/shopify-settings-policies-editor-populated.png)
 
 ### Comparison Table
 
@@ -1084,7 +1084,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > This screen captures the storefront preview canvas in the Theme Customizer, highlighting the main header navigation menu links (Home, Catalog, Contact). In the coming screenshots, this layout block will be edited to map custom menus created in the navigation settings.
 
-![Shopify Header Navigation Menu](shopify-theme-navigation-header-menu.png)
+![Shopify Header Navigation Menu](media/shopify-theme-navigation-header-menu.png)
 
 ---
 
@@ -1093,7 +1093,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > This dashboard serves as the central control panel for online store navigation. Merchants can manage menus (link lists) such as the main header navigation or footer links. It also provides entry points for configuring collection filters.
 
-![Navigation Dashboard](shopify-settings-navigation-main-entry.png)
+![Navigation Dashboard](media/shopify-settings-navigation-main-entry.png)
 
 ---
 
@@ -1102,7 +1102,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > Selecting a menu opens its detailed editor. The menu title determines its administrative name, while the system generates a unique **Handle** (e.g., `main-menu`). This handle is referenced in theme Liquid files to fetch and iterate over the link list dynamically. Menu items can be reordered via drag-and-drop or nested by dragging them under parent items.
 
-![Main Menu Editor](shopify-settings-navigation-main-editor.png)
+![Main Menu Editor](media/shopify-settings-navigation-main-editor.png)
 
 ---
 
@@ -1111,7 +1111,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > Clicking "Add menu item" opens a context-sensitive sidebar drawer. This avoids displacing the merchant from the main menu hierarchy while inputting the link details.
 
-![Add Menu Item Drawer](shopify-settings-navigation-main-add-item.png)
+![Add Menu Item Drawer](media/shopify-settings-navigation-main-add-item.png)
 
 ---
 
@@ -1120,7 +1120,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > The link input acts as both a search bar and a dropdown for pre-loaded site resources. Merchants can link to collections, products, pages, blogs, or administrative policy pages.
 
-![Link Selector Popover](shopify-settings-navigation-main-link-resolve.png)
+![Link Selector Popover](media/shopify-settings-navigation-main-link-resolve.png)
 
 ---
 
@@ -1129,7 +1129,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > Selecting an option like "Collections" expands into a sub-navigation list showing all active collections on the store (e.g., Hoodies, Shorts, Tshirts). This allows merchants to bind a menu link directly to a database resource group.
 
-![Nested Menu Selection](shopify-settings-navigation-main-nested-menu.png)
+![Nested Menu Selection](media/shopify-settings-navigation-main-nested-menu.png)
 
 ---
 
@@ -1138,7 +1138,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > Merchants can structure nested menus (sub-menus) using an interactive drag-and-drop interface. Dragging a menu item (e.g., `Tshirts`) slightly to the right triggers a blue placement line showing it will be nested as a child of the item above it (`Womens`).
 
-![Drag and Drop Start](shopify-settings-navigation-drag-drop-start.png)
+![Drag and Drop Start](media/shopify-settings-navigation-drag-drop-start.png)
 
 ---
 
@@ -1147,7 +1147,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > Releasing the drag nests the item under the parent. The child item is indented, and the parent item gets an expand/collapse chevron to toggle visibility of its sub-items in the editor.
 
-![Drag and Drop Indented](shopify-settings-navigation-drag-drop-indented.png)
+![Drag and Drop Indented](media/shopify-settings-navigation-drag-drop-indented.png)
 
 ---
 
@@ -1156,7 +1156,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > Once a nested hierarchy is established, the interface provides a dedicated "+ Add menu item to [Parent Name]" action nested directly inside the parent container. This allows the merchant to continue adding items directly within the sub-menu hierarchy.
 
-![Add Nested Menu Item](shopify-settings-navigation-add-nested-item.png)
+![Add Nested Menu Item](media/shopify-settings-navigation-add-nested-item.png)
 
 ---
 
@@ -1165,7 +1165,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > A completed nested structure separates distinct product categories (e.g., nesting category links like Hoodies, Shorts, and Tshirts under gendered parents like `Womens` and `Mens`). This builds a clean, semantic mapping tree.
 
-![Nested Menu Structure](shopify-settings-navigation-nested-structure.png)
+![Nested Menu Structure](media/shopify-settings-navigation-nested-structure.png)
 
 ---
 
@@ -1174,7 +1174,7 @@ This section analyzes the customization and dynamic data-binding of the storefro
 > [!NOTE]
 > The storefront's layout rendering engine pulls the menu hierarchy dynamically using the bound handle. Hovering over a parent menu item (`Womens`) in the header automatically triggers a dropdown listing the nested sub-links. The left side panel in the Theme Customizer binds this menu to the header and provides configuration toggles like desktop menu type (dropdown vs. mega menu).
 
-![Storefront Navigation Preview](shopify-theme-customizer-navigation-live-preview.png)
+![Storefront Navigation Preview](media/shopify-theme-customizer-navigation-live-preview.png)
 
 ---
 
@@ -1227,3 +1227,5 @@ The following items are visible in Shopify's **Settings** panel:
 18. **Custom data** — Define metafields and custom schemas for products, variants, collections, orders, etc.
 19. **Languages** — Multi-language localization settings.
 20. **Policies** — Standard store policies (Refund, Privacy, Terms of Service, Shipping, Contact info) auto-populated at checkout (*Actively Analyzed in [§15b](#15b-store-policies-return-rules--html-document-editors)*).
+
+

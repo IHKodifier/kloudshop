@@ -5,6 +5,7 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/services/file_uploader.dart';
+import 'package:kloudshop/widgets/upload/asset_selection_dialog.dart';
 
 class MediaGalleryUploader extends StatefulWidget {
   final List<String> images;
@@ -116,11 +117,24 @@ class _MediaGalleryUploaderState extends State<MediaGalleryUploader> {
   }
 
   Future<void> _pickAndUploadImage() async {
-    final picker = ImagePicker();
-    final List<XFile> files = await picker.pickMultiImage();
-    for (final file in files) {
-      _startMockUpload(file.name, file.readAsBytes());
-    }
+    final currentImages = _localImages ?? widget.images;
+    showDialog<dynamic>(
+      context: context,
+      builder: (context) {
+        return AssetSelectionDialog(
+          title: 'Select Product Images',
+          isMultiSelect: true,
+          initialUrls: currentImages,
+        );
+      },
+    ).then((selected) {
+      if (selected is List<String>) {
+        setState(() {
+          _localImages = selected;
+        });
+        widget.onImagesChanged(selected);
+      }
+    });
   }
 
   @override

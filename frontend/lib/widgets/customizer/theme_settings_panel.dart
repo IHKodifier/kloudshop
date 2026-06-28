@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:kloudshop/widgets/customizer/custom_color_picker.dart';
+import 'package:kloudshop/widgets/upload/asset_selection_dialog.dart';
 import 'package:kloudshop/models/theme_config.dart';
 import 'package:kloudshop/theme/app_theme.dart';
 import 'package:kloudshop/providers/theme_providers.dart';
@@ -91,13 +93,13 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
         return AlertDialog(
           backgroundColor: Theme.of(context).dialogBackgroundColor,
           title: const Text('Pick Color', style: TextStyle(fontFamily: 'Outfit')),
-          content: SingleChildScrollView(
-            child: ColorPicker(
+          content: SizedBox(
+            width: 340,
+            child: CustomColorPicker(
               pickerColor: initialColor,
               onColorChanged: (color) {
                 selectedColor = color;
               },
-              pickerAreaHeightPercent: 0.8,
             ),
           ),
           actions: [
@@ -108,7 +110,7 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                final hex = '#${selectedColor.value.toRadixString(16).substring(2).toUpperCase()}';
+                final hex = '#${selectedColor.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
                 _updateToken(key, hex);
               },
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.brandEmerald500),
@@ -121,37 +123,23 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
   }
 
   void _simulateSelectImage(String tokenKey) {
-    final theme = Theme.of(context);
-    showDialog(
+    final tokens = widget.config?.draftTokens ?? {};
+    final currentUrl = tokens[tokenKey]?.toString() ?? '';
+
+    showDialog<dynamic>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: theme.dialogBackgroundColor,
-          title: const Text('Select Brand Asset', style: TextStyle(fontFamily: 'Outfit')),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _AssetSelectTile(
-                name: 'Brand Logo Dark (Vector/PNG)',
-                url: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6',
-                onSelect: (url) {
-                  Navigator.pop(context);
-                  _updateToken(tokenKey, url);
-                },
-              ),
-              _AssetSelectTile(
-                name: 'Alternative light logo',
-                url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
-                onSelect: (url) {
-                  Navigator.pop(context);
-                  _updateToken(tokenKey, url);
-                },
-              ),
-            ],
-          ),
+        return AssetSelectionDialog(
+          title: tokenKey == 'logo' ? 'Logo' : 'Favicon',
+          isMultiSelect: false,
+          initialUrls: currentUrl.isNotEmpty ? [currentUrl] : const [],
         );
       },
-    );
+    ).then((selected) {
+      if (selected is String && selected.isNotEmpty) {
+        _updateToken(tokenKey, selected);
+      }
+    });
   }
 
   @override
@@ -165,6 +153,21 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
     final secondaryColor = _parseColor(tokens['secondary'], AppTheme.brandTeal500);
     final backgroundColor = _parseColor(tokens['background'] ?? tokens['bg_color'], Colors.white);
     final textColor = _parseColor(tokens['text_color'], const Color(0xFF0F172A));
+
+    final customColors = <Map<String, String>>[];
+    tokens.forEach((k, v) {
+      if (k.startsWith('custom_color_name_')) {
+        final id = k.replaceFirst('custom_color_name_', '');
+        final name = v.toString();
+        final value = tokens['custom_color_value_$id']?.toString() ?? '#000000';
+        customColors.add({
+          'id': id,
+          'name': name,
+          'value': value,
+        });
+      }
+    });
+    customColors.sort((a, b) => a['id']!.compareTo(b['id']!));
 
     final contrast = _contrastRatio(textColor, backgroundColor);
     final contrastFailed = contrast < 4.5;
@@ -224,6 +227,19 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
                     _buildColorTile('Secondary Color', 'secondary', secondaryColor),
                     _buildColorTile('Background Color', 'background', backgroundColor),
                     _buildColorTile('Body Text Color', 'text_color', textColor),
+                    
+                    if (customColors.isNotEmpty) ...[
+                      const Padding(
+                        padding: EdgeInsets.only(top: 12, bottom: 4),
+                        child: Text(
+                          'CUSTOM COLORS',
+                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Colors.grey),
+                        ),
+                      ),
+                      ...customColors.map((cc) => _buildCustomColorTile(cc, theme)),
+                    ],
+
+                    _buildAddCustomColorButton(theme),
                     const SizedBox(height: 12),
                     
                     // WCAG Warning Box
@@ -413,6 +429,8 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
         children: [
           ListTile(
             dense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+            visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
             leading: Icon(icon, size: 16, color: isExpanded ? AppTheme.brandEmerald500 : theme.hintColor),
             title: Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: isExpanded ? AppTheme.brandEmerald500 : null)),
             trailing: Icon(isExpanded ? LucideIcons.chevronDown : LucideIcons.chevronRight, size: 14),
@@ -443,7 +461,7 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
       onTap: () => _simulateSelectImage(tokenKey),
       borderRadius: BorderRadius.circular(6),
       child: Container(
-        height: 60,
+        height: 42,
         decoration: BoxDecoration(
           border: Border.all(color: theme.dividerColor),
           borderRadius: BorderRadius.circular(6),
@@ -466,7 +484,7 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
                 alignment: Alignment.bottomRight,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  margin: const EdgeInsets.all(4),
+                  margin: const EdgeInsets.all(2),
                   decoration: BoxDecoration(color: Colors.black.withOpacity(0.6), borderRadius: BorderRadius.circular(2)),
                   child: const Text('Change', style: TextStyle(fontSize: 8, color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
@@ -477,6 +495,7 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
 
   Widget _buildWidthSlider(String tokenKey, dynamic val) {
     final currentVal = _parseDouble(val, 90.0);
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -487,14 +506,28 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
             Text('${currentVal.round()}px', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
           ],
         ),
-        Slider(
-          value: currentVal.clamp(40, 300),
-          min: 40,
-          max: 300,
-          activeColor: AppTheme.brandEmerald500,
-          onChanged: (val) {
-            _updateToken(tokenKey, val);
-          },
+        const SizedBox(height: 2),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 2.0,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 10.0),
+            activeTrackColor: AppTheme.brandEmerald500,
+            inactiveTrackColor: theme.dividerColor.withOpacity(0.5),
+            thumbColor: AppTheme.brandEmerald500,
+            overlayColor: AppTheme.brandEmerald500.withOpacity(0.12),
+          ),
+          child: SizedBox(
+            height: 24,
+            child: Slider(
+              value: currentVal.clamp(40, 300),
+              min: 40,
+              max: 300,
+              onChanged: (val) {
+                _updateToken(tokenKey, val);
+              },
+            ),
+          ),
         ),
       ],
     );
@@ -577,6 +610,7 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
 
   Widget _buildFontSizeSlider(String tokenKey, dynamic val) {
     final currentVal = _parseDouble(val, 14.0);
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -587,14 +621,28 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
             Text('${currentVal.round()}px', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
           ],
         ),
-        Slider(
-          value: currentVal.clamp(10, 24),
-          min: 10,
-          max: 24,
-          activeColor: AppTheme.brandEmerald500,
-          onChanged: (val) {
-            _updateToken(tokenKey, val);
-          },
+        const SizedBox(height: 2),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 2.0,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 10.0),
+            activeTrackColor: AppTheme.brandEmerald500,
+            inactiveTrackColor: theme.dividerColor.withOpacity(0.5),
+            thumbColor: AppTheme.brandEmerald500,
+            overlayColor: AppTheme.brandEmerald500.withOpacity(0.12),
+          ),
+          child: SizedBox(
+            height: 24,
+            child: Slider(
+              value: currentVal.clamp(10, 24),
+              min: 10,
+              max: 24,
+              onChanged: (val) {
+                _updateToken(tokenKey, val);
+              },
+            ),
+          ),
         ),
       ],
     );
@@ -602,6 +650,7 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
 
   Widget _buildBorderRadiusSlider(String tokenKey, dynamic val) {
     final currentVal = _parseDouble(val, 8.0);
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -612,14 +661,28 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
             Text('${currentVal.round()}px', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
           ],
         ),
-        Slider(
-          value: currentVal.clamp(0, 32),
-          min: 0,
-          max: 32,
-          activeColor: AppTheme.brandEmerald500,
-          onChanged: (val) {
-            _updateToken(tokenKey, val);
-          },
+        const SizedBox(height: 2),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 2.0,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 10.0),
+            activeTrackColor: AppTheme.brandEmerald500,
+            inactiveTrackColor: theme.dividerColor.withOpacity(0.5),
+            thumbColor: AppTheme.brandEmerald500,
+            overlayColor: AppTheme.brandEmerald500.withOpacity(0.12),
+          ),
+          child: SizedBox(
+            height: 24,
+            child: Slider(
+              value: currentVal.clamp(0, 32),
+              min: 0,
+              max: 32,
+              onChanged: (val) {
+                _updateToken(tokenKey, val);
+              },
+            ),
+          ),
         ),
       ],
     );
@@ -658,6 +721,211 @@ class _ThemeSettingsPanelState extends ConsumerState<ThemeSettingsPanel> {
           _updateToken(tokenKey, val);
         },
       ),
+    );
+  }
+
+  Widget _buildCustomColorTile(Map<String, String> cc, ThemeData theme) {
+    final id = cc['id']!;
+    final name = cc['name']!;
+    final colorHex = cc['value']!;
+    final color = _parseColor(colorHex, Colors.black);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: SizedBox(
+              height: 32,
+              child: _CustomColorNameInput(
+                initialName: name,
+                onNameSubmitted: (newName) {
+                  if (newName.isNotEmpty) {
+                    _updateToken('custom_color_name_$id', newName);
+                  }
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => _showColorPickerDialog('custom_color_value_$id', color),
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey.withOpacity(0.5)),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            colorHex.length > 7 ? colorHex.substring(0, 7) : colorHex,
+            style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+          ),
+          IconButton(
+            icon: const Icon(LucideIcons.trash2, size: 14, color: Colors.red),
+            onPressed: () => _deleteCustomColor(id),
+            padding: const EdgeInsets.all(4),
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddCustomColorButton(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: InkWell(
+          onTap: _showAddCustomColorDialog,
+          borderRadius: BorderRadius.circular(4),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  LucideIcons.plusCircle,
+                  size: 13,
+                  color: AppTheme.brandEmerald500,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'Add Custom Color',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.brandEmerald500,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddCustomColorDialog() {
+    final theme = Theme.of(context);
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: theme.dialogBackgroundColor,
+          title: const Text('Add Custom Color', style: TextStyle(fontFamily: 'Outfit')),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            style: const TextStyle(fontSize: 13),
+            decoration: const InputDecoration(
+              hintText: 'e.g. Announcement Background',
+              labelText: 'Color Name',
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: AppTheme.brandEmerald500),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final name = controller.text.trim();
+                if (name.isNotEmpty) {
+                  Navigator.pop(context);
+                  _addCustomColor(name);
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.brandEmerald500),
+              child: const Text('Add', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _addCustomColor(String name) {
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    ref.read(activeThemeConfigProvider.notifier).updateTokens({
+      'custom_color_name_$id': name,
+      'custom_color_value_$id': '#000000',
+    });
+  }
+
+  void _deleteCustomColor(String id) {
+    ref.read(activeThemeConfigProvider.notifier).deleteTokens([
+      'custom_color_name_$id',
+      'custom_color_value_$id',
+    ]);
+  }
+}
+
+class _CustomColorNameInput extends StatefulWidget {
+  final String initialName;
+  final ValueChanged<String> onNameSubmitted;
+
+  const _CustomColorNameInput({
+    required this.initialName,
+    required this.onNameSubmitted,
+  });
+
+  @override
+  State<_CustomColorNameInput> createState() => _CustomColorNameInputState();
+}
+
+class _CustomColorNameInputState extends State<_CustomColorNameInput> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialName);
+  }
+
+  @override
+  void didUpdateWidget(covariant _CustomColorNameInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialName != widget.initialName && _controller.text != widget.initialName) {
+      _controller.text = widget.initialName;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return TextField(
+      controller: _controller,
+      style: const TextStyle(fontSize: 12),
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        hintText: 'Color Name',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: AppTheme.brandEmerald500, width: 1.2),
+        ),
+      ),
+      onSubmitted: (val) {
+        widget.onNameSubmitted(val.trim());
+      },
     );
   }
 }
